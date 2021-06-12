@@ -5,8 +5,13 @@ module.exports = {
   },
   purge: ["./**/*.html", "./**/*.tsx"],
   theme: {
-    textColor: {
-      primary: "#0070f3",
+    litho: {
+      black: "#191B1D",
+      cream: "#FBF9F3",
+      red: "#D50031",
+      blue: "#1F4C7A",
+      mustard: "#F1AA3C",
+      pink: "#F5BDC2",
     },
     extend: {},
   },
