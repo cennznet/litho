@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors");
+
 module.exports = {
   future: {
     // removeDeprecatedGapUtilities: true,
@@ -6,6 +8,7 @@ module.exports = {
   purge: ["./**/*.html", "./**/*.tsx"],
   theme: {
     colors: {
+      ...colors,
       litho: {
         black: "#191B1D",
         cream: "#FBF9F3",
@@ -16,7 +19,11 @@ module.exports = {
         wallet: "rgba(0, 0, 0, 0.12)",
       },
     },
-    extend: {},
+    extend: {
+      backgroundImage: () => ({
+        noise: "url('/Noise.png')",
+      }),
+    },
   },
   variants: {},
   plugins: [],
