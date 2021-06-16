@@ -1,16 +1,21 @@
+import React from "react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 import "../styles/globals.scss";
 
+const Web3Enable = dynamic(() => import("../components/Web3"), { ssr: false });
+
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <main className="w-screen h-screen bg-litho-cream p-20 flex bg-noise">
+    <main className="w-screen bg-litho-cream p-20 bg-noise">
+      <Web3Enable />
       <Head>
         <title>Litho</title>
       </Head>
-      <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20">
+      <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 bg-litho-cream z-10">
         <Link href="/">
           <a>
             <img src="/logo.svg" alt="Litho" />
