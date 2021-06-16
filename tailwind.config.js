@@ -23,6 +23,9 @@ module.exports = {
       backgroundImage: () => ({
         noise: "url('/Noise.png')",
       }),
+      height: {
+        customScreen: "calc(100vh - 274px)",
+      },
     },
   },
   variants: {},

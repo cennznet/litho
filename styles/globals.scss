@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   padding: 0;
@@ -15,6 +19,7 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+#__next {
+  height: 100%;
+  width: 100%;
 }

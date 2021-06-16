@@ -10,7 +10,7 @@ const Web3Enable = dynamic(() => import("../components/Web3"), { ssr: false });
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <main className="w-screen bg-litho-cream p-20 bg-noise">
+    <main className="w-full bg-litho-cream p-20 bg-noise">
       <Web3Enable />
       <Head>
         <title>Litho</title>
