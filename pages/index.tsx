@@ -42,7 +42,7 @@ const Home: React.FC<{}> = () => {
           </div>
         </div>
       </div>
-      <div className="w-full flex items-center justify-center mb-16">
+      {/* <div className="w-full flex items-center justify-center mb-16">
         <div className="w-1/2 flex justify-center">
           <Image src="/placeholder.png" height={400} width={400} />
         </div>
@@ -60,7 +60,7 @@ const Home: React.FC<{}> = () => {
             <button className="text-white bg-litho-blue px-4">Subscribe</button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
