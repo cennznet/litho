@@ -16,16 +16,18 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         <Head>
           <title>Litho</title>
         </Head>
-        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 bg-litho-cream z-10">
+        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-10">
           <Link href="/">
             <a>
               <img src="/logo.svg" alt="Litho" />
             </a>
           </Link>
-          <div className="h-12 flex items-center">
-            Create
-            <ConnectWallet />
-          </div>
+          <Link href="/create">
+            <a className="h-12 flex items-center">
+              Create
+              <ConnectWallet />
+            </a>
+          </Link>
         </header>
         <Component {...pageProps} />
         <footer className="fixed bottom-0 left-0 w-full h-20 px-20 bg-litho-cream flex items-center">

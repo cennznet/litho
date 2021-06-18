@@ -17,14 +17,17 @@ module.exports = {
         mustard: "#F1AA3C",
         pink: "#F5BDC2",
         wallet: "rgba(0, 0, 0, 0.12)",
+        gray4: "#BDBDBD",
       },
     },
     extend: {
       backgroundImage: () => ({
         noise: "url('/Noise.png')",
+        grid: "url('/grid.png')",
       }),
       height: {
         customScreen: "calc(100vh - 274px)",
+        customScreen2: "calc(100vh - 214px)",
       },
     },
   },
