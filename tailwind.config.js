@@ -30,6 +30,9 @@ module.exports = {
         customScreen2: "calc(100vh - 214px)",
         create: "900px",
       },
+      minHeight: {
+        create: "900px",
+      },
     },
   },
   variants: {},

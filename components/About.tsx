@@ -5,7 +5,9 @@ import Input from "./Input";
 
 const MAX_ATTRIBUTES = 16;
 
-const About: React.FC<{}> = () => {
+const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
+  moveToUploadAsset,
+}) => {
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [numOfAttributes, setNumOfAttributes] = React.useState(1);
   const [error, setError] = React.useState(null);
@@ -63,6 +65,13 @@ const About: React.FC<{}> = () => {
     }
 
     console.log({
+      title: titleValue,
+      description: descriptionValue,
+      copies: numOfCopies,
+      attributes,
+    });
+
+    moveToUploadAsset({
       title: titleValue,
       description: descriptionValue,
       copies: numOfCopies,

@@ -1,9 +1,22 @@
 import React from "react";
 import Image from "next/image";
 import About from "../components/About";
+import Upload from "../components/Upload";
 
 const Create: React.FC<{}> = () => {
   const [currentTab, setCurrentTab] = React.useState(1);
+  const [aboutNFT, setAboutNFT] = React.useState();
+  const [nftData, setNFTData] = React.useState();
+
+  const moveToUploadAsset = (aboutNFT: any) => {
+    setAboutNFT(aboutNFT);
+    setCurrentTab((tab) => tab + 1);
+  };
+
+  const moveToPreview = (nftData) => {
+    setNFTData(nftData);
+    setCurrentTab((tab) => tab + 1);
+  };
 
   return (
     <div className="border border-litho-black mt-7 mb-6flex flex-col">
@@ -39,7 +52,7 @@ const Create: React.FC<{}> = () => {
           3. Preview
         </div>
       </div>
-      <div className="bg-grid p-12 flex-1 overflow-auto relative min-h-create ">
+      <div className="bg-grid p-12 flex-1 overflow-auto relative min-h-create">
         <div className="absolute top-28">
           <Image src="/create-1.png" height="135" width="132" alt="" />
         </div>
@@ -51,7 +64,8 @@ const Create: React.FC<{}> = () => {
           <Image src="/create-3.png" height="173" width="152" alt="" />
         </div>
 
-        {currentTab === 1 && <About />}
+        {currentTab === 1 && <About moveToUploadAsset={moveToUploadAsset} />}
+        {currentTab === 2 && <Upload moveToPreview={moveToPreview} />}
       </div>
     </div>
   );
