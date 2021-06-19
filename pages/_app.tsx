@@ -16,7 +16,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         <Head>
           <title>Litho</title>
         </Head>
-        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-10">
+        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-10 bg-litho-cream bg-noise">
           <Link href="/">
             <a>
               <img src="/logo.svg" alt="Litho" />
