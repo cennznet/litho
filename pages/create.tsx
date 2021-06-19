@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import About from "../components/About";
-import Upload from "../components/Upload";
+import About from "../components/create/About";
+import Upload from "../components/create/Upload";
+import Preview from "../components/create/Preview";
 
 const Create: React.FC<{}> = () => {
   const [currentTab, setCurrentTab] = React.useState(1);
@@ -56,7 +57,7 @@ const Create: React.FC<{}> = () => {
         <div className="absolute top-28">
           <Image src="/create-1.png" height="135" width="132" alt="" />
         </div>
-        <div className="absolute bottom-28">
+        <div className="absolute bottom-28 left-32">
           <Image src="/create-2.png" height="89" width="89" alt="" />
         </div>
 
@@ -66,6 +67,7 @@ const Create: React.FC<{}> = () => {
 
         {currentTab === 1 && <About moveToUploadAsset={moveToUploadAsset} />}
         {currentTab === 2 && <Upload moveToPreview={moveToPreview} />}
+        {currentTab === 3 && <Preview aboutNFT={aboutNFT} nftData={nftData} />}
       </div>
     </div>
   );

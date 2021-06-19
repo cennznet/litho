@@ -18,6 +18,7 @@ module.exports = {
         pink: "#F5BDC2",
         wallet: "rgba(0, 0, 0, 0.12)",
         gray4: "#BDBDBD",
+        nft: "#F9F7F1",
       },
     },
     extend: {
