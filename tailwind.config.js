@@ -21,6 +21,9 @@ module.exports = {
         nft: "#F9F7F1",
       },
     },
+    fontFamily: {
+      sans: ["serenity", "sans-serif"],
+    },
     extend: {
       backgroundImage: () => ({
         noise: "url('/Noise.png')",

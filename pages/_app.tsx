@@ -15,6 +15,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
       <main className="w-full bg-litho-cream p-20 bg-noise">
         <Head>
           <title>Litho</title>
+          <link rel="stylesheet" href="https://use.typekit.net/txj7ase.css" />
         </Head>
         <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-10 bg-litho-cream bg-noise">
           <Link href="/">
@@ -42,7 +43,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               <a className="font-semibold ml-12">Privacy Policy</a>
             </Link>
           </div>
-          <div className="flex items-center justify-end w-10/12">
+          <div className="flex items-center justify-end w-9/12">
             <Link href="/instagram">
               <a className="font-semibold mx-4" target="_blank">
                 Instagram
