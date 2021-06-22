@@ -1,6 +1,7 @@
 import React from "react";
 
 import Web3Context from "./Web3Context";
+import Text from "./Text";
 
 const ConnectWallet: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -32,7 +33,9 @@ const ConnectWallet: React.FC<{}> = () => {
       }}
     >
       <img src="/wallet.svg" alt="Connect Wallet" className="mr-4" />
-      Connect Wallet
+      <Text variant="button" color="litho-blue">
+        Connect Wallet
+      </Text>
     </button>
   );
 };

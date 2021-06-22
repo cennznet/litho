@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Text from "../Text";
 
 interface Props {
   moveToPreview: (nftData: any) => void;
@@ -22,15 +23,17 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       className="flex flex-col w-3/5 m-auto text-xl"
       onSubmit={submitHandler}
     >
-      <span>Upload Assets</span>
+      <Text variant="h6">Upload Assets</Text>
       <label
         htmlFor="file"
         className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-25 text-litho-black mb-10"
       >
-        Choose from folder
+        <Text variant="body1">Choose from folder</Text>
       </label>
       <input name="file" type="file" className="hidden" id="file" />
-      <label>Choose content storage</label>
+      <label>
+        <Text variant="h6">Choose content storage</Text>
+      </label>
       <select
         className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
         disabled
@@ -42,12 +45,16 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
 
       <div className="w-full flex items-center justify-between mt-10">
         <Link href="/">
-          <a className="border bg-litho-cream text-base text-litho-blue flex-1 text-center py-2">
-            Cancel
+          <a className="border bg-litho-cream flex-1 text-center py-2">
+            <Text variant="button" color="litho-blue">
+              Cancel
+            </Text>
           </a>
         </Link>
-        <button className="border bg-litho-blue text-base text-white flex-1 ml-6 text-center py-2">
-          Next: Preview
+        <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
+          <Text variant="button" color="white">
+            Next: Preview
+          </Text>
         </button>
       </div>
     </form>

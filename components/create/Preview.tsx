@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
+import Text from "../Text";
 import NFT from "../NFT";
 
 interface Props {
@@ -20,18 +21,22 @@ const Preview: React.FC<Props> = ({ aboutNFT, nftData }) => {
       {!nftMinted && (
         <div className="w-full flex items-center justify-between mt-16">
           <Link href="/">
-            <a className="border bg-litho-cream text-base text-litho-blue flex-1 text-center py-2">
-              Cancel
+            <a className="border bg-litho-cream flex-1 text-center py-2">
+              <Text variant="button" color="litho-blue">
+                Cancel
+              </Text>
             </a>
           </Link>
           <button
-            className="border bg-litho-blue text-base text-white flex-1 ml-6 text-center py-2"
+            className="border bg-litho-blue flex-1 ml-6 text-center py-2"
             onClick={() => {
               setShowSuccess(true);
               setNFTMinted(true);
             }}
           >
-            Mint
+            <Text variant="button" color="white">
+              Mint
+            </Text>
           </button>
         </div>
       )}
@@ -45,20 +50,31 @@ const Preview: React.FC<Props> = ({ aboutNFT, nftData }) => {
             >
               &times;
             </button>
-            <h2 className="text-3xl font-bold text-litho-blue mb-6">
+            <Text
+              variant="h4"
+              color="litho-blue"
+              component="h2"
+              className="mb-6"
+            >
               Congratulations!
-            </h2>
-            <span className="text-black mt-2 font-light border-b border-black border-opacity-20 pb-6">
+            </Text>
+            <Text
+              variant="body1"
+              color="black"
+              className="mt-2 border-b border-black border-opacity-20 pb-6"
+            >
               NFT was successfully minted and should be displayed in your wallet
               shortly.
-            </span>
+            </Text>
             <div className="self-end flex items-center mt-8">
               <Link href="/me">
                 <a
                   target="_blank"
-                  className="ml-4 rounded-sm text-white bg-litho-blue px-4 py-3"
+                  className="ml-4 rounded-sm bg-litho-blue px-4 py-3"
                 >
-                  View Your NFT
+                  <Text variant="button" color="white">
+                    View Your NFT
+                  </Text>
                 </a>
               </Link>
             </div>

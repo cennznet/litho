@@ -1,43 +1,58 @@
 import React from "react";
 import Image from "next/image";
+import Text from "../components/Text";
 
 const Home: React.FC<{}> = () => {
   return (
     <div className="mt-12 mb-16 border border-litho-black bg-litho-cream flex">
-      <div className="w-1/3 text-5xl p-10" style={{ lineHeight: "60px" }}>
-        <span className="font-bold">Litho</span> discovers, collects and sells
-        extraordinary NFTs
+      <div className="w-1/3 p-10">
+        <Text variant="h3">Litho</Text>{" "}
+        <span className="text-5xl font-normal" style={{ lineHeight: "60px" }}>
+          discovers, collects and sells extraordinary NFTs
+        </span>
       </div>
       <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
-        <Image
-          src="/placeholder.png"
-          className="flex-1 max-w-full max-h-full"
-          objectFit="cover"
-          priority={true}
-          layout="fill"
-        />
+        <div className="flex-1 relative">
+          <Image
+            src="/placeholder.png"
+            objectFit="cover"
+            priority={true}
+            layout="fill"
+          />
+        </div>
 
         <div className="p-6 pb-10 flex flex-col">
-          <span className="text-2xl mb-4 font-bold">Create an NFT</span>
-          <button className="bg-litho-blue w-40 h-12 text-white flex items-center justify-center font-semibold">
-            Start Minting
+          <Text variant="h5" className="mb-4">
+            Create an NFT
+          </Text>
+          <button className="bg-litho-blue w-40 h-12 flex items-center justify-center">
+            <Text variant="button" color="white">
+              Start Minting
+            </Text>
           </button>
         </div>
       </div>
       <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
-        <Image
-          src="/placeholder.png"
-          className="flex-1 max-w-full max-h-full"
-          objectFit="cover"
-          priority={true}
-          layout="fill"
-        />
+        <div className="flex-1 relative">
+          <Image
+            src="/placeholder.png"
+            objectFit="cover"
+            priority={true}
+            layout="fill"
+          />
+        </div>
 
         <div className="p-6 pb-10 flex flex-col">
-          <span className="text-2xl mb-4 font-bold">Marketplace</span>
-          <span className="h-12 flex items-center text-litho-blue text-opacity-60 font-semibold">
+          <Text variant="h5" className="mb-8">
+            Marketplace
+          </Text>
+          <Text
+            variant="button"
+            color="litho-blue"
+            className="flex items-center text-opacity-60 mb-4"
+          >
             Coming Soon
-          </span>
+          </Text>
         </div>
       </div>
       {/* <div className="w-full flex items-center justify-center mb-16">

@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 
 import ConnectWallet from "../components/ConnectWallet";
 import "../styles/globals.scss";
+import Text from "../components/Text";
 
 const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 
@@ -25,7 +26,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           </Link>
           <Link href="/create">
             <a className="h-12 flex items-center">
-              Create
+              <Text variant="h6">Create</Text>
               <ConnectWallet />
             </a>
           </Link>

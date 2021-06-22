@@ -2,6 +2,7 @@ import React, { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Input from "./Input";
+import Text from "../Text";
 
 const MAX_ATTRIBUTES = 16;
 
@@ -81,7 +82,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
 
   return (
     <form
-      className="flex flex-col w-3/5 m-auto text-xl"
+      className="flex flex-col w-3/5 m-auto"
       onSubmit={submitAboutNFT}
       onFocus={() => setError(null)}
     >
@@ -90,10 +91,14 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
           {error}
         </div>
       )}
-      <label>Title</label>
+      <label>
+        <Text variant="h6">Title</Text>
+      </label>
       <Input name="title" placeholder="Sheep NFT" />
 
-      <label>Description</label>
+      <label>
+        <Text variant="h6">Description</Text>
+      </label>
       <textarea
         name="description"
         placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud."
@@ -101,15 +106,17 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         rows={5}
       />
 
-      <label>Number of copies</label>
+      <label>
+        <Text variant="h6">Number of copies</Text>
+      </label>
       <Input name="copies" type="number" placeholder="0" className="mb-10" />
 
       <div
-        className="font-bold text-2xl flex item-center "
+        className="flex item-center"
         onClick={() => setShowAdvanced((val) => !val)}
       >
-        Advanced
-        <span className="ml-4">
+        <Text variant="h5">Advanced</Text>
+        <span className="ml-4 relative top-1">
           <Image
             src="/arrow.svg"
             height="10"
@@ -125,27 +132,35 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
           showAdvanced ? "h-auto py-4" : "h-0"
         } flex flex-col overflow-hidden`}
       >
-        <label>Attributes (Optional)</label>
+        <label>
+          <Text variant="h6">Attributes (Optional)</Text>
+        </label>
 
         {renderAttributeInputs(numOfAttributes)}
 
         <button
           type="button"
-          className="bg-litho-cream text-litho-blue text-center py-2 border border-black w-56 text-base"
+          className="bg-litho-cream text-center py-2 border border-black w-56 text-base"
           onClick={() => setNumOfAttributes((num) => num + 1)}
         >
-          + Add Attributes (15 left)
+          <Text variant="button" color="litho-blue">
+            + Add Attributes (15 left)
+          </Text>
         </button>
       </div>
 
       <div className="w-full flex items-center justify-between mt-10">
         <Link href="/">
-          <a className="border bg-litho-cream text-base text-litho-blue flex-1 text-center py-2">
-            Cancel
+          <a className="border bg-litho-cream flex-1 text-center py-2">
+            <Text variant="button" color="litho-blue">
+              Cancel
+            </Text>
           </a>
         </Link>
-        <button className="border bg-litho-blue text-base text-white flex-1 ml-6 text-center py-2">
-          Next: Upload Assets
+        <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
+          <Text variant="button" color="white">
+            Next: Upload Assets
+          </Text>
         </button>
       </div>
     </form>

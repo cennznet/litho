@@ -20,8 +20,15 @@ const NFT: React.FC<Props> = () => {
           className="object-contain object-center"
         />
         <div className="mt-3 flex justify-between items-center">
-          <span className="text-lg font-bold">NFT name</span>
-          <span className="text-sm font-semibold">x1</span>
+          <span className="text-lg font-bold" style={{ lineHeight: "21.6px" }}>
+            NFT name
+          </span>
+          <span
+            className="text-sm font-semibold"
+            style={{ lineHeight: "18px" }}
+          >
+            x1
+          </span>
         </div>
       </div>
       <div className="absolute w-10/12 h-4 -bottom-4 border border-litho-black bg-litho-nft" />
