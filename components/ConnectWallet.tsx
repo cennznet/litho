@@ -2,70 +2,54 @@ import React from "react";
 
 import Web3Context from "./Web3Context";
 import Text from "./Text";
-import Modal from "./Modal";
+import ConnectWalletModal from "./wallet/ConnectWalletModal";
+import ConnectedWalletModal from "./wallet/ConnectedWalletModal";
 
 const ConnectWallet: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
-  const [showUserAccount, setShowUserAccount] = React.useState(false);
+  const [isWalletConnected, setIsWalletConnected] = React.useState(false);
   const [showWallet, setShowWallet] = React.useState(false);
+  const [showConnectedWallet, setShowConnectedWallet] = React.useState(false);
 
   React.useEffect(() => {
     if (web3Context.account) {
-      setShowUserAccount(true);
+      setIsWalletConnected(true);
     } else {
-      setShowUserAccount(false);
+      setIsWalletConnected(false);
     }
   }, [web3Context.account]);
+
+  const buttonClickHandler: React.EventHandler<React.SyntheticEvent> = (
+    event: React.SyntheticEvent
+  ) => {
+    if (isWalletConnected) {
+      setShowConnectedWallet((val) => !val);
+    } else {
+      setShowWallet((val) => !val);
+    }
+  };
 
   return (
     <>
       <button
-        className="border border-litho-wallet ml-9 flex items-center flex-1 pl-1 pr-3 py-2 w-40"
-        onClick={() => {
-          // web3Context.connectWallet();
-          setShowWallet(true);
-        }}
-        disabled={showUserAccount && web3Context.account}
+        className="border border-litho-wallet ml-9 flex items-center justify-center flex-1 pl-1 pr-3 py-2 w-40"
+        onClick={buttonClickHandler}
       >
         <img src="/wallet.svg" alt="Connect Wallet" className="mr-2" />
-        <Text
-          variant="button"
-          color="litho-blue"
-          className="flex-1 text-center"
-        >
-          {showUserAccount && web3Context.account
-            ? "Connected"
-            : "Connect Wallet"}
+        <Text variant="button" color="litho-blue">
+          {isWalletConnected ? "1000 CENNZ" : "Connect Wallet"}
         </Text>
       </button>
       {showWallet && (
-        <Modal
-          onClose={() => setShowWallet(false)}
-          styles={{
-            modalBody: "w-2/6 bg-white absolute top-20 right-20",
-          }}
-        >
-          <Text component="h4" variant="h4" color="litho-blue">
-            Connect Wallet
-          </Text>
-          <Text variant="body1" className="mt-4" component="div">
-            Connect with one of our available wallet providers or create a new
-            one.
-          </Text>
-          <div className="h-0.5 w-full my-6 bg-litho-black bg-opacity-10" />
-          <button
-            className="border border-litho-black border-opacity-20 flex items-center justify-center bg-litho-cream w-full py-3 h-12"
-            onClick={() => {
-              web3Context.connectWallet();
-              setShowWallet(false);
-            }}
-          >
-            <img src="/cennznet-logo.svg" className="mr-2" />
-            <Text variant="button" color="litho-blue">
-              CENNZnet Wallet
-            </Text>
-          </button>
-        </Modal>
+        <ConnectWalletModal
+          closeModal={() => setShowWallet(false)}
+          connectWallet={() => web3Context.connectWallet()}
+        />
+      )}
+      {showConnectedWallet && (
+        <ConnectedWalletModal
+          closeModal={() => setShowConnectedWallet(false)}
+        />
       )}
     </>
   );

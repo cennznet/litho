@@ -28,6 +28,8 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
         return "font-semibold text-base leading-none";
       case "body1":
         return "font-light text-base leading-none";
+      case "subtitle1":
+        return "font-semibold text-base leading-6";
       default:
         return "";
     }

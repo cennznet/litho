@@ -37,6 +37,9 @@ module.exports = {
       minHeight: {
         create: "900px",
       },
+      zIndex: {
+        "-10": "-10",
+      },
     },
   },
   variants: {},

@@ -18,18 +18,20 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           <title>Litho</title>
           <link rel="stylesheet" href="https://use.typekit.net/txj7ase.css" />
         </Head>
-        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-10 bg-litho-cream bg-noise">
+        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-20 bg-litho-cream bg-noise">
           <Link href="/">
             <a>
               <img src="/logo.svg" alt="Litho" />
             </a>
           </Link>
-          <Link href="/create">
-            <a className="h-12 flex items-center">
-              <Text variant="h6">Create</Text>
-              <ConnectWallet />
-            </a>
-          </Link>
+          <div className="h-12 flex items-center">
+            <Link href="/create">
+              <a>
+                <Text variant="h6">Create</Text>
+              </a>
+            </Link>
+            <ConnectWallet />
+          </div>
         </header>
         <Component {...pageProps} />
         <footer className="fixed bottom-0 left-0 w-full h-20 px-20 bg-litho-cream flex items-center">
