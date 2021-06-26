@@ -31,10 +31,9 @@ module.exports = {
       }),
       height: {
         customScreen: "calc(100vh - 274px)",
-        customScreen2: "calc(100vh - 214px)",
-        create: "900px",
       },
       minHeight: {
+        customScreen2: "calc(100vh - 354px)",
         create: "900px",
       },
       zIndex: {

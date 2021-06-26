@@ -72,7 +72,7 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
       </div>
       <div className="h-0.5 w-full my-8 bg-litho-black bg-opacity-10" />
       <Link href="/me">
-        <a>
+        <a onClick={closeModal}>
           <Text variant="button" color="litho-blue">
             My NFTs
           </Text>
@@ -80,7 +80,10 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
       </Link>
       <br />
       <button
-        onClick={() => web3Context.extension.provider.disconnect()}
+        onClick={() => {
+          web3Context.extension.provider.disconnect();
+          closeModal();
+        }}
         className="mt-6"
       >
         <Text variant="button" color="litho-blue">
