@@ -23,11 +23,11 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
       case "h5":
         return "font-bold text-2xl";
       case "h6":
-        return "font-normal text-xl";
+        return "font-medium text-xl";
       case "button":
         return "font-semibold text-base leading-none";
       case "body1":
-        return "font-normal text-base leading-none";
+        return "font-light text-base leading-none";
       default:
         return "";
     }
@@ -84,7 +84,6 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
   const typography = getVariantTypography(variant);
 
   const Component = component;
-  console.log(typography);
 
   return (
     <Component
