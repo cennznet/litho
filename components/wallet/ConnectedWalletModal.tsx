@@ -37,7 +37,7 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
           <Text variant="body1">CENNZ</Text>
         </div>
       </div>
-      <Link href="https://cennzx.centrality.me/">
+      <Link href="https://cennzx.io/">
         <a
           className="flex items-center justify-center bg-litho-blue w-full py-3 h-12"
           target="_blank"
