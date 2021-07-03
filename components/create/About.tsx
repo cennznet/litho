@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Input from "./Input";
 import Text from "../Text";
+import Web3Context from "../Web3Context";
 
 const MAX_ATTRIBUTES = 16;
 
@@ -12,6 +13,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [numOfAttributes, setNumOfAttributes] = React.useState(1);
   const [error, setError] = React.useState(null);
+  const web3Context = React.useContext(Web3Context);
 
   const renderAttributeInputs = (num) => {
     const attributeContainers = [];
@@ -19,14 +21,9 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
       attributeContainers.push(
         <div className="flex w-full items-center" key={i}>
           <Input
-            name={`attribute-key-${i + 1}`}
-            placeholder="Key (Example: size)"
+            name={`attribute-${i + 1}`}
+            placeholder="Example: Size 20px"
             className="flex-1"
-          />
-          <Input
-            name={`attribute-value-${i + 1}`}
-            placeholder="Value (Example: 200x200)"
-            className="flex-1 ml-4"
           />
         </div>
       );
@@ -39,11 +36,12 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    const { title, description, copies } = event.currentTarget;
+    const { title, description, copies, royalty } = event.currentTarget;
 
     const titleValue = (title as any).value;
     const descriptionValue = description.value;
     const numOfCopies = copies.value;
+    const royaltyForNFT = royalty.value;
 
     if (!titleValue) {
       setError("Please provide a name for the NFT");
@@ -52,15 +50,16 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
 
     const attributes = [];
     for (let i = 0; i < numOfAttributes; i++) {
-      const key = event.target[`attribute-key-${i + 1}`];
-      const value = event.target[`attribute-value-${i + 1}`];
-      if (key.value) {
-        if (!value.value) {
+      const attributeInput = event.target[`attribute-${i + 1}`];
+      const [key, value] = attributeInput.value.split(" ");
+
+      if (key) {
+        if (!value) {
           setError("All attributes should have a value");
           return;
         }
         attributes.push({
-          [key.value]: value.value,
+          [key]: value,
         });
       }
     }
@@ -70,14 +69,28 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
       description: descriptionValue,
       copies: numOfCopies,
       attributes,
+      royaltyForNFT,
     });
 
-    moveToUploadAsset({
-      title: titleValue,
-      description: descriptionValue,
-      copies: numOfCopies,
-      attributes,
-    });
+    if (!web3Context.account) {
+      web3Context.connectWallet(() => {
+        moveToUploadAsset({
+          title: titleValue,
+          description: descriptionValue,
+          copies: numOfCopies,
+          attributes,
+          royaltyForNFT,
+        });
+      });
+    } else {
+      moveToUploadAsset({
+        title: titleValue,
+        description: descriptionValue,
+        copies: numOfCopies,
+        attributes,
+        royaltyForNFT,
+      });
+    }
   };
 
   return (
@@ -132,6 +145,17 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
           showAdvanced ? "h-auto py-4" : "h-0"
         } flex flex-col overflow-hidden`}
       >
+        <label>
+          <Text variant="h6">Royalty in % (Optional)</Text>
+        </label>
+        <Input
+          name="royalty"
+          type="number"
+          placeholder="5%"
+          className="mb-10"
+          defaultValue="0"
+          min={0}
+        />
         <label>
           <Text variant="h6">Attributes (Optional)</Text>
         </label>
