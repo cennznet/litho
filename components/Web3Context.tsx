@@ -3,7 +3,7 @@ import React from "react";
 
 const Web3Context = React.createContext({
   hasWeb3injected: false,
-  connectWallet: () => {},
+  connectWallet: (callback?: () => void) => {},
   extension: null,
   account: null,
   api: null,

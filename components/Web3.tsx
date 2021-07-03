@@ -80,7 +80,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     }));
   };
 
-  const connectWallet = async () => {
+  const connectWallet = async (callback) => {
     console.log("connect wallet clicked");
     if (accountsUnsubscribe) {
       accountsUnsubscribe();
@@ -117,6 +117,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
       setExtension(polkadotExtension);
       setHasWeb3Injected(true);
+
+      if (callback) {
+        callback();
+      }
     } catch (error) {
       setShowNoExtensionMessage(true);
       setHasWeb3Injected(false);
