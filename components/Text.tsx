@@ -5,6 +5,7 @@ interface TextProps {
   variant?: string;
   color?: string;
   className?: string;
+  onClick?: () => void;
 }
 
 const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
@@ -13,6 +14,7 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
   variant = "body1",
   color = "litho-black",
   className = "",
+  onClick = () => {},
 }) => {
   const getVariantTypography = (variant: string): string => {
     switch (variant) {
@@ -91,6 +93,7 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
     <Component
       className={`${typography} text-${color} ${className}`}
       style={customStyles(variant)}
+      onClick={onClick}
     >
       {children}
     </Component>

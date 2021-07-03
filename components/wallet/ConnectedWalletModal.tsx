@@ -4,6 +4,7 @@ import Link from "next/link";
 import Modal from "../Modal";
 import Text from "../Text";
 import Web3Context from "../Web3Context";
+import copyTextToClipboard from "../../utils/copyTextToClipboard";
 
 interface Props {
   closeModal: () => void;
@@ -22,19 +23,38 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
       hideClose
     >
       <Text component="h4" variant="h4" color="litho-blue">
-        Wallet name
+        {web3Context.account.meta.name}
       </Text>
-      <Text variant="body1" className="mt-4" component="div">
-        wallet address
+      <Text
+        variant="body1"
+        className="mt-4 flex justify-between items-center"
+        component="div"
+        onClick={() => copyTextToClipboard(web3Context.account.address)}
+      >
+        <span>{web3Context.account.address.substr(0, 32)}...</span>
+        <img src="/copy.svg" alt="Copy address" />
       </Text>
       <div className="h-0.5 w-full my-6 bg-litho-black bg-opacity-10" />
       <Text variant="subtitle1">Balance</Text>
 
       <div className="mt-4 mb-6">
         <div className="flex items-center">
-          <div className="h-12 w-12 bg-gray-200 mr-4"></div>
-          <Text variant="subtitle1">1000</Text>&nbsp;
+          <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
+            <img src="/cennznet-logo.svg" alt="CENNZ balance" />
+          </div>
+          <Text variant="subtitle1">{web3Context.account.balances.cennz}</Text>
+          &nbsp;
           <Text variant="body1">CENNZ</Text>
+        </div>
+      </div>
+      <div className="mt-4 mb-6">
+        <div className="flex items-center">
+          <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
+            <img src="/cpay-logo.svg" alt="CENNZ balance" className="h-6 w-6" />
+          </div>
+          <Text variant="subtitle1">{web3Context.account.balances.cpay}</Text>
+          &nbsp;
+          <Text variant="body1">CPAY</Text>
         </div>
       </div>
       <Link href="https://cennzx.io/">
@@ -79,7 +99,7 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
         </a>
       </Link>
       <br />
-      <button
+      {/* <button
         onClick={() => {
           web3Context.extension.provider.disconnect();
           closeModal();
@@ -89,7 +109,7 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
         <Text variant="button" color="litho-blue">
           Disconnect
         </Text>
-      </button>
+      </button> */}
     </Modal>
   );
 };
