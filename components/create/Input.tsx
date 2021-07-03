@@ -6,6 +6,7 @@ interface Props {
   placeholder?: string;
   defaultValue?: string | number;
   min?: number;
+  id?: string;
   className?: string;
 }
 

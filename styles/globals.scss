@@ -2,6 +2,12 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@layer base {
+  body {
+    font-family: serenity, sans-serif;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
