@@ -6,6 +6,7 @@ const Web3Context = React.createContext({
   connectWallet: () => {},
   extension: null,
   account: null,
+  api: null,
 });
 
 export default Web3Context;

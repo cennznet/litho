@@ -9,8 +9,13 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@cennznet/api": "^1.4.1",
+    "@cennznet/types": "^1.4.1",
     "@polkadot/extension-dapp": "^0.38.5",
+    "@polkadot/keyring": "^6.10.1",
+    "@polkadot/util": "^6.10.1",
     "next": "^11.0.0",
+    "nft.storage": "^2.1.1",
     "postcss-import": "^13.0.0",
     "postcss-preset-env": "^6.7.0",
     "react": "^17.0.2",

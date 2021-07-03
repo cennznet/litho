@@ -1,12 +1,53 @@
 import React from "react";
-import {
-  web3Enable,
-  web3Accounts,
-  web3AccountsSubscribe,
-} from "@polkadot/extension-dapp";
+import { web3Enable, web3AccountsSubscribe } from "@polkadot/extension-dapp";
+import { getSpecTypes } from "@polkadot/types-known";
+import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
+import { TypeRegistry } from "@polkadot/types";
+import { Api as ApiPromise } from "@cennznet/api";
 import Link from "next/link";
+import { hexToString } from "@polkadot/util";
 
 import Web3Context from "./Web3Context";
+
+import { cennznetExtensions } from "../utils/cennznetExtensions";
+import { fileURLToPath } from "node:url";
+
+const registry = new TypeRegistry();
+const endpoint = "ws://127.0.0.1:9944/";
+
+async function extractMeta(api) {
+  const systemChain = await api.rpc.system.chain();
+  const specTypes = getSpecTypes(
+    api.registry,
+    systemChain,
+    api.runtimeVersion.specName,
+    api.runtimeVersion.specVersion
+  );
+  const filteredSpecTypes = Object.keys(specTypes)
+    .filter((key) => typeof specTypes[key] !== "function")
+    .reduce((obj, key) => {
+      obj[key] = specTypes[key];
+      return obj;
+    }, {});
+  const DEFAULT_SS58 = api.registry.createType("u32", addressDefaults.prefix);
+  const DEFAULT_DECIMALS = api.registry.createType("u32", 4);
+  const metadata = {
+    chain: systemChain,
+    color: "#191a2e",
+    genesisHash: api.genesisHash.toHex(),
+    icon: "CENNZnet",
+    metaCalls: Buffer.from(api.runtimeMetadata.asCallsOnly.toU8a()).toString(
+      "base64"
+    ),
+    specVersion: api.runtimeVersion.specVersion.toNumber(),
+    ss58Format: DEFAULT_SS58.toNumber(),
+    tokenDecimals: DEFAULT_DECIMALS.toNumber(),
+    tokenSymbol: "CENNZ",
+    types: filteredSpecTypes,
+    userExtensions: cennznetExtensions,
+  };
+  return metadata;
+}
 
 const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [hasWeb3injected, setHasWeb3Injected] = React.useState(false);
@@ -18,6 +59,26 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [showZeroAccountMessage, setShowZeroAccountMessage] =
     React.useState(false);
   const [isRefresh, setIsRefresh] = React.useState(false);
+  const [api, setAPI] = React.useState(null);
+
+  const getAccountAssets = async (address: string) => {
+    const cennzBalance = await api.query.genericAsset.freeBalance(
+      16000,
+      address
+    );
+    const cpayBalance = await api.query.genericAsset.freeBalance(
+      16001,
+      address
+    );
+
+    setAccount((account) => ({
+      ...account,
+      balances: {
+        cennz: cennzBalance.toNumber() / 10000,
+        cpay: cpayBalance.toNumber() / 10000,
+      },
+    }));
+  };
 
   const connectWallet = async () => {
     console.log("connect wallet clicked");
@@ -33,23 +94,27 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       const polkadotExtension = extensions.find(
         (ext) => ext.name === "polkadot-js"
       );
-      // const metadata = polkadotExtension.metadata;
-      // const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
-      // if (!checkIfMetaUpdated) {
-      //     const metadataDef = await extractMeta(apiInstance);
-      //     await metadata.provide(metadataDef);
-      //     localStorage.setItem(`EXTENSION_META_UPDATED`, 'true');
-      // }
+      const metadata = polkadotExtension.metadata;
+      const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
+      if (!checkIfMetaUpdated) {
+        const metadataDef = await extractMeta(api);
+        await metadata.provide(metadataDef);
+        localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
+      }
       let unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
         if (injectedAccounts.length === 0) {
           setAccount(null);
           setShowZeroAccountMessage(true);
         } else {
           setAccount(injectedAccounts[0]);
+          getAccountAssets(injectedAccounts[0].address);
           setShowZeroAccountMessage(false);
         }
       });
+
+      // to unsubscribe on component unmount
       setAccountsUnsubsribe(unsubscribe);
+
       setExtension(polkadotExtension);
       setHasWeb3Injected(true);
     } catch (error) {
@@ -59,6 +124,9 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   };
 
   React.useEffect(() => {
+    const apiInstance = new ApiPromise({ provider: endpoint, registry });
+    setAPI(apiInstance);
+
     return () => {
       if (accountsUnsubscribe) {
         accountsUnsubscribe();
@@ -73,6 +141,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         connectWallet,
         extension,
         account,
+        api,
       }}
     >
       {children}
