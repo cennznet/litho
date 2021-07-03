@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Text from "../components/Text";
+import Link from "next/link";
 
 const Home: React.FC<{}> = () => {
   return (
@@ -25,11 +26,13 @@ const Home: React.FC<{}> = () => {
           <Text variant="h5" className="mb-4">
             Create an NFT
           </Text>
-          <button className="bg-litho-blue w-40 h-12 flex items-center justify-center">
-            <Text variant="button" color="white">
-              Start Minting
-            </Text>
-          </button>
+          <Link href="/create">
+            <a className="bg-litho-blue w-40 h-12 flex items-center justify-center">
+              <Text variant="button" color="white">
+                Start Minting
+              </Text>
+            </a>
+          </Link>
         </div>
       </div>
       <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
