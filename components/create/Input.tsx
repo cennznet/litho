@@ -4,6 +4,8 @@ interface Props {
   name: string;
   type?: string;
   placeholder?: string;
+  defaultValue?: string | number;
+  min?: number;
   className?: string;
 }
 
