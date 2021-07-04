@@ -12,6 +12,7 @@ interface Props {
 const Upload: React.FC<Props> = ({ moveToPreview }) => {
   const web3Context = React.useContext(Web3Context);
   const [userCollections, setCollections] = React.useState([]);
+  const [error, setError] = React.useState(null);
   const [showNewCollectionFields, setShowNewCollectionFields] =
     React.useState(false);
 
@@ -35,13 +36,19 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
     event.preventDefault();
     const { file, storage, collection, collectionId } = event.currentTarget;
 
+    if (file.files.length === 0) {
+      setError("Please upload an image");
+      return;
+    }
+
     moveToPreview({
       image: file.files[0],
       storage: storage.value,
       createNew: showNewCollectionFields,
-      collectionName: collection
-        ? collection.value
-        : `${web3Context.account.meta.name} collection`,
+      collectionName:
+        collection && collection.value
+          ? collection.value
+          : `${web3Context.account.meta.name} collection`,
       collectionId: collectionId && collectionId.value,
     });
   };
@@ -51,6 +58,11 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       className="flex flex-col w-3/5 m-auto text-xl"
       onSubmit={submitHandler}
     >
+      {error && (
+        <div className="bg-litho-red bg-opacity-25 text-litho-red font-bold p-2 text-base mb-4">
+          {error}
+        </div>
+      )}
       <Text variant="h6">Upload Assets</Text>
       <label
         htmlFor="file"
@@ -58,7 +70,13 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       >
         <Text variant="body1">Choose from folder</Text>
       </label>
-      <input name="file" type="file" className="hidden" id="file" />
+      <input
+        name="file"
+        type="file"
+        className="hidden"
+        id="file"
+        accept=".jpg,.png,.svg,.jpeg,.webp"
+      />
       <label>
         <Text variant="h6">Choose content storage</Text>
       </label>
