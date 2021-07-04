@@ -149,10 +149,16 @@ const Me: React.FC<{}> = () => {
         {nfts.length > 0 && (
           <div className="pt-4 grid grid-cols-3 gap-3">
             {nfts.map((nft) => {
+              const { image, collectionId, seriesId, serialNumber } = nft;
               return (
-                <div className="rounded" key={nft.image}>
-                  <NFT nft={nft} />
-                </div>
+                <Link
+                  href={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
+                  key={image}
+                >
+                  <div className="rounded">
+                    <NFT nft={nft} />
+                  </div>
+                </Link>
               );
             })}
           </div>
