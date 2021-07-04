@@ -104,7 +104,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
       if (!checkIfMetaUpdated) {
         const metadataDef = await extractMeta(api);
-        await metadata.provide(metadataDef);
+        await metadata.provide(metadataDef as any);
         localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
       }
       let unsubscribe = await web3AccountsSubscribe(
