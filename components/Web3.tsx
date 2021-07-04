@@ -15,9 +15,10 @@ import Web3Context from "./Web3Context";
 
 import { cennznetExtensions } from "../utils/cennznetExtensions";
 import { fileURLToPath } from "node:url";
+import { LOCAL_API_ENDPOINT, NIKAU_API_ENDPOINT } from "../utils/config";
 
 const registry = new TypeRegistry();
-const endpoint = "ws://127.0.0.1:9944/";
+const endpoint = NIKAU_API_ENDPOINT;
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();

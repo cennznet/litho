@@ -27,8 +27,6 @@ const NFTDetail: React.FC<{}> = () => {
           router.query.collectionId,
           router.query.seriesId
         );
-        // const royalties = await web3Context.api.query.nft.seriesRoyalties(router.query.collectionId, router.query.seriesId);
-        // console.log(royalties);
 
         const { attributes, owner } = tokenInfo;
         const nft: { [index: string]: any } = {
@@ -84,7 +82,7 @@ const NFTDetail: React.FC<{}> = () => {
           &lt; My Single NFTs
         </a>
       </Link>
-      {nft && (
+      {nft && nft.image ? (
         <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
           <div className="border-b border-litho-black px-10 py-5 flex justify-between items-center">
             <Text variant="h3" component="h3">
@@ -180,6 +178,10 @@ const NFTDetail: React.FC<{}> = () => {
               )}
             </div>
           </div>
+        </div>
+      ) : (
+        <div className="border border-litho-black h-customScreen flex items-center justify-center text-4xl text-litho-black text-opacity-50">
+          Could not load NFT
         </div>
       )}
     </>
