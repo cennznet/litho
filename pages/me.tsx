@@ -18,7 +18,6 @@ const Me: React.FC<{}> = () => {
     if (web3Context && web3Context.account) {
       setLoading(true);
       (async () => {
-        console.log("in func");
         const tokensInCollections = await getCollectionWiseTokens(
           web3Context.api,
           web3Context.account.address
@@ -27,61 +26,65 @@ const Me: React.FC<{}> = () => {
         await Promise.all(
           tokensInCollections.map(async (tokens) => {
             if (tokens.length > 0) {
-              return new Promise((resolve) => {
-                const tokensInCollection = {};
-                tokens.forEach(async (token) => {
-                  const { collectionId, seriesId } = token;
-                  const seriesLevelKey = `${collectionId}-${seriesId}`;
-                  if (tokensInCollection.hasOwnProperty(seriesLevelKey)) {
-                    tokensInCollection[seriesLevelKey].count += 1;
-                  } else {
-                    tokensInCollection[seriesLevelKey] = {
-                      token,
-                      count: 1,
-                    };
-                  }
-                });
-                Object.values(tokensInCollection).forEach(
+              const tokensInCollection = {};
+              tokens.forEach(async (token) => {
+                const { collectionId, seriesId } = token;
+                const seriesLevelKey = `${collectionId}-${seriesId}`;
+                if (tokensInCollection.hasOwnProperty(seriesLevelKey)) {
+                  tokensInCollection[seriesLevelKey].count += 1;
+                } else {
+                  tokensInCollection[seriesLevelKey] = {
+                    token,
+                    count: 1,
+                  };
+                }
+              });
+
+              return Promise.all(
+                Object.values(tokensInCollection).map(
                   async ({ token, count }) => {
-                    const tokenInfo =
-                      await web3Context.api.derive.nft.tokenInfo({
+                    return new Promise(async (resolve) => {
+                      const tokenInfo =
+                        await web3Context.api.derive.nft.tokenInfo({
+                          collectionId: token.collectionId.toJSON(),
+                          seriesId: token.seriesId.toJSON(),
+                          serialNumber: 0,
+                        });
+                      const { attributes, owner } = tokenInfo;
+                      const nft: { [index: string]: any } = {
                         collectionId: token.collectionId.toJSON(),
                         seriesId: token.seriesId.toJSON(),
                         serialNumber: 0,
-                      });
-                    const { attributes, owner } = tokenInfo;
-                    const nft: { [index: string]: any } = {
-                      collectionId: token.collectionId.toJSON(),
-                      seriesId: token.seriesId.toJSON(),
-                      serialNumber: 0,
-                      owner,
-                      attributes: attributes,
-                      copies: count + 1,
-                    };
-                    attributes.forEach(({ Text, Url }) => {
-                      const attributeString = Text || Url;
-                      if (attributeString) {
-                        const attributeBreakup = attributeString.split(" ");
-                        switch (attributeBreakup[0]) {
-                          case "Image-URL":
-                            nft.image = attributeBreakup[1];
-                            break;
-                          case "Metadata-URL":
-                            nft.metadata = attributeBreakup[1];
-                            break;
-                          case "Title":
-                            nft.title = attributeBreakup[1];
-                            break;
-                          default:
-                            break;
+                        owner,
+                        attributes: attributes,
+                        copies: count + 1,
+                      };
+                      attributes.forEach(({ Text, Url }) => {
+                        const attributeString = Text || Url;
+                        if (attributeString) {
+                          const attributeBreakup = attributeString.split(" ");
+                          switch (attributeBreakup[0]) {
+                            case "Image-URL":
+                              nft.image = attributeBreakup[1];
+                              break;
+                            case "Metadata-URL":
+                              nft.metadata = attributeBreakup[1];
+                              break;
+                            case "Title":
+                              const [_, ...words] = attributeBreakup;
+                              nft.title = words.join(" ");
+                              break;
+                            default:
+                              break;
+                          }
                         }
-                      }
+                      });
+                      userNFTs.push(nft);
+                      resolve(null);
                     });
-                    userNFTs.push(nft);
-                    resolve(null);
                   }
-                );
-              });
+                )
+              );
             } else {
               return Promise.resolve();
             }
@@ -92,7 +95,7 @@ const Me: React.FC<{}> = () => {
       })();
     }
   }, [web3Context.account]);
-  console.log(nfts);
+
   return (
     <div className="border border-litho-black mt-7 mb-6 flex flex-col">
       <Text variant="h3" component="h3" className="text-center py-4">
@@ -144,7 +147,7 @@ const Me: React.FC<{}> = () => {
           </div>
         )}
         {nfts.length > 0 && (
-          <div className="pt-4 grid grid-cols-4 gap-3">
+          <div className="pt-4 grid grid-cols-3 gap-3">
             {nfts.map((nft) => {
               return (
                 <div className="rounded" key={nft.image}>
