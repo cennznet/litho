@@ -2,32 +2,46 @@ import React from "react";
 import Image from "next/image";
 
 interface Props {
-  aboutNFT: any;
-  nftData: any;
+  nft: any;
 }
 
-const NFT: React.FC<Props> = () => {
+const NFT: React.FC<Props> = ({ nft }) => {
+  let imageUrl;
+  if (typeof nft.image === "object") {
+    imageUrl = URL.createObjectURL(nft.image);
+  } else {
+    imageUrl = nft.image;
+  }
   return (
     <div
       className="bg-litho-nft m-auto relative flex justify-center"
       style={{ height: "400px", width: "300px" }}
     >
       <div className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black">
-        <img
-          src="https://place-puppy.com/300x300"
-          height="300"
-          width="300"
-          className="object-contain object-center"
-        />
+        {typeof nft.image === "object" ? (
+          <img
+            src={imageUrl}
+            height="300"
+            width="300"
+            className="object-contain object-center h-72 w-72"
+          />
+        ) : (
+          <Image
+            src={imageUrl}
+            height="300"
+            width="300"
+            className="object-contain object-center"
+          />
+        )}
         <div className="mt-3 flex justify-between items-center">
           <span className="text-lg font-bold" style={{ lineHeight: "21.6px" }}>
-            NFT name
+            {nft.title}
           </span>
           <span
             className="text-sm font-semibold"
             style={{ lineHeight: "18px" }}
           >
-            x1
+            x{nft.copies}
           </span>
         </div>
       </div>
