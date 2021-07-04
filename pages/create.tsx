@@ -163,8 +163,8 @@ const Create: React.FC<{}> = () => {
 
     const nftAttributes = [
       ...nft.attributes,
-      { URL: `Image URL: ${imageURL}` },
-      { URL: `Metadata URL: ${metadataURL}` },
+      { URL: `Image-URL ${imageURL}` },
+      { URL: `Metadata-URL ${metadataURL}` },
       { Text: `Title ${nft.title}` },
       { Text: `Description ${nft.description}` },
       { Text: `Quantity ${nft.copies}` },

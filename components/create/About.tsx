@@ -51,18 +51,12 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
     const attributes = [];
     for (let i = 0; i < numOfAttributes; i++) {
       const attributeInput = event.target[`attribute-${i + 1}`];
-      attributes.push({
-        Text: attributeInput.value,
-      });
+      if (attributeInput && attributeInput.value) {
+        attributes.push({
+          Text: attributeInput.value,
+        });
+      }
     }
-
-    console.log({
-      title: titleValue,
-      description: descriptionValue,
-      copies: numOfCopies,
-      attributes,
-      royaltyForNFT,
-    });
 
     if (!web3Context.account) {
       web3Context.connectWallet(() => {

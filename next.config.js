@@ -1,5 +1,5 @@
 module.exports = {
   images: {
-    domains: [""],
+    domains: ["", "ipfs.io"],
   },
 };

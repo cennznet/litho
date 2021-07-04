@@ -27,6 +27,7 @@ const NFT: React.FC<Props> = ({ nft }) => {
           />
         ) : (
           <Image
+            loader={({ src }) => src}
             src={imageUrl}
             height="300"
             width="300"
