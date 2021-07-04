@@ -182,42 +182,42 @@ const Create: React.FC<{}> = () => {
         nft.collectionName,
         metadataBaseURI
       );
-
-      if (nft.copies > 1) {
-        let tokenArgs: { [index: string]: any } = {
-          collectionId,
-          quantity: nft.copies,
-          owner: web3Context.account.address,
-          attributes: nftAttributes,
-          metadataPath: metadata.url,
-        };
-        if (nft.royalty > 0) {
-          tokenArgs.royaltiesSchedule = {
-            entitlements: [
-              `${web3Context.account.address}, ${nft.royalty * 100000}`,
-            ],
-          };
-        }
-        await mintNFTSeries(web3Context.api, web3Context.account, tokenArgs);
-      } else {
-        let tokenArgs: { [index: string]: any } = {
-          collectionId,
-          owner: web3Context.account.address,
-          attributes: nftAttributes,
-          metadataPath: metadata.url,
-        };
-
-        if (nft.royalty > 0) {
-          tokenArgs.royaltiesSchedule = {
-            entitlements: [
-              `${web3Context.account.address}, ${nft.royalty * 100000}`,
-            ],
-          };
-        }
-        await mintNFT(web3Context.api, web3Context.account, tokenArgs);
-      }
-      return;
     }
+
+    if (nft.copies > 1) {
+      let tokenArgs: { [index: string]: any } = {
+        collectionId,
+        quantity: nft.copies,
+        owner: web3Context.account.address,
+        attributes: nftAttributes,
+        metadataPath: metadata.url,
+      };
+      if (nft.royalty > 0) {
+        tokenArgs.royaltiesSchedule = {
+          entitlements: [
+            `${web3Context.account.address}, ${nft.royalty * 100000}`,
+          ],
+        };
+      }
+      await mintNFTSeries(web3Context.api, web3Context.account, tokenArgs);
+    } else {
+      let tokenArgs: { [index: string]: any } = {
+        collectionId,
+        owner: web3Context.account.address,
+        attributes: nftAttributes,
+        metadataPath: metadata.url,
+      };
+
+      if (nft.royalty > 0) {
+        tokenArgs.royaltiesSchedule = {
+          entitlements: [
+            `${web3Context.account.address}, ${nft.royalty * 100000}`,
+          ],
+        };
+      }
+      await mintNFT(web3Context.api, web3Context.account, tokenArgs);
+    }
+    return;
   };
 
   return (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Text from "../Text";
 import Web3Context from "../Web3Context";
 import Input from "./Input";
+import { hexToString } from "@polkadot/util";
 
 interface Props {
   moveToPreview: (nftData: any) => void;
@@ -16,16 +17,31 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
   const [showNewCollectionFields, setShowNewCollectionFields] =
     React.useState(false);
 
+  const getCollectionWiseTokens = async (api, address) => {
+    return await api.derive.nft.tokensOf(address);
+  };
+
   React.useEffect(() => {
     (async () => {
       const api = web3Context.api;
       if (web3Context.account) {
-        const allTokens = await api.derive.nft.tokensOf(
+        const tokensInCollections = await getCollectionWiseTokens(
+          api,
           web3Context.account.address
         );
-        if (allTokens) {
-          setCollections([]);
-        }
+        let collectionIds = tokensInCollections
+          .filter((tokens) => tokens.length > 0)
+          .map((tokens) => tokens[0].collectionId.toJSON());
+
+        const collections = await Promise.all(
+          collectionIds.map((collectionId) => {
+            return new Promise(async (resolve) => {
+              const name = await api.query.nft.collectionName(collectionId);
+              resolve({ id: collectionId, name: hexToString(name.toString()) });
+            });
+          })
+        );
+        setCollections(collections);
       }
     })();
   }, [web3Context.account]);
@@ -48,6 +64,8 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       collectionName:
         collection && collection.value
           ? collection.value
+          : collectionId && collectionId.value
+          ? null
           : `${web3Context.account.meta.name} collection`,
       collectionId: collectionId && collectionId.value,
     });
@@ -87,7 +105,28 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       >
         <option value="ipfs">IPFS</option>
       </select>
-
+      {userCollections.length > 0 && (
+        <>
+          <label>
+            <Text variant="h6">Collection</Text>
+          </label>
+          <select
+            className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
+            onChange={(event) => {
+              if (event.target.value === "new") {
+                setShowNewCollectionFields(true);
+              } else {
+                setShowNewCollectionFields(false);
+              }
+            }}
+          >
+            <option defaultChecked value="existing">
+              Select existing
+            </option>
+            <option value="new">Create a new collection</option>
+          </select>
+        </>
+      )}
       {(userCollections.length === 0 || showNewCollectionFields) && (
         <>
           <label id="collection">
@@ -101,6 +140,22 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
               web3Context.account ? web3Context.account.meta.name : ""
             } collection`}
           />
+        </>
+      )}
+      {userCollections.length && !showNewCollectionFields && (
+        <>
+          <label id="collectionId">
+            <Text variant="h6">Choose Collection</Text>
+          </label>
+          <select
+            className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
+            name="collectionId"
+            id="collectionId"
+          >
+            {userCollections.map((collection) => {
+              return <option value={collection.id}>{collection.name}</option>;
+            })}
+          </select>
         </>
       )}
 
