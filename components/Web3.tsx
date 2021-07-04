@@ -1,5 +1,9 @@
 import React from "react";
-import { web3Enable, web3AccountsSubscribe } from "@polkadot/extension-dapp";
+import {
+  web3Enable,
+  web3AccountsSubscribe,
+  web3FromSource,
+} from "@polkadot/extension-dapp";
 import { getSpecTypes } from "@polkadot/types-known";
 import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
 import { TypeRegistry } from "@polkadot/types";
@@ -62,22 +66,24 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [api, setAPI] = React.useState(null);
 
   const getAccountAssets = async (address: string) => {
-    const cennzBalance = await api.query.genericAsset.freeBalance(
-      16000,
-      address
-    );
-    const cpayBalance = await api.query.genericAsset.freeBalance(
-      16001,
-      address
-    );
+    await api.query.genericAsset.freeBalance.multi(
+      [
+        [16000, address],
+        [16001, address],
+      ],
+      (balances) => {
+        const cennzBalance = balances[0];
+        const cpayBalance = balances[1];
 
-    setAccount((account) => ({
-      ...account,
-      balances: {
-        cennz: cennzBalance.toNumber() / 10000,
-        cpay: cpayBalance.toNumber() / 10000,
-      },
-    }));
+        setAccount((account) => ({
+          ...account,
+          balances: {
+            cennz: cennzBalance.toNumber() / 10000,
+            cpay: cpayBalance.toNumber() / 10000,
+          },
+        }));
+      }
+    );
   };
 
   const connectWallet = async (callback) => {
@@ -101,16 +107,23 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         await metadata.provide(metadataDef);
         localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
       }
-      let unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
-        if (injectedAccounts.length === 0) {
-          setAccount(null);
-          setShowZeroAccountMessage(true);
-        } else {
-          setAccount(injectedAccounts[0]);
-          getAccountAssets(injectedAccounts[0].address);
-          setShowZeroAccountMessage(false);
+      let unsubscribe = await web3AccountsSubscribe(
+        async (injectedAccounts) => {
+          if (injectedAccounts.length === 0) {
+            setAccount(null);
+            setShowZeroAccountMessage(true);
+          } else {
+            getAccountAssets(injectedAccounts[0].address);
+            const injector = await web3FromSource(
+              injectedAccounts[0].meta.source
+            );
+            let payload = { signer: injector.signer };
+            let signer = injectedAccounts[0].address;
+            setAccount({ ...injectedAccounts[0], payload, signer });
+            setShowZeroAccountMessage(false);
+          }
         }
-      });
+      );
 
       // to unsubscribe on component unmount
       setAccountsUnsubsribe(unsubscribe);
