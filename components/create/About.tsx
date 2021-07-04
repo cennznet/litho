@@ -40,7 +40,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
 
     const titleValue = (title as any).value;
     const descriptionValue = description.value;
-    const numOfCopies = copies.value;
+    const numOfCopies = copies.value || 1;
     const royaltyForNFT = royalty.value;
 
     if (!titleValue) {
@@ -51,17 +51,9 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
     const attributes = [];
     for (let i = 0; i < numOfAttributes; i++) {
       const attributeInput = event.target[`attribute-${i + 1}`];
-      const [key, value] = attributeInput.value.split(" ");
-
-      if (key) {
-        if (!value) {
-          setError("All attributes should have a value");
-          return;
-        }
-        attributes.push({
-          [key]: value,
-        });
-      }
+      attributes.push({
+        Text: attributeInput.value,
+      });
     }
 
     console.log({
@@ -122,7 +114,13 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
       <label>
         <Text variant="h6">Number of copies</Text>
       </label>
-      <Input name="copies" type="number" placeholder="0" className="mb-10" />
+      <Input
+        name="copies"
+        type="number"
+        placeholder="1"
+        className="mb-10"
+        min={1}
+      />
 
       <div
         className="flex item-center"
