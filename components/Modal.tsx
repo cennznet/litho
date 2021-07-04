@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Props {
-  onClose: () => void;
+  onClose?: () => void;
   styles?: {
     modalBody?: string;
     modalContainer?: string;
@@ -41,7 +41,11 @@ const Modal: React.FC<React.PropsWithChildren<Props>> = ({
       onClick={outsideClickHandler}
       id="modal-container"
     >
-      <div className={`absolute py-10 px-6 ${styles ? styles.modalBody : ""}`}>
+      <div
+        className={`bg-white shadow-md absolute py-10 px-6 ${
+          styles ? styles.modalBody : ""
+        }`}
+      >
         {!hideClose && (
           <div className="absolute top-5 right-5" onClick={onClose}>
             <svg
