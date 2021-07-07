@@ -8,6 +8,7 @@ import Text from "../../../../components/Text";
 
 const NFTDetail: React.FC<{}> = () => {
   const router = useRouter();
+  const [loading, setLoading] = React.useState(true);
   const web3Context = React.useContext(Web3Context);
   const [nft, setNFT] = React.useState<{ [index: string]: any }>();
 
@@ -66,6 +67,7 @@ const NFTDetail: React.FC<{}> = () => {
         });
         nft.attributes = otherAttributes;
         setNFT(nft);
+        setLoading(false);
       });
     })();
   }, [
@@ -179,11 +181,11 @@ const NFTDetail: React.FC<{}> = () => {
             </div>
           </div>
         </div>
-      ) : (
+      ) : !loading ? (
         <div className="border border-litho-black h-customScreen flex items-center justify-center text-4xl text-litho-black text-opacity-50">
           Could not load NFT
         </div>
-      )}
+      ) : null}
     </>
   );
 };
