@@ -12,6 +12,11 @@ interface Props {
 
 const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
   const web3Context = React.useContext(Web3Context);
+  const tokenLogoURLs = {
+    CENNZ: "/cennznet-logo.svg",
+    CPAY: "/cpay-logo.svg",
+    cUSD: "/cusd-logo.svg",
+  };
 
   return (
     <Modal
@@ -36,27 +41,26 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
       </Text>
       <div className="h-0.5 w-full my-6 bg-litho-black bg-opacity-10" />
       <Text variant="subtitle1">Balance</Text>
-
-      <div className="mt-4 mb-6">
-        <div className="flex items-center">
-          <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
-            <img src="/cennznet-logo.svg" alt="CENNZ balance" />
+      {Object.keys(web3Context.account.balances).map((symbol) => {
+        return (
+          <div className="mt-4 mb-6" key={symbol}>
+            <div className="flex items-center">
+              <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
+                <img
+                  src={tokenLogoURLs[symbol] || "/cennznet-logo.svg"}
+                  alt="CENNZ balance"
+                  className="h-6 w-6 object-contain"
+                />
+              </div>
+              <Text variant="subtitle1">
+                {web3Context.account.balances[symbol]}
+              </Text>
+              &nbsp;
+              <Text variant="body1">{symbol}</Text>
+            </div>
           </div>
-          <Text variant="subtitle1">{web3Context.account.balances.cennz}</Text>
-          &nbsp;
-          <Text variant="body1">CENNZ</Text>
-        </div>
-      </div>
-      <div className="mt-4 mb-6">
-        <div className="flex items-center">
-          <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
-            <img src="/cpay-logo.svg" alt="CENNZ balance" className="h-6 w-6" />
-          </div>
-          <Text variant="subtitle1">{web3Context.account.balances.cpay}</Text>
-          &nbsp;
-          <Text variant="body1">CPAY</Text>
-        </div>
-      </div>
+        );
+      })}
       <Link href="https://cennzx.io/">
         <a
           className="flex items-center justify-center bg-litho-blue w-full py-3 h-12"

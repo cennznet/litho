@@ -38,7 +38,7 @@ const ConnectWallet: React.FC<{}> = () => {
         <img src="/wallet.svg" alt="Connect Wallet" className="mr-2" />
         <Text variant="button" color="litho-blue">
           {isWalletConnected && web3Context.account.balances
-            ? `${web3Context.account.balances.cennz} CENNZ`
+            ? `${web3Context.account.balances.CENNZ} CENNZ`
             : "Connect Wallet"}
         </Text>
       </button>

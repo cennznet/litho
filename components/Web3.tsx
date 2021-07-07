@@ -14,11 +14,10 @@ import { hexToString } from "@polkadot/util";
 import Web3Context from "./Web3Context";
 
 import { cennznetExtensions } from "../utils/cennznetExtensions";
-import { fileURLToPath } from "node:url";
 import { LOCAL_API_ENDPOINT, NIKAU_API_ENDPOINT } from "../utils/config";
 
 const registry = new TypeRegistry();
-const endpoint = NIKAU_API_ENDPOINT;
+const endpoint = LOCAL_API_ENDPOINT;
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
@@ -67,21 +66,35 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [api, setAPI] = React.useState(null);
 
   const getAccountAssets = async (address: string) => {
-    await api.query.genericAsset.freeBalance.multi(
-      [
-        [16000, address],
-        [16001, address],
-      ],
-      (balances) => {
-        const cennzBalance = balances[0];
-        const cpayBalance = balances[1];
+    const assets = await api.rpc.genericAsset.registeredAssets();
+    const tokenMap = {};
+    assets.forEach((asset) => {
+      const [tokenId, { symbol, decimalPlaces }] = asset;
+      tokenMap[tokenId] = {
+        symbol: hexToString(symbol.toJSON()),
+        decimalPlaces: decimalPlaces.toNumber(),
+      };
+    });
+    const balanceSubscriptionArg = Object.keys(tokenMap).map(
+      (tokenId, index) => {
+        tokenMap[tokenId].index = index;
+        return [tokenId, address];
+      }
+    );
 
+    await api.query.genericAsset.freeBalance.multi(
+      balanceSubscriptionArg,
+      (balances) => {
+        const userBalances = {};
+        Object.keys(tokenMap).forEach((tokenId) => {
+          const token = tokenMap[tokenId];
+          userBalances[token.symbol] =
+            balances[token.index] / Math.pow(10, token.decimalPlaces);
+        });
+        console.log(userBalances);
         setAccount((account) => ({
           ...account,
-          balances: {
-            cennz: cennzBalance.toNumber() / 10000,
-            cpay: cpayBalance.toNumber() / 10000,
-          },
+          balances: userBalances,
         }));
       }
     );
