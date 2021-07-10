@@ -7,7 +7,6 @@ import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 
 import { NFTStorage, toGatewayURL } from "nft.storage";
-import { NFT_STORAGE_API_KEY } from "../utils/config";
 import Web3Context from "../components/Web3Context";
 
 type NFT = {
@@ -140,7 +139,7 @@ const Create: React.FC<{}> = () => {
   };
 
   const mint = async () => {
-    const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
+    const client = new NFTStorage({ token: process.env.NFT_STORAGE_API_KEY });
 
     const metadata = await client.store({
       name: nft.title || "Litho NFT",

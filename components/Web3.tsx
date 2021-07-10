@@ -14,10 +14,9 @@ import { hexToString } from "@polkadot/util";
 import Web3Context from "./Web3Context";
 
 import { cennznetExtensions } from "../utils/cennznetExtensions";
-import { LOCAL_API_ENDPOINT, NIKAU_API_ENDPOINT } from "../utils/config";
 
 const registry = new TypeRegistry();
-const endpoint = NIKAU_API_ENDPOINT;
+const endpoint = process.env.CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
