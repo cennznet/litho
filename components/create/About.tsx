@@ -14,7 +14,7 @@ const About: React.FC<{
   nft: NFTType;
 }> = ({ moveToUploadAsset, nft }) => {
   const [showAdvanced, setShowAdvanced] = React.useState(
-    nft.royalty || nft.attributes.length > 0
+    nft.royalty > 0 || nft.attributes.length > 0
   );
   const [numOfAttributes, setNumOfAttributes] = React.useState(
     nft.attributes.length || 1
@@ -61,6 +61,11 @@ const About: React.FC<{
 
     if (!titleValue) {
       setError("Please provide a name for the NFT");
+      return;
+    }
+
+    if (!descriptionValue) {
+      setError("Please provide a description for the NFT");
       return;
     }
 
