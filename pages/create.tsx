@@ -139,7 +139,9 @@ const Create: React.FC<{}> = () => {
   };
 
   const mint = async () => {
-    const client = new NFTStorage({ token: process.env.NFT_STORAGE_API_KEY });
+    const client = new NFTStorage({
+      token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
+    });
 
     const metadata = await client.store({
       name: nft.title || "Litho NFT",
