@@ -13,12 +13,12 @@ const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Web3>
-      <main className="w-full bg-litho-cream p-20 bg-noise">
+      <main className="w-full bg-litho-cream py-20 px-6 lg:p-20 bg-noise">
         <Head>
           <title>Litho</title>
           <link rel="stylesheet" href="https://use.typekit.net/txj7ase.css" />
         </Head>
-        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-20 z-20 bg-litho-cream bg-noise">
+        <header className="h-20 py-5 flex items-center w-full justify-between fixed top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
           <Link href="/">
             <a>
               <img src="/logo.svg" alt="Litho" />

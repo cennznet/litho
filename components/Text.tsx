@@ -30,6 +30,8 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
         return "font-semibold text-base leading-none";
       case "body1":
         return "font-light text-base leading-none";
+      case "body2":
+        return "font-light text-base";
       case "subtitle1":
         return "font-semibold text-base leading-6";
       default:
@@ -71,6 +73,7 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
       case "subtitle2":
         return {
           lineHeight: "21px",
+          fontSize: "14px",
         };
       case "body1":
         return {

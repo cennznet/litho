@@ -5,14 +5,25 @@ import Link from "next/link";
 
 const Home: React.FC<{}> = () => {
   return (
-    <div className="mt-12 mb-16 border border-litho-black bg-litho-cream flex">
-      <div className="w-1/3 p-10">
+    <div className="mt-12 mb-16 lg:border border-litho-black bg-litho-cream flex flex-col lg:flex-row">
+      <div className="bg-litho-mustard px-3 py-2 flex justify-center mb-4 item-start lg:hidden">
+        <img src="/info.svg" alt="" className="h-5 mr-2" />
+        <Text variant="body2" className="flex-1">
+          Please view on desktop for a better user experience
+        </Text>
+      </div>
+      <div className="w-1/3 p-6 xl:p-10 hidden lg:block">
         <Text variant="h3">Litho</Text>{" "}
         <span className="text-5xl font-normal" style={{ lineHeight: "60px" }}>
           discovers, collects and sells extraordinary NFTs
         </span>
       </div>
-      <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
+      <div className="px-6 py-8 border border-litho-black mb-4 lg:hidden">
+        <Text variant="h4">
+          Litho discovers, collects and sells extraordinary NFTs
+        </Text>{" "}
+      </div>
+      <div className="w-full lg:w-1/3 border lg:border-0 lg:border-l lg:border-r border-litho-black flex flex-col relative h-customScreen mb-4 lg:mb-0">
         <div className="flex-1 relative">
           <Image
             src="/start-minting.png"
@@ -36,7 +47,7 @@ const Home: React.FC<{}> = () => {
           </Link>
         </div>
       </div>
-      <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
+      <div className="w-full lg:w-1/3 flex flex-col relative h-customScreen border lg:border-0 border-litho-black">
         <div className="flex-1 relative">
           <Image
             src="/placeholder.png"
