@@ -1,29 +1,45 @@
-import React, { FormEvent } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import Input from "./Input";
 import Text from "../Text";
 import Web3Context from "../Web3Context";
+import { NFT as NFTType } from "../../pages/create";
 
 const MAX_ATTRIBUTES = 16;
 
-const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
-  moveToUploadAsset,
-}) => {
-  const [showAdvanced, setShowAdvanced] = React.useState(false);
-  const [numOfAttributes, setNumOfAttributes] = React.useState(1);
+const About: React.FC<{
+  moveToUploadAsset: (formData: any) => void;
+  nft: NFTType;
+}> = ({ moveToUploadAsset, nft }) => {
+  const [showAdvanced, setShowAdvanced] = React.useState(
+    nft.royalty || nft.attributes.length > 0
+  );
+  const [numOfAttributes, setNumOfAttributes] = React.useState(
+    nft.attributes.length || 1
+  );
   const [error, setError] = React.useState(null);
   const web3Context = React.useContext(Web3Context);
 
   const renderAttributeInputs = (num) => {
     const attributeContainers = [];
     for (let i = 0; i < num; i++) {
+      let attribute;
+      if (nft.attributes[i]) {
+        attribute = nft.attributes[i].hasOwnProperty("Text")
+          ? nft.attributes[i].Text
+          : nft.attributes[i].hasOwnProperty("URL")
+          ? nft.attributes[i].URL
+          : null;
+      }
       attributeContainers.push(
         <div className="flex w-full items-center" key={i}>
           <Input
             name={`attribute-${i + 1}`}
             placeholder="Example: Size 20px"
             className="flex-1"
+            defaultValue={attribute}
           />
         </div>
       );
@@ -65,7 +81,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
           description: descriptionValue,
           copies: numOfCopies,
           attributes,
-          royaltyForNFT,
+          royalty: royaltyForNFT,
         });
       });
     } else {
@@ -74,7 +90,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         description: descriptionValue,
         copies: numOfCopies,
         attributes,
-        royaltyForNFT,
+        royalty: royaltyForNFT,
       });
     }
   };
@@ -93,7 +109,12 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
       <label>
         <Text variant="h6">Title</Text>
       </label>
-      <Input name="title" placeholder="Sheep NFT" />
+      <Input
+        name="title"
+        id="title"
+        defaultValue={nft.title}
+        placeholder="Sheep NFT"
+      />
 
       <label>
         <Text variant="h6">Description</Text>
@@ -103,6 +124,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud."
         className="border border-litho-black p-4 mb-8 text-base"
         rows={5}
+        defaultValue={nft.description}
       />
 
       <label>
@@ -114,6 +136,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         placeholder="1"
         className="mb-10"
         min={1}
+        defaultValue={nft.copies}
       />
 
       <div
@@ -145,7 +168,7 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
           type="number"
           placeholder="5%"
           className="mb-10"
-          defaultValue="0"
+          defaultValue={nft.royalty}
           min={0}
         />
         <label>
@@ -157,12 +180,18 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         <button
           type="button"
           className="bg-litho-cream text-center py-2 border border-black w-56 text-base"
-          onClick={() => setNumOfAttributes((num) => num + 1)}
+          onClick={() =>
+            numOfAttributes < MAX_ATTRIBUTES &&
+            setNumOfAttributes((num) => num + 1)
+          }
         >
           <Text variant="button" color="litho-blue">
-            + Add Attributes (15 left)
+            + Add Attributes
           </Text>
         </button>
+        <Text variant="caption" className="text-opacity-60">
+          You can add maximum 16 attributes
+        </Text>
       </div>
 
       <div className="w-full flex items-center justify-between mt-10">
@@ -175,7 +204,9 @@ const About: React.FC<{ moveToUploadAsset: (formData: any) => void }> = ({
         </Link>
         <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
           <Text variant="button" color="white">
-            Next: Upload Assets
+            {!web3Context.account
+              ? "Connect Wallet To Continue"
+              : "Next: Upload Assets"}
           </Text>
         </button>
       </div>
