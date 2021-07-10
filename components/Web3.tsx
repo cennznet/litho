@@ -16,7 +16,7 @@ import Web3Context from "./Web3Context";
 import { cennznetExtensions } from "../utils/cennznetExtensions";
 
 const registry = new TypeRegistry();
-const endpoint = process.env.CENNZ_API_ENDPOINT;
+const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
