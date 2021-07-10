@@ -259,15 +259,15 @@ const Create: React.FC<{}> = () => {
         </Text>
       </div>
       <div className="bg-grid p-12 flex-1 overflow-auto relative min-h-create">
-        <div className="absolute top-28">
-          <Image src="/create-1.png" height="135" width="132" alt="" />
+        <div className="absolute top-28 transform -rotate-6">
+          <Image src="/create-1.png" height="106" width="65" alt="" />
         </div>
         <div className="absolute bottom-28 left-32">
-          <Image src="/create-2.png" height="89" width="89" alt="" />
+          <Image src="/create-2.png" height="85" width="80" alt="" />
         </div>
 
-        <div className="absolute right-6 top-64">
-          <Image src="/create-3.png" height="173" width="152" alt="" />
+        <div className="absolute right-6 top-64 rotate-45 transform">
+          <Image src="/create-3.png" height="17" width="150" alt="" />
         </div>
 
         {currentTab === 1 && <About moveToUploadAsset={moveToUploadAsset} />}
