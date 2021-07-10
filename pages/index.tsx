@@ -15,10 +15,11 @@ const Home: React.FC<{}> = () => {
       <div className="w-1/3 border-l border-r border-litho-black flex flex-col relative h-customScreen">
         <div className="flex-1 relative">
           <Image
-            src="/placeholder.png"
+            src="/start-minting.png"
             objectFit="cover"
             priority={true}
             layout="fill"
+            objectPosition="center"
           />
         </div>
 
