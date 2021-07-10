@@ -7,6 +7,7 @@ interface Props {
     modalContainer?: string;
   };
   hideClose?: boolean;
+  disableOutsideClick?: boolean;
 }
 
 const Modal: React.FC<React.PropsWithChildren<Props>> = ({
@@ -14,6 +15,7 @@ const Modal: React.FC<React.PropsWithChildren<Props>> = ({
   styles,
   children,
   hideClose = false,
+  disableOutsideClick = false,
 }) => {
   const outsideClickHandler: React.EventHandler<React.SyntheticEvent> = (
     event: React.SyntheticEvent
@@ -38,7 +40,7 @@ const Modal: React.FC<React.PropsWithChildren<Props>> = ({
       className={`fixed top-0 left-0 h-full w-full bg-litho-cream bg-opacity-75 flex items-center justify-center ${
         styles ? styles.modalContainer : ""
       }`}
-      onClick={outsideClickHandler}
+      onClick={!disableOutsideClick ? outsideClickHandler : null}
       id="modal-container"
     >
       <div

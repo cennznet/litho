@@ -1,9 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import Text from "../components/Text";
 import Link from "next/link";
 
+import Text from "../components/Text";
+import Modal from "../components/Modal";
+
 const Home: React.FC<{}> = () => {
+  const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   return (
     <div className="mt-12 mb-16 lg:border border-litho-black bg-litho-cream flex flex-col lg:flex-row">
       <div className="bg-litho-mustard px-3 py-2 flex justify-center mb-4 item-start lg:hidden">
@@ -39,12 +42,20 @@ const Home: React.FC<{}> = () => {
             Create an NFT
           </Text>
           <Link href="/create">
-            <a className="bg-litho-blue w-40 h-12 flex items-center justify-center">
+            <a className="bg-litho-blue w-40 h-12 flex items-center justify-center hidden lg:flex">
               <Text variant="button" color="white">
                 Start Minting
               </Text>
             </a>
           </Link>
+          <button
+            className="bg-litho-blue w-40 h-12 flex items-center justify-center lg:hidden"
+            onClick={() => setShowViewOnDesktop(true)}
+          >
+            <Text variant="button" color="white">
+              Start Minting
+            </Text>
+          </button>
         </div>
       </div>
       <div className="w-full lg:w-1/3 flex flex-col relative h-customScreen border lg:border-0 border-litho-black">
@@ -89,6 +100,17 @@ const Home: React.FC<{}> = () => {
             </div>
           </div>
         </div> */}
+      {showViewOnDesktop && (
+        <Modal
+          onClose={() => setShowViewOnDesktop(false)}
+          disableOutsideClick={true}
+          styles={{ modalBody: "w-11/12", modalContainer: "z-20" }}
+        >
+          <Text variant="h4" color="litho-blue">
+            Minting is only available on Desktop
+          </Text>
+        </Modal>
+      )}
     </div>
   );
 };
