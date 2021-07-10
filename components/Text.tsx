@@ -34,6 +34,8 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
         return "font-light text-base";
       case "subtitle1":
         return "font-semibold text-base leading-6";
+      case "caption":
+        return "font-normal text-xs";
       default:
         return "";
     }
@@ -82,6 +84,11 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
       case "button":
         return {
           letterSpacing: "0.05em",
+        };
+      case "caption":
+        return {
+          lineHeight: "18px",
+          letterSpacing: "0.04em",
         };
       default:
         return {};
