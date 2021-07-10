@@ -3,27 +3,53 @@ import Link from "next/link";
 
 import Text from "../Text";
 import Web3Context from "../Web3Context";
-import Input from "./Input";
 import { hexToString } from "@polkadot/util";
+import { NFT as NFTType } from "../../pages/create";
+import getFileExtension from "../../utils/getFileExtension";
 
 interface Props {
   moveToPreview: (nftData: any) => void;
+  nft: NFTType;
 }
 
-const Upload: React.FC<Props> = ({ moveToPreview }) => {
+type Collection = {
+  id: number;
+  name: string;
+};
+
+const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
   const web3Context = React.useContext(Web3Context);
-  const [userCollections, setCollections] = React.useState([]);
+  const [defaultCollection, setDefaultCollection] =
+    React.useState<Collection>();
+  const [fileName, setFileName] = React.useState<string>();
+  const [fileExtension, setFileExtension] = React.useState<string>(
+    nft.image ? getFileExtension(nft.image.name) : undefined
+  );
+  const [coverImageName, setCoverImageName] = React.useState<string>();
   const [error, setError] = React.useState(null);
-  const [showNewCollectionFields, setShowNewCollectionFields] =
-    React.useState(false);
 
   const getCollectionWiseTokens = async (api, address) => {
     return await api.derive.nft.tokensOf(address);
   };
 
+  const imageAndVideoExtensions = [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "svg",
+    "webp",
+    "mp4",
+    "mov",
+  ];
+
   React.useEffect(() => {
     (async () => {
       const api = web3Context.api;
+      /**
+       * Load user collections and check if default Litho collection is already created for the user.
+       * If the collection exists use the existing collection id else create a new collection while minting.
+       */
       if (web3Context.account) {
         const tokensInCollections = await getCollectionWiseTokens(
           api,
@@ -33,7 +59,7 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
           .filter((tokens) => tokens.length > 0)
           .map((tokens) => tokens[0].collectionId.toJSON());
 
-        const collections = await Promise.all(
+        const collections: Array<Collection> = await Promise.all(
           collectionIds.map((collectionId) => {
             return new Promise(async (resolve) => {
               const name = await api.query.nft.collectionName(collectionId);
@@ -41,7 +67,12 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
             });
           })
         );
-        setCollections(collections);
+        const defaultCollection: Collection = collections.find(
+          (collection: Collection) => collection.name === "Litho (Default)"
+        );
+        if (defaultCollection) {
+          setDefaultCollection(defaultCollection);
+        }
       }
     })();
   }, [web3Context.account]);
@@ -50,25 +81,37 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    const { file, storage, collection, collectionId } = event.currentTarget;
+    const { file, coverimage, storage } = event.currentTarget;
 
-    if (file.files.length === 0) {
+    if (file.files.length === 0 && !nft.image) {
       setError("Please upload an image");
       return;
     }
 
     moveToPreview({
       image: file.files[0],
+      coverImage: coverimage?.files?.length > 0 ? coverimage.files[0] : null,
       storage: storage.value,
-      createNew: showNewCollectionFields,
-      collectionName:
-        collection && collection.value
-          ? collection.value
-          : collectionId && collectionId.value
-          ? null
-          : `${web3Context.account.meta.name} collection`,
-      collectionId: collectionId && collectionId.value,
+      collectionId: defaultCollection ? defaultCollection.id : null,
     });
+  };
+
+  const fileSelectorHandler = (event) => {
+    const { currentTarget } = event;
+    const { files, name } = currentTarget;
+    if (!currentTarget || files.length === 0) {
+      return;
+    }
+    const fileName = files[0].name;
+
+    const fileExtension = getFileExtension(fileName);
+
+    if (name === "file") {
+      setFileName(fileName);
+      setFileExtension(fileExtension);
+    } else {
+      setCoverImageName(fileName);
+    }
   };
 
   return (
@@ -84,80 +127,63 @@ const Upload: React.FC<Props> = ({ moveToPreview }) => {
       <Text variant="h6">Upload Assets</Text>
       <label
         htmlFor="file"
-        className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-25 text-litho-black mb-10"
+        className="border border-litho-black p-4 text-base bg-white text-opacity-25 text-litho-black"
       >
-        <Text variant="body1">Choose from folder</Text>
+        <Text variant="h6">
+          {fileName
+            ? fileName
+            : nft.image
+            ? nft.image.name
+            : "Choose from folder"}
+        </Text>
       </label>
+      <Text variant="caption" className="text-opacity-60 mb-10">
+        Support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, quicktime,
+        webm, glb, mp3, oga, wav, xwav, flac, pdf, html (zip archive), md
+      </Text>
       <input
         name="file"
         type="file"
         className="hidden"
         id="file"
-        accept=".jpg,.png,.svg,.jpeg,.webp"
+        onChange={fileSelectorHandler}
       />
+      {fileExtension && !imageAndVideoExtensions.includes(fileExtension) && (
+        <>
+          <Text variant="h6">Add cover image (Optional)</Text>
+          <label
+            htmlFor="coverimage"
+            className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-25 text-litho-black mb-10"
+          >
+            <Text variant="h6">
+              {coverImageName
+                ? coverImageName
+                : nft.coverImage
+                ? nft.coverImage.name
+                : "Choose from folder"}
+            </Text>
+          </label>
+          <input
+            name="coverimage"
+            type="file"
+            className="hidden"
+            id="coverimage"
+            accept=".jpg,.png,.svg,.jpeg,.webp,.gif"
+            onChange={fileSelectorHandler}
+          />
+        </>
+      )}
       <label>
         <Text variant="h6">Choose content storage</Text>
       </label>
       <select
-        className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
+        className="border border-litho-black border-opacity-40 p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
         name="storage"
         defaultValue={"ipfs"}
+        disabled
       >
         <option value="ipfs">IPFS</option>
       </select>
-      {userCollections.length > 0 && (
-        <>
-          <label>
-            <Text variant="h6">Collection</Text>
-          </label>
-          <select
-            className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
-            onChange={(event) => {
-              if (event.target.value === "new") {
-                setShowNewCollectionFields(true);
-              } else {
-                setShowNewCollectionFields(false);
-              }
-            }}
-          >
-            <option defaultChecked value="existing">
-              Select existing
-            </option>
-            <option value="new">Create a new collection</option>
-          </select>
-        </>
-      )}
-      {(userCollections.length === 0 || showNewCollectionFields) && (
-        <>
-          <label id="collection">
-            <Text variant="h6">Collection name</Text>
-          </label>
-          <Input
-            name="collection"
-            type="text"
-            id="collection"
-            placeholder={`${
-              web3Context.account ? web3Context.account.meta.name : ""
-            } collection`}
-          />
-        </>
-      )}
-      {userCollections.length && !showNewCollectionFields && (
-        <>
-          <label id="collectionId">
-            <Text variant="h6">Choose Collection</Text>
-          </label>
-          <select
-            className="border border-litho-black p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
-            name="collectionId"
-            id="collectionId"
-          >
-            {userCollections.map((collection) => {
-              return <option value={collection.id}>{collection.name}</option>;
-            })}
-          </select>
-        </>
-      )}
 
       <div className="w-full flex items-center justify-between mt-10">
         <Link href="/">
