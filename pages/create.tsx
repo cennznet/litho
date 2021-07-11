@@ -9,15 +9,45 @@ import Preview from "../components/create/Preview";
 import { NFTStorage, toGatewayURL } from "nft.storage";
 import Web3Context from "../components/Web3Context";
 
-type NFT = {
+export type NFT = {
   title: string;
-  description?: string;
+  description: string;
   copies: number;
   collectionName?: string;
   collectionId?: number;
   image: any;
+  coverImage?: any;
+  storage?: string;
   attributes: Array<{ [index: string]: string }>;
   royalty: number;
+};
+
+interface Action {
+  type: string;
+  payload: any;
+}
+
+interface State {
+  nft: NFT;
+  isAboutFilled: boolean;
+  isUploadFilled: boolean;
+  currentTab: number;
+}
+
+const initialState: State = {
+  nft: {
+    title: "",
+    description: "",
+    copies: 1,
+    image: null,
+    storage: "ipfs",
+    attributes: [],
+    royalty: 0,
+    collectionName: "Litho (default)",
+  },
+  isAboutFilled: false,
+  isUploadFilled: false,
+  currentTab: 1,
 };
 
 const createCollection = async (
@@ -123,20 +153,151 @@ const mintNFTSeries = async (api, account, tokenArgs) => {
   });
 };
 
+const createReducer: React.Reducer<State, Action> = (state, action) => {
+  switch (action.type) {
+    case "GO_TO_TAB":
+      return {
+        ...state,
+        currentTab: action.payload.currentTab,
+      };
+    case "MOVE_TO_UPLOAD":
+      const { title, description, copies, attributes, royalty } =
+        action.payload;
+      return {
+        ...state,
+        nft: {
+          ...state.nft,
+          title,
+          description,
+          copies,
+          attributes,
+          royalty,
+        },
+        currentTab: 2,
+        isAboutFilled: true,
+      };
+    case "MOVE_TO_PREVIEW":
+      const { image, coverImage, storage, collectionId } = action.payload;
+      return {
+        ...state,
+        nft: {
+          ...state.nft,
+          image,
+          coverImage,
+          storage,
+          collectionId,
+        },
+        currentTab: 3,
+        isUploadFilled: true,
+      };
+    default:
+      return state;
+  }
+};
+
 const Create: React.FC<{}> = () => {
-  const [currentTab, setCurrentTab] = React.useState(1);
-  const [nft, setNFT] = React.useState<NFT>();
   const web3Context = React.useContext(Web3Context);
+  const [state, dispatch] = React.useReducer<React.Reducer<State, Action>>(
+    createReducer,
+    initialState
+  );
+  const [transactionFee, setTransactionFee] = React.useState<number>();
 
   const moveToUploadAsset = (aboutData: any) => {
-    setNFT(aboutData);
-    setCurrentTab((tab) => tab + 1);
+    const { title, description, copies, attributes, royalty } = aboutData;
+    dispatch({
+      type: "MOVE_TO_UPLOAD",
+      payload: {
+        title,
+        description,
+        copies,
+        attributes,
+        royalty,
+      },
+    });
+  };
+
+  const getTransactionFeeEstimate = async (hasCollection) => {
+    let transactionFee = 0;
+    if (!hasCollection) {
+      const collectionExtrinsic = await web3Context.api.tx.nft.createCollection(
+        "Litho (default)",
+        null,
+        null
+      );
+      const createCollectionFee = await web3Context.api.derive.fees.estimateFee(
+        {
+          extrinsic: collectionExtrinsic,
+          userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+        }
+      );
+      transactionFee =
+        createCollectionFee.toNumber() /
+        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+    }
+
+    if (state.nft.copies > 1) {
+      const mintSeriesExtrinsic = await web3Context.api.tx.nft.mintSeries(
+        1,
+        state.nft.copies,
+        web3Context.account.address,
+        null,
+        null,
+        null
+      );
+
+      const mintSeriesFee = await web3Context.api.derive.fees.estimateFee({
+        extrinsic: mintSeriesExtrinsic,
+        userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+      });
+      transactionFee +=
+        mintSeriesFee.toNumber() /
+        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+    } else {
+      const mintUniqueExtrinsic = await web3Context.api.tx.nft.mintUnique(
+        1,
+        web3Context.account.address,
+        null,
+        null,
+        null
+      );
+
+      const mintUniqueFee = await web3Context.api.derive.fees.estimateFee({
+        extrinsic: mintUniqueExtrinsic,
+        userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+      });
+      transactionFee +=
+        mintUniqueFee.toNumber() /
+        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+    }
+
+    setTransactionFee(transactionFee);
   };
 
   const moveToPreview = (uploadData) => {
-    setNFT((currentVal) => ({ ...currentVal, ...uploadData }));
-    setCurrentTab((tab) => tab + 1);
+    const { image, coverImage, storage, collectionId } = uploadData;
+
+    dispatch({
+      type: "MOVE_TO_PREVIEW",
+      payload: {
+        /**
+         * This is needed because in cases where the user is navigating between tabs and presses Next without actually uploading a new
+         * image and since file inputs cannot have a default value, the value of input field will be null but the image is already stored in
+         * the reducer state.
+         */
+        image: image || state.nft.image,
+        coverImage: coverImage || state.nft.coverImage,
+        storage,
+        collectionId,
+      },
+    });
+
+    getTransactionFeeEstimate(collectionId);
   };
+
+  React.useEffect(() => {
+    window.scroll(0, 0);
+  }, [state.currentTab]);
 
   const mint = async () => {
     const client = new NFTStorage({
@@ -144,9 +305,9 @@ const Create: React.FC<{}> = () => {
     });
 
     const metadata = await client.store({
-      name: nft.title || "Litho NFT",
-      description: nft.description || nft.title || "Litho NFT",
-      image: nft.image,
+      name: state.nft.title || "Litho NFT",
+      description: state.nft.description || state.nft.title || "Litho NFT",
+      image: state.nft.image,
     });
 
     const metadataBaseURI = "ipfs";
@@ -163,61 +324,61 @@ const Create: React.FC<{}> = () => {
     const imagePath = imageGatewayURL.pathname;
 
     const nftAttributes = [
-      ...nft.attributes,
+      ...state.nft.attributes,
       { URL: `Image-URL ${imageURL}` },
       { URL: `Metadata-URL ${metadataURL}` },
-      { Text: `Title ${nft.title}` },
-      { Text: `Description ${nft.description}` },
-      { Text: `Quantity ${nft.copies}` },
+      { Text: `Title ${state.nft.title}` },
+      { Text: `Description ${state.nft.description}` },
+      { Text: `Quantity ${state.nft.copies}` },
     ];
 
     let collectionId;
 
-    if (nft.collectionId) {
-      collectionId = nft.collectionId;
+    if (state.nft.collectionId) {
+      collectionId = state.nft.collectionId;
     } else {
-      console.log("create collection", nft.collectionName);
+      console.log("create collection", state.nft.collectionName);
       collectionId = await createCollection(
         web3Context.api,
         web3Context.account,
-        nft.collectionName,
+        state.nft.collectionName,
         metadataBaseURI
       );
     }
 
-    if (nft.copies > 1) {
-      let tokenArgs: { [index: string]: any } = {
-        collectionId,
-        quantity: nft.copies,
-        owner: web3Context.account.address,
-        attributes: nftAttributes,
-        metadataPath: metadata.url,
-      };
-      if (nft.royalty > 0) {
-        tokenArgs.royaltiesSchedule = {
-          entitlements: [
-            `${web3Context.account.address}, ${nft.royalty * 100000}`,
-          ],
-        };
-      }
-      await mintNFTSeries(web3Context.api, web3Context.account, tokenArgs);
-    } else {
-      let tokenArgs: { [index: string]: any } = {
-        collectionId,
-        owner: web3Context.account.address,
-        attributes: nftAttributes,
-        metadataPath: metadata.url,
-      };
+    // if (state.nft.copies > 1) {
+    //   let tokenArgs: { [index: string]: any } = {
+    //     collectionId,
+    //     quantity: state.nft.copies,
+    //     owner: web3Context.account.address,
+    //     attributes: nftAttributes,
+    //     metadataPath: metadata.url,
+    //   };
+    //   if (state.nft.royalty > 0) {
+    //     tokenArgs.royaltiesSchedule = {
+    //       entitlements: [
+    //         `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+    //       ],
+    //     };
+    //   }
+    //   await mintNFTSeries(web3Context.api, web3Context.account, tokenArgs);
+    // } else {
+    //   let tokenArgs: { [index: string]: any } = {
+    //     collectionId,
+    //     owner: web3Context.account.address,
+    //     attributes: nftAttributes,
+    //     metadataPath: metadata.url,
+    //   };
 
-      if (nft.royalty > 0) {
-        tokenArgs.royaltiesSchedule = {
-          entitlements: [
-            `${web3Context.account.address}, ${nft.royalty * 100000}`,
-          ],
-        };
-      }
-      await mintNFT(web3Context.api, web3Context.account, tokenArgs);
-    }
+    //   if (state.nft.royalty > 0) {
+    //     tokenArgs.royaltiesSchedule = {
+    //       entitlements: [
+    //         `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+    //       ],
+    //     };
+    //   }
+    //   await mintNFT(web3Context.api, web3Context.account, tokenArgs);
+    // }
     return;
   };
 
@@ -231,9 +392,21 @@ const Create: React.FC<{}> = () => {
           variant="h5"
           component="div"
           className={`w-1/3 h-full p-2 text-center ${
-            currentTab === 1 ? "bg-litho-black" : "bg-litho-cream"
+            state.currentTab === 1 ? "bg-litho-black" : "bg-litho-cream"
           }`}
-          color={currentTab === 1 ? "white" : "litho-gray4"}
+          color={
+            state.currentTab === 1
+              ? "white"
+              : state.isAboutFilled
+              ? "litho-black"
+              : "litho-gray4"
+          }
+          onClick={
+            state.isAboutFilled
+              ? () =>
+                  dispatch({ type: "GO_TO_TAB", payload: { currentTab: 1 } })
+              : null
+          }
         >
           1. About
         </Text>
@@ -241,9 +414,21 @@ const Create: React.FC<{}> = () => {
           variant="h5"
           component="div"
           className={`w-1/3 h-full p-2 text-center border-l border-r border-litho-black ${
-            currentTab === 2 ? "bg-litho-black" : "bg-litho-cream"
+            state.currentTab === 2 ? "bg-litho-black" : "bg-litho-cream"
           }`}
-          color={currentTab === 2 ? "white" : "litho-gray4"}
+          color={
+            state.currentTab === 2
+              ? "white"
+              : state.isUploadFilled
+              ? "litho-black"
+              : "litho-gray4"
+          }
+          onClick={
+            state.isUploadFilled
+              ? () =>
+                  dispatch({ type: "GO_TO_TAB", payload: { currentTab: 2 } })
+              : null
+          }
         >
           2. Upload Assets
         </Text>
@@ -251,9 +436,21 @@ const Create: React.FC<{}> = () => {
           variant="h5"
           component="div"
           className={`w-1/3 h-full p-2 text-center ${
-            currentTab === 3 ? "bg-litho-black" : "bg-litho-cream"
+            state.currentTab === 3 ? "bg-litho-black" : "bg-litho-cream"
           }`}
-          color={currentTab === 3 ? "white" : "litho-gray4"}
+          color={
+            state.currentTab === 3
+              ? "white"
+              : state.isUploadFilled
+              ? "litho-black"
+              : "litho-gray4"
+          }
+          onClick={
+            state.isUploadFilled
+              ? () =>
+                  dispatch({ type: "GO_TO_TAB", payload: { currentTab: 3 } })
+              : null
+          }
         >
           3. Preview
         </Text>
@@ -270,9 +467,19 @@ const Create: React.FC<{}> = () => {
           <Image src="/create-3.png" height="17" width="150" alt="" />
         </div>
 
-        {currentTab === 1 && <About moveToUploadAsset={moveToUploadAsset} />}
-        {currentTab === 2 && <Upload moveToPreview={moveToPreview} />}
-        {currentTab === 3 && <Preview nft={nft} mint={mint} />}
+        {state.currentTab === 1 && (
+          <About moveToUploadAsset={moveToUploadAsset} nft={state.nft} />
+        )}
+        {state.currentTab === 2 && (
+          <Upload moveToPreview={moveToPreview} nft={state.nft} />
+        )}
+        {state.currentTab === 3 && (
+          <Preview
+            nft={state.nft}
+            mint={mint}
+            transactionFee={transactionFee}
+          />
+        )}
       </div>
     </div>
   );

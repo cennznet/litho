@@ -53,7 +53,7 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
                 />
               </div>
               <Text variant="subtitle1">
-                {web3Context.account.balances[symbol]}
+                {web3Context.account.balances[symbol].balance}
               </Text>
               &nbsp;
               <Text variant="body1">{symbol}</Text>

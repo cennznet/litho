@@ -87,8 +87,11 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         const userBalances = {};
         Object.keys(tokenMap).forEach((tokenId) => {
           const token = tokenMap[tokenId];
-          userBalances[token.symbol] =
-            balances[token.index] / Math.pow(10, token.decimalPlaces);
+          userBalances[token.symbol] = {
+            balance: balances[token.index] / Math.pow(10, token.decimalPlaces),
+            tokenId,
+            decimalPlaces: token.decimalPlaces,
+          };
         });
         console.log(userBalances);
         setAccount((account) => ({
