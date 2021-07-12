@@ -6,6 +6,7 @@ import Web3Context from "../Web3Context";
 import { hexToString } from "@polkadot/util";
 import { NFT as NFTType } from "../../pages/create";
 import getFileExtension from "../../utils/getFileExtension";
+import isImageOrVideo from "../../utils/isImageOrVideo";
 
 interface Props {
   moveToPreview: (nftData: any) => void;
@@ -32,17 +33,6 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
     return await api.derive.nft.tokensOf(address);
   };
 
-  const imageAndVideoExtensions = [
-    "jpg",
-    "jpeg",
-    "png",
-    "gif",
-    "svg",
-    "webp",
-    "mp4",
-    "mov",
-  ];
-
   React.useEffect(() => {
     (async () => {
       const api = web3Context.api;
@@ -67,10 +57,12 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
             });
           })
         );
+
         const defaultCollection: Collection = collections.find(
           (collection: Collection) => collection.name === "Litho (Default)"
         );
         if (defaultCollection) {
+          console.log("collection exists");
           setDefaultCollection(defaultCollection);
         }
       }
@@ -148,7 +140,7 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
         id="file"
         onChange={fileSelectorHandler}
       />
-      {fileExtension && !imageAndVideoExtensions.includes(fileExtension) && (
+      {fileExtension && !isImageOrVideo(fileExtension) && (
         <>
           <Text variant="h6">Add cover image (Optional)</Text>
           <label

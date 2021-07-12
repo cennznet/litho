@@ -5,12 +5,14 @@ import Link from "next/link";
 
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
+import getFileExtension from "../../../../utils/getFileExtension";
 
 const NFTDetail: React.FC<{}> = () => {
   const router = useRouter();
   const [loading, setLoading] = React.useState(true);
   const web3Context = React.useContext(Web3Context);
   const [nft, setNFT] = React.useState<{ [index: string]: any }>();
+  const [image, setImage] = React.useState<string>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -67,6 +69,21 @@ const NFTDetail: React.FC<{}> = () => {
         });
         nft.attributes = otherAttributes;
         setNFT(nft);
+
+        let imageUrl;
+        const image = nft.coverImage || nft.image;
+        const fileExtension = getFileExtension(image.name || image);
+
+        if (!fileExtension) {
+          imageUrl = "/litho-default.jpg";
+        } else {
+          if (typeof image === "object") {
+            imageUrl = URL.createObjectURL(image);
+          } else {
+            imageUrl = image;
+          }
+        }
+        setImage(imageUrl);
         setLoading(false);
       });
     })();
@@ -84,7 +101,7 @@ const NFTDetail: React.FC<{}> = () => {
           &lt; My Single NFTs
         </a>
       </Link>
-      {nft && nft.image ? (
+      {image ? (
         <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
           <div className="border-b border-litho-black px-10 py-5 flex justify-between items-center">
             <Text variant="h3" component="h3">
@@ -105,7 +122,7 @@ const NFTDetail: React.FC<{}> = () => {
               >
                 <Image
                   loader={({ src }) => src}
-                  src={nft.image}
+                  src={image}
                   layout="fill"
                   className="object-contain object-center"
                   objectFit="contain"

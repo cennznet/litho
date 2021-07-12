@@ -1,13 +1,18 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { NFTStorage, toGatewayURL } from "nft.storage";
+import { TokenInput } from "nft.storage/dist/src/lib/interface";
 
 import Text from "../components/Text";
+import Modal from "../components/Modal";
 import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
-
-import { NFTStorage, toGatewayURL } from "nft.storage";
 import Web3Context from "../components/Web3Context";
+import getFileExtension from "../utils/getFileExtension";
+import isImageOrVideo from "../utils/isImageOrVideo";
 
 export type NFT = {
   title: string;
@@ -72,7 +77,6 @@ const createCollection = async (
         );
         if (createCollectionEvent) {
           const collectionId = createCollectionEvent.event.data[0].toJSON();
-          console.log("newCollectionId", collectionId);
           resolve(collectionId);
         }
         if (args.status.isInBlock) {
@@ -88,7 +92,7 @@ const createCollection = async (
   });
 };
 
-const mintNFT = async (api, account, tokenArgs) => {
+const mintNFT = async (api, account, tokenArgs, setTransactionInProgress) => {
   const { collectionId, owner, attributes, metadataPath, royaltiesSchedule } =
     tokenArgs;
   const mintUniqueExtrinsic = await api.tx.nft.mintUnique(
@@ -103,6 +107,7 @@ const mintNFT = async (api, account, tokenArgs) => {
   return new Promise((resolve, reject) => {
     mintUniqueExtrinsic
       .signAndSend(signer, payload, ({ status }) => {
+        setTransactionInProgress();
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -117,7 +122,12 @@ const mintNFT = async (api, account, tokenArgs) => {
   });
 };
 
-const mintNFTSeries = async (api, account, tokenArgs) => {
+const mintNFTSeries = async (
+  api,
+  account,
+  tokenArgs,
+  setTransactionInProgress
+) => {
   const {
     collectionId,
     quantity,
@@ -139,6 +149,7 @@ const mintNFTSeries = async (api, account, tokenArgs) => {
   return new Promise((resolve, reject) => {
     mintUniqueExtrinsic
       .signAndSend(signer, payload, ({ status }) => {
+        setTransactionInProgress();
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -196,12 +207,67 @@ const createReducer: React.Reducer<State, Action> = (state, action) => {
 };
 
 const Create: React.FC<{}> = () => {
+  const router = useRouter();
   const web3Context = React.useContext(Web3Context);
   const [state, dispatch] = React.useReducer<React.Reducer<State, Action>>(
     createReducer,
     initialState
   );
+  const [modalState, setModalState] = React.useState<string>();
   const [transactionFee, setTransactionFee] = React.useState<number>();
+
+  const modalStates = {
+    mint: {
+      message: "Uploading assets to IPFS",
+      subText: "Please wait while the assets are uploaded",
+      onClose: () => setModalState(null),
+    },
+    signTransaction: {
+      message: "Sign this transaction in your wallet",
+      subText:
+        "Confirm the transaction in your wallet to continue, doing this will sign your wallet as the original creator of the NFT",
+      onClose: () => setModalState(null),
+    },
+    txInProgress: {
+      message: "Please stay on this page",
+      subText:
+        "Your asset is being minted as an NFT on CENNZnet. Please stay on the page until it has been successfully minted.",
+      onClose: () => setModalState(null),
+    },
+    success: {
+      message: "Congratulations!",
+      subText:
+        "NFT was successfully minted and should be displayed in your wallet shortly.",
+      buttons: [
+        {
+          text: "View My NFT",
+          isPrimary: true,
+          type: "link",
+          link: "/me",
+        },
+      ],
+      onClose: () => router.push("/"),
+    },
+    error: {
+      message: "Oops... something went wrong",
+      subText: " Your NFT failed to be minted. Please try again.",
+      buttons: [
+        {
+          text: "Cancel",
+          isPrimary: false,
+          type: "link",
+          link: "/",
+        },
+        {
+          text: "Try again",
+          onClick: () => setModalState(null),
+          isPrimary: true,
+          type: "button",
+        },
+      ],
+      onClose: () => setModalState(null),
+    },
+  };
 
   const moveToUploadAsset = (aboutData: any) => {
     const { title, description, copies, attributes, royalty } = aboutData;
@@ -300,15 +366,55 @@ const Create: React.FC<{}> = () => {
   }, [state.currentTab]);
 
   const mint = async () => {
+    setModalState("mint");
     const client = new NFTStorage({
       token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
     });
 
-    const metadata = await client.store({
-      name: state.nft.title || "Litho NFT",
-      description: state.nft.description || state.nft.title || "Litho NFT",
-      image: state.nft.image,
-    });
+    let storeOnIPFS: TokenInput;
+
+    if (state.nft.coverImage) {
+      storeOnIPFS = {
+        name: state.nft.title,
+        description: state.nft.description,
+        image: state.nft.coverImage,
+        properties: {
+          file: state.nft.image,
+          title: state.nft.title,
+          description: state.nft.description,
+          quantity: state.nft.copies,
+        },
+      };
+    } else {
+      const fileExtension = getFileExtension(state.nft.image.name);
+      if (isImageOrVideo(fileExtension)) {
+        storeOnIPFS = {
+          name: state.nft.title,
+          description: state.nft.description,
+          image: state.nft.image,
+          properties: {
+            title: state.nft.title,
+            description: state.nft.description,
+            quantity: state.nft.copies,
+          },
+        };
+      } else {
+        const blob = new Blob();
+        storeOnIPFS = {
+          name: state.nft.title,
+          description: state.nft.description,
+          image: new File([""], "no-image", { type: "image/jpg" }),
+          properties: {
+            file: state.nft.image,
+            title: state.nft.title,
+            description: state.nft.description,
+            quantity: state.nft.copies,
+          },
+        };
+      }
+    }
+
+    const metadata = await client.store(storeOnIPFS);
 
     const metadataBaseURI = "ipfs";
     const metadataGatewayURL = toGatewayURL(metadata.url, {
@@ -333,52 +439,65 @@ const Create: React.FC<{}> = () => {
     ];
 
     let collectionId;
+    setModalState("signTransaction");
+    try {
+      if (state.nft.collectionId) {
+        collectionId = state.nft.collectionId;
+      } else {
+        console.log("create collection", state.nft.collectionName);
+        collectionId = await createCollection(
+          web3Context.api,
+          web3Context.account,
+          state.nft.collectionName,
+          metadataBaseURI
+        );
+      }
 
-    if (state.nft.collectionId) {
-      collectionId = state.nft.collectionId;
-    } else {
-      console.log("create collection", state.nft.collectionName);
-      collectionId = await createCollection(
-        web3Context.api,
-        web3Context.account,
-        state.nft.collectionName,
-        metadataBaseURI
-      );
+      if (state.nft.copies > 1) {
+        let tokenArgs: { [index: string]: any } = {
+          collectionId,
+          quantity: state.nft.copies,
+          owner: web3Context.account.address,
+          attributes: nftAttributes,
+          metadataPath: metadata.url,
+        };
+        if (state.nft.royalty > 0) {
+          tokenArgs.royaltiesSchedule = {
+            entitlements: [
+              `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+            ],
+          };
+        }
+        await mintNFTSeries(
+          web3Context.api,
+          web3Context.account,
+          tokenArgs,
+          () => setModalState("txInProgress")
+        );
+      } else {
+        let tokenArgs: { [index: string]: any } = {
+          collectionId,
+          owner: web3Context.account.address,
+          attributes: nftAttributes,
+          metadataPath: metadata.url,
+        };
+
+        if (state.nft.royalty > 0) {
+          tokenArgs.royaltiesSchedule = {
+            entitlements: [
+              `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+            ],
+          };
+        }
+        await mintNFT(web3Context.api, web3Context.account, tokenArgs, () =>
+          setModalState("txInProgress")
+        );
+      }
+      setModalState("success");
+    } catch (error) {
+      setModalState("error");
+      throw new Error(error);
     }
-
-    // if (state.nft.copies > 1) {
-    //   let tokenArgs: { [index: string]: any } = {
-    //     collectionId,
-    //     quantity: state.nft.copies,
-    //     owner: web3Context.account.address,
-    //     attributes: nftAttributes,
-    //     metadataPath: metadata.url,
-    //   };
-    //   if (state.nft.royalty > 0) {
-    //     tokenArgs.royaltiesSchedule = {
-    //       entitlements: [
-    //         `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
-    //       ],
-    //     };
-    //   }
-    //   await mintNFTSeries(web3Context.api, web3Context.account, tokenArgs);
-    // } else {
-    //   let tokenArgs: { [index: string]: any } = {
-    //     collectionId,
-    //     owner: web3Context.account.address,
-    //     attributes: nftAttributes,
-    //     metadataPath: metadata.url,
-    //   };
-
-    //   if (state.nft.royalty > 0) {
-    //     tokenArgs.royaltiesSchedule = {
-    //       entitlements: [
-    //         `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
-    //       ],
-    //     };
-    //   }
-    //   await mintNFT(web3Context.api, web3Context.account, tokenArgs);
-    // }
     return;
   };
 
@@ -481,6 +600,71 @@ const Create: React.FC<{}> = () => {
           />
         )}
       </div>
+      {modalState && (
+        <Modal
+          onClose={modalStates[modalState].onClose}
+          hideClose={modalStates[modalState].hideClose}
+          styles={{
+            modalBody: "w-3/6 flex flex-col",
+            modalContainer: "z-10",
+          }}
+        >
+          <Text variant="h4" color="litho-blue" component="h2" className="mb-6">
+            {modalStates[modalState].message}
+          </Text>
+          <Text
+            variant="body1"
+            color="black"
+            className="mt-2 border-b border-black border-opacity-20 pb-6"
+          >
+            {modalStates[modalState].subText}
+          </Text>
+          <div className="self-end flex items-center mt-8 space-x-4">
+            {modalStates[modalState].buttons &&
+              modalStates[modalState].buttons.length > 0 &&
+              modalStates[modalState].buttons.map((button) => {
+                if (button.type === "button") {
+                  return (
+                    <button
+                      className={`${
+                        button.isPrimary
+                          ? "rounded-sm bg-litho-blue text-white"
+                          : ""
+                      } px-4 py-3`}
+                      onClick={button.onClick}
+                      key={button.text}
+                    >
+                      <Text
+                        variant="button"
+                        color={`${button.isPrimary ? "white" : "litho-blue"}`}
+                      >
+                        {button.text}
+                      </Text>
+                    </button>
+                  );
+                }
+                return (
+                  <Link href={button.link} key={button.text}>
+                    <a
+                      className={`${
+                        button.isPrimary
+                          ? "rounded-sm bg-litho-blue"
+                          : "text-litho-blue"
+                      } px-4 py-3`}
+                    >
+                      <Text
+                        variant="button"
+                        color={`${button.isPrimary ? "white" : "litho-blue"}`}
+                      >
+                        {button.text}
+                      </Text>
+                    </a>
+                  </Link>
+                );
+              })}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

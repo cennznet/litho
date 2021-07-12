@@ -1,16 +1,26 @@
 import React from "react";
 import Image from "next/image";
 
+import getFileExtension from "../utils/getFileExtension";
+import isImageOrVideo from "../utils/isImageOrVideo";
+
 interface Props {
   nft: any;
 }
 
 const NFT: React.FC<Props> = ({ nft }) => {
   let imageUrl;
-  if (typeof nft.image === "object") {
-    imageUrl = URL.createObjectURL(nft.image);
+  const image = nft.coverImage || nft.image;
+  const fileExtension = getFileExtension(image.name || image);
+
+  if (!image || !fileExtension || !isImageOrVideo(fileExtension)) {
+    imageUrl = "/litho-default.jpg";
   } else {
-    imageUrl = nft.image;
+    if (typeof image === "object") {
+      imageUrl = URL.createObjectURL(image);
+    } else {
+      imageUrl = image;
+    }
   }
   return (
     <div
@@ -23,7 +33,7 @@ const NFT: React.FC<Props> = ({ nft }) => {
             src={imageUrl}
             height="300"
             width="300"
-            className="object-contain object-center h-72 w-72"
+            className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center"
           />
         ) : (
           <Image
@@ -31,7 +41,7 @@ const NFT: React.FC<Props> = ({ nft }) => {
             src={imageUrl}
             height="300"
             width="300"
-            className="object-contain object-center"
+            className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
           />
         )}
         <div className="mt-3 flex justify-between items-center">

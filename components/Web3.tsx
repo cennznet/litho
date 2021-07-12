@@ -93,7 +93,6 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             decimalPlaces: token.decimalPlaces,
           };
         });
-        console.log(userBalances);
         setAccount((account) => ({
           ...account,
           balances: userBalances,
