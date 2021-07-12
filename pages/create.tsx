@@ -366,15 +366,14 @@ const Create: React.FC<{}> = () => {
   }, [state.currentTab]);
 
   const mint = async () => {
-    console.log(state.nft.copies);
-    debugger;
     setModalState("mint");
     const client = new NFTStorage({
       token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
     });
 
     let storeOnIPFS: TokenInput;
-
+    const fileExtension = getFileExtension(state.nft.image.name);
+    const fileType = isImageOrVideo(fileExtension);
     if (state.nft.coverImage) {
       storeOnIPFS = {
         name: state.nft.title,
@@ -388,13 +387,24 @@ const Create: React.FC<{}> = () => {
         },
       };
     } else {
-      const fileExtension = getFileExtension(state.nft.image.name);
-      if (isImageOrVideo(fileExtension)) {
+      if (fileType === "image") {
         storeOnIPFS = {
           name: state.nft.title,
           description: state.nft.description,
           image: state.nft.image,
           properties: {
+            title: state.nft.title,
+            description: state.nft.description,
+            quantity: state.nft.copies,
+          },
+        };
+      } else if (fileType === "video") {
+        storeOnIPFS = {
+          name: state.nft.title,
+          description: state.nft.description,
+          image: new File([""], "no-image", { type: "image/jpg" }),
+          properties: {
+            video: state.nft.image,
             title: state.nft.title,
             description: state.nft.description,
             quantity: state.nft.copies,
@@ -416,7 +426,7 @@ const Create: React.FC<{}> = () => {
     }
 
     const metadata = await client.store(storeOnIPFS);
-
+    console.log(metadata);
     const metadataBaseURI = "ipfs";
     const metadataGatewayURL = toGatewayURL(metadata.url, {
       gateway: "https://ipfs.io/",
@@ -438,6 +448,15 @@ const Create: React.FC<{}> = () => {
       { Text: `Description ${state.nft.description}` },
       { Text: `Quantity ${state.nft.copies}` },
       { Text: `File-Type ${getFileExtension(state.nft.image.name)}` },
+      {
+        URL: `Video-URL ${
+          fileType === "video"
+            ? toGatewayURL((metadata.data.properties as any).video, {
+                gateway: "https://ipfs.io/",
+              })
+            : ""
+        }`,
+      },
     ];
 
     let collectionId;

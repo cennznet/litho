@@ -71,8 +71,13 @@ const Me: React.FC<{}> = () => {
                               nft.metadata = attributeBreakup[1];
                               break;
                             case "Title":
-                              const [_, ...words] = attributeBreakup;
+                              const [, ...words] = attributeBreakup;
                               nft.title = words.join(" ");
+                              break;
+                            case "Video-URL":
+                              const [, video] = attributeBreakup;
+                              console.log(video);
+                              nft.videoUrl = video;
                               break;
                             default:
                               break;
@@ -153,9 +158,9 @@ const Me: React.FC<{}> = () => {
               return (
                 <Link
                   href={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
-                  key={image}
+                  key={`${collectionId}-${seriesId}-${serialNumber}`}
                 >
-                  <div className="rounded">
+                  <div className="rounded mb-10">
                     <NFT nft={nft} />
                   </div>
                 </Link>

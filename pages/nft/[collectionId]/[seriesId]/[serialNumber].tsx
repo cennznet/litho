@@ -1,11 +1,11 @@
 import React from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import Link from "next/link";
 
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
 import getFileExtension from "../../../../utils/getFileExtension";
+import isImageOrVideo from "../../../../utils/isImageOrVideo";
 
 const NFTDetail: React.FC<{}> = () => {
   const router = useRouter();
@@ -13,6 +13,7 @@ const NFTDetail: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
   const [nft, setNFT] = React.useState<{ [index: string]: any }>();
   const [image, setImage] = React.useState<string>();
+  const [extension, setFileExtension] = React.useState<string>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -65,6 +66,10 @@ const NFTDetail: React.FC<{}> = () => {
                 break;
               case "Quantity":
                 break;
+              case "Video-URL":
+                const [, video] = attributeBreakup;
+                nft.videoUrl = video;
+                break;
               default:
                 otherAttributes.push(attributeString);
                 break;
@@ -87,6 +92,7 @@ const NFTDetail: React.FC<{}> = () => {
             imageUrl = image;
           }
         }
+        setFileExtension(fileExtension);
         setImage(imageUrl);
         setLoading(false);
       });
@@ -132,34 +138,38 @@ const NFTDetail: React.FC<{}> = () => {
                 className="border-b border-litho-black flex items-center justify-center"
                 style={{ minHeight: "500px", maxHeight: "499px" }}
               >
-                <img
-                  src={image}
-                  className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
-                  onLoad={(event) => {
-                    console.log("image loaded", event);
-                    if (event.target) {
-                      (event.target as HTMLImageElement).classList.remove(
-                        "bg-image-loading"
-                      );
-                    }
-                  }}
-                  onError={(event) => {
-                    (event.target as HTMLImageElement).src =
-                      "/litho-default.jpg";
-                    (event.target as HTMLImageElement).style.height = "499px";
-                  }}
-                  style={{ maxHeight: "499px" }}
-                />
+                {nft.videoUrl ? (
+                  <video
+                    src={nft.videoUrl}
+                    height="300"
+                    controls
+                    autoPlay
+                    width="300"
+                    loop
+                    controlsList="nodownload"
+                    className="object-contain object-center w-full bg-litho-black bg-no-repeat bg-center"
+                  />
+                ) : (
+                  <img
+                    src={image}
+                    className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
+                    onLoad={(event) => {
+                      if (event.target) {
+                        (event.target as HTMLImageElement).classList.remove(
+                          "bg-image-loading"
+                        );
+                      }
+                    }}
+                    onError={(event) => {
+                      (event.target as HTMLImageElement).src =
+                        "/litho-default.jpg";
+                      (event.target as HTMLImageElement).style.height = "499px";
+                    }}
+                    style={{ maxHeight: "499px" }}
+                  />
+                )}
               </div>
               <div className="p-5 flex items-center justify-around">
-                <Link href="https://cennznet.io/#/explorer">
-                  <a
-                    className="text-litho-blue font-medium text-lg underline"
-                    target="_blank"
-                  >
-                    View on Explorer
-                  </a>
-                </Link>
                 <Link href={nft.image}>
                   <a
                     className="text-litho-blue font-medium text-lg underline"

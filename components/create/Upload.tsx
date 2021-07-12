@@ -45,21 +45,23 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
           api,
           web3Context.account.address
         );
+
         let collectionIds = tokensInCollections
           .filter((tokens) => tokens.length > 0)
-          .map((tokens) => tokens[0].collectionId.toJSON());
+          .map((tokens) => tokens.toJSON()[0].collectionId);
 
         const collections: Array<Collection> = await Promise.all(
           collectionIds.map((collectionId) => {
             return new Promise(async (resolve) => {
               const name = await api.query.nft.collectionName(collectionId);
+              console.log(collectionId, hexToString(name.toString()));
               resolve({ id: collectionId, name: hexToString(name.toString()) });
             });
           })
         );
 
         const defaultCollection: Collection = collections.find(
-          (collection: Collection) => collection.name === "Litho (Default)"
+          (collection: Collection) => collection.name === "Litho (default)"
         );
         if (defaultCollection) {
           console.log("collection exists");
