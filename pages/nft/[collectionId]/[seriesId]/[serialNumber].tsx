@@ -59,6 +59,10 @@ const NFTDetail: React.FC<{}> = () => {
                 const [, ...description] = attributeBreakup;
                 nft.description = description.join(" ");
                 break;
+              case "File-Type":
+                const [, ...fileType] = attributeBreakup;
+                nft.fileType = fileType;
+                break;
               case "Quantity":
                 break;
               default:
@@ -72,7 +76,7 @@ const NFTDetail: React.FC<{}> = () => {
 
         let imageUrl;
         const image = nft.coverImage || nft.image;
-        const fileExtension = getFileExtension(image.name || image);
+        const fileExtension = getFileExtension(image);
 
         if (!fileExtension) {
           imageUrl = "/litho-default.jpg";
@@ -103,10 +107,18 @@ const NFTDetail: React.FC<{}> = () => {
       </Link>
       {image ? (
         <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
-          <div className="border-b border-litho-black px-10 py-5 flex justify-between items-center">
-            <Text variant="h3" component="h3">
+          <div className="border-b border-litho-black px-10 py-5 flex items-center">
+            <Text variant="h3" component="h3" className="flex-1">
               {nft.title}
             </Text>
+            {nft.fileType && (
+              <Text variant="h6" className="mr-8">
+                File Type:{" "}
+                <span className="text-litho-black text-opacity-50">
+                  {nft.fileType}
+                </span>
+              </Text>
+            )}
             <Text variant="h6">
               Copies:{" "}
               <span className="text-litho-black text-opacity-50">
@@ -117,16 +129,26 @@ const NFTDetail: React.FC<{}> = () => {
           <div className="flex">
             <div className="w-2/3 border-r border-litho-black">
               <div
-                className="relative border-b border-litho-black"
-                style={{ minHeight: "500px" }}
+                className="border-b border-litho-black flex items-center justify-center"
+                style={{ minHeight: "500px", maxHeight: "499px" }}
               >
-                <Image
-                  loader={({ src }) => src}
+                <img
                   src={image}
-                  layout="fill"
-                  className="object-contain object-center"
-                  objectFit="contain"
-                  objectPosition="center"
+                  className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
+                  onLoad={(event) => {
+                    console.log("image loaded", event);
+                    if (event.target) {
+                      (event.target as HTMLImageElement).classList.remove(
+                        "bg-image-loading"
+                      );
+                    }
+                  }}
+                  onError={(event) => {
+                    (event.target as HTMLImageElement).src =
+                      "/litho-default.jpg";
+                    (event.target as HTMLImageElement).style.height = "499px";
+                  }}
+                  style={{ maxHeight: "499px" }}
                 />
               </div>
               <div className="p-5 flex items-center justify-around">

@@ -1,9 +1,11 @@
 const getFileExtension = (fileName) => {
-  const lastDotInName = fileName.replace('https://ipfs.io/').lastIndexOf('.');
+  const name = fileName.replace('https://ipfs.io/');
+  const lastDotInName = name.lastIndexOf('.');
+
   if(lastDotInName < 0) {
     return null;
   }
-  const fileExtension = fileName.substr(lastDotInName + 1);
+  const fileExtension = name.substr(lastDotInName + 1);
   return fileExtension;
 }
 

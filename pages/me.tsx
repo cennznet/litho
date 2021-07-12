@@ -57,7 +57,7 @@ const Me: React.FC<{}> = () => {
                         serialNumber: 0,
                         owner,
                         attributes: attributes,
-                        copies: count + 1,
+                        copies: count,
                       };
                       attributes.forEach(({ Text, Url }) => {
                         const attributeString = Text || Url;

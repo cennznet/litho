@@ -366,6 +366,8 @@ const Create: React.FC<{}> = () => {
   }, [state.currentTab]);
 
   const mint = async () => {
+    console.log(state.nft.copies);
+    debugger;
     setModalState("mint");
     const client = new NFTStorage({
       token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
@@ -399,7 +401,6 @@ const Create: React.FC<{}> = () => {
           },
         };
       } else {
-        const blob = new Blob();
         storeOnIPFS = {
           name: state.nft.title,
           description: state.nft.description,
@@ -436,6 +437,7 @@ const Create: React.FC<{}> = () => {
       { Text: `Title ${state.nft.title}` },
       { Text: `Description ${state.nft.description}` },
       { Text: `Quantity ${state.nft.copies}` },
+      { Text: `File-Type ${getFileExtension(state.nft.image.name)}` },
     ];
 
     let collectionId;
