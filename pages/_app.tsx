@@ -70,19 +70,14 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           </Link>
         </div>
         <div className="flex items-center lg:justify-end lg:w-9/12 space-x-4">
-          <Link href="/instagram">
-            <a className="font-semibold" target="_blank">
-              Instagram
-            </a>
-          </Link>
-          <Link href="/twitter">
+          <Link href="https://twitter.com/CENNZnet">
             <a className="font-semibold" target="_blank">
               Twitter
             </a>
           </Link>
-          <Link href="/facebook">
+          <Link href="https://discord.gg/hsRbe4gb">
             <a className="font-semibold" target="_blank">
-              Facebook
+              Discord
             </a>
           </Link>
         </div>
