@@ -14,7 +14,7 @@ const ConnectWalletModal: React.FC<Props> = ({ closeModal, connectWallet }) => {
       onClose={closeModal}
       styles={{
         modalBody: "w-2/6 absolute top-20 right-20",
-        modalContainer: "-z-10",
+        modalContainer: "z-10",
       }}
     >
       <Text component="h4" variant="h4" color="litho-blue">

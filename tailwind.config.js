@@ -36,6 +36,8 @@ module.exports = {
       minHeight: {
         customScreen2: "calc(100vh - 354px)",
         create: "900px",
+        "litho-app": "648px",
+        "litho-body": "600px",
       },
       zIndex: {
         "-10": "-10",

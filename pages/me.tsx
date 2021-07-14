@@ -102,7 +102,7 @@ const Me: React.FC<{}> = () => {
   }, [web3Context.account]);
 
   return (
-    <div className="border border-litho-black mt-7 mb-6 flex flex-col">
+    <div className="border border-litho-black mb-6 flex flex-col min-h-litho-app">
       <Text variant="h3" component="h3" className="text-center py-4">
         My NFTs
       </Text>
