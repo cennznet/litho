@@ -41,7 +41,10 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           <ConnectWallet />
         </div>
       </header>
-      <main className="w-full bg-litho-cream py-20 px-6 lg:py-6 lg:px-20 bg-noise min-h-litho-app">
+      <main
+        className="w-full bg-litho-cream p-6 lg:px-20 bg-noise"
+        style={{ minHeight: "calc(100% - 160px)" }}
+      >
         <Component {...pageProps} />
         {showViewOnDesktop && (
           <Modal
@@ -55,7 +58,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           </Modal>
         )}
       </main>
-      <footer className=" w-screen lg:w-full -mx-6 lg:mx-0 -my-20 mt-4 lg:my-0 lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
+      <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
         <div className="flex flex-col lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
           <Link href="/">
             <a className="mb-4 lg:mb-0">

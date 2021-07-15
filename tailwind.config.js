@@ -37,7 +37,7 @@ module.exports = {
         customScreen2: "calc(100vh - 354px)",
         create: "900px",
         "litho-app": "648px",
-        "litho-body": "600px",
+        "litho-body": "598px",
       },
       zIndex: {
         "-10": "-10",
