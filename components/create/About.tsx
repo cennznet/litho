@@ -118,7 +118,7 @@ const About: React.FC<{
         name="title"
         id="title"
         defaultValue={nft.title}
-        placeholder="Sheep NFT"
+        placeholder="Enter a name for your NFT"
       />
 
       <label>
@@ -126,7 +126,7 @@ const About: React.FC<{
       </label>
       <textarea
         name="description"
-        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud."
+        placeholder="Enter a short description of your NFT to accompany your marketplace listing"
         className="border border-litho-black p-4 mb-8 text-base"
         rows={5}
         defaultValue={nft.description}
@@ -148,7 +148,7 @@ const About: React.FC<{
         className="flex item-center"
         onClick={() => setShowAdvanced((val) => !val)}
       >
-        <Text variant="h5">Advanced</Text>
+        <Text variant="h5">Advanced (Optional)</Text>
         <span className="ml-4 relative top-1">
           <Image
             src="/arrow.svg"
@@ -166,7 +166,7 @@ const About: React.FC<{
         } flex flex-col overflow-hidden`}
       >
         <label>
-          <Text variant="h6">Royalty in % (Optional)</Text>
+          <Text variant="h6">Royalty in %</Text>
         </label>
         <Input
           name="royalty"
@@ -177,7 +177,10 @@ const About: React.FC<{
           min={0}
         />
         <label>
-          <Text variant="h6">Attributes (Optional)</Text>
+          <Text variant="h6">
+            Attributes (function as category, theme or descriptive tags to
+            organise your NFTs)
+          </Text>
         </label>
 
         {renderAttributeInputs(numOfAttributes)}
@@ -195,7 +198,7 @@ const About: React.FC<{
           </Text>
         </button>
         <Text variant="caption" className="text-opacity-60">
-          You can add maximum 16 attributes
+          You can add a maximum of 16 attributes
         </Text>
       </div>
 

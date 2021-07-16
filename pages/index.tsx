@@ -98,7 +98,7 @@ const Home: React.FC<{}> = () => {
           styles={{ modalBody: "w-11/12", modalContainer: "z-20" }}
         >
           <Text variant="h4" color="litho-blue">
-            Minting is only available on Desktop
+            Open in Chrome on a desktop to mint your NFT
           </Text>
         </Modal>
       )}

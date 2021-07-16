@@ -121,7 +121,7 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
       <Text variant="h6">Upload Assets</Text>
       <label
         htmlFor="file"
-        className="border border-litho-black p-4 text-base bg-white text-opacity-25 text-litho-black"
+        className="border border-litho-black p-4 text-base bg-white text-opacity-25 text-litho-black cursor-pointer overflow-hidden"
       >
         <Text variant="h6">
           {fileName
@@ -131,8 +131,13 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
             : "Choose from folder"}
         </Text>
       </label>
-      <Text variant="caption" className="text-opacity-60 mb-10">
-        Support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, quicktime,
+      <Text
+        variant="caption"
+        className={`text-opacity-60 mb-10 ${
+          fileName || nft.image ? "invisible" : "visible"
+        }`}
+      >
+        We support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, quicktime,
         webm, glb, mp3, oga, wav, xwav, flac, pdf, html (zip archive), md
       </Text>
       <input

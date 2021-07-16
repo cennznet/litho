@@ -237,7 +237,7 @@ const Create: React.FC<{}> = () => {
     success: {
       message: "Congratulations!",
       subText:
-        "NFT was successfully minted and should be displayed in your wallet shortly.",
+        "Your NFT was successfully minted and should be displayed in your wallet shortly.",
       buttons: [
         {
           text: "View My NFT",
@@ -250,7 +250,7 @@ const Create: React.FC<{}> = () => {
     },
     error: {
       message: "Oops... something went wrong",
-      subText: " Your NFT failed to be minted. Please try again.",
+      subText: " Your NFT failed to mint. Please try again.",
       buttons: [
         {
           text: "Cancel",
@@ -596,14 +596,14 @@ const Create: React.FC<{}> = () => {
         </Text>
       </div>
       <div className="bg-grid p-12 flex-1 overflow-auto relative min-h-create">
-        <div className="absolute top-28 transform -rotate-6">
+        <div className="absolute top-28 transform -rotate-6 hidden lg:block">
           <Image src="/create-1.png" height="106" width="65" alt="" />
         </div>
-        <div className="absolute bottom-28 left-32">
+        <div className="absolute bottom-28 left-32 hidden lg:block">
           <Image src="/create-2.png" height="85" width="80" alt="" />
         </div>
 
-        <div className="absolute right-6 top-64 rotate-45 transform">
+        <div className="absolute right-6 top-64 rotate-45 transform hidden lg:block">
           <Image src="/create-3.png" height="17" width="150" alt="" />
         </div>
 
