@@ -8,9 +8,13 @@ import copyTextToClipboard from "../../utils/copyTextToClipboard";
 
 interface Props {
   closeModal: () => void;
+  setShowToast: (val: boolean) => void;
 }
 
-const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
+const ConnectedWalletModal: React.FC<Props> = ({
+  closeModal,
+  setShowToast,
+}) => {
   const web3Context = React.useContext(Web3Context);
   const tokenLogoURLs = {
     CENNZ: "/cennznet-logo.svg",
@@ -32,9 +36,12 @@ const ConnectedWalletModal: React.FC<Props> = ({ closeModal }) => {
       </Text>
       <Text
         variant="body1"
-        className="mt-4 flex justify-between items-center"
+        className="mt-4 flex justify-between items-center cursor-pointer"
         component="div"
-        onClick={() => copyTextToClipboard(web3Context.account.address)}
+        onClick={() => {
+          copyTextToClipboard(web3Context.account.address);
+          setShowToast(true);
+        }}
       >
         <span>{web3Context.account.address.substr(0, 32)}...</span>
         <img src="/copy.svg" alt="Copy address" />

@@ -10,6 +10,7 @@ const ConnectWallet: React.FC<{}> = () => {
   const [isWalletConnected, setIsWalletConnected] = React.useState(false);
   const [showWallet, setShowWallet] = React.useState(false);
   const [showConnectedWallet, setShowConnectedWallet] = React.useState(false);
+  const [showToast, setShowToast] = React.useState(false);
 
   React.useEffect(() => {
     if (web3Context.account) {
@@ -18,6 +19,14 @@ const ConnectWallet: React.FC<{}> = () => {
       setIsWalletConnected(false);
     }
   }, [web3Context.account]);
+
+  React.useEffect(() => {
+    if (showToast) {
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+    }
+  }, [showToast]);
 
   const buttonClickHandler: React.EventHandler<React.SyntheticEvent> = (
     event: React.SyntheticEvent
@@ -51,7 +60,16 @@ const ConnectWallet: React.FC<{}> = () => {
       {showConnectedWallet && (
         <ConnectedWalletModal
           closeModal={() => setShowConnectedWallet(false)}
+          setShowToast={setShowToast}
         />
+      )}
+      {showToast && (
+        <div className="bg-litho-black fixed top-4 inset-x-1/2 h-12 flex items-center w-80 rounded shadow-md px-4 z-20">
+          <img src="/tick.svg" className="mr-3" />
+          <Text variant="body2" color="white">
+            Address Copied
+          </Text>
+        </div>
       )}
     </>
   );
