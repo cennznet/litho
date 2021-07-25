@@ -59,28 +59,38 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         )}
       </main>
       <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
-        <div className="flex flex-col lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
+        <div className="flex flex-wrap lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
           <Link href="/">
-            <a className="mb-4 lg:mb-0">
+            <a className="mb-4 lg:mb-0 w-full lg:w-auto">
               <img src="/logo.svg" alt="Litho" />
             </a>
           </Link>
 
+          <Link href="/about">
+            <a className="lg:ml-12 flex items-center">
+              <Text variant="subtitle1">About</Text>
+            </a>
+          </Link>
+          <Link href="/community-guidelines">
+            <a className="ml-4 mr-4 lg:ml-12 lg:mr-0 flex items-center">
+              <Text variant="subtitle1">Community Guidelines</Text>
+            </a>
+          </Link>
           <Link href="/privacy-policy">
-            <a className="font-semibold lg:ml-12 flex items-center">
-              Privacy Policy
+            <a className="lg:ml-12 flex items-center">
+              <Text variant="subtitle1">Privacy Policy</Text>
             </a>
           </Link>
         </div>
-        <div className="flex items-center lg:justify-end lg:w-9/12 space-x-4">
+        <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
           <Link href="https://twitter.com/CENNZnet">
-            <a className="font-semibold" target="_blank">
-              Twitter
+            <a target="_blank">
+              <Text variant="subtitle1">Twitter</Text>
             </a>
           </Link>
           <Link href="https://discord.gg/hsRbe4gb">
-            <a className="font-semibold" target="_blank">
-              Discord
+            <a target="_blank">
+              <Text variant="subtitle1">Discord</Text>
             </a>
           </Link>
         </div>

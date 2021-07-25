@@ -16,14 +16,13 @@ const Home: React.FC<{}> = () => {
         </Text>
       </div>
       <div className="w-1/3 p-6 xl:p-10 hidden lg:block">
-        <Text variant="h3">Litho</Text>{" "}
-        <span className="text-5xl font-normal" style={{ lineHeight: "60px" }}>
-          discovers, collects and sells extraordinary NFTs
-        </span>
+        <Text variant="h2">
+          Launch into the Lithoverse. Your place to create and exchange NFTs
+        </Text>{" "}
       </div>
       <div className="px-6 py-8 border border-litho-black mb-4 lg:hidden">
         <Text variant="h4">
-          Litho discovers, collects and sells extraordinary NFTs
+          Launch into the Lithoverse. Your place to create and exchange NFTs
         </Text>{" "}
       </div>
       <div className="w-full lg:w-1/3 border lg:border-0 lg:border-l lg:border-r border-litho-black flex flex-col relative mb-4 lg:mb-0">

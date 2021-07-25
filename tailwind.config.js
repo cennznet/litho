@@ -13,7 +13,7 @@ module.exports = {
         black: "#191B1D",
         cream: "#FBF9F3",
         red: "#D50031",
-        blue: "#1F4C7A",
+        blue: "#1B019A",
         mustard: "#F1AA3C",
         pink: "#F5BDC2",
         wallet: "rgba(0, 0, 0, 0.12)",
@@ -22,7 +22,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: ["serenity", "sans-serif"],
+      sans: ["quasimoda", "sans-serif"],
     },
     extend: {
       backgroundImage: () => ({

@@ -18,24 +18,32 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
 }) => {
   const getVariantTypography = (variant: string): string => {
     switch (variant) {
+      case "h1":
+        return "font-normal";
+      case "h2":
+        return "font-bold text-5xl";
       case "h3":
-        return "font-semibold text-5xl";
+        return "font-semibold text-4xl";
       case "h4":
-        return "font-bold";
-      case "h5":
         return "font-bold text-2xl";
+      case "h5":
+        return "font-bold text-lg";
       case "h6":
-        return "font-medium text-xl";
+        return "font-semibold text-lg";
       case "button":
-        return "font-semibold text-base leading-none";
+        return "font-bold text-sm leading-none";
       case "body1":
-        return "font-light text-base leading-none";
+        return "font-normal text-base leading-6";
       case "body2":
-        return "font-light text-base";
+        return "font-normal text-sm";
       case "subtitle1":
-        return "font-semibold text-base leading-6";
+        return "font-bold text-base leading-6";
+      case "subtitle2":
+        return "font-semibold text-sm";
       case "caption":
         return "font-normal text-xs";
+      case "overline":
+        return "font-semibold text-xs leading-4";
       default:
         return "";
     }
@@ -45,37 +53,37 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
     switch (variant) {
       case "h1":
         return {
-          lineHeight: "120px",
+          fontSize: "52px",
+          lineHeight: "65px",
         };
       case "h2":
         return {
-          lineHeight: "75px",
+          lineHeight: "60px",
           letterSpacing: "-0.5px",
         };
       case "h3":
         return {
-          lineHeight: "60px",
+          lineHeight: "45px",
         };
       case "h4":
         return {
-          lineHeight: "42.5px",
-          fontSize: "34px",
+          lineHeight: "30px",
+          letterSpacing: "1px",
         };
       case "h5":
         return {
-          lineHeight: "30px",
-          letterSpacing: "0.01em",
+          lineHeight: "22.5px",
+          letterSpacing: "0.05em",
         };
       case "h6":
         return {
-          lineHeight: "25px",
-          letterSpacing: "0.02em",
+          lineHeight: "21.6px",
+          letterSpacing: "0.01em",
         };
       case "body2":
       case "subtitle2":
         return {
           lineHeight: "21px",
-          fontSize: "14px",
         };
       case "body1":
         return {
@@ -83,12 +91,16 @@ const Text: React.FC<React.PropsWithChildren<TextProps>> = ({
         };
       case "button":
         return {
+          lineHeight: "14px",
           letterSpacing: "0.05em",
         };
       case "caption":
         return {
           lineHeight: "18px",
-          letterSpacing: "0.04em",
+        };
+      case "overline":
+        return {
+          letterSpacing: "1.5px",
         };
       default:
         return {};
