@@ -527,10 +527,10 @@ const Create: React.FC<{}> = () => {
       <Text variant="h3" component="h3" className="text-center py-4">
         Create a single NFT
       </Text>
-      <div className="border-t border-b border-black flex items-center">
+      <div className="border-t border-b border-black flex items-center h-14">
         <Text
           variant="h5"
-          component="div"
+          component="button"
           className={`w-1/3 h-full p-2 text-center ${
             state.currentTab === 1 ? "bg-litho-black" : "bg-litho-cream"
           }`}
@@ -552,7 +552,7 @@ const Create: React.FC<{}> = () => {
         </Text>
         <Text
           variant="h5"
-          component="div"
+          component="button"
           className={`w-1/3 h-full p-2 text-center border-l border-r border-litho-black ${
             state.currentTab === 2 ? "bg-litho-black" : "bg-litho-cream"
           }`}
@@ -574,7 +574,7 @@ const Create: React.FC<{}> = () => {
         </Text>
         <Text
           variant="h5"
-          component="div"
+          component="button"
           className={`w-1/3 h-full p-2 text-center ${
             state.currentTab === 3 ? "bg-litho-black" : "bg-litho-cream"
           }`}

@@ -110,7 +110,7 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
 
   return (
     <form
-      className="flex flex-col w-3/5 m-auto text-xl"
+      className="flex flex-col lg:w-3/5 m-auto text-xl"
       onSubmit={submitHandler}
     >
       {error && (

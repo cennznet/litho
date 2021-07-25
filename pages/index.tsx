@@ -4,75 +4,86 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
+import DeviceContext from "../components/DeviceContext";
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
+  const deviceContext = React.useContext(DeviceContext);
+
   return (
-    <div className="bg-litho-cream flex flex-col lg:flex-row h-full min-h-litho-body">
-      <div className="bg-litho-mustard px-3 py-2 flex justify-center mb-4 item-start lg:hidden">
+    <>
+      <div
+        className={`bg-litho-mustard px-3 py-2 justify-center mb-4 item-start ${
+          !deviceContext.isChrome || deviceContext.isMobile ? "flex" : "hidden"
+        }`}
+      >
         <img src="/info.svg" alt="" className="h-5 mr-2" />
         <Text variant="body2" className="flex-1">
-          Please view on desktop for a better user experience
+          Open in Chrome on a desktop to mint your NFT
         </Text>
       </div>
-      <div
-        className="px-6 py-8 mb-4 lg:mb-0 border-2 border-litho-black lg:w-1/3 lg:p-6 xl:p-10 lg:bg-home-1 bg-center bg-no-repeat flex items-center"
-        style={{ backgroundSize: "auto 105%", backgroundPositionX: "90%" }}
-      >
-        <Text variant="h2" className="hidden lg:block">
-          Launch into the Lithoverse. Your place to create and exchange NFTs
-        </Text>{" "}
-        <Text variant="h4" className="lg:hidden">
-          Launch into the Lithoverse. Your place to create and exchange NFTs
-        </Text>{" "}
-      </div>
-      <div className="w-full lg:w-1/3 border-2 border-litho-black flex flex-col mb-4 lg:mb-0 lg:mx-6 bg-home-2 items-center">
-        <img
-          src="/start-minting.png"
-          className="object-center object-contain pt-16"
-        />
+      <div className="bg-litho-cream flex flex-col lg:flex-row h-full min-h-litho-body">
+        <div
+          className="px-6 py-8 mb-4 lg:mb-0 border-2 border-litho-black lg:w-1/3 lg:p-6 xl:p-10 lg:bg-home-1 bg-center bg-no-repeat flex items-center"
+          style={{ backgroundSize: "auto 105%", backgroundPositionX: "90%" }}
+        >
+          <Text variant="h2" className="hidden lg:block">
+            Launch into the Lithoverse. Your place to create and exchange NFTs
+          </Text>{" "}
+          <Text variant="h4" className="lg:hidden">
+            Launch into the Lithoverse. Your place to create and exchange NFTs
+          </Text>{" "}
+        </div>
+        <div className="w-full lg:w-1/3 border-2 border-litho-black flex flex-col mb-4 lg:mb-0 lg:mx-6 bg-home-2 items-center">
+          <img
+            src="/start-minting.png"
+            className="object-center object-contain pt-16"
+          />
 
-        <div className="flex-1 p-6 pt-0 flex flex-col items-center justify-end w-full">
-          <Text variant="h4" className="mb-8 bg-litho-cream p-2">
-            CREATE AN NFT
-          </Text>
-          <Link href="/create">
-            <a className="bg-litho-blue w-40 h-12 flex items-center justify-center hidden lg:flex">
-              <Text variant="button" color="white">
-                Start Minting
-              </Text>
-            </a>
-          </Link>
-          <button
-            className="bg-litho-blue w-40 h-12 flex items-center justify-center lg:hidden"
-            onClick={() => setShowViewOnDesktop(true)}
-          >
-            <Text variant="button" color="white">
-              Start Minting
+          <div className="flex-1 p-6 pt-0 flex flex-col items-center justify-end w-full">
+            <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+              CREATE AN NFT
             </Text>
-          </button>
+            {deviceContext.isMobile || !deviceContext.isChrome ? (
+              <button
+                className="bg-litho-blue w-40 h-12 flex items-center justify-center"
+                onClick={() => setShowViewOnDesktop(true)}
+              >
+                <Text variant="button" color="white">
+                  Start Minting
+                </Text>
+              </button>
+            ) : (
+              <Link href="/create">
+                <a className="bg-litho-blue w-40 h-12 flex items-center justify-center flex">
+                  <Text variant="button" color="white">
+                    Start Minting
+                  </Text>
+                </a>
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="w-full lg:w-1/3 flex flex-col border-2 border-litho-black">
-        <img
-          src="/marketplace.png"
-          className="flex-1 object-center object-cover"
-        />
+        <div className="w-full lg:w-1/3 flex flex-col border-2 border-litho-black">
+          <img
+            src="/marketplace.png"
+            className="flex-1 object-center object-cover"
+          />
 
-        <div className="flex-1 p-6 pt-0 pb-10 flex flex-col items-center justify-end w-full">
-          <Text variant="h4" className="mb-8 bg-litho-cream p-2">
-            MARKETPLACE
-          </Text>
-          <Text
-            variant="button"
-            color="litho-blue"
-            className="flex items-center text-opacity-60 mb-4"
-          >
-            Coming Soon
-          </Text>
+          <div className="flex-1 p-6 pt-0 pb-10 flex flex-col items-center justify-end w-full">
+            <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+              MARKETPLACE
+            </Text>
+            <Text
+              variant="button"
+              color="litho-blue"
+              className="flex items-center text-opacity-60 mb-4"
+            >
+              Coming Soon
+            </Text>
+          </div>
         </div>
-      </div>
-      {/* <div className="w-full flex items-center justify-center mb-16">
+        {/* <div className="w-full flex items-center justify-center mb-16">
           <div className="w-1/2 flex justify-center">
             <Image src="/placeholder.png" height={400} width={400} />
           </div>
@@ -91,18 +102,19 @@ const Home: React.FC<{}> = () => {
             </div>
           </div>
         </div> */}
-      {showViewOnDesktop && (
-        <Modal
-          onClose={() => setShowViewOnDesktop(false)}
-          disableOutsideClick={true}
-          styles={{ modalBody: "w-11/12", modalContainer: "z-20" }}
-        >
-          <Text variant="h4" color="litho-blue">
-            Open in Chrome on a desktop to mint your NFT
-          </Text>
-        </Modal>
-      )}
-    </div>
+        {showViewOnDesktop && (
+          <Modal
+            onClose={() => setShowViewOnDesktop(false)}
+            disableOutsideClick={true}
+            styles={{ modalBody: "w-11/12 lg:w-3/12", modalContainer: "z-20" }}
+          >
+            <Text variant="h4" color="litho-blue">
+              Open in Chrome on a desktop to mint your NFT
+            </Text>
+          </Modal>
+        )}
+      </div>
+    </>
   );
 };
 

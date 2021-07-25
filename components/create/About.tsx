@@ -102,7 +102,7 @@ const About: React.FC<{
 
   return (
     <form
-      className="flex flex-col w-3/5 m-auto"
+      className="flex flex-col lg:w-3/5 m-auto"
       onSubmit={submitAboutNFT}
       onFocus={() => setError(null)}
     >

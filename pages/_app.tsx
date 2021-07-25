@@ -8,94 +8,109 @@ import ConnectWallet from "../components/ConnectWallet";
 import "../styles/globals.scss";
 import Text from "../components/Text";
 import Modal from "../components/Modal";
+import DeviceContext from "../components/DeviceContext";
 
 const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
+const Device = dynamic(() => import("../components/DeviceContextProvider"), {
+  ssr: false,
+});
+
+const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
+  ({ setShowViewOnDesktop }) => {
+    const deviceContext = React.useContext(DeviceContext);
+    return deviceContext.isMobile || !deviceContext.isChrome ? (
+      <button onClick={() => setShowViewOnDesktop(true)}>
+        <Text variant="h6">Create</Text>
+      </button>
+    ) : (
+      <Link href="/create">
+        <a>
+          <Text variant="h6">Create</Text>
+        </a>
+      </Link>
+    );
+  };
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
 
   return (
-    <Web3>
-      <Head>
-        <title>Litho</title>
-        <link rel="stylesheet" href="https://use.typekit.net/txj7ase.css" />
-      </Head>
-      <header className="h-20 py-5 flex items-center w-full justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
-        <Link href="/">
-          <a>
-            <img src="/logo.svg" alt="Litho" />
-          </a>
-        </Link>
-        <div className="h-12 flex items-center">
-          <Link href="/create">
-            <a className="hidden lg:block">
-              <Text variant="h6">Create</Text>
-            </a>
-          </Link>
-          <button
-            className="lg:hidden"
-            onClick={() => setShowViewOnDesktop(true)}
-          >
-            <Text variant="h6">Create</Text>
-          </button>
-          <ConnectWallet />
-        </div>
-      </header>
-      <main
-        className="w-full bg-litho-cream p-6 lg:px-20 bg-noise"
-        style={{ minHeight: "calc(100% - 160px)" }}
-      >
-        <Component {...pageProps} />
-        {showViewOnDesktop && (
-          <Modal
-            onClose={() => setShowViewOnDesktop(false)}
-            disableOutsideClick={true}
-            styles={{ modalBody: "w-11/12", modalContainer: "z-20" }}
-          >
-            <Text variant="h4" color="litho-blue">
-              Open in Chrome on a desktop to mint your NFT
-            </Text>
-          </Modal>
-        )}
-      </main>
-      <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
-        <div className="flex flex-wrap lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
+    <Device>
+      <Web3>
+        <Head>
+          <title>Litho</title>
+          <link rel="stylesheet" href="https://use.typekit.net/txj7ase.css" />
+        </Head>
+        <header className="h-20 py-5 flex items-center w-full justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
           <Link href="/">
-            <a className="mb-4 lg:mb-0 w-full lg:w-auto">
+            <a>
               <img src="/logo.svg" alt="Litho" />
             </a>
           </Link>
+          <div className="h-12 flex items-center">
+            <CreateButton setShowViewOnDesktop={setShowViewOnDesktop} />
+            <ConnectWallet />
+          </div>
+        </header>
+        <main
+          className="w-full bg-litho-cream p-6 lg:px-20 bg-noise"
+          style={{ minHeight: "calc(100% - 160px)" }}
+        >
+          <Component {...pageProps} />
+          {showViewOnDesktop && (
+            <Modal
+              onClose={() => setShowViewOnDesktop(false)}
+              disableOutsideClick={true}
+              styles={{
+                modalBody: "w-11/12 lg:w-3/12",
+                modalContainer: "z-20",
+              }}
+            >
+              <Text variant="h4" color="litho-blue">
+                Open in Chrome on a desktop to mint your NFT
+              </Text>
+            </Modal>
+          )}
+        </main>
+        <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
+          <div className="flex flex-wrap lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
+            <Link href="/">
+              <a className="mb-4 lg:mb-0 w-full lg:w-auto">
+                <img src="/logo.svg" alt="Litho" />
+              </a>
+            </Link>
 
-          <Link href="/about">
-            <a className="lg:ml-12 flex items-center">
-              <Text variant="subtitle1">About</Text>
-            </a>
-          </Link>
-          <Link href="/community-guidelines">
-            <a className="ml-4 mr-4 lg:ml-12 lg:mr-0 flex items-center">
-              <Text variant="subtitle1">Community Guidelines</Text>
-            </a>
-          </Link>
-          <Link href="/privacy-policy">
-            <a className="lg:ml-12 flex items-center">
-              <Text variant="subtitle1">Privacy Policy</Text>
-            </a>
-          </Link>
-        </div>
-        <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
-          <Link href="https://twitter.com/CENNZnet">
-            <a target="_blank">
-              <Text variant="subtitle1">Twitter</Text>
-            </a>
-          </Link>
-          <Link href="https://discord.gg/hsRbe4gb">
-            <a target="_blank">
-              <Text variant="subtitle1">Discord</Text>
-            </a>
-          </Link>
-        </div>
-      </footer>
-    </Web3>
+            <Link href="/about">
+              <a className="lg:ml-12 flex items-center">
+                <Text variant="subtitle1">About</Text>
+              </a>
+            </Link>
+            <Link href="/community-guidelines">
+              <a className="ml-4 mr-4 lg:ml-12 lg:mr-0 flex items-center">
+                <Text variant="subtitle1">Community Guidelines</Text>
+              </a>
+            </Link>
+            <Link href="/privacy-policy">
+              <a className="lg:ml-12 flex items-center">
+                <Text variant="subtitle1">Privacy Policy</Text>
+              </a>
+            </Link>
+          </div>
+          <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
+            <Link href="https://twitter.com/CENNZnet">
+              <a target="_blank">
+                <Text variant="subtitle1">Twitter</Text>
+              </a>
+            </Link>
+            <Link href="https://discord.gg/hsRbe4gb">
+              <a target="_blank">
+                <Text variant="subtitle1">Discord</Text>
+              </a>
+            </Link>
+          </div>
+        </footer>
+      </Web3>
+    </Device>
   );
 };
 

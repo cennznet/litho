@@ -30,7 +30,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
     transactionFee > web3Context.account.balances.CPAY.balance;
 
   return (
-    <div className="flex flex-col w-3/5 m-auto">
+    <div className="flex flex-col lg:w-3/5 m-auto">
       <div className="flex flex-col items-center">
         <NFT nft={nft} />
         {transactionFee && (
