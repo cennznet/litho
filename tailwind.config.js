@@ -29,6 +29,8 @@ module.exports = {
         noise: "url('/Noise.png')",
         grid: "url('/grid.png')",
         "image-loading": "url('/image-loading.jpg')",
+        "home-1": "url('/bg-home-1.png')",
+        "home-2": "url('/bg-home-2.png')",
       }),
       height: {
         customScreen: "calc(100vh - 274px)",

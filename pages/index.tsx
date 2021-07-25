@@ -8,32 +8,33 @@ import Modal from "../components/Modal";
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   return (
-    <div className="lg:border border-litho-black bg-litho-cream flex flex-col lg:flex-row h-full min-h-litho-body">
+    <div className="bg-litho-cream flex flex-col lg:flex-row h-full min-h-litho-body">
       <div className="bg-litho-mustard px-3 py-2 flex justify-center mb-4 item-start lg:hidden">
         <img src="/info.svg" alt="" className="h-5 mr-2" />
         <Text variant="body2" className="flex-1">
           Please view on desktop for a better user experience
         </Text>
       </div>
-      <div className="w-1/3 p-6 xl:p-10 hidden lg:block">
-        <Text variant="h2">
+      <div
+        className="px-6 py-8 mb-4 lg:mb-0 border-2 border-litho-black lg:w-1/3 lg:p-6 xl:p-10 lg:bg-home-1 bg-center bg-no-repeat flex items-center"
+        style={{ backgroundSize: "auto 105%", backgroundPositionX: "90%" }}
+      >
+        <Text variant="h2" className="hidden lg:block">
+          Launch into the Lithoverse. Your place to create and exchange NFTs
+        </Text>{" "}
+        <Text variant="h4" className="lg:hidden">
           Launch into the Lithoverse. Your place to create and exchange NFTs
         </Text>{" "}
       </div>
-      <div className="px-6 py-8 border border-litho-black mb-4 lg:hidden">
-        <Text variant="h4">
-          Launch into the Lithoverse. Your place to create and exchange NFTs
-        </Text>{" "}
-      </div>
-      <div className="w-full lg:w-1/3 border lg:border-0 lg:border-l lg:border-r border-litho-black flex flex-col relative mb-4 lg:mb-0">
+      <div className="w-full lg:w-1/3 border-2 border-litho-black flex flex-col mb-4 lg:mb-0 lg:mx-6 bg-home-2 items-center">
         <img
           src="/start-minting.png"
-          className="flex-1 object-center object-cover w-full"
+          className="object-center object-contain pt-16"
         />
 
-        <div className="p-6 pb-10 flex flex-col">
-          <Text variant="h5" className="mb-4">
-            Create an NFT
+        <div className="flex-1 p-6 pt-0 flex flex-col items-center justify-end w-full">
+          <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+            CREATE AN NFT
           </Text>
           <Link href="/create">
             <a className="bg-litho-blue w-40 h-12 flex items-center justify-center hidden lg:flex">
@@ -52,15 +53,15 @@ const Home: React.FC<{}> = () => {
           </button>
         </div>
       </div>
-      <div className="w-full lg:w-1/3 flex flex-col relative border lg:border-0 border-litho-black">
+      <div className="w-full lg:w-1/3 flex flex-col border-2 border-litho-black">
         <img
-          src="/placeholder.png"
+          src="/marketplace.png"
           className="flex-1 object-center object-cover"
         />
 
-        <div className="p-6 pb-10 flex flex-col">
-          <Text variant="h5" className="mb-8">
-            Marketplace
+        <div className="flex-1 p-6 pt-0 pb-10 flex flex-col items-center justify-end w-full">
+          <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+            MARKETPLACE
           </Text>
           <Text
             variant="button"
