@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import Text from "../Text";
 import NFT from "../NFT";
@@ -15,8 +14,6 @@ interface Props {
 const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
   const [nftMinted, setNFTMinted] = React.useState(false);
   const web3Context = React.useContext(Web3Context);
-
-  const router = useRouter();
 
   const mintNFT = async () => {
     try {
