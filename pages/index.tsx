@@ -77,9 +77,9 @@ const Home: React.FC<{}> = () => {
             <Text
               variant="button"
               color="litho-blue"
-              className="flex items-center text-opacity-60 mb-4"
+              className="flex items-center mb-4"
             >
-              Coming Soon
+              Coming Soon...
             </Text>
           </div>
         </div>
