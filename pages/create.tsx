@@ -218,29 +218,29 @@ const Create: React.FC<{}> = () => {
 
   const modalStates = {
     mint: {
-      message: "Uploading assets to IPFS",
+      message: "UPLOADING ASSETS TO IPFS",
       subText: "Please wait while the assets are uploaded",
       onClose: () => setModalState(null),
     },
     signTransaction: {
-      message: "Sign this transaction in your wallet",
+      message: "SIGN THIS TRANSACTION IN YOUR WALLET",
       subText:
         "Confirm the transaction in your wallet to continue, doing this will sign your wallet as the original creator of the NFT",
       onClose: () => setModalState(null),
     },
     txInProgress: {
-      message: "Please stay on this page",
+      message: "PLEASE STAY ON THIS PAGE",
       subText:
         "Your asset is being minted as an NFT on CENNZnet. Please stay on the page until it has been successfully minted.",
       onClose: () => setModalState(null),
     },
     success: {
-      message: "Congratulations!",
+      message: "CONGRATULATIONS!",
       subText:
         "Your NFT was successfully minted and should be displayed in your wallet shortly.",
       buttons: [
         {
-          text: "View My NFT",
+          text: "VIEW MY NFT",
           isPrimary: true,
           type: "link",
           link: "/me",
@@ -249,17 +249,17 @@ const Create: React.FC<{}> = () => {
       onClose: () => router.push("/"),
     },
     error: {
-      message: "Oops... something went wrong",
+      message: "OOPS... SOMETHING WENT WRONG",
       subText: " Your NFT failed to mint. Please try again.",
       buttons: [
         {
-          text: "Cancel",
+          text: "CANCEL",
           isPrimary: false,
           type: "link",
           link: "/",
         },
         {
-          text: "Try again",
+          text: "TRY AGAIN",
           onClick: () => setModalState(null),
           isPrimary: true,
           type: "button",
@@ -525,7 +525,7 @@ const Create: React.FC<{}> = () => {
   return (
     <div className="border border-litho-black mt-7 mb-6 flex flex-col">
       <Text variant="h3" component="h3" className="text-center py-4">
-        Create a single NFT
+        Create NFTs
       </Text>
       <div className="border-t border-b border-black flex items-center h-14">
         <Text
@@ -611,13 +611,22 @@ const Create: React.FC<{}> = () => {
           <About moveToUploadAsset={moveToUploadAsset} nft={state.nft} />
         )}
         {state.currentTab === 2 && (
-          <Upload moveToPreview={moveToPreview} nft={state.nft} />
+          <Upload
+            moveToPreview={moveToPreview}
+            nft={state.nft}
+            goBack={() =>
+              dispatch({ type: "GO_TO_TAB", payload: { currentTab: 1 } })
+            }
+          />
         )}
         {state.currentTab === 3 && (
           <Preview
             nft={state.nft}
             mint={mint}
             transactionFee={transactionFee}
+            goBack={() =>
+              dispatch({ type: "GO_TO_TAB", payload: { currentTab: 2 } })
+            }
           />
         )}
       </div>

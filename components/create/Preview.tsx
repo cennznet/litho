@@ -9,9 +9,10 @@ interface Props {
   nft: any;
   mint: () => void;
   transactionFee: number;
+  goBack: () => void;
 }
 
-const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
+const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
   const [nftMinted, setNFTMinted] = React.useState(false);
   const web3Context = React.useContext(Web3Context);
 
@@ -53,13 +54,14 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
       </div>
       {!nftMinted && (
         <div className="w-full flex items-center justify-between mt-16">
-          <Link href="/">
-            <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
-              <Text variant="button" color="litho-blue">
-                CANCEL
-              </Text>
-            </a>
-          </Link>
+          <button
+            className="border border-litho-blue bg-litho-cream flex-1 text-center py-2"
+            onClick={goBack}
+          >
+            <Text variant="button" color="litho-blue">
+              BACK
+            </Text>
+          </button>
           <button
             className={`border bg-litho-blue flex-1 ml-6 text-center py-2 ${
               isBalanceLow ? "bg-opacity-60" : ""

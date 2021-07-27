@@ -11,6 +11,7 @@ import isImageOrVideo from "../../utils/isImageOrVideo";
 interface Props {
   moveToPreview: (nftData: any) => void;
   nft: NFTType;
+  goBack: () => void;
 }
 
 type Collection = {
@@ -18,7 +19,7 @@ type Collection = {
   name: string;
 };
 
-const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
+const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
   const web3Context = React.useContext(Web3Context);
   const [defaultCollection, setDefaultCollection] =
     React.useState<Collection>();
@@ -185,13 +186,14 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
       </select>
 
       <div className="w-full flex items-center justify-between mt-10">
-        <Link href="/">
-          <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
-            <Text variant="button" color="litho-blue">
-              CANCEL
-            </Text>
-          </a>
-        </Link>
+        <button
+          className="border border-litho-blue bg-litho-cream flex-1 text-center py-2"
+          onClick={goBack}
+        >
+          <Text variant="button" color="litho-blue">
+            BACK
+          </Text>
+        </button>
         <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
           <Text variant="button" color="white">
             NEXT: PREVIEW
