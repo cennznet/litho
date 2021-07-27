@@ -80,7 +80,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               </a>
             </Link>
 
-            <Link href="/about">
+            {/* <Link href="/about">
               <a className="lg:ml-12 flex items-center">
                 <Text variant="subtitle1">About</Text>
               </a>
@@ -89,7 +89,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               <a className="ml-4 mr-4 lg:ml-12 lg:mr-0 flex items-center">
                 <Text variant="subtitle1">Community Guidelines</Text>
               </a>
-            </Link>
+            </Link> */}
             <Link href="/privacy-policy">
               <a className="lg:ml-12 flex items-center">
                 <Text variant="subtitle1">Privacy Policy</Text>

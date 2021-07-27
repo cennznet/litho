@@ -145,7 +145,7 @@ const Me: React.FC<{}> = () => {
             <Link href="/create">
               <a className="bg-litho-blue py-3 w-80 text-center">
                 <Text variant="button" color="white">
-                  CREATE AN NFT
+                  CREATE NFTs
                 </Text>
               </a>
             </Link>

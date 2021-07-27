@@ -108,7 +108,7 @@ const NFTDetail: React.FC<{}> = () => {
     <>
       <Link href="/me">
         <a className="font-bold" style={{ lineHeight: "31px" }}>
-          &lt; My Single NFTs
+          &lt; My Profile
         </a>
       </Link>
       {image ? (

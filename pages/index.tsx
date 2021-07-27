@@ -42,7 +42,7 @@ const Home: React.FC<{}> = () => {
 
           <div className="flex-1 p-6 pt-0 flex flex-col items-center justify-end w-full">
             <Text variant="h4" className="mb-8 bg-litho-cream p-2">
-              CREATE AN NFT
+              CREATE NFTs
             </Text>
             {deviceContext.isMobile || !deviceContext.isChrome ? (
               <button
