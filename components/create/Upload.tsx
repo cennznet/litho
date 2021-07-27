@@ -186,15 +186,15 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft }) => {
 
       <div className="w-full flex items-center justify-between mt-10">
         <Link href="/">
-          <a className="border bg-litho-cream flex-1 text-center py-2">
+          <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
             <Text variant="button" color="litho-blue">
-              Cancel
+              CANCEL
             </Text>
           </a>
         </Link>
         <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
           <Text variant="button" color="white">
-            Next: Preview
+            NEXT: PREVIEW
           </Text>
         </button>
       </div>

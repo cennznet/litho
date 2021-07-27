@@ -54,9 +54,9 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
       {!nftMinted && (
         <div className="w-full flex items-center justify-between mt-16">
           <Link href="/">
-            <a className="border bg-litho-cream flex-1 text-center py-2">
+            <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
               <Text variant="button" color="litho-blue">
-                Cancel
+                CANCEL
               </Text>
             </a>
           </Link>
@@ -68,7 +68,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee }) => {
             disabled={isBalanceLow}
           >
             <Text variant="button" color="white">
-              Mint
+              MINT
             </Text>
           </button>
         </div>

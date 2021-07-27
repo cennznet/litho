@@ -41,14 +41,14 @@ const ConnectWallet: React.FC<{}> = () => {
   return (
     <>
       <button
-        className="border border-litho-wallet ml-9 flex items-center justify-center flex-1 pl-1 pr-3 py-2 w-44 hidden lg:flex"
+        className="border border-litho-wallet ml-9 flex items-center justify-center flex-1 pl-1 pr-3 py-2 w-48 hidden lg:flex"
         onClick={buttonClickHandler}
       >
         <img src="/wallet.svg" alt="Connect Wallet" className="mr-2" />
         <Text variant="button" color="litho-blue">
           {isWalletConnected && web3Context.account.balances
             ? `${web3Context.account.balances.CENNZ.balance} CENNZ`
-            : "Connect Wallet"}
+            : "CONNECT WALLET"}
         </Text>
       </button>
       {showWallet && (

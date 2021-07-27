@@ -36,7 +36,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
       </Text>
       <Text
         variant="body1"
-        className="mt-4 flex justify-between items-center cursor-pointer"
+        className="mt-4 flex justify-between items-center cursor-pointer break-all"
         component="div"
         onClick={() => {
           copyTextToClipboard(web3Context.account.address);
@@ -78,7 +78,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
           </Text>
         </a>
       </Link>
-      <div className="flex items-center mt-4">
+      {/* <div className="flex items-center mt-4">
         <svg
           width="24"
           height="24"
@@ -100,12 +100,12 @@ const ConnectedWalletModal: React.FC<Props> = ({
         >
           How does it work?
         </span>
-      </div>
+      </div> */}
       <div className="h-0.5 w-full my-8 bg-litho-black bg-opacity-10" />
       <Link href="/me">
         <a onClick={closeModal}>
           <Text variant="button" color="litho-blue">
-            My NFTs
+            My Profile
           </Text>
         </a>
       </Link>

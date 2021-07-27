@@ -50,14 +50,14 @@ const Home: React.FC<{}> = () => {
                 onClick={() => setShowViewOnDesktop(true)}
               >
                 <Text variant="button" color="white">
-                  Start Minting
+                  START MINTING
                 </Text>
               </button>
             ) : (
               <Link href="/create">
                 <a className="bg-litho-blue w-40 h-12 flex items-center justify-center flex">
                   <Text variant="button" color="white">
-                    Start Minting
+                    START MINTING
                   </Text>
                 </a>
               </Link>

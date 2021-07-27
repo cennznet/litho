@@ -195,7 +195,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             </span>
             <div className="self-end flex items-center mt-8">
               <button onClick={() => setShowNoExtensionMessage(false)}>
-                Cancel
+                CANCEL
               </button>
               <Link href="https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk">
                 <a
@@ -207,7 +207,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
                       : () => setIsRefresh(true)
                   }
                 >
-                  {isRefresh ? "Refresh" : "Install"}
+                  {isRefresh ? "REFRESH" : "INSTALL"}
                 </a>
               </Link>
             </div>
@@ -235,7 +235,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
                 className="ml-4 rounded-sm text-sm text-white bg-litho-blue px-2 py-1"
                 onClick={() => setShowZeroAccountMessage(false)}
               >
-                Okay
+                OKAY
               </button>
             </div>
           </div>

@@ -104,7 +104,7 @@ const Me: React.FC<{}> = () => {
   return (
     <div className="border border-litho-black mb-6 flex flex-col min-h-litho-app">
       <Text variant="h3" component="h3" className="text-center py-4">
-        My NFTs
+        My Profile
       </Text>
       <div className="border-t border-b border-black flex items-center">
         <Text
@@ -113,7 +113,7 @@ const Me: React.FC<{}> = () => {
           className="w-1/2 h-full p-2 text-center bg-litho-black"
           color="white"
         >
-          Single NFTs
+          My NFTs
         </Text>
         <Text
           variant="h5"
@@ -132,7 +132,7 @@ const Me: React.FC<{}> = () => {
               onClick={() => web3Context.connectWallet()}
             >
               <Text variant="button" color="white">
-                Connect Wallet
+                CONNECT WALLET
               </Text>
             </button>
           </div>
@@ -145,7 +145,7 @@ const Me: React.FC<{}> = () => {
             <Link href="/create">
               <a className="bg-litho-blue py-3 w-80 text-center">
                 <Text variant="button" color="white">
-                  Create an NFT
+                  CREATE AN NFT
                 </Text>
               </a>
             </Link>

@@ -651,7 +651,7 @@ const Create: React.FC<{}> = () => {
                         button.isPrimary
                           ? "rounded-sm bg-litho-blue text-white"
                           : ""
-                      } px-4 py-3`}
+                      } px-4 py-3 uppercase`}
                       onClick={button.onClick}
                       key={button.text}
                     >
@@ -671,7 +671,7 @@ const Create: React.FC<{}> = () => {
                         button.isPrimary
                           ? "rounded-sm bg-litho-blue"
                           : "text-litho-blue"
-                      } px-4 py-3`}
+                      } px-4 py-3 uppercase`}
                     >
                       <Text
                         variant="button"

@@ -194,7 +194,7 @@ const About: React.FC<{
           }
         >
           <Text variant="button" color="litho-blue">
-            + Add Attributes
+            + ADD ATTRIBUTES
           </Text>
         </button>
         <Text variant="caption" className="text-opacity-60">
@@ -204,17 +204,17 @@ const About: React.FC<{
 
       <div className="w-full flex items-center justify-between mt-10">
         <Link href="/">
-          <a className="border bg-litho-cream flex-1 text-center py-2">
+          <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
             <Text variant="button" color="litho-blue">
-              Cancel
+              CANCEL
             </Text>
           </a>
         </Link>
         <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
           <Text variant="button" color="white">
             {!web3Context.account
-              ? "Connect Wallet To Continue"
-              : "Next: Upload Assets"}
+              ? "CONNECT WALLET TO CONTINUE"
+              : "NEXT: UPLOAD ASSETS"}
           </Text>
         </button>
       </div>
