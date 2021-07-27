@@ -177,7 +177,7 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
         <Text variant="h6">Choose content storage</Text>
       </label>
       <select
-        className="border border-litho-black border-opacity-40 p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed"
+        className="border border-litho-black border-opacity-40 p-4 mb-6 text-base bg-white text-opacity-75 text-litho-black mb-10 cursor-not-allowed no-arrow"
         name="storage"
         defaultValue={"ipfs"}
         disabled
