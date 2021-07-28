@@ -119,6 +119,7 @@ const About: React.FC<{
         id="title"
         defaultValue={nft.title}
         placeholder="Enter a name for your NFT"
+        maxLength={140}
       />
 
       <label>
@@ -130,6 +131,7 @@ const About: React.FC<{
         className="border border-litho-black p-4 mb-8 text-base"
         rows={5}
         defaultValue={nft.description}
+        maxLength={500}
       />
 
       <label>
@@ -175,6 +177,7 @@ const About: React.FC<{
           className="mb-10"
           defaultValue={nft.royalty}
           min={0}
+          max={100}
         />
         <label>
           <Text variant="h6">

@@ -426,7 +426,7 @@ const Create: React.FC<{}> = () => {
     }
 
     const metadata = await client.store(storeOnIPFS);
-    console.log(metadata);
+
     const metadataBaseURI = "ipfs";
     const metadataGatewayURL = toGatewayURL(metadata.url, {
       gateway: "https://ipfs.io/",
@@ -462,7 +462,7 @@ const Create: React.FC<{}> = () => {
     let collectionId;
     setModalState("signTransaction");
     try {
-      if (state.nft.collectionId) {
+      if (state.nft.hasOwnProperty("collectionId")) {
         collectionId = state.nft.collectionId;
       } else {
         console.log("create collection", state.nft.collectionName);
@@ -506,7 +506,7 @@ const Create: React.FC<{}> = () => {
         if (state.nft.royalty > 0) {
           tokenArgs.royaltiesSchedule = {
             entitlements: [
-              `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+              [web3Context.account.address, state.nft.royalty * 10000],
             ],
           };
         }
@@ -638,6 +638,7 @@ const Create: React.FC<{}> = () => {
             modalBody: "w-3/6 flex flex-col",
             modalContainer: "z-10",
           }}
+          disableOutsideClick
         >
           <Text variant="h4" color="litho-blue" component="h2" className="mb-6">
             {modalStates[modalState].message}

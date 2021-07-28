@@ -22,8 +22,6 @@ const NFT: React.FC<Props> = ({ nft }) => {
     }
   }
 
-  console.log(nft);
-
   return (
     <div
       className="bg-litho-nft m-auto relative flex justify-center"

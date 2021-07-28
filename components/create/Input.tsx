@@ -7,6 +7,8 @@ interface Props {
   defaultValue?: string | number;
   min?: number;
   id?: string;
+  maxLength?: number;
+  max?: number;
   className?: string;
 }
 

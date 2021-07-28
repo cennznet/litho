@@ -203,7 +203,7 @@ const NFTDetail: React.FC<{}> = () => {
               {nft.description && (
                 <div className="w-full p-8 flex flex-col border-b border-litho-black">
                   <Text variant="h6">Description</Text>
-                  <Text variant="body2" className="text-opacity-50">
+                  <Text variant="body2" className="text-opacity-50 break-all">
                     {nft.description}
                   </Text>
                 </div>

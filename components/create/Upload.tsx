@@ -60,10 +60,11 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
             });
           })
         );
-
+        console.log("collections", collections);
         const defaultCollection: Collection = collections.find(
           (collection: Collection) => collection.name === "Litho (default)"
         );
+        console.log("defaultCollection", defaultCollection);
         if (defaultCollection) {
           console.log("collection exists");
           setDefaultCollection(defaultCollection);
