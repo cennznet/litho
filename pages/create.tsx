@@ -462,10 +462,12 @@ const Create: React.FC<{}> = () => {
     let collectionId;
     setModalState("signTransaction");
     try {
-      if (state.nft.hasOwnProperty("collectionId")) {
+      if (
+        state.nft.hasOwnProperty("collectionId") &&
+        state.nft.collectionId !== null
+      ) {
         collectionId = state.nft.collectionId;
       } else {
-        console.log("create collection", state.nft.collectionName);
         collectionId = await createCollection(
           web3Context.api,
           web3Context.account,

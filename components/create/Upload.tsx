@@ -55,18 +55,14 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
           collectionIds.map((collectionId) => {
             return new Promise(async (resolve) => {
               const name = await api.query.nft.collectionName(collectionId);
-              console.log(collectionId, hexToString(name.toString()));
               resolve({ id: collectionId, name: hexToString(name.toString()) });
             });
           })
         );
-        console.log("collections", collections);
         const defaultCollection: Collection = collections.find(
           (collection: Collection) => collection.name === "Litho (default)"
         );
-        console.log("defaultCollection", defaultCollection);
         if (defaultCollection) {
-          console.log("collection exists");
           setDefaultCollection(defaultCollection);
         }
       }
