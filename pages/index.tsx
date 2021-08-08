@@ -28,10 +28,10 @@ const Home: React.FC<{}> = () => {
           style={{ backgroundSize: "auto 105%", backgroundPositionX: "90%" }}
         >
           <Text variant="h2" className="hidden lg:block">
-            Launch into the Lithoverse. Your place to create and exchange NFTs
+            Launch into the Lithoverse. Your place to create and exchange NFTs.
           </Text>{" "}
           <Text variant="h4" className="lg:hidden">
-            Launch into the Lithoverse. Your place to create and exchange NFTs
+            Launch into the Lithoverse. Your place to create and exchange NFTs.
           </Text>{" "}
         </div>
         <div className="w-full lg:w-1/3 border-2 border-litho-black flex flex-col mb-4 lg:mb-0 lg:mx-6 bg-home-2 items-center">
@@ -67,17 +67,17 @@ const Home: React.FC<{}> = () => {
         <div className="w-full lg:w-1/3 flex flex-col border-2 border-litho-black">
           <img
             src="/marketplace.png"
-            className="flex-1 object-center object-cover"
+            className="object-center object-cover h-4/5"
           />
 
-          <div className="flex-1 p-6 pt-0 pb-10 flex flex-col items-center justify-end w-full">
+          <div className="p-6 pt-0 pb-3 flex flex-col items-center justify-end w-full -mt-3">
             <Text variant="h4" className="mb-8 bg-litho-cream p-2">
               MARKETPLACE
             </Text>
             <Text
               variant="button"
               color="litho-blue"
-              className="flex items-center mb-4"
+              className="flex items-center mt-4"
             >
               Coming Soon...
             </Text>
