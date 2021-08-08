@@ -90,23 +90,23 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 <Text variant="subtitle1">Community Guidelines</Text>
               </a>
             </Link> */}
-            <Link href="/privacy-policy">
-              <a className="lg:ml-12 flex items-center">
+            <Link href="https://cennz.net/privacy-policy/">
+              <a className="lg:ml-12 flex items-center" target="_blank">
                 <Text variant="subtitle1">Privacy Policy</Text>
               </a>
             </Link>
           </div>
           <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
-            <Link href="https://twitter.com/CENNZnet">
+            <Link href="https://twitter.com/Lithoverse_">
               <a target="_blank">
                 <Text variant="subtitle1">Twitter</Text>
               </a>
             </Link>
-            <Link href="https://discord.gg/hsRbe4gb">
+            {/* <Link href="https://discord.gg/hsRbe4gb">
               <a target="_blank">
                 <Text variant="subtitle1">Discord</Text>
               </a>
-            </Link>
+            </Link> */}
           </div>
         </footer>
       </Web3>
