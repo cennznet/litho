@@ -9,6 +9,7 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
+      transparent: "transparent",
       litho: {
         black: "#191B1D",
         cream: "#FBF9F3",

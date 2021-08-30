@@ -3,6 +3,7 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 import ConnectWallet from "../components/ConnectWallet";
 import "../styles/globals.scss";
@@ -14,6 +15,54 @@ const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 const Device = dynamic(() => import("../components/DeviceContextProvider"), {
   ssr: false,
 });
+
+const SearchBar: React.FC<{}> = () => {
+  const router = useRouter();
+  const submitHandler: React.FormEventHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const { query } = form;
+    if (query.value) {
+      router.push(`/marketplace?q=${query.value}`);
+    }
+    form.reset();
+  };
+
+  const hideOnPaths = [
+    "/create",
+    "/nft/[collectionId]/[seriesId]/[serialNumber]",
+  ];
+  if (hideOnPaths.includes(router.pathname)) {
+    return null;
+  }
+
+  return (
+    <form
+      className="flex-1 mr-9 flex items-center border-b-2 border-black hidden lg:flex"
+      onSubmit={submitHandler}
+    >
+      <img src="/search.svg" alt="Search" />
+      <input
+        type="text"
+        className="bg-transparent flex-1 ml-2 outline-none"
+        name="query"
+        id="query"
+      />
+    </form>
+  );
+};
+
+const MarketplaceLink: React.FC<{}> = () => {
+  return (
+    <Link href="/marketplace">
+      <a className="mr-9 hidden lg:flex">
+        <Text variant="h6" color="litho-blue">
+          Marketplace
+        </Text>
+      </a>
+    </Link>
+  );
+};
 
 const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
   ({ setShowViewOnDesktop }) => {
@@ -47,7 +96,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               <img src="/logo.svg" alt="Litho" />
             </a>
           </Link>
-          <div className="h-12 flex items-center">
+          <div className="ml-24 h-12 flex items-center flex-1 justify-end">
+            <SearchBar />
+            <MarketplaceLink />
             <CreateButton setShowViewOnDesktop={setShowViewOnDesktop} />
             <ConnectWallet />
           </div>
