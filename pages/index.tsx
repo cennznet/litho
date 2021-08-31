@@ -28,10 +28,14 @@ const Home: React.FC<{}> = () => {
           style={{ backgroundSize: "auto 105%", backgroundPositionX: "90%" }}
         >
           <Text variant="h2" className="hidden lg:block">
-            Launch into the Lithoverse. Your place to create and exchange NFTs.
+            <span className="font-normal">Launch into the</span> Lithoverse.{" "}
+            <span className="font-normal">Your place to</span> create and
+            exchange NFTs.
           </Text>{" "}
           <Text variant="h4" className="lg:hidden">
-            Launch into the Lithoverse. Your place to create and exchange NFTs.
+            <span className="font-normal">Launch into the</span> Lithoverse.{" "}
+            <span className="font-normal">Your place to</span> create and
+            exchange NFTs.
           </Text>{" "}
         </div>
         <div className="w-full lg:w-1/3 border-2 border-litho-black flex flex-col mb-4 lg:mb-0 lg:mx-6 bg-home-2 items-center">
@@ -77,7 +81,7 @@ const Home: React.FC<{}> = () => {
             <Text
               variant="button"
               color="litho-blue"
-              className="flex items-center mt-4"
+              className="flex items-center"
             >
               Coming Soon...
             </Text>

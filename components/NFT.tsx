@@ -24,8 +24,8 @@ const NFT: React.FC<Props> = ({ nft }) => {
 
   return (
     <div
-      className="bg-litho-nft m-auto relative flex justify-center"
-      style={{ height: "400px", width: "300px" }}
+      className="bg-litho-nft relative flex justify-center"
+      // style={{ height: "400px", width: "300px" }}
     >
       <div className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black">
         {isImageOrVideo(fileExtension) === "video" || nft.videoUrl ? (
@@ -44,7 +44,7 @@ const NFT: React.FC<Props> = ({ nft }) => {
             src={imageUrl}
             height="300"
             width="300"
-            className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center"
+            className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
             onLoad={(event) => {
               if (event.target) {
                 (event.target as HTMLImageElement).classList.remove(
@@ -58,7 +58,10 @@ const NFT: React.FC<Props> = ({ nft }) => {
           />
         )}
         <div className="mt-3 flex justify-between items-center">
-          <span className="text-lg font-bold" style={{ lineHeight: "21.6px" }}>
+          <span
+            className="text-lg font-bold break-all mr-4"
+            style={{ lineHeight: "21.6px", maxWidth: 300 }}
+          >
             {nft.title}
           </span>
           <span
@@ -69,8 +72,12 @@ const NFT: React.FC<Props> = ({ nft }) => {
           </span>
         </div>
       </div>
-      <div className="absolute w-10/12 h-4 -bottom-4 border border-litho-black bg-litho-nft" />
-      <div className="absolute w-11/12 h-4 -bottom-2 border border-litho-black bg-litho-nft" />
+      {nft.copies && nft.copies > 1 && (
+        <>
+          <div className="absolute w-10/12 h-4 -bottom-4 border border-litho-black bg-litho-nft" />
+          <div className="absolute w-11/12 h-4 -bottom-2 border border-litho-black bg-litho-nft" />
+        </>
+      )}
     </div>
   );
 };

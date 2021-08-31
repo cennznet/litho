@@ -64,7 +64,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
           </button>
           <button
             className={`border bg-litho-blue flex-1 ml-6 text-center py-2 ${
-              isBalanceLow ? "bg-opacity-60" : ""
+              isBalanceLow ? "bg-opacity-60 cursor-not-allowed" : ""
             }`}
             onClick={mintNFT}
             disabled={isBalanceLow}

@@ -111,7 +111,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           {showViewOnDesktop && (
             <Modal
               onClose={() => setShowViewOnDesktop(false)}
-              disableOutsideClick={true}
               styles={{
                 modalBody: "w-11/12 lg:w-3/12",
                 modalContainer: "z-20",

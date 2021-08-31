@@ -190,14 +190,25 @@ const About: React.FC<{
 
         <button
           type="button"
-          className="bg-litho-cream text-center py-2 border border-black w-56 text-base"
+          className={`bg-litho-cream text-center py-2 border border-black w-56 text-base ${
+            numOfAttributes === MAX_ATTRIBUTES
+              ? "border-gray-500 cursor-not-allowed"
+              : ""
+          }`}
           onClick={() =>
             numOfAttributes < MAX_ATTRIBUTES &&
             setNumOfAttributes((num) => num + 1)
           }
+          disabled={numOfAttributes === MAX_ATTRIBUTES}
         >
-          <Text variant="button" color="litho-blue">
-            + ADD ATTRIBUTES
+          <Text
+            variant="button"
+            color={
+              numOfAttributes === MAX_ATTRIBUTES ? "gray-500" : "litho-blue"
+            }
+            className={numOfAttributes === MAX_ATTRIBUTES ? "text" : ""}
+          >
+            + ADD ATTRIBUTE
           </Text>
         </button>
         <Text variant="caption" className="text-opacity-60">
@@ -205,15 +216,15 @@ const About: React.FC<{
         </Text>
       </div>
 
-      <div className="w-full flex items-center justify-between mt-10">
+      <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
         <Link href="/">
-          <a className="border border-litho-blue bg-litho-cream flex-1 text-center py-2">
+          <a className="w-full md:w-auto border border-litho-blue bg-litho-cream flex-1 text-center py-2">
             <Text variant="button" color="litho-blue">
               CANCEL
             </Text>
           </a>
         </Link>
-        <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
+        <button className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
           <Text variant="button" color="white">
             {!web3Context.account
               ? "CONNECT WALLET TO CONTINUE"

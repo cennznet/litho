@@ -49,7 +49,10 @@ const Modal: React.FC<React.PropsWithChildren<Props>> = ({
         }`}
       >
         {!hideClose && (
-          <div className="absolute top-5 right-5" onClick={onClose}>
+          <div
+            className="absolute top-5 right-5 cursor-pointer"
+            onClick={onClose}
+          >
             <svg
               width="14"
               height="14"
