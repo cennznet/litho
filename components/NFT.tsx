@@ -11,7 +11,6 @@ const NFT: React.FC<Props> = ({ nft }) => {
   let imageUrl;
   const image = nft.coverImage || nft.image;
   const fileExtension = getFileExtension(image.name || image);
-
   if (!image || !fileExtension || !isImageOrVideo(fileExtension)) {
     imageUrl = "/litho-default.jpg";
   } else {
@@ -62,15 +61,23 @@ const NFT: React.FC<Props> = ({ nft }) => {
             className="text-lg font-bold break-all mr-4"
             style={{ lineHeight: "21.6px", maxWidth: 300 }}
           >
-            {nft.title}
+            {nft.title || nft.name || ""}
           </span>
           <span
             className="text-sm font-semibold"
             style={{ lineHeight: "18px" }}
           >
-            x{nft.copies}
+            x{nft.copies || 1}
           </span>
         </div>
+        {nft.owner && (
+          <div
+            className="break-all text-sm mt-2"
+            style={{ lineHeight: "24px" }}
+          >
+            {nft.owner.substr(0, 20)}...
+          </div>
+        )}
       </div>
       {nft.copies && nft.copies > 1 && (
         <>

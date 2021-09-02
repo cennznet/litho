@@ -27,7 +27,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
       onClose={closeModal}
       styles={{
         modalBody: "w-3/12 absolute top-20 right-20",
-        modalContainer: "z-10",
+        modalContainer: "z-30",
       }}
       hideClose
     >
@@ -43,7 +43,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
           setShowToast(true);
         }}
       >
-        <span>{web3Context.account.address.substr(0, 32)}...</span>
+        <span>{web3Context.account.address.substr(0, 20)}...</span>
         <img src="/copy.svg" alt="Copy address" />
       </Text>
       <div className="h-0.5 w-full my-6 bg-litho-black bg-opacity-10" />

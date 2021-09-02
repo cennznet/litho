@@ -76,7 +76,6 @@ const Me: React.FC<{}> = () => {
                               break;
                             case "Video-URL":
                               const [, video] = attributeBreakup;
-                              console.log(video);
                               nft.videoUrl = video;
                               break;
                             default:
