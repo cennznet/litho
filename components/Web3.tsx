@@ -6,7 +6,6 @@ import {
 } from "@polkadot/extension-dapp";
 import { getSpecTypes } from "@polkadot/types-known";
 import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
-import { TypeRegistry } from "@polkadot/types";
 import { Api as ApiPromise } from "@cennznet/api";
 import Link from "next/link";
 import { hexToString } from "@polkadot/util";
@@ -15,7 +14,6 @@ import Web3Context from "./Web3Context";
 
 import { cennznetExtensions } from "../utils/cennznetExtensions";
 
-const registry = new TypeRegistry();
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
@@ -154,18 +152,21 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       setHasWeb3Injected(false);
     }
   };
-  const apiInstance = new ApiPromise({ provider: endpoint, registry });
 
   React.useEffect(() => {
-    if (!apiInstance.isReady) return;
-    setAPI(apiInstance);
+    if (!api) {
+      const apiInstance = new ApiPromise({ provider: endpoint });
+
+      if (!apiInstance.isReady) return;
+      setAPI(apiInstance);
+    }
 
     return () => {
       if (accountsUnsubscribe) {
         accountsUnsubscribe();
       }
     };
-  }, [apiInstance]);
+  });
 
   return (
     <Web3Context.Provider

@@ -6,8 +6,8 @@ import getMetadata from "../../utils/getMetadata";
 const IPFSGatewayTools = require('@pinata/ipfs-gateway-tools/dist/node');
 const gatewayTools = new IPFSGatewayTools();
 
-const registry = new TypeRegistry();
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
+let api = null;
 
 export default async (req, res) => {
   if(cache.has('nfts')) {
@@ -16,7 +16,11 @@ export default async (req, res) => {
     res.json({ nfts: nftsFromCache, total: Object.keys(nftsFromCache).length, cacheHit: true });
     return;
   }
-  const api = await ApiPromise.create({ provider: endpoint, registry });
+  // Create api instance only if it does not exist
+  if (!api) {
+    api = await ApiPromise.create({provider: endpoint});
+  }
+
   const allListings = await api.query.nft.listings.entries();
   const nfts = [];
   await Promise.all(allListings.map(
@@ -47,7 +51,7 @@ export default async (req, res) => {
             royaltiesSchedule,
           }
         }
-        
+
         const { tokens, ...restDetails } = listingDetails as any;
         await Promise.all((listingDetails as any).tokens.map(async (tokenId) => {
           const tokenInfo = await api.derive.nft.tokenInfo(tokenId);

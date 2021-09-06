@@ -5,7 +5,6 @@ import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
-import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
