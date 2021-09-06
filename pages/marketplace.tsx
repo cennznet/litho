@@ -1,10 +1,12 @@
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
-import useSWR from "swr";
+import Link from "next/link";
 
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
 import Text from "../components/Text";
+import NFTRenderer from "../components/nft/NFTRenderer";
+import useSWR from "swr";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -76,24 +78,6 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   );
 };
 
-const MarketplaceNFT: React.FC<{ nft: any }> = ({ nft }) => {
-  const [nftDetails, setNFTDetails] = React.useState(nft);
-
-  const { data, error } = useSWR(!nft.image ? nft.metadata : null);
-
-  React.useEffect(() => {
-    if (data) {
-      setNFTDetails({ ...nftDetails, ...data });
-    }
-  }, [data]);
-
-  if (!nftDetails.image) {
-    return null;
-  }
-
-  return <NFT nft={nftDetails} />;
-};
-
 const MarketPlace: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
   const [pageEnd, setPageEnd] = React.useState(10);
@@ -101,11 +85,27 @@ const MarketPlace: React.FC<{}> = () => {
     threshold: 1,
   });
   const [sort, setSort] = React.useState("newest-first");
+  const { data } = useSWR("/api/getAllNFTs");
+
+  // React.useEffect(() => {
+  //   (async () => {
+  //     const res = await fetch("/api/getAllNFTs").then((res) => res.json());
+  //     const sortedNFTs = res.nfts.sort((n1, n2) => {
+  //       if (n1.close > n2.close) {
+  //         return sort === "oldest-first" ? 1 : -1;
+  //       } else if (n1.close < n2.close) {
+  //         return sort === "oldest-first" ? -1 : 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     });
+  //     setNFTs(sortedNFTs);
+  //   })();
+  // }, []);
 
   React.useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/getAllNFTs").then((res) => res.json());
-      const sortedNFTs = res.nfts.sort((n1, n2) => {
+    if (data && data.nfts && data.nfts.length > 0) {
+      const sortedNFTs = data.nfts.sort((n1, n2) => {
         if (n1.close > n2.close) {
           return sort === "oldest-first" ? 1 : -1;
         } else if (n1.close < n2.close) {
@@ -115,8 +115,8 @@ const MarketPlace: React.FC<{}> = () => {
         }
       });
       setNFTs(sortedNFTs);
-    })();
-  }, []);
+    }
+  }, [data]);
 
   React.useEffect(() => {
     if (entry && entry.isIntersecting && nfts.length > 0) {
@@ -157,7 +157,16 @@ const MarketPlace: React.FC<{}> = () => {
             return null;
           }
 
-          return <MarketplaceNFT nft={nft} key={nft.listingId} />;
+          return (
+            <Link
+              href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
+              key={nft.listingId}
+            >
+              <a>
+                <NFT nft={nft} renderer={NFTRenderer} />
+              </a>
+            </Link>
+          );
         })}
       </div>
       {nfts.length > 10 && <div id="sentinel" ref={ref} />}

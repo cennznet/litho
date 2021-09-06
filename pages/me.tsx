@@ -3,7 +3,9 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
+import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -157,7 +159,7 @@ const Me: React.FC<{}> = () => {
                   key={`${collectionId}-${seriesId}-${serialNumber}`}
                 >
                   <div className="rounded mb-10">
-                    <NFT nft={nft} />
+                    <NFT nft={nft} renderer={NFTRenderer} />
                   </div>
                 </Link>
               );

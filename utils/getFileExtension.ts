@@ -1,15 +1,41 @@
-const getFileExtension = (fileName) => {
-  const name = fileName.replace('https://ipfs.io/').replace('https://gateway.pinata.cloud/ipfs/');
-  const lastDotInName = name.lastIndexOf('.');
+const getFileExtension = (contentType) => {
 
-  if(lastDotInName < 0) {
-    if(fileName.startsWith('https://gateway')) {
+  if(contentType.startsWith('image/')) {
+    if(contentType.includes('svg')) {
+      return 'svg';
+    }
+    if(contentType.includes('jpg') || contentType.includes('jpeg')) {
       return 'jpg';
     }
-    return 'null';
+    if(contentType.includes('png')) {
+      return 'png';
+    }
+    if(contentType.includes('gif')) {
+      return 'gif';
+    }
+    if(contentType.includes('webp')) {
+      return 'webp';
+    }
   }
-  const fileExtension = name.substr(lastDotInName + 1);
-  return fileExtension;
+  if(contentType.startsWith('video/')) {
+    if(contentType.includes("mp4")) {
+      return "mp4";
+    }
+    if(contentType.includes("ogg")) {
+      return "ogg";
+    }
+    if(contentType.includes("wmv")) {
+      return "wmv";
+    }
+    if(contentType.includes("webm")) {
+      return "webm";
+    }
+  }
+
+  const extensionMatch = contentType.match(/.*\/(.*)/);
+  if(extensionMatch.length > 0) {
+    return extensionMatch[1];
+  }
 }
 
 export default getFileExtension;
