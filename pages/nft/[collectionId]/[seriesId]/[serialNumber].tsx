@@ -32,7 +32,12 @@ const NFTDetail: React.FC<{}> = () => {
           router.query.seriesId
         );
 
-        const { attributes, owner } = tokenInfo;
+        const tokenOwner = await web3Context.api.query.nft.tokenOwner(
+          [router.query.collectionId, router.query.seriesId],
+          router.query.serialNumber
+        );
+
+        const { attributes, owner, tokenId } = tokenInfo;
         const nft: { [index: string]: any } = {
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
@@ -199,6 +204,26 @@ const NFTDetail: React.FC<{}> = () => {
                       : null
                     : null}
                 </Text>
+                {/* {web3Context.account && web3Context.account.address === nft.owner &&  */}
+                <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                  <Link href="#" passHref>
+                    <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2">
+                      <Text variant="button" color="white">
+                        EDIT
+                      </Text>
+                    </a>
+                  </Link>
+                  <Link
+                    href={`/sell?collectionId=${router.query.collectionId}&seriesId=${router.query.seriesId}&serialNumber=${router.query.serialNumber}`}
+                  >
+                    <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
+                      <Text variant="button" color="white">
+                        SELL
+                      </Text>
+                    </a>
+                  </Link>
+                </div>
+                {/* } */}
               </div>
               {nft.description && (
                 <div className="w-full p-8 flex flex-col border-b border-litho-black">
