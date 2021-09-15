@@ -7,7 +7,7 @@ import Text from "../../../../components/Text";
 import getFileExtension from "../../../../utils/getFileExtension";
 import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import getMetadata from "../../../../utils/getMetadata";
-import NFT from "../../../../components/nft";
+import NFT from "../../../../components/NFT";
 
 const NFTDetailRenderer: React.FC<{ nft: any; error: any }> = ({
   nft,
@@ -153,6 +153,15 @@ const NFTDetailRenderer: React.FC<{ nft: any; error: any }> = ({
               </Text>
             )}
           </div>
+          <Link
+            href={`/sell?collectionId=${router.query.collectionId}&seriesId=${router.query.seriesId}&serialNumber=${router.query.serialNumber}`}
+          >
+            <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
+              <Text variant="button" color="white">
+                SELL
+              </Text>
+            </a>
+          </Link>
           {nft.description && (
             <div className="w-full p-8 flex flex-col border-b border-litho-black">
               <Text variant="h6">Description</Text>

@@ -20,6 +20,7 @@ module.exports = {
         wallet: "rgba(0, 0, 0, 0.12)",
         gray4: "#BDBDBD",
         nft: "#F9F7F1",
+        green: "#45986F",
       },
     },
     fontFamily: {
@@ -47,6 +48,8 @@ module.exports = {
       },
     },
   },
-  variants: {},
+  variants: {
+    fill: ["hover"],
+  },
   plugins: [],
 };

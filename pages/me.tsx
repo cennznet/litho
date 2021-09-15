@@ -1,13 +1,15 @@
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/nft";
-import getMetadata from "../utils/getMetadata";
+import NFT from "../components/NFT";
 import NFTRenderer from "../components/nft/NFTRenderer";
+import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
+  const router = useRouter();
   const web3Context = React.useContext(Web3Context);
   const [loading, setLoading] = React.useState(false);
   const [nfts, setNFTs] = React.useState([]);
