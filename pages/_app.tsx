@@ -89,7 +89,6 @@ const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
-
   return (
     <SWRConfig
       value={{
