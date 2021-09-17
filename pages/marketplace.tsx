@@ -3,7 +3,7 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import useSWR from "swr";
 
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
 import Text from "../components/Text";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
@@ -76,24 +76,6 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   );
 };
 
-const MarketplaceNFT: React.FC<{ nft: any }> = ({ nft }) => {
-  const [nftDetails, setNFTDetails] = React.useState(nft);
-
-  const { data, error } = useSWR(!nft.image ? nft.metadata : null);
-
-  React.useEffect(() => {
-    if (data) {
-      setNFTDetails({ ...nftDetails, ...data });
-    }
-  }, [data]);
-
-  if (!nftDetails.image) {
-    return null;
-  }
-
-  return <NFT nft={nftDetails} />;
-};
-
 const MarketPlace: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
   const [pageEnd, setPageEnd] = React.useState(10);
@@ -157,7 +139,7 @@ const MarketPlace: React.FC<{}> = () => {
             return null;
           }
 
-          return <MarketplaceNFT nft={nft} key={nft.listingId} />;
+          return <NFT nft={nft} key={nft.listingId} />;
         })}
       </div>
       {nfts.length > 10 && <div id="sentinel" ref={ref} />}

@@ -5,7 +5,6 @@ import Text from "../Text";
 import Web3Context from "../Web3Context";
 import { hexToString } from "@polkadot/util";
 import { NFT as NFTType } from "../../pages/create";
-import getFileExtension from "../../utils/getFileExtension";
 import isImageOrVideo from "../../utils/isImageOrVideo";
 
 interface Props {
@@ -19,15 +18,27 @@ type Collection = {
   name: string;
 };
 
+const getFileExtensionFromName = (fileName) => {
+  const name = fileName
+    .replace("https://ipfs.io/")
+    .replace("https://gateway.pinata.cloud/ipfs/");
+  const lastDotInName = name.lastIndexOf(".");
+  const fileExtension = name.substr(lastDotInName + 1);
+  return fileExtension;
+};
+
 const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
   const web3Context = React.useContext(Web3Context);
   const [defaultCollection, setDefaultCollection] =
     React.useState<Collection>();
   const [fileName, setFileName] = React.useState<string>();
   const [fileExtension, setFileExtension] = React.useState<string>(
-    nft.image ? getFileExtension(nft.image.name) : undefined
+    nft.image ? getFileExtensionFromName(nft.image.name) : undefined
   );
   const [coverImageName, setCoverImageName] = React.useState<string>();
+  const [coverFileExtension, setCoverFileExtension] = React.useState<string>(
+    nft.coverImage ? getFileExtensionFromName(nft.coverImage) : undefined
+  );
   const [error, setError] = React.useState(null);
 
   const getCollectionWiseTokens = async (api, address) => {
@@ -85,6 +96,8 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
       coverImage: coverimage?.files?.length > 0 ? coverimage.files[0] : null,
       storage: storage.value,
       collectionId: defaultCollection ? defaultCollection.id : null,
+      fileExtension,
+      coverFileExtension,
     });
   };
 
@@ -96,13 +109,15 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
     }
     const fileName = files[0].name;
 
-    const fileExtension = getFileExtension(fileName);
+    const fileExtension = getFileExtensionFromName(fileName);
 
     if (name === "file") {
       setFileName(fileName);
       setFileExtension(fileExtension);
     } else {
       setCoverImageName(fileName);
+      const cfileExtension = getFileExtensionFromName(fileName);
+      setCoverFileExtension(cfileExtension);
     }
   };
 

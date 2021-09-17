@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 import Text from "../Text";
-import NFT from "../NFT";
+import NFTRenderer from "../nft/NFTRenderer";
 import Web3Context from "../Web3Context";
 
 interface Props {
@@ -30,7 +30,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
   return (
     <div className="flex flex-col lg:w-3/5 m-auto">
       <div className="flex flex-col items-center">
-        <NFT nft={nft} />
+        <NFTRenderer nft={nft} />
         {transactionFee && (
           <div className="mt-10">
             <Text variant="body1" className="text-opacity-60">

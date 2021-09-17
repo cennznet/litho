@@ -3,7 +3,9 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
+import getMetadata from "../utils/getMetadata";
+import NFTRenderer from "../components/nft/NFTRenderer";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -51,6 +53,8 @@ const Me: React.FC<{}> = () => {
                           serialNumber: 0,
                         });
                       const { attributes, owner } = tokenInfo;
+                      const metadata = getMetadata(attributes);
+
                       const nft: { [index: string]: any } = {
                         collectionId: token.collectionId.toJSON(),
                         seriesId: token.seriesId.toJSON(),
@@ -58,31 +62,8 @@ const Me: React.FC<{}> = () => {
                         owner,
                         attributes: attributes,
                         copies: count,
+                        metadata,
                       };
-                      attributes.forEach(({ Text, Url }) => {
-                        const attributeString = Text || Url;
-                        if (attributeString) {
-                          const attributeBreakup = attributeString.split(" ");
-                          switch (attributeBreakup[0]) {
-                            case "Image-URL":
-                              nft.image = attributeBreakup[1];
-                              break;
-                            case "Metadata-URL":
-                              nft.metadata = attributeBreakup[1];
-                              break;
-                            case "Title":
-                              const [, ...words] = attributeBreakup;
-                              nft.title = words.join(" ");
-                              break;
-                            case "Video-URL":
-                              const [, video] = attributeBreakup;
-                              nft.videoUrl = video;
-                              break;
-                            default:
-                              break;
-                          }
-                        }
-                      });
                       userNFTs.push(nft);
                       resolve(null);
                     });
@@ -94,7 +75,7 @@ const Me: React.FC<{}> = () => {
             }
           })
         );
-        setNFTs(userNFTs.filter((nft) => nft.image));
+        setNFTs(userNFTs);
         setLoading(false);
       })();
     }
@@ -160,7 +141,7 @@ const Me: React.FC<{}> = () => {
                   key={`${collectionId}-${seriesId}-${serialNumber}`}
                 >
                   <div className="rounded mb-10">
-                    <NFT nft={nft} />
+                    <NFT nft={nft} renderer={NFTRenderer} />
                   </div>
                 </Link>
               );

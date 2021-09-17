@@ -11,6 +11,8 @@
   "dependencies": {
     "@cennznet/api": "^1.4.1",
     "@cennznet/types": "^1.4.1",
+    "@pinata/ipfs-gateway-tools": "^1.1.6",
+    "@pinata/sdk": "^1.1.23",
     "@polkadot/extension-dapp": "^0.38.5",
     "@polkadot/keyring": "^6.10.1",
     "@polkadot/util": "^6.10.1",

@@ -228,7 +228,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
               Please create an account in the wallet extension
             </h3>
             <span className="text-sm text-black mt-2 font-light">
-              Your wallet currently has 0 zero accounts
+              Your wallet currently has zero accounts
             </span>
             <div className="self-end flex items-center mt-8">
               <button
