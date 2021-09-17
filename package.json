@@ -17,7 +17,6 @@
     "@polkadot/keyring": "^6.10.1",
     "@polkadot/util": "^6.10.1",
     "next": "^11.0.0",
-    "nft.storage": "^3.2.0",
     "node-cache": "^5.1.2",
     "postcss-import": "^13.0.0",
     "postcss-preset-env": "^6.7.0",

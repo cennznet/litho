@@ -2,8 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { NFTStorage, toGatewayURL } from "nft.storage";
-import { TokenInput } from "nft.storage/dist/src/lib/interface";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
@@ -388,11 +386,8 @@ const Create: React.FC<{}> = () => {
 
   const mint = async () => {
     setModalState("mint");
-    const client = new NFTStorage({
-      token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
-    });
 
-    let storeOnIPFS: TokenInput;
+    let storeOnIPFS;
     if (state.nft.coverImage) {
       storeOnIPFS = {
         name: state.nft.title,
