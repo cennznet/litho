@@ -5,6 +5,7 @@ import useSWR from "swr";
 
 import NFT from "../components/nft";
 import Text from "../components/Text";
+import NFTRenderer from "../components/nft/NFTRenderer";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -139,7 +140,7 @@ const MarketPlace: React.FC<{}> = () => {
             return null;
           }
 
-          return <NFT nft={nft} key={nft.listingId} />;
+          return <NFT nft={nft} key={nft.listingId} renderer={NFTRenderer} />;
         })}
       </div>
       {nfts.length > 10 && <div id="sentinel" ref={ref} />}
