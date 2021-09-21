@@ -1,229 +1,229 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
 
 import Text from "../Text";
 import Web3Context from "../Web3Context";
-import { hexToString } from "@polkadot/util";
-import { NFT as NFTType } from "../../pages/create";
 import Image from "next/image";
 import TokenSelect from "./Select";
 import Input from "../Input";
-import { ReactComponent as AlertIcon } from "../../public/error_alert.svg";
+import { EnhancedTokenId } from "@cennznet/types/interfaces/nft/enhanced-token-id";
+import { SupportedAssetInfo } from "../SupportedAssetsProvider";
+import dayjs from "dayjs";
+import { BLOCK_TIME } from "../../pages/sell";
+import TxStatusModal from "./TxStatusModal";
 
+const openAuction = async (
+  api,
+  account,
+  tokenId,
+  paymentAssetId,
+  priceInUnit,
+  duration
+) => {
+  const extrinsic = await api.tx.nft.auction(
+    tokenId,
+    paymentAssetId,
+    priceInUnit,
+    duration
+  );
+
+  return new Promise((resolve, reject) => {
+    extrinsic
+      .signAndSend(account.signer, account.payload, ({ status }) => {
+        if (status.isInBlock) {
+          resolve(status.asInBlock.toString());
+          console.log(
+            `Completed at block hash #${status.asInBlock.toString()}`
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(":( transaction failed", error);
+        reject(error);
+      });
+  });
+};
 interface Props {
   collectionId: number;
   seriesId: number;
   serialNumber: number;
+  supportedAssets: SupportedAssetInfo[];
 }
-
-type Collection = {
-  id: number;
-  name: string;
-};
-
 const TimedAuction: React.FC<Props> = ({
   collectionId,
   seriesId,
   serialNumber,
+  supportedAssets,
 }) => {
   const web3Context = React.useContext(Web3Context);
-  const [defaultCollection, setDefaultCollection] =
-    React.useState<Collection>();
-
-  const getCollectionWiseTokens = async (api, address) => {
-    return await api.derive.nft.tokensOf(address);
-  };
 
   const [showAdvanced, setShowAdvanced] = React.useState(false);
-  const [numOfRoyalties, setNumOfRoyalties] = React.useState(1);
   const [error, setError] = React.useState(null);
-  const [token, setToken] = React.useState("CENNZ");
-  const [isSplitRoyaltyChecked, setIsSplitRoyaltyChecked] =
-    React.useState(true);
-  const [remainingPercentage, setRemainingPercentage] = React.useState(0);
+  const [paymentAsset, setPaymentAsset] = React.useState<SupportedAssetInfo>();
+
+  const [modalState, setModalState] = React.useState<string>();
 
   React.useEffect(() => {
-    (async () => {
-      const api = web3Context.api;
-      /**
-       * Load user collections and check if default Litho collection is already created for the user.
-       * If the collection exists use the existing collection id else create a new collection while minting.
-       */
-      if (web3Context.account) {
-        const tokensInCollections = await getCollectionWiseTokens(
-          api,
-          web3Context.account.address
-        );
+    if (supportedAssets && supportedAssets.length > 0) {
+      setPaymentAsset(supportedAssets[0]);
+    }
+  }, [supportedAssets]);
 
-        let collectionIds = tokensInCollections
-          .filter((tokens) => tokens.length > 0)
-          .map((tokens) => tokens.toJSON()[0].collectionId);
+  const tokenId = useMemo(() => {
+    if (web3Context.api) {
+      const id = new EnhancedTokenId(web3Context.api.registry, [
+        collectionId,
+        seriesId,
+        serialNumber,
+      ]);
+      return id.toHex();
+    }
+    return undefined;
+  }, [web3Context, collectionId, seriesId, serialNumber]);
 
-        const collections: Array<Collection> = await Promise.all(
-          collectionIds.map((collectionId) => {
-            return new Promise(async (resolve) => {
-              const name = await api.query.nft.collectionName(collectionId);
-              resolve({ id: collectionId, name: hexToString(name.toString()) });
-            });
-          })
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const { price, endDate } = e.currentTarget;
+
+      const priceInUnit = +price.value * 10 ** paymentAsset.decimals;
+      if (priceInUnit <= 0) {
+        setError("Please provide a proper price");
+        return;
+      }
+      let duration = null;
+      if (endDate.value) {
+        var dateParts = endDate.value.split("/");
+
+        if (dateParts.length < 3) {
+          setError("Please provide a valid end date");
+          return;
+        }
+        const now = dayjs();
+        const end_date = dayjs(
+          new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`)
         );
-        const defaultCollection: Collection = collections.find(
-          (collection: Collection) => collection.name === "Litho (default)"
-        );
-        if (defaultCollection) {
-          setDefaultCollection(defaultCollection);
+        if (!end_date.isValid()) {
+          setError("Please provide a valid end date");
+          return;
+        }
+        const duration_in_sec = end_date.diff(now, "s");
+        duration = duration_in_sec / BLOCK_TIME;
+        if (duration <= 0) {
+          setError("Please provide a future end date");
+          return;
         }
       }
-    })();
-  }, [web3Context.account]);
-
-  const submitHandler: React.FormEventHandler<HTMLFormElement> = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const { file, coverimage, storage } = event.currentTarget;
-  };
-
-  const renderRoyaltyInputs = (num) => {
-    const Royalties = [];
-    for (let i = 0; i < num; i++) {
-      Royalties.push(
-        <div className="flex w-full items-center justify-between" key={i}>
-          <Input
-            name={`royalty-account-${i + 1}`}
-            placeholder="Example: Size 20px"
-            className="flex-1"
-            defaultValue={"attribute"}
-          />
-          <Input
-            name={`royalty-percentage-${i + 1}`}
-            placeholder="Example: Size 20px"
-            className="flex-1"
-            defaultValue={"attribute"}
-          />
-        </div>
-      );
-    }
-
-    return Royalties;
-  };
+      if (web3Context.api) {
+        try {
+          setModalState("txInProgress");
+          await openAuction(
+            web3Context.api,
+            web3Context.account,
+            tokenId,
+            paymentAsset.id,
+            priceInUnit,
+            duration
+          );
+          setModalState("success");
+        } catch (e) {
+          setModalState("error");
+        }
+      }
+    },
+    [paymentAsset, web3Context.api, web3Context.account]
+  );
 
   return (
-    <form className="flex flex-col lg:w-3/5 m-auto" onSubmit={submitHandler}>
-      {error && (
-        <div className="bg-litho-red bg-opacity-25 text-litho-red font-bold p-2 text-base mb-4">
-          {error}
-        </div>
-      )}
+    <>
+      <form className="flex flex-col lg:w-3/5 m-auto" onSubmit={handleSubmit}>
+        <div className="w-full flex flex-col m-auto">
+          {error && (
+            <div className="w-full bg-litho-red bg-opacity-25 text-litho-red font-bold p-2 text-base mb-4">
+              {error}
+            </div>
+          )}
 
-      <label>
-        <Text variant="h6">Token</Text>
-      </label>
-      <TokenSelect
-        onChange={(val) => {
-          setToken(val);
-        }}
-      />
-
-      <label>
-        <Text variant="h6">Price</Text>
-      </label>
-      <Input
-        name="copies"
-        type="number"
-        placeholder={`Enter your price in ${"CENNZ"}`}
-        min={1}
-      />
-      <Text variant="caption" className="text-opacity-60 mb-10">
-        Service fee 2.5%
-      </Text>
-
-      <label>
-        <Text variant="h6">Total Royalty in %</Text>
-      </label>
-      <Input
-        name="royalty"
-        type="number"
-        placeholder="5%"
-        className="w-1/2 mb-10"
-        min={0}
-        max={100}
-      />
-
-      <div
-        className="flex item-center"
-        onClick={() => setShowAdvanced((val) => !val)}
-      >
-        <Text variant="h5">Distrubution of Royalties</Text>
-        <span className="ml-4 top-1">
-          <Image
-            src="/arrow.svg"
-            height="12"
-            width="12"
-            className={`transform transition-transform ${
-              !showAdvanced ? "rotate-180" : "rotate-0"
-            }`}
-          />
-        </span>
-      </div>
-      <div
-        className={`${
-          showAdvanced ? "h-auto py-4" : "h-0"
-        } flex flex-col overflow-hidden`}
-      >
-        <div className="w-full flex items-center justify-between mt-10 mb-10">
-          <label className="border bg-litho-gray4 flex-1 inline-flex items-center justify-center py-4">
-            <input
-              type="checkbox"
-              className="p-2"
-              checked={isSplitRoyaltyChecked}
-              onClick={() => setIsSplitRoyaltyChecked((val) => !val)}
-            />
-            <span className="ml-2">Split royalities evenly</span>
+          <label>
+            <Text variant="h6">Token</Text>
           </label>
-          <div className="border bg-litho-gray4 flex-1 ml-6 inline-flex items-center justify-center py-4">
-            <AlertIcon />
-            <span className="ml-2">{`${remainingPercentage}% of royalties remain`}</span>
-          </div>
+          <TokenSelect
+            selectedToken={paymentAsset}
+            supportedAssets={supportedAssets}
+            onTokenSelected={setPaymentAsset}
+          />
+
+          <label>
+            <Text variant="h6">Reserve price (in {paymentAsset?.symbol})</Text>
+          </label>
+          <Input
+            name="price"
+            type="text"
+            placeholder={`Enter your price in ${paymentAsset?.symbol}`}
+          />
+          <Text variant="caption" className="w-full text-opacity-60 mb-10">
+            Service fee 2.5%
+          </Text>
         </div>
-        <label>
-          <Text variant="h6">
-            Attributes (function as category, theme or descriptive tags to
-            organise your NFTs)
-          </Text>
-        </label>
 
-        {renderRoyaltyInputs(numOfRoyalties)}
-
-        <button
-          type="button"
-          className={`bg-litho-cream text-center py-2 border border-black w-56 text-base mt-10`}
-          onClick={() => setNumOfRoyalties((num) => num + 1)}
+        <div
+          className="flex item-center"
+          onClick={() => setShowAdvanced((val) => !val)}
         >
-          <Text variant="button" color="litho-blue">
-            + ADD COLLABORATOR
-          </Text>
-        </button>
-      </div>
+          <Text variant="h5">Advanced (optional)</Text>
+          <span className="ml-4 top-1">
+            <Image
+              src="/arrow.svg"
+              height="12"
+              width="12"
+              className={`transform transition-transform ${
+                !showAdvanced ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </span>
+        </div>
 
-      <div className="w-full flex items-center justify-between mt-10">
-        <Link
-          href={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
-          passHref
+        <div
+          className={`${
+            showAdvanced ? "h-auto py-4" : "h-0"
+          } flex flex-col overflow-hidden`}
         >
-          <a className="w-full md:w-auto border border-litho-blue bg-litho-cream flex-1 text-center py-2">
-            <Text variant="button" color="litho-blue">
-              CANCEL
+          <label>
+            <Text variant="h6">Auction end date</Text>
+          </label>
+          <Input name="endDate" type="text" placeholder="DD/MM/YYYY" />
+          <Text variant="caption" className="w-full text-opacity-60 mb-10">
+            By default, the auction will be closed after 3 days.
+          </Text>
+        </div>
+
+        <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+          <Link
+            href={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
+            passHref
+          >
+            <a className="md:w-auto border border-litho-blue bg-litho-cream text-center flex-1 py-2">
+              <Text variant="button" color="litho-blue">
+                CANCEL
+              </Text>
+            </a>
+          </Link>
+          <button className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
+            <Text variant="button" color="white">
+              SELL
             </Text>
-          </a>
-        </Link>
-        <button className="border bg-litho-blue flex-1 ml-6 text-center py-2">
-          <Text variant="button" color="white">
-            SELL
-          </Text>
-        </button>
-      </div>
-    </form>
+          </button>
+        </div>
+      </form>
+      {modalState && (
+        <TxStatusModal
+          successLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
+          errorLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
+          modalState={modalState}
+          setModalState={setModalState}
+        />
+      )}
+    </>
   );
 };
 

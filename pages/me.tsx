@@ -9,7 +9,6 @@ import NFTRenderer from "../components/nft/NFTRenderer";
 import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
-  const router = useRouter();
   const web3Context = React.useContext(Web3Context);
   const [loading, setLoading] = React.useState(false);
   const [nfts, setNFTs] = React.useState([]);
