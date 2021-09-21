@@ -6,17 +6,15 @@ import { useRouter } from "next/router";
 import Modal from "../Modal";
 
 interface Props {
-  collectionId: number;
-  seriesId: number;
-  serialNumber: number;
+  successLink: string;
+  errorLink: string;
   modalState: string;
   setModalState: (status: string) => void;
 }
 
 const TxStatusModal: React.FC<Props> = ({
-  collectionId,
-  seriesId,
-  serialNumber,
+  successLink,
+  errorLink,
   modalState,
   setModalState,
 }) => {
@@ -30,28 +28,26 @@ const TxStatusModal: React.FC<Props> = ({
     },
     success: {
       message: "CONGRATULATIONS!",
-      subText:
-        "Your NFT was successfully on sale and should be displayed in the marketplace.",
+      subText: "Your transaction was successfully proccessed.",
       buttons: [
         {
-          text: "VIEW NFT DETAILS",
+          text: "OK",
           isPrimary: true,
           type: "link",
-          link: `/nft/${collectionId}/${seriesId}/${serialNumber}`,
+          link: successLink,
         },
       ],
-      onClose: () =>
-        router.push(`/nft/${collectionId}/${seriesId}/${serialNumber}`),
+      onClose: () => router.push(successLink),
     },
     error: {
       message: "OOPS... SOMETHING WENT WRONG",
-      subText: " Your NFT failed to mint. Please try again.",
+      subText: "Your transaction failed to proccess. Please try again.",
       buttons: [
         {
           text: "CANCEL",
           isPrimary: false,
           type: "link",
-          link: `/nft/${collectionId}/${seriesId}/${serialNumber}`,
+          link: errorLink,
         },
         {
           text: "TRY AGAIN",

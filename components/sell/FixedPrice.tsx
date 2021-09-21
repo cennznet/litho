@@ -98,8 +98,7 @@ const FixedPrice: React.FC<Props> = ({
         buyerAddress = buyer.value;
       }
 
-      const DEFAULT_DECIMALS = 4;
-      const priceInUnit = +price.value * 10 ** DEFAULT_DECIMALS;
+      const priceInUnit = +price.value * 10 ** paymentAsset.decimals;
       if (priceInUnit <= 0) {
         setError("Please provide a proper price");
         return;
@@ -107,10 +106,13 @@ const FixedPrice: React.FC<Props> = ({
       let duration = null;
       if (endDate.value) {
         var dateParts = endDate.value.split("/");
-
+        if (dateParts.length < 3) {
+          setError("Please provide a valid end date");
+          return;
+        }
         const now = dayjs();
         const end_date = dayjs(
-          new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0])
+          new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`)
         );
         if (!end_date.isValid()) {
           setError("Please provide a valid end date");
@@ -141,7 +143,7 @@ const FixedPrice: React.FC<Props> = ({
         }
       }
     },
-    [paymentAsset, web3Context.api]
+    [paymentAsset, web3Context.api, web3Context.account]
   );
 
   return (
@@ -213,6 +215,9 @@ const FixedPrice: React.FC<Props> = ({
             <Text variant="h6">Expiration date</Text>
           </label>
           <Input name="endDate" type="text" placeholder="DD/MM/YYYY" />
+          <Text variant="caption" className="w-full text-opacity-60 mb-10">
+            By default, this sale will be closed after 3 days.
+          </Text>
         </div>
 
         <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
@@ -235,9 +240,8 @@ const FixedPrice: React.FC<Props> = ({
       </form>
       {modalState && (
         <TxStatusModal
-          collectionId={collectionId}
-          seriesId={seriesId}
-          serialNumber={serialNumber}
+          successLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
+          errorLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
           modalState={modalState}
           setModalState={setModalState}
         />

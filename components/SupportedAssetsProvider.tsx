@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Web3Context from "./Web3Context";
 import SupportedAssetsContext from "./SupportedAssetsContext";
+import { u8aToString } from "@polkadot/util";
 
 const SupportedAssetIds =
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS &&
-  process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(" ");
+  process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(",");
 
 export type SupportedAssetInfo = {
   id: number;
@@ -26,15 +27,16 @@ const SupportedAssetsProvider = ({ children }) => {
       web3Context.api.isReady.then(async () => {
         const assets =
           await web3Context.api.rpc.genericAsset.registeredAssets();
+
         let assetInfo = [];
         if (SupportedAssetIds && SupportedAssetIds.length > 0) {
           assetInfo = SupportedAssetIds.map((assetId) => {
             const [tokenId, { symbol, decimalPlaces }] = assets.find(
-              (asset) => asset[0].toNumber() === +assetId
+              (asset) => asset[0].toString() === assetId
             );
             return {
-              id: tokenId.toNumber(),
-              symbol: symbol.toUtf8(),
+              id: Number(tokenId),
+              symbol: u8aToString(symbol),
               decimals: decimalPlaces.toNumber(),
             };
           });
@@ -42,8 +44,8 @@ const SupportedAssetsProvider = ({ children }) => {
           assetInfo = assets.map((asset) => {
             const [tokenId, { symbol, decimalPlaces }] = asset;
             return {
-              id: tokenId.toNumber(),
-              symbol: symbol.toUtf8(),
+              id: tokenId.toString(),
+              symbol: u8aToString(symbol),
               decimals: decimalPlaces.toNumber(),
             };
           });

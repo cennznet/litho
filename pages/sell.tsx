@@ -6,9 +6,11 @@ import Text from "../components/Text";
 import { ReactComponent as MoneyIcon } from "../public/money.svg";
 import { ReactComponent as HourglassIcon } from "../public/hourglass.svg";
 import { ReactComponent as CatIcon } from "../public/cat.svg";
-import FixedPrice from "../components/sell/FixedPrice";
-import TimedAuction from "../components/sell/TimedAuction";
 import SupportedAssetsContext from "../components/SupportedAssetsContext";
+import dynamic from "next/dynamic";
+
+const FixedPrice = dynamic(() => import("../components/sell/FixedPrice"));
+const TimedAuction = dynamic(() => import("../components/sell/TimedAuction"));
 
 export const BLOCK_TIME = 5;
 
