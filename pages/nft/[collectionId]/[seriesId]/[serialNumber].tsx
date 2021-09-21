@@ -247,11 +247,13 @@ const NFTDetail: React.FC<{}> = () => {
 
   return (
     <>
-      <Link href="/me">
-        <a className="font-bold" style={{ lineHeight: "31px" }}>
-          &lt; My Profile
-        </a>
-      </Link>
+      <button
+        className="font-bold"
+        style={{ lineHeight: "31px" }}
+        onClick={() => router.back()}
+      >
+        &lt; Back
+      </button>
 
       {nft && <NFT nft={nft} renderer={NFTDetailRenderer} />}
     </>

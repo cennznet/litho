@@ -1,7 +1,7 @@
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
-import useSWR from "swr";
+import Link from "next/link";
 
 import NFT from "../components/nft";
 import Text from "../components/Text";
@@ -140,7 +140,15 @@ const MarketPlace: React.FC<{}> = () => {
             return null;
           }
 
-          return <NFT nft={nft} key={nft.listingId} renderer={NFTRenderer} />;
+          return (
+            <Link
+              href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
+            >
+              <a>
+                <NFT nft={nft} key={nft.listingId} renderer={NFTRenderer} />
+              </a>
+            </Link>
+          );
         })}
       </div>
       {nfts.length > 10 && <div id="sentinel" ref={ref} />}

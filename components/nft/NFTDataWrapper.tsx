@@ -3,8 +3,6 @@ import useSWR from "swr";
 import IPFSGatewayTools from "@pinata/ipfs-gateway-tools/dist/browser";
 const gatewayTools = new IPFSGatewayTools();
 
-import NFTRenderer from "./NFTRenderer";
-
 const NFTDataWrapper: React.FC<{
   nft: any;
   renderer: React.FC<{ nft: any; error: any }>;
