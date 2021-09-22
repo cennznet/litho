@@ -20,7 +20,7 @@ const Input: React.FC<Props> = ({
   return (
     <input
       type={type}
-      className={`border border-litho-black text-base p-4 mb-6 ${className}`}
+      className={`border border-litho-black text-base p-4 ${className}`}
       {...inputProps}
     />
   );
