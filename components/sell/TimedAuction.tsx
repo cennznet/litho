@@ -158,9 +158,8 @@ const TimedAuction: React.FC<Props> = ({
           </label>
           <Input
             name="price"
-            type="number"
+            type="text"
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
-            min={1}
           />
           <Text variant="caption" className="w-full text-opacity-60 mb-10">
             Service fee 2.5%

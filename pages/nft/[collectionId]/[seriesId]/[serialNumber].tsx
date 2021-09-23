@@ -70,6 +70,7 @@ const NFTDetail: React.FC<{}> = () => {
   const [error, setError] = React.useState(null);
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
+  const [listingInfo, setListingInfo] = React.useState<any>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -93,49 +94,14 @@ const NFTDetail: React.FC<{}> = () => {
           router.query.seriesId
         );
 
-        const [openListing, tokenOwner] = await Promise.all([
-          web3Context.api.derive.nft.openCollectionListings(
-            router.query.collectionId
-          ),
-          web3Context.api.query.nft.tokenOwner(
-            [router.query.collectionId, router.query.seriesId],
-            router.query.serialNumber
-          ),
-        ]);
-
         const { attributes, owner, tokenId } = tokenInfo;
-        const listingInfo = openListing.find((listing) => {
-          return (
-            listing.tokenId.collectionId.toNumber() ===
-              tokenId.collectionId.toNumber() &&
-            listing.tokenId.seriesId.toNumber() ===
-              tokenId.seriesId.toNumber() &&
-            listing.tokenId.serialNumber.toNumber() ===
-              tokenId.serialNumber.toNumber()
-          );
-        });
-        let auctionInfo = undefined;
-        let fixedPriceInfo = undefined;
 
-        if (listingInfo) {
-          const listing = (
-            await web3Context.api.query.nft.listings(listingInfo.listingId)
-          ).unwrapOrDefault();
-          if (listing.isAuction) {
-            auctionInfo = listing.asAuction.toJSON();
-          } else {
-            fixedPriceInfo = listing.asFixedPrice.toJSON();
-          }
-        }
         const nft: { [index: string]: any } = {
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
           owner,
           copies: seriesIssuance.toJSON(),
-          listingId: listingInfo?.listingId.toNumber(),
-          auctionInfo: auctionInfo,
-          fixedPriceInfo: fixedPriceInfo,
         };
 
         const otherAttributes = [];
@@ -207,7 +173,47 @@ const NFTDetail: React.FC<{}> = () => {
       return;
     }
     (async () => {
-      web3Context.api.isReady.then(async () => {
+      const isApiReady = await web3Context.api.isReady;
+      if (isApiReady) {
+        let openListing = undefined;
+        try {
+          openListing = await web3Context.api.derive.nft.openCollectionListings(
+            router.query.collectionId
+          );
+        } catch (e) {
+          openListing = [];
+        }
+
+        const listingInfo = openListing.find((listing) => {
+          return (
+            listing.tokenId.collectionId.toNumber() ===
+              Number(router.query.collectionId) &&
+            listing.tokenId.seriesId.toNumber() ===
+              Number(router.query.seriesId) &&
+            listing.tokenId.serialNumber.toNumber() ===
+              Number(router.query.serialNumber)
+          );
+        });
+        let auctionInfo = undefined;
+        let fixedPriceInfo = undefined;
+
+        if (listingInfo) {
+          const listing = (
+            await web3Context.api.query.nft.listings(listingInfo.listingId)
+          ).unwrapOrDefault();
+          if (listing.isAuction) {
+            auctionInfo = listing.asAuction.toJSON();
+          } else {
+            fixedPriceInfo = listing.asFixedPrice.toJSON();
+          }
+        }
+
+        setListingInfo({
+          listingId: listingInfo?.listingId.toNumber(),
+          auctionInfo: auctionInfo,
+          fixedPriceInfo: fixedPriceInfo,
+        });
+
         const copies = await web3Context.api.query.nft.seriesIssuance(
           router.query.collectionId,
           router.query.seriesId
@@ -227,13 +233,10 @@ const NFTDetail: React.FC<{}> = () => {
             router.query.serialNumber,
           ]);
         }
-        const [copyOwers, openListing] = await Promise.all([
-          web3Context.api.query.nft.tokenOwner.multi(copyParams),
-          web3Context.api.derive.nft.openCollectionListings(
-            router.query.collectionId
-          ),
-        ]);
-        for (let i = 0; i < copies.toNumber(); i++) {
+        const copyOwers = await web3Context.api.query.nft.tokenOwner.multi(
+          copyParams
+        );
+        for (let i = 0; i < copyOwers.length; i++) {
           const isOwner =
             copyOwers[i].toString() === web3Context.account.address.toString();
           const isOnSale = openListing.find((listing) => {
@@ -250,63 +253,63 @@ const NFTDetail: React.FC<{}> = () => {
             break;
           }
         }
-      });
+      }
     })();
   }, [web3Context.api, web3Context.account]);
 
   const paymentAsset = useMemo(() => {
     let paymentAssetId = undefined;
-    if (nft && nft.fixedPriceInfo) {
-      paymentAssetId = nft.fixedPriceInfo.paymentAsset;
+    if (listingInfo && listingInfo.fixedPriceInfo) {
+      paymentAssetId = listingInfo.fixedPriceInfo.paymentAsset;
     }
-    if (nft && nft.auctionInfo) {
-      paymentAssetId = nft.auctionInfo.paymentAsset;
+    if (listingInfo && listingInfo.auctionInfo) {
+      paymentAssetId = listingInfo.auctionInfo.paymentAsset;
     }
     if (supportedAssets && supportedAssets.length > 0 && paymentAssetId) {
       return supportedAssets.find((asset) => asset.id === paymentAssetId);
     }
-  }, [nft, supportedAssets]);
+  }, [listingInfo, supportedAssets]);
 
   const reservePrice = useMemo(() => {
-    if (nft && nft.auctionInfo && paymentAsset) {
-      const price = nft.auctionInfo.reservePrice;
+    if (listingInfo && listingInfo.auctionInfo && paymentAsset) {
+      const price = listingInfo.auctionInfo.reservePrice;
       return price / 10 ** paymentAsset.decimals;
     }
     return 0;
-  }, [nft, paymentAsset]);
+  }, [listingInfo, paymentAsset]);
 
   const fixedPrice = useMemo(() => {
-    if (nft && nft.fixedPriceInfo && paymentAsset) {
-      const price = nft.fixedPriceInfo.fixedPrice;
+    if (listingInfo && listingInfo.fixedPriceInfo && paymentAsset) {
+      const price = listingInfo.fixedPriceInfo.fixedPrice;
       return price / 10 ** paymentAsset.decimals;
     }
     return 0;
-  }, [nft, paymentAsset]);
+  }, [listingInfo, paymentAsset]);
 
   const endTime = useMemo(() => {
-    if (nft && web3Context.api) {
+    if (listingInfo && web3Context.api) {
       let blocks = 0;
-      if (nft.fixedPriceInfo) {
-        blocks = Number(nft.fixedPriceInfo.close) - currentBlock;
+      if (listingInfo.fixedPriceInfo) {
+        blocks = Number(listingInfo.fixedPriceInfo.close) - currentBlock;
         return GetRemaindedTime(web3Context.api, blocks);
       }
-      if (nft.auctionInfo) {
-        blocks = Number(nft.auctionInfo.close) - currentBlock;
+      if (listingInfo.auctionInfo) {
+        blocks = Number(listingInfo.auctionInfo.close) - currentBlock;
         return GetRemaindedTime(web3Context.api, blocks);
       }
     }
-  }, [nft, web3Context.api, currentBlock]);
+  }, [listingInfo, web3Context.api, currentBlock]);
 
   const buyNow = useCallback(
     async (e) => {
       e.preventDefault();
-      if (web3Context.api && nft && nft.listingId) {
+      if (web3Context.api && listingInfo && listingInfo.listingId) {
         try {
           setModalState("txInProgress");
           await buyWithFixedPrice(
             web3Context.api,
             web3Context.account,
-            nft.listingId
+            listingInfo.listingId
           );
           setModalState("success");
         } catch (e) {
@@ -314,7 +317,7 @@ const NFTDetail: React.FC<{}> = () => {
         }
       }
     },
-    [nft, web3Context.api, web3Context.account]
+    [listingInfo, web3Context.api, web3Context.account]
   );
 
   const confirmBid = useCallback(
@@ -325,10 +328,14 @@ const NFTDetail: React.FC<{}> = () => {
       if (
         !price.value ||
         !paymentAsset ||
-        !nft ||
-        !nft.auctionInfo ||
-        !nft.listingId
+        !listingInfo ||
+        !listingInfo.auctionInfo ||
+        !listingInfo.listingId
       ) {
+        return;
+      }
+
+      if (+price.value < +reservePrice) {
         return;
       }
 
@@ -340,7 +347,7 @@ const NFTDetail: React.FC<{}> = () => {
           await placeABid(
             web3Context.api,
             web3Context.account,
-            nft.listingId,
+            listingInfo.listingId,
             priceInUnit
           );
           setModalState("success");
@@ -350,7 +357,13 @@ const NFTDetail: React.FC<{}> = () => {
         }
       }
     },
-    [paymentAsset, nft, web3Context.api, reservePrice, web3Context.account]
+    [
+      paymentAsset,
+      listingInfo,
+      web3Context.api,
+      reservePrice,
+      web3Context.account,
+    ]
   );
 
   return (
@@ -440,68 +453,70 @@ const NFTDetail: React.FC<{}> = () => {
             <div className="w-1/3">
               {!isPlaceABid ? (
                 <>
-                  {nft.listingId && (nft.auctionInfo || nft.fixedPriceInfo) && (
-                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
-                      {nft.fixedPriceInfo && (
-                        <>
-                          <div className="flex justify-between">
-                            <Text variant="h6" className="text-opacity-50">
-                              Fixed Price
-                            </Text>
-                            <Text variant="h6">
-                              {endTime &&
-                                `Ending in ${endTime.days} days ${endTime.hours} hours`}
-                            </Text>
-                          </div>
-                          <div className="flex justify-between">
+                  {listingInfo &&
+                    listingInfo.listingId &&
+                    (listingInfo.auctionInfo || listingInfo.fixedPriceInfo) && (
+                      <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                        {listingInfo.fixedPriceInfo && (
+                          <>
+                            <div className="flex justify-between">
+                              <Text variant="h6" className="text-opacity-50">
+                                Fixed Price
+                              </Text>
+                              <Text variant="h6">
+                                {endTime &&
+                                  `Ending in ${endTime.days} days ${endTime.hours} hours`}
+                              </Text>
+                            </div>
+                            <div className="flex justify-between">
+                              <Text variant="h3" className="mt-6">
+                                {fixedPrice} {paymentAsset?.symbol}
+                              </Text>
+                            </div>
+                          </>
+                        )}
+                        {listingInfo.auctionInfo && (
+                          <>
+                            <div className="flex justify-between">
+                              <Text variant="h6" className="text-opacity-50">
+                                Live Auction
+                              </Text>
+                              <Text variant="h6">
+                                {endTime &&
+                                  `Ending in ${endTime.days} days ${endTime.hours} hours`}
+                              </Text>
+                            </div>
                             <Text variant="h3" className="mt-6">
-                              {fixedPrice} {paymentAsset?.symbol}
+                              {reservePrice} {paymentAsset?.symbol}
                             </Text>
+                          </>
+                        )}
+                        {listingInfo.auctionInfo && (
+                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-4">
+                            <button
+                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                              onClick={() => setIsPlaceABid(true)}
+                            >
+                              <Text variant="button" color="white">
+                                PLACE A BID
+                              </Text>
+                            </button>
                           </div>
-                        </>
-                      )}
-                      {nft.auctionInfo && (
-                        <>
-                          <div className="flex justify-between">
-                            <Text variant="h6" className="text-opacity-50">
-                              Live Auction
-                            </Text>
-                            <Text variant="h6">
-                              {endTime &&
-                                `Ending in ${endTime.days} days ${endTime.hours} hours`}
-                            </Text>
+                        )}
+                        {listingInfo.fixedPriceInfo && (
+                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                            <button
+                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                              onClick={buyNow}
+                            >
+                              <Text variant="button" color="white">
+                                BUY NOW
+                              </Text>
+                            </button>
                           </div>
-                          <Text variant="h3" className="mt-6">
-                            {reservePrice} {paymentAsset?.symbol}
-                          </Text>
-                        </>
-                      )}
-                      {nft.auctionInfo && (
-                        <div className="w-full flex-col md:flex-row flex items-center justify-between mt-4">
-                          <button
-                            className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
-                            onClick={() => setIsPlaceABid(true)}
-                          >
-                            <Text variant="button" color="white">
-                              PLACE A BID
-                            </Text>
-                          </button>
-                        </div>
-                      )}
-                      {nft.fixedPriceInfo && (
-                        <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
-                          <button
-                            className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
-                            onClick={buyNow}
-                          >
-                            <Text variant="button" color="white">
-                              BUY NOW
-                            </Text>
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    )}
                   <div className="w-full p-8 flex flex-col border-b border-litho-black">
                     <Text variant="h6">Creator</Text>
                     <Text variant="h6" className="text-opacity-50">
@@ -582,9 +597,8 @@ const NFTDetail: React.FC<{}> = () => {
                       </Text>
                       <Input
                         name="price"
-                        type="number"
+                        type="text"
                         placeholder={`Minimum bid of ${reservePrice} ${paymentAsset?.symbol}`}
-                        min={+reservePrice}
                       />
                       <Text
                         variant="caption"
