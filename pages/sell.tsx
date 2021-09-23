@@ -16,6 +16,7 @@ export const BLOCK_TIME = 5;
 
 const Sell: React.FC<{}> = () => {
   const router = useRouter();
+
   const web3Context = React.useContext(Web3Context);
   const supportedAssetContext = React.useContext(SupportedAssetsContext);
 
@@ -26,6 +27,33 @@ const Sell: React.FC<{}> = () => {
   const { collectionId, seriesId, serialNumber } = router.query;
 
   const [currentTab, setCurrentTab] = React.useState<number>(1);
+
+  React.useEffect(() => {
+    if (!web3Context.api) {
+      return;
+    }
+    (async () => {
+      web3Context.api.isReady.then(async () => {
+        const tokenOwner = await web3Context.api.query.nft.tokenOwner(
+          [collectionId, seriesId],
+          serialNumber
+        );
+        if (
+          web3Context.account &&
+          tokenOwner.toString() !== web3Context.account.address
+        ) {
+          router.push("/me");
+          return;
+        }
+      });
+    })();
+  }, [
+    web3Context.api,
+    web3Context.account,
+    collectionId,
+    seriesId,
+    serialNumber,
+  ]);
 
   return (
     <div className="border border-litho-black mt-7 mb-6 flex flex-col">
