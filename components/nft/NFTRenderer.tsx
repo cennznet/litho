@@ -22,10 +22,14 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
   React.useEffect(() => {
     if (!error && !fileExtension) {
       (async () => {
-        const res = await fetch(image);
-        const contentType = res.headers.get("content-type");
-        const extension = getFileExtension(contentType);
-        setFileExtension(extension);
+        try {
+          const res = await fetch(image);
+          const contentType = res.headers.get("content-type");
+          const extension = getFileExtension(contentType);
+          setFileExtension(extension);
+        } catch (error) {
+          console.log(error);
+        }
       })();
     }
   }, []);

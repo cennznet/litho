@@ -55,10 +55,6 @@ export default async (req, res) => {
           let attributes = tokenInfo.attributes;
           if(tokenInfo.attributes) {
             metadata = getMetadata(tokenInfo.attributes);
-            console.log(gatewayTools.convertToDesiredGateway(
-              metadata,
-              process.env.NEXT_PUBLIC_PINATA_GATEWAY
-            ));
             if(metadata) {
               try {
                 const metadataUrl = gatewayTools.convertToDesiredGateway(
@@ -69,7 +65,6 @@ export default async (req, res) => {
                 if(cache.has(metadataUrl)) {
                   metadataResponse = cache.get(metadataUrl);
                 } else {
-                  console.log(metadataUrl);
                   metadataResponse = await fetch(metadataUrl).then(res => res.json());
                   cache.set(metadataUrl, metadataResponse);
                 }
@@ -84,7 +79,7 @@ export default async (req, res) => {
             }
           }
 
-          nfts.push({ ...restDetails, ...tokenInfo, tokenId, ...attributes, listingId: listingId.toString()});
+          nfts.push({ ...restDetails, ...tokenInfo, tokenId, ...attributes, listingId: listingId.toString(), metadata});
         }));
         resolve({});
       });

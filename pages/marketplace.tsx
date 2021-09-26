@@ -6,6 +6,7 @@ import Link from "next/link";
 import NFT from "../components/nft";
 import Text from "../components/Text";
 import NFTRenderer from "../components/nft/NFTRenderer";
+import useSWR from "swr";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -84,11 +85,27 @@ const MarketPlace: React.FC<{}> = () => {
     threshold: 1,
   });
   const [sort, setSort] = React.useState("newest-first");
+  const { data } = useSWR("/api/getAllNFTs");
+
+  // React.useEffect(() => {
+  //   (async () => {
+  //     const res = await fetch("/api/getAllNFTs").then((res) => res.json());
+  //     const sortedNFTs = res.nfts.sort((n1, n2) => {
+  //       if (n1.close > n2.close) {
+  //         return sort === "oldest-first" ? 1 : -1;
+  //       } else if (n1.close < n2.close) {
+  //         return sort === "oldest-first" ? -1 : 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     });
+  //     setNFTs(sortedNFTs);
+  //   })();
+  // }, []);
 
   React.useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/getAllNFTs").then((res) => res.json());
-      const sortedNFTs = res.nfts.sort((n1, n2) => {
+    if (data && data.nfts && data.nfts.length > 0) {
+      const sortedNFTs = data.nfts.sort((n1, n2) => {
         if (n1.close > n2.close) {
           return sort === "oldest-first" ? 1 : -1;
         } else if (n1.close < n2.close) {
@@ -98,8 +115,8 @@ const MarketPlace: React.FC<{}> = () => {
         }
       });
       setNFTs(sortedNFTs);
-    })();
-  }, []);
+    }
+  }, [data]);
 
   React.useEffect(() => {
     if (entry && entry.isIntersecting && nfts.length > 0) {
@@ -143,9 +160,10 @@ const MarketPlace: React.FC<{}> = () => {
           return (
             <Link
               href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
+              key={nft.listingId}
             >
               <a>
-                <NFT nft={nft} key={nft.listingId} renderer={NFTRenderer} />
+                <NFT nft={nft} renderer={NFTRenderer} />
               </a>
             </Link>
           );

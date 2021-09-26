@@ -1,14 +1,17 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
+  const { data } = useSWR("/api/getAllNFTs");
 
   return (
     <>
@@ -118,16 +121,38 @@ const Home: React.FC<{}> = () => {
           </Modal>
         )}
       </div>
-      <div className="mt-16">
-        <div className="flex items-center justify-between">
-          <Text variant="h3">Marketplace</Text>
-          <Link href="/marketplace">
-            <a className="">
-              <Text variant="h6">View all</Text>
-            </a>
-          </Link>
+      {data && data.nfts && data.nfts.length > 0 && (
+        <div className="mt-16">
+          <div className="flex items-center justify-between">
+            <Text variant="h3">Marketplace</Text>
+            <Link href="/marketplace">
+              <a className="">
+                <Text variant="h6">View all</Text>
+              </a>
+            </Link>
+          </div>
+          {
+            <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr">
+              {data.nfts.map((nft, index) => {
+                if (index > 4) {
+                  return null;
+                }
+
+                return (
+                  <Link
+                    href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
+                    key={nft.listingId}
+                  >
+                    <a>
+                      <NFT nft={nft} renderer={NFTRenderer} />
+                    </a>
+                  </Link>
+                );
+              })}
+            </div>
+          }
         </div>
-      </div>
+      )}
     </>
   );
 };

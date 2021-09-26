@@ -1,9 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import useSWR from "swr";
-// import IPFSGatewayTools from '@pinata/ipfs-gateway-tools/dist/browser';
-// const gatewayTools = new IPFSGatewayTools();
 
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
@@ -145,14 +142,16 @@ const NFTDetailRenderer: React.FC<{ nft: any; error: any }> = ({
         <div className="w-1/3">
           <div className="w-full p-8 flex flex-col border-b border-litho-black">
             <Text variant="h6">Creator</Text>
-            <Text variant="h6" className="text-opacity-50">
-              {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
-              {web3Context.account
-                ? web3Context.account.address === nft.owner
-                  ? "(You)"
-                  : null
-                : null}
-            </Text>
+            {nft.owner && (
+              <Text variant="h6" className="text-opacity-50">
+                {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
+                {web3Context.account
+                  ? web3Context.account.address === nft.owner
+                    ? "(You)"
+                    : null
+                  : null}
+              </Text>
+            )}
           </div>
           {nft.description && (
             <div className="w-full p-8 flex flex-col border-b border-litho-black">

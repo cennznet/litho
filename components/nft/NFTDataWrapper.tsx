@@ -9,15 +9,18 @@ const NFTDataWrapper: React.FC<{
 }> = ({ nft, renderer: Renderer }) => {
   const [nftData, setNFTData] = React.useState(nft);
   const [nftError, setError] = React.useState<string>(null);
-
-  const { data, error } = useSWR(
+  const [metadataUrl, setMetadataUrl] = React.useState(
     nft.metadata && nft.metadata !== "undefined"
-      ? gatewayTools.convertToDesiredGateway(
-          nft.metadata,
-          process.env.NEXT_PUBLIC_PINATA_GATEWAY
-        )
+      ? nft.metadata.startsWith("ipfs://")
+        ? gatewayTools.convertToDesiredGateway(
+            nft.metadata,
+            process.env.NEXT_PUBLIC_PINATA_GATEWAY
+          )
+        : nft.metadata
       : null
   );
+
+  const { data, error } = useSWR(metadataUrl);
 
   React.useEffect(() => {
     if (!nft.metadata) {
@@ -28,20 +31,24 @@ const NFTDataWrapper: React.FC<{
       const metadata = {
         name: data.name,
         description: data.description,
-        image: gatewayTools.convertToDesiredGateway(
-          data.image,
-          process.env.NEXT_PUBLIC_PINATA_GATEWAY
-        ),
-        copies: data.properties.quantity,
-        owner: data.properties.owner,
-        file: data.properties.file
+        image: data.image.startsWith("ipfs://")
           ? gatewayTools.convertToDesiredGateway(
-              data.properties.file,
+              data.image,
               process.env.NEXT_PUBLIC_PINATA_GATEWAY
             )
-          : null,
-        extension: data.properties.extension,
-        coverFileExtension: data.properties.coverFileExtension,
+          : data.image,
+        copies: (data.properties && data.properties.quantity) || 1,
+        owner: data.properties && data.properties.owner,
+        file:
+          data.properties && data.properties.file
+            ? gatewayTools.convertToDesiredGateway(
+                data.properties.file,
+                process.env.NEXT_PUBLIC_PINATA_GATEWAY
+              )
+            : null,
+        extension: data.properties && data.properties.extension,
+        coverFileExtension:
+          data.properties && data.properties.coverFileExtension,
         metadata: gatewayTools.convertToDesiredGateway(
           nft.metadata,
           process.env.NEXT_PUBLIC_PINATA_GATEWAY
@@ -51,7 +58,16 @@ const NFTDataWrapper: React.FC<{
     }
 
     if (error) {
-      setError(error.message);
+      if (nft.metadata.startsWith("ipfs://")) {
+        setMetadataUrl(
+          gatewayTools.convertToDesiredGateway(
+            nft.metadata,
+            "https://gateway.pinata.cloud"
+          )
+        );
+      } else {
+        setError(error.message);
+      }
     }
   }, [data, error]);
 
