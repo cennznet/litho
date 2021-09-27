@@ -154,9 +154,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       setHasWeb3Injected(false);
     }
   };
+  const apiInstance = new ApiPromise({ provider: endpoint, registry });
 
   React.useEffect(() => {
-    const apiInstance = new ApiPromise({ provider: endpoint, registry });
+    if (!apiInstance.isReady) return;
     setAPI(apiInstance);
 
     return () => {
@@ -164,7 +165,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         accountsUnsubscribe();
       }
     };
-  }, []);
+  }, [apiInstance]);
 
   return (
     <Web3Context.Provider

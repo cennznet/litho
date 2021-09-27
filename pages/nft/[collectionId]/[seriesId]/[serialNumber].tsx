@@ -7,7 +7,7 @@ import Text from "../../../../components/Text";
 import getFileExtension from "../../../../utils/getFileExtension";
 import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import getMetadata from "../../../../utils/getMetadata";
-import NFT from "../../../../components/NFT";
+import NFT from "../../../../components/nft";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
 import { GetRemainingTime } from "../../../../utils/chainHelper";
@@ -123,6 +123,10 @@ const NFTDetailRenderer: React.FC<RendererProps> = ({
   if (!imageUrl && !error) {
     return null;
   }
+
+  const displayOwner = nft.owner
+    ? `${nft.owner.substr(0, 8)}...${nft.owner.substr(-8)}`
+    : "";
 
   return imageUrl ? (
     <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
@@ -278,7 +282,7 @@ const NFTDetailRenderer: React.FC<RendererProps> = ({
               <div className="w-full p-8 flex flex-col border-b border-litho-black">
                 <Text variant="h6">Creator</Text>
                 <Text variant="h6" className="text-opacity-50">
-                  {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
+                  {displayOwner}{" "}
                   {web3Context.account
                     ? web3Context.account.address === nft.owner
                       ? "(You)"
@@ -419,6 +423,11 @@ const NFTDetail: React.FC<{}> = () => {
           serialNumber: router.query.serialNumber,
         });
 
+        const tokenOwner = await web3Context.api.query.nft.tokenOwner(
+          (router.query.collectionId, router.query.seriesId),
+          router.query.serialNumber
+        );
+
         const currentBlock = (
           await web3Context.api.rpc.chain.getBlock()
         ).block.header.number.toNumber();
@@ -433,10 +442,10 @@ const NFTDetail: React.FC<{}> = () => {
         const metadata = getMetadata(attributes);
 
         const nft: { [index: string]: any } = {
+          owner: tokenOwner,
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
-          owner,
           attributes: attributes,
           copies: seriesIssuance.toJSON(),
           metadata,
@@ -674,7 +683,9 @@ const NFTDetail: React.FC<{}> = () => {
         &lt; Back
       </button>
 
-      {nft && <NFT nft={nft} renderer={NFTDetailRenderer} {...props} />}
+      {nft && nft.length > 0 && (
+        <NFT nft={nft} renderer={NFTDetailRenderer} {...props} />
+      )}
 
       {modalState && (
         <TxStatusModal
