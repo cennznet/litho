@@ -402,11 +402,21 @@ const NFTDetail: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
   const [nft, setNFT] = React.useState<{ [index: string]: any }>();
   const supportedAssetContext = React.useContext(SupportedAssetsContext);
+
   const supportedAssets = useMemo(() => {
     return supportedAssetContext.supportedAssets;
   }, [supportedAssetContext]);
 
+  const [loading, setLoading] = React.useState(true);
+  const web3Context = React.useContext(Web3Context);
+  const [nft, setNFT] = React.useState<{ [index: string]: any }>();
+  const [image, setImage] = React.useState<string>();
+  const [extension, setFileExtension] = React.useState<string>();
+  const [isPlaceABid, setIsPlaceABid] = React.useState<boolean>(false);
+  const [modalState, setModalState] = React.useState<string>();
   const [currentBlock, setCurrentBlock] = React.useState<number>();
+  const [error, setError] = React.useState(null);
+  const [editableSerialNumber, setEditableSerialNumber] =
   const [isOwner, setIsOwner] = React.useState(false);
   const [listingInfo, setListingInfo] = React.useState<any>();
   const [modalState, setModalState] = React.useState<string>();
@@ -451,7 +461,61 @@ const NFTDetail: React.FC<{}> = () => {
           metadata,
         };
 
+        const otherAttributes = [];
+
+        attributes.forEach(({ Text, Url }) => {
+          const attributeString = Text || Url;
+          if (attributeString) {
+            const attributeBreakup = attributeString.split(" ");
+            switch (attributeBreakup[0]) {
+              case "Image-URL":
+                nft.image = attributeBreakup[1];
+                break;
+              case "Metadata-URL":
+                nft.metadata = attributeBreakup[1];
+                break;
+              case "Title":
+                const [_, ...words] = attributeBreakup;
+                nft.title = words.join(" ");
+              case "Description":
+                const [, ...description] = attributeBreakup;
+                nft.description = description.join(" ");
+                break;
+              case "File-Type":
+                const [, ...fileType] = attributeBreakup;
+                nft.fileType = fileType;
+                break;
+              case "Quantity":
+                break;
+              case "Video-URL":
+                const [, video] = attributeBreakup;
+                nft.videoUrl = video;
+                break;
+              default:
+                otherAttributes.push(attributeString);
+                break;
+            }
+          }
+        });
+        nft.attributes = otherAttributes;
         setNFT(nft);
+
+        let imageUrl;
+        const image = nft.coverImage || nft.image;
+        const fileExtension = getFileExtension(image);
+
+        if (!fileExtension) {
+          imageUrl = "/litho-default.jpg";
+        } else {
+          if (typeof image === "object") {
+            imageUrl = URL.createObjectURL(image);
+          } else {
+            imageUrl = image;
+          }
+        }
+        setFileExtension(fileExtension);
+        setImage(imageUrl);
+        setLoading(false);
       });
     })();
   }, [
@@ -677,14 +741,272 @@ const NFTDetail: React.FC<{}> = () => {
     <>
       <button
         className="font-bold"
+          &lt; My Profile
+        </a>
+      </Link>
+      {image ? (
+        <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
+          <div className="border-b border-litho-black px-10 py-5 flex items-center">
+            <Text variant="h3" component="h3" className="flex-1">
+              {nft.title}
+            </Text>
+            {nft.fileType && (
+              <Text variant="h6" className="mr-8">
+                File Type:{" "}
+                <span className="text-litho-black text-opacity-50">
+                  {nft.fileType}
+                </span>
+              </Text>
+            )}
+            <Text variant="h6">
+              Copies:{" "}
+              <span className="text-litho-black text-opacity-50">
+                {nft.copies}
+              </span>
+            </Text>
+          </div>
+          <div className="flex">
+            <div className="w-2/3 border-r border-litho-black">
+              <div
+                className="border-b border-litho-black flex items-center justify-center"
+                style={{ minHeight: "500px", maxHeight: "499px" }}
+              >
+                {nft.videoUrl ? (
+                  <video
+                    src={nft.videoUrl}
+                    height="300"
+                    controls
+                    autoPlay
+                    width="300"
+                    loop
+                    controlsList="nodownload"
+                    className="object-contain object-center w-full bg-litho-black bg-no-repeat bg-center"
+                  />
+                ) : (
+                  <img
+                    src={image}
+                    className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
+                    onLoad={(event) => {
+                      if (event.target) {
+                        (event.target as HTMLImageElement).classList.remove(
+                          "bg-image-loading"
+                        );
+                      }
+                    }}
+                    onError={(event) => {
+                      (event.target as HTMLImageElement).src =
+                        "/litho-default.jpg";
+                      (event.target as HTMLImageElement).style.height = "499px";
+                    }}
+                    style={{ maxHeight: "499px" }}
+                  />
+                )}
+              </div>
+              <div className="p-5 flex items-center justify-around">
+                <Link href={nft.image}>
+                  <a
+                    className="text-litho-blue font-medium text-lg underline"
+                    target="_blank"
+                  >
+                    View on IPFS
+                  </a>
+                </Link>
+                <Link href={nft.metadata}>
+                  <a
+                    className="text-litho-blue font-medium text-lg underline"
+                    target="_blank"
+                  >
+                    IPFS Metadata
+                  </a>
+                </Link>
+              </div>
+            </div>
+            <div className="w-1/3">
+              {!isPlaceABid ? (
+                <>
+                  {listingInfo &&
+                    listingInfo.listingId &&
+                    (listingInfo.auctionInfo || listingInfo.fixedPriceInfo) && (
+                      <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                        {listingInfo.fixedPriceInfo && (
+                          <>
+                            <div className="flex justify-between">
+                              <Text variant="h6" className="text-opacity-50">
+                                Fixed Price
+                              </Text>
+                              <Text variant="h6">
+                                {endTime &&
+                                  `Ending in ${endTime.days} days ${endTime.hours} hours`}
+                              </Text>
+                            </div>
+                            <div className="flex justify-between">
+                              <Text variant="h3" className="mt-6">
+                                {fixedPrice} {paymentAsset?.symbol}
+                              </Text>
+                            </div>
+                          </>
+                        )}
+                        {listingInfo.auctionInfo && (
+                          <>
+                            <div className="flex justify-between">
+                              <Text variant="h6" className="text-opacity-50">
+                                Live Auction
+                              </Text>
+                              <Text variant="h6">
+                                {endTime &&
+                                  `Ending in ${endTime.days} days ${endTime.hours} hours`}
+                              </Text>
+                            </div>
+                            <Text variant="h3" className="mt-6">
+                              {reservePrice} {paymentAsset?.symbol}
+                            </Text>
+                          </>
+                        )}
+                        {listingInfo.auctionInfo && (
+                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-4">
+                            <button
+                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
         style={{ lineHeight: "31px" }}
-        onClick={() => router.back()}
-      >
-        &lt; Back
-      </button>
-
-      {nft && nft.length > 0 && (
-        <NFT nft={nft} renderer={NFTDetailRenderer} {...props} />
+                              onClick={() => setIsPlaceABid(true)}
+                            >
+                              <Text variant="button" color="white">
+                                PLACE A BID
+                              </Text>
+                            </button>
+                          </div>
+                        )}
+                        {listingInfo.fixedPriceInfo && (
+                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                            <button
+                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                              onClick={buyNow}
+                            >
+                              <Text variant="button" color="white">
+                                BUY NOW
+                              </Text>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                    <Text variant="h6">Creator</Text>
+                    <Text variant="h6" className="text-opacity-50">
+                      {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
+                      {web3Context.account
+                        ? web3Context.account.address === nft.owner
+                          ? "(You)"
+                          : null
+                        : null}
+                    </Text>
+                    {editableSerialNumber !== undefined && (
+                      <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                        <Link href="#" passHref>
+                          <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2">
+                            <Text variant="button" color="white">
+                              EDIT
+                            </Text>
+                          </a>
+                        </Link>
+                        <Link
+                          href={`/sell?collectionId=${router.query.collectionId}&seriesId=${router.query.seriesId}&serialNumber=${editableSerialNumber}`}
+                        >
+                          <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
+                            <Text variant="button" color="white">
+                              SELL
+                            </Text>
+                          </a>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                  {nft.description && (
+                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                      <Text variant="h6">Description</Text>
+                      <Text
+                        variant="body2"
+                        className="text-opacity-50 break-all"
+                      >
+                        {nft.description}
+                      </Text>
+                    </div>
+                  )}
+                  {nft.attributes.length > 0 && (
+                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                      <Text variant="h6">Attributes</Text>
+                      {nft.attributes.map((attribute) => {
+                        if (!attribute) {
+                          return null;
+                        }
+                        return (
+                          <Text
+                            variant="body1"
+                            className="text-opacity-50 break-all my-2"
+                            key={attribute}
+                          >
+                            {attribute}
+                          </Text>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                  <div className="flex justify-between">
+                    <Text variant="h6" className="text-opacity-50">
+                      Live Auction
+                    </Text>
+                    <Text variant="h6">
+                      {endTime &&
+                        `Ending in ${endTime.days} days ${endTime.hours} hours`}
+                    </Text>
+                  </div>
+                  <form onSubmit={confirmBid}>
+                    <div className="w-full flex flex-col m-auto mt-10">
+                      <Text variant="h3" className="mb-6">
+                        Enter a bid
+                      </Text>
+                      <Input
+                        name="price"
+                        type="text"
+                        placeholder={`Minimum bid of ${reservePrice} ${paymentAsset?.symbol}`}
+                      />
+                      <Text
+                        variant="caption"
+                        className="w-full text-opacity-60 mt-10 mb-10"
+                      >
+                        Once a bid is placed it cant be withdrawn, additional Ts
+                        andCs here Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua.
+                      </Text>
+                    </div>
+                    <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                      <button
+                        className="w-full md:w-auto border border-litho-blue bg-litho-cream flex-1 mt-4 md:mt-0 text-center py-2"
+                        onClick={() => setIsPlaceABid(false)}
+                      >
+                        <Text variant="button" color="litho-blue">
+                          CANCEL
+                        </Text>
+                      </button>
+                      <button className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
+                        <Text variant="button" color="white">
+                          CONFIRM BID
+                        </Text>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : !loading ? (
+        <div className="border border-litho-black h-customScreen flex items-center justify-center text-4xl text-litho-black text-opacity-50">
+          Could not load NFT
+        </div>
       )}
 
       {modalState && (

@@ -17,7 +17,7 @@ const Me: React.FC<{}> = () => {
   };
 
   React.useEffect(() => {
-    if (web3Context && web3Context.account) {
+    if (web3Context && web3Context.api && web3Context.account) {
       setLoading(true);
       (async () => {
         const tokensInCollections = await getCollectionWiseTokens(
@@ -51,12 +51,39 @@ const Me: React.FC<{}> = () => {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
                           serialNumber: 0,
+                          owner,
+                          attributes: attributes,
+                          copies: count,
+                        };
+                        attributes.forEach(({ Text, Url }) => {
+                          const attributeString = Text || Url;
+                          if (attributeString) {
+                            const attributeBreakup = attributeString.split(" ");
+                            switch (attributeBreakup[0]) {
+                              case "Image-URL":
+                                nft.image = attributeBreakup[1];
+                                break;
+                              case "Metadata-URL":
+                                nft.metadata = attributeBreakup[1];
+                                break;
+                              case "Title":
+                                const [, ...words] = attributeBreakup;
+                                nft.title = words.join(" ");
+                                break;
+                              case "Video-URL":
+                                const [, video] = attributeBreakup;
+                                nft.videoUrl = video;
+                                break;
+                              default:
+                                break;
+                            }
+                          }
                         });
                       const { attributes, owner } = tokenInfo;
                       const metadata = getMetadata(attributes);
 
                       const nft: { [index: string]: any } = {
-                        collectionId: token.collectionId.toJSON(),
+                        userNFTs.push(nft);
                         seriesId: token.seriesId.toJSON(),
                         serialNumber: 0,
                         owner,
@@ -77,6 +104,7 @@ const Me: React.FC<{}> = () => {
         );
         setNFTs(userNFTs);
         setLoading(false);
+        });
       })();
     }
   }, [web3Context.account]);
