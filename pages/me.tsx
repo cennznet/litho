@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/nft";
-import NFTRenderer from "../components/nft/NFTRenderer";
+import NFT from "../components/NFT";
+import NFTRenderer from "../components/NFT/NFTRenderer";
 import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
@@ -12,42 +12,44 @@ const Me: React.FC<{}> = () => {
   const [loading, setLoading] = React.useState(false);
   const [nfts, setNFTs] = React.useState([]);
 
-  const getCollectionWiseTokens = async (api, address) => {
-    return await api.derive.nft.tokensOf(address);
-  };
-
   React.useEffect(() => {
     if (web3Context && web3Context.api && web3Context.account) {
       setLoading(true);
       (async () => {
-        const tokensInCollections = await getCollectionWiseTokens(
-          web3Context.api,
-          web3Context.account.address
-        );
-        const userNFTs = [];
-        await Promise.all(
-          tokensInCollections.map(async (tokens) => {
-            if (tokens.length > 0) {
-              const tokensInCollection = {};
-              tokens.forEach(async (token) => {
-                const { collectionId, seriesId } = token;
-                const seriesLevelKey = `${collectionId}-${seriesId}`;
-                if (tokensInCollection.hasOwnProperty(seriesLevelKey)) {
-                  tokensInCollection[seriesLevelKey].count += 1;
-                } else {
-                  tokensInCollection[seriesLevelKey] = {
-                    token,
-                    count: 1,
-                  };
-                }
-              });
+        web3Context.api.isReady.then(async () => {
+          const tokensInCollections = await web3Context.api.derive.nft.tokensOf(
+            web3Context.account.address
+          );
+          const userNFTs = [];
+          await Promise.all(
+            tokensInCollections.map(async (tokens) => {
+              if (tokens.length > 0) {
+                const tokensInCollection = {};
+                tokens.forEach(async (token) => {
+                  const { collectionId, seriesId } = token;
+                  const seriesLevelKey = `${collectionId}-${seriesId}`;
+                  if (tokensInCollection.hasOwnProperty(seriesLevelKey)) {
+                    tokensInCollection[seriesLevelKey].count += 1;
+                  } else {
+                    tokensInCollection[seriesLevelKey] = {
+                      token,
+                      count: 1,
+                    };
+                  }
+                });
 
-              return Promise.all(
-                Object.values(tokensInCollection).map(
-                  async ({ token, count }) => {
-                    return new Promise(async (resolve) => {
-                      const tokenInfo =
-                        await web3Context.api.derive.nft.tokenInfo({
+                return Promise.all(
+                  Object.values(tokensInCollection).map(
+                    async ({ token, count }) => {
+                      return new Promise(async (resolve) => {
+                        const tokenInfo =
+                          await web3Context.api.derive.nft.tokenInfo({
+                            collectionId: token.collectionId.toJSON(),
+                            seriesId: token.seriesId.toJSON(),
+                            serialNumber: 0,
+                          });
+                        const { attributes, owner } = tokenInfo;
+                        const nft: { [index: string]: any } = {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
                           serialNumber: 0,
@@ -79,31 +81,19 @@ const Me: React.FC<{}> = () => {
                             }
                           }
                         });
-                      const { attributes, owner } = tokenInfo;
-                      const metadata = getMetadata(attributes);
-
-                      const nft: { [index: string]: any } = {
                         userNFTs.push(nft);
-                        seriesId: token.seriesId.toJSON(),
-                        serialNumber: 0,
-                        owner,
-                        attributes: attributes,
-                        copies: count,
-                        metadata,
-                      };
-                      userNFTs.push(nft);
-                      resolve(null);
-                    });
-                  }
-                )
-              );
-            } else {
-              return Promise.resolve();
-            }
-          })
-        );
-        setNFTs(userNFTs);
-        setLoading(false);
+                        resolve(null);
+                      });
+                    }
+                  )
+                );
+              } else {
+                return Promise.resolve();
+              }
+            })
+          );
+          setNFTs(userNFTs.filter((nft) => nft.image));
+          setLoading(false);
         });
       })();
     }

@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 import Text from "../Text";
-import NFTRenderer from "../nft/NFTRenderer";
+import NFTRenderer from "../NFT/NFTRenderer";
 import Web3Context from "../Web3Context";
 
 interface Props {
