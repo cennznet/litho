@@ -3,9 +3,9 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import Link from "next/link";
 
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
 import Text from "../components/Text";
-import NFTRenderer from "../components/NFT/NFTRenderer";
+import NFTRenderer from "../components/nft/NFTRenderer";
 import useSWR from "swr";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {

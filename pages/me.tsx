@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/NFT";
-import NFTRenderer from "../components/NFT/NFTRenderer";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
 import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {

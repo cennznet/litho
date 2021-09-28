@@ -5,8 +5,8 @@ import useSWR from "swr";
 import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
-import NFT from "../components/NFT";
-import NFTRenderer from "../components/NFT/NFTRenderer";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
