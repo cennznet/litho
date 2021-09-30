@@ -8,7 +8,7 @@ import getFileExtension from "../../../../utils/getFileExtension";
 import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
-// import { GetRemainingTime } from "../../../../utils/chainHelper";
+import { GetRemainingTime } from "../../../../utils/chainHelper";
 import Input from "../../../../components/Input";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
@@ -291,11 +291,11 @@ const NFTDetail: React.FC<{}> = () => {
       let blocks = 0;
       if (listingInfo.fixedPriceInfo) {
         blocks = Number(listingInfo.fixedPriceInfo.close) - currentBlock;
-        return GetRemaindedTime(web3Context.api, blocks);
+        return GetRemainingTime(web3Context.api, blocks);
       }
       if (listingInfo.auctionInfo) {
         blocks = Number(listingInfo.auctionInfo.close) - currentBlock;
-        return GetRemaindedTime(web3Context.api, blocks);
+        return GetRemainingTime(web3Context.api, blocks);
       }
     }
   }, [listingInfo, web3Context.api, currentBlock]);
