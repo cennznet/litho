@@ -8,7 +8,7 @@ import getFileExtension from "../../../../utils/getFileExtension";
 import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
-import { GetRemaindedTime } from "../../../../utils/chainHelper";
+// import { GetRemainingTime } from "../../../../utils/chainHelper";
 import Input from "../../../../components/Input";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
