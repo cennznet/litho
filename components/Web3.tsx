@@ -115,7 +115,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       );
       const metadata = polkadotExtension.metadata;
       const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
-      if (!checkIfMetaUpdated) {
+      if (!checkIfMetaUpdated && api) {
         const metadataDef = await extractMeta(api);
         await metadata.provide(metadataDef as any);
         localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
@@ -126,7 +126,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             setAccount(null);
             setShowZeroAccountMessage(true);
           } else {
-            getAccountAssets(injectedAccounts[0].address);
+            api &&
+              api.isReady.then(async () => {
+                await getAccountAssets(injectedAccounts[0].address);
+              });
             const injector = await web3FromSource(
               injectedAccounts[0].meta.source
             );
