@@ -124,7 +124,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       }
 
       setWallet(cennznetWallet);
-      store.set("WALLET", cennznetWallet);
+      store.set("CENNZNET-EXTENSION", cennznetWallet);
 
       setHasWeb3Injected(true);
 
@@ -187,7 +187,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   // on mount if wallet is not set, check store and load the wallet
   useEffect(() => {
     if (!wallet) {
-      setWallet(store.get("WALLET"));
+      setWallet(store.get("CENNZNET-EXTENSION"));
     }
   });
 
