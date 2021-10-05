@@ -105,7 +105,6 @@ const NFTDetail: React.FC<{}> = () => {
         };
 
         const otherAttributes = [];
-
         attributes.forEach(({ Text, Url }) => {
           const attributeString = Text || Url;
           if (attributeString) {
@@ -145,7 +144,7 @@ const NFTDetail: React.FC<{}> = () => {
 
         let imageUrl;
         const image = nft.coverImage || nft.image;
-        const fileExtension = getFileExtension(image);
+        const fileExtension = image ? getFileExtension(image) : undefined;
 
         if (!fileExtension) {
           imageUrl = "/litho-default.jpg";
@@ -432,22 +431,26 @@ const NFTDetail: React.FC<{}> = () => {
                 )}
               </div>
               <div className="p-5 flex items-center justify-around">
-                <Link href={nft.image}>
-                  <a
-                    className="text-litho-blue font-medium text-lg underline"
-                    target="_blank"
-                  >
-                    View on IPFS
-                  </a>
-                </Link>
-                <Link href={nft.metadata}>
-                  <a
-                    className="text-litho-blue font-medium text-lg underline"
-                    target="_blank"
-                  >
-                    IPFS Metadata
-                  </a>
-                </Link>
+                {nft.image && (
+                  <Link href={nft.image}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      View on IPFS
+                    </a>
+                  </Link>
+                )}
+                {nft.metadata && (
+                  <Link href={nft.metadata}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      IPFS Metadata
+                    </a>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="w-1/3">

@@ -62,7 +62,7 @@ const NFTDataWrapper: React.FC<{
         setMetadataUrl(
           gatewayTools.convertToDesiredGateway(
             nft.metadata,
-            "https://gateway.pinata.cloud"
+            "https://ik.imagekit.io/i4ryln6htzn"
           )
         );
       } else {

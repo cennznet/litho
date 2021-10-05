@@ -1,21 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   web3Enable,
   web3AccountsSubscribe,
   web3FromSource,
+  web3Accounts,
 } from "@polkadot/extension-dapp";
+import { InjectedExtension } from "@polkadot/extension-inject/types";
+
 import { getSpecTypes } from "@polkadot/types-known";
 import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
-import { TypeRegistry } from "@polkadot/types";
 import { Api as ApiPromise } from "@cennznet/api";
 import Link from "next/link";
 import { hexToString } from "@polkadot/util";
+import store from "store";
 
 import Web3Context from "./Web3Context";
 
 import { cennznetExtensions } from "../utils/cennznetExtensions";
 
-const registry = new TypeRegistry();
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
@@ -54,8 +56,8 @@ async function extractMeta(api) {
 
 const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [hasWeb3injected, setHasWeb3Injected] = React.useState(false);
-  const [extension, setExtension] = React.useState(null);
-  const [accountsUnsubscribe, setAccountsUnsubsribe] = React.useState(null);
+  const [wallet, setWallet] = React.useState<InjectedExtension>();
+  const [web3Account, setWeb3Account] = React.useState(null);
   const [account, setAccount] = React.useState(null);
   const [showNoExtensionMessage, setShowNoExtensionMessage] =
     React.useState(false);
@@ -65,6 +67,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [api, setAPI] = React.useState(null);
 
   const getAccountAssets = async (address: string) => {
+    await api.isReady;
     const assets = await api.rpc.genericAsset.registeredAssets();
     const tokenMap = {};
     assets.forEach((asset) => {
@@ -80,7 +83,6 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         return [tokenId, address];
       }
     );
-
     await api.query.genericAsset.freeBalance.multi(
       balanceSubscriptionArg,
       (balances) => {
@@ -103,47 +105,27 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   const connectWallet = async (callback) => {
     console.log("connect wallet clicked");
-    if (accountsUnsubscribe) {
-      accountsUnsubscribe();
-    }
     try {
       const extensions = await web3Enable("Litho");
       if (extensions.length === 0) {
         throw new Error("No extension found");
       }
-
-      const polkadotExtension = extensions.find(
-        (ext) => ext.name === "cennznet-extension"
+      const cennznetWallet = extensions.find(
+        (extension) => extension.name === "cennznet-extension"
       );
-      const metadata = polkadotExtension.metadata;
+
+      if (!cennznetWallet) throw new Error("CENNZnet wallet not found");
+      const metadata = cennznetWallet.metadata;
       const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
-      if (!checkIfMetaUpdated) {
+      if (!checkIfMetaUpdated && api) {
         const metadataDef = await extractMeta(api);
         await metadata.provide(metadataDef as any);
         localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
       }
-      let unsubscribe = await web3AccountsSubscribe(
-        async (injectedAccounts) => {
-          if (injectedAccounts.length === 0) {
-            setAccount(null);
-            setShowZeroAccountMessage(true);
-          } else {
-            getAccountAssets(injectedAccounts[0].address);
-            const injector = await web3FromSource(
-              injectedAccounts[0].meta.source
-            );
-            let payload = { signer: injector.signer };
-            let signer = injectedAccounts[0].address;
-            setAccount({ ...injectedAccounts[0], payload, signer });
-            setShowZeroAccountMessage(false);
-          }
-        }
-      );
 
-      // to unsubscribe on component unmount
-      setAccountsUnsubsribe(unsubscribe);
+      setWallet(cennznetWallet);
+      store.set("CENNZNET-EXTENSION", cennznetWallet);
 
-      setExtension(polkadotExtension);
       setHasWeb3Injected(true);
 
       if (callback) {
@@ -154,25 +136,67 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       setHasWeb3Injected(false);
     }
   };
-  const apiInstance = new ApiPromise({ provider: endpoint, registry });
 
-  React.useEffect(() => {
+  // Create api instance on endpoint change
+  useEffect(() => {
+    const apiInstance = new ApiPromise({ provider: endpoint });
+
     if (!apiInstance.isReady) return;
     setAPI(apiInstance);
+  }, [endpoint]);
 
-    return () => {
-      if (accountsUnsubscribe) {
-        accountsUnsubscribe();
+  // Get balances for extension account when api or web3Account has changed
+  useEffect(() => {
+    if (api && web3Account) {
+      getAccountAssets(web3Account.address);
+    }
+  }, [api, web3Account]);
+
+  // Set account/signer when wallet has changed
+  useEffect(() => {
+    const getSelectedAccount = async () => {
+      await web3Enable("Litho");
+      const accounts = await web3Accounts();
+
+      if (accounts.length === 0) {
+        setWeb3Account(null);
+        setShowZeroAccountMessage(true);
+        throw new Error("No accounts found in CENNZnet wallet");
       }
+      setWeb3Account(accounts[0]);
+
+      const injector = await web3FromSource(accounts[0].meta.source);
+      const payload = { signer: injector.signer };
+      const signer = accounts[0].address;
+      setAccount({ ...accounts[0], payload, signer });
+      setShowZeroAccountMessage(false);
+
+      web3AccountsSubscribe(async (accounts) => {
+        if (accounts.length) {
+          setWeb3Account(accounts[0]);
+        }
+      });
     };
-  }, [apiInstance]);
+
+    // if wallet exist,
+    if (wallet) {
+      getSelectedAccount();
+    }
+  }, [wallet]);
+
+  // on mount if wallet is not set, check store and load the wallet
+  useEffect(() => {
+    if (!wallet) {
+      setWallet(store.get("CENNZNET-EXTENSION"));
+    }
+  });
 
   return (
     <Web3Context.Provider
       value={{
         hasWeb3injected,
         connectWallet,
-        extension,
+        extension: wallet,
         account,
         api,
       }}
