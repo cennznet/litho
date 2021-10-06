@@ -139,9 +139,18 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   // Create api instance on endpoint change
   useEffect(() => {
-    const apiInstance = new ApiPromise({ provider: endpoint });
+    let apiInstance;
+    try {
+      apiInstance = new ApiPromise({ provider: endpoint });
+    } catch (err) {
+      console.error(`cennznet connection failed: ${err}`);
+    }
 
-    if (!apiInstance.isReady) return;
+    if (!apiInstance || !apiInstance.isReady) {
+      console.warn(`cennznet is not connected. endpoint: ${endpoint}`);
+      return;
+    }
+
     setAPI(apiInstance);
   }, [endpoint]);
 
