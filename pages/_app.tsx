@@ -74,7 +74,9 @@ const MarketplaceLink: React.FC<{}> = () => {
 const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
   ({ setShowViewOnDesktop }) => {
     const deviceContext = React.useContext(DeviceContext);
-    return deviceContext.isMobile || !deviceContext.isChrome ? (
+    return deviceContext.isMobile ||
+      !deviceContext.isChrome ||
+      !deviceContext.isFirefox ? (
       <button onClick={() => setShowViewOnDesktop(true)}>
         <Text variant="h6">Create</Text>
       </button>
@@ -101,6 +103,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
           <SupportedAssetsProvider>
             <Head>
               <title>Litho</title>
+              <link rel="shortcut icon" href="/favicon.ico" />
               <link
                 rel="stylesheet"
                 href="https://use.typekit.net/txj7ase.css"
@@ -109,7 +112,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             <header className="h-20 py-5 flex items-center w-full justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
               <Link href="/">
                 <a>
-                  <img src="/logo.svg" alt="Litho" />
+                  <img src="/logo-beta.svg" alt="Litho" />
                 </a>
               </Link>
               <div className="ml-24 h-12 flex items-center flex-1 justify-end">
@@ -141,8 +144,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
               <div className="flex flex-wrap lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
                 <Link href="/">
-                  <a className="mb-4 lg:mb-0 w-full lg:w-auto">
-                    <img src="/logo.svg" alt="Litho" />
+                  <a className="mb-4 lg:mb-0 lg:w-auto">
+                    <img src="/logo-beta.svg" alt="Litho" />
                   </a>
                 </Link>
 
