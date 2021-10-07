@@ -69,7 +69,7 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@cennznet/api@^1.4.0":
+"@cennznet/api@^1.4.1":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@cennznet/api/-/api-1.4.2.tgz#fd5e73fd5e8bfe700c704ff81561ce55e158238c"
   integrity sha512-og03m6V1uSrXcJ5ic/mQb96X9L7/l1t1cirM5Ci/7TEv3TuibSYJrji4H4i/t357E4X3plicpA3ibKNL7zQtTw==
@@ -82,7 +82,7 @@
     "@polkadot/types" "2.7.1"
     eventemitter3 "^4.0.0"
 
-"@cennznet/types@^1.4.0", "@cennznet/types@^1.4.2":
+"@cennznet/types@^1.4.1", "@cennznet/types@^1.4.2":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-1.4.2.tgz#48cd0dcf269a705b45cc427a7bb5526461f594bc"
   integrity sha512-3KEpYo03nHTdvm6ZCzy69MDnVwUs6zSOUtN2Ai8wOq1g+lwzvdNxKcxK5fJotAEcnzhRafE03/ldh1ZrsLf4cQ==
