@@ -121,7 +121,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </a>
               </Link>
               <div className="ml-24 h-12 flex items-center flex-1 justify-end">
-                <SearchBar />
                 <MarketplaceLink />
                 <CreateButton setShowViewOnDesktop={setShowViewOnDesktop} />
                 <ConnectWallet />

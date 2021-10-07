@@ -9,10 +9,12 @@ import Loader from "../components/Loader";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const [nfts, setNFTs] = React.useState([]);
 
   React.useEffect(() => {
+    if (!web3Context.account) return;
+    setLoading(true);
     if (web3Context && web3Context.api && web3Context.account) {
       (async () => {
         web3Context.api.isReady.then(async () => {
