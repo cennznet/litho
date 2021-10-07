@@ -120,7 +120,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       if (!checkIfMetaUpdated && api) {
         const metadataDef = await extractMeta(api);
         await metadata.provide(metadataDef as any);
-        localStorage.setItem(`EXTENSION_META_UPDATED`, "false");
+        localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
       }
 
       setWallet(cennznetWallet);
