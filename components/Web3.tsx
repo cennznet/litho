@@ -7,7 +7,6 @@ import {
 } from "@polkadot/extension-dapp";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
-import { getSpecTypes } from "@polkadot/types-known";
 import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
 import { Api as ApiPromise } from "@cennznet/api";
 import Link from "next/link";
@@ -16,24 +15,27 @@ import store from "store";
 
 import Web3Context from "./Web3Context";
 
-import { cennznetExtensions } from "../utils/cennznetExtensions";
-
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
-  const specTypes = getSpecTypes(
-    api.registry,
-    systemChain,
-    api.runtimeVersion.specName,
-    api.runtimeVersion.specVersion
+  const genesisHashExpected = api.genesisHash.toString();
+  const xmlHttp = new XMLHttpRequest();
+  // One source of truth to get the types
+  xmlHttp.open(
+    "GET",
+    "https://raw.githubusercontent.com/cennznet/api.js/master/extension-releases/runtimeModuleTypes.json",
+    false
   );
-  const filteredSpecTypes = Object.keys(specTypes)
-    .filter((key) => typeof specTypes[key] !== "function")
-    .reduce((obj, key) => {
-      obj[key] = specTypes[key];
-      return obj;
-    }, {});
+  xmlHttp.send(null);
+  let response = xmlHttp.responseText;
+  const additionalTypes = JSON.parse(response);
+  const typesForCurrentChain = additionalTypes[genesisHashExpected];
+  let specTypes, userExtensions;
+  if (typesForCurrentChain) {
+    specTypes = typesForCurrentChain.types;
+    userExtensions = typesForCurrentChain.userExtensions;
+  }
   const DEFAULT_SS58 = api.registry.createType("u32", addressDefaults.prefix);
   const DEFAULT_DECIMALS = api.registry.createType("u32", 4);
   const metadata = {
@@ -48,8 +50,8 @@ async function extractMeta(api) {
     ss58Format: DEFAULT_SS58.toNumber(),
     tokenDecimals: DEFAULT_DECIMALS.toNumber(),
     tokenSymbol: "CENNZ",
-    types: filteredSpecTypes,
-    userExtensions: cennznetExtensions,
+    types: specTypes,
+    userExtensions: userExtensions,
   };
   return metadata;
 }
