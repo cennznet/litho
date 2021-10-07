@@ -1,5 +1,4 @@
 import { Api as ApiPromise } from "@cennznet/api";
-import { TypeRegistry } from "@polkadot/types";
 import cache from '../../utils/cache';
 import getMetadata from "../../utils/getMetadata";
 

@@ -107,6 +107,12 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 rel="stylesheet"
                 href="https://use.typekit.net/txj7ase.css"
               />
+              <link
+                rel="preload"
+                href="/api/getAllNfts"
+                as="fetch"
+                crossOrigin="anonymous"
+              />
             </Head>
             <header className="h-20 py-5 flex items-center justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
               <Link href="/">

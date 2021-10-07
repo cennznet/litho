@@ -5,15 +5,15 @@ import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
+import Loader from "../components/Loader";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [nfts, setNFTs] = React.useState([]);
 
   React.useEffect(() => {
     if (web3Context && web3Context.api && web3Context.account) {
-      setLoading(true);
       (async () => {
         web3Context.api.isReady.then(async () => {
           const tokensInCollections = await web3Context.api.derive.nft.tokensOf(
@@ -134,6 +134,7 @@ const Me: React.FC<{}> = () => {
             </button>
           </div>
         )}
+        <Loader loading={loading} />
         {web3Context.account && !loading && nfts.length === 0 && (
           <div className="flex-1 w-full flex flex-col items-center justify-center pt-32">
             <Text variant="h4" component="h4" className="mb-11">

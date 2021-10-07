@@ -1,0 +1,16 @@
+<!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
+<svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(1 1)">
+            <path d="M27 3V14.5526C26.7987 14.5317 26.5975 14.5317 26.3761 14.5317C22.6327 14.5317 19.6138 17.6919 19.6138 21.5638C19.6138 25.2263 22.3107 28.24 25.7723 28.5749V28.5958V35H12.2277V28.5958V28.5749C15.6692 28.261 18.3862 25.2472 18.3862 21.5638C18.3862 17.671 15.3472 14.5317 11.6239 14.5317C11.4226 14.5317 11.2013 14.5526 11 14.5526V3H27Z" fill="#191B1D">
+                <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 18 18"
+                    to="360 18 18"
+                    dur="1.2s"
+                    repeatCount="indefinite" />
+            </path>
+        </g>
+    </g>
+</svg>

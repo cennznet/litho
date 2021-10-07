@@ -10,6 +10,7 @@ import SupportedAssetsContext from "../../../../components/SupportedAssetsContex
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
 import { GetRemainingTime } from "../../../../utils/chainHelper";
 import Input from "../../../../components/Input";
+import Loader from "../../../../components/Loader";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -367,12 +368,9 @@ const NFTDetail: React.FC<{}> = () => {
 
   return (
     <>
-      <Link href="#">
-        <a
-          className="font-bold"
-          style={{ lineHeight: "31px" }}
-          onClick={() => history.go(-1)}
-        >
+      <Loader loading={loading} />
+      <Link href="javascript:history.back()">
+        <a className="font-bold" style={{ lineHeight: "31px" }}>
           &lt; Back
         </a>
       </Link>
@@ -536,13 +534,6 @@ const NFTDetail: React.FC<{}> = () => {
                     </Text>
                     {editableSerialNumber !== undefined && (
                       <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
-                        <Link href="#" passHref>
-                          <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2">
-                            <Text variant="button" color="white">
-                              EDIT
-                            </Text>
-                          </a>
-                        </Link>
                         <Link
                           href={`/sell?collectionId=${router.query.collectionId}&seriesId=${router.query.seriesId}&serialNumber=${editableSerialNumber}`}
                         >
