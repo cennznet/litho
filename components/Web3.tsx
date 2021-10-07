@@ -146,12 +146,12 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       console.error(`cennznet connection failed: ${err}`);
     }
 
-    if (!apiInstance || !apiInstance.isReady) {
+    if (!apiInstance) {
       console.warn(`cennznet is not connected. endpoint: ${endpoint}`);
       return;
     }
 
-    setAPI(apiInstance);
+    apiInstance.isReady.then(() => setAPI(apiInstance));
   }, [endpoint]);
 
   // Get balances for extension account when api or web3Account has changed
