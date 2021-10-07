@@ -139,10 +139,19 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   // Create api instance on endpoint change
   useEffect(() => {
-    const apiInstance = new ApiPromise({ provider: endpoint });
+    let apiInstance;
+    try {
+      apiInstance = new ApiPromise({ provider: endpoint });
+    } catch (err) {
+      console.error(`cennznet connection failed: ${err}`);
+    }
 
-    if (!apiInstance.isReady) return;
-    setAPI(apiInstance);
+    if (!apiInstance) {
+      console.warn(`cennznet is not connected. endpoint: ${endpoint}`);
+      return;
+    }
+
+    apiInstance.isReady.then(() => setAPI(apiInstance));
   }, [endpoint]);
 
   // Get balances for extension account when api or web3Account has changed

@@ -162,7 +162,7 @@ const TimedAuction: React.FC<Props> = ({
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
           />
           <Text variant="caption" className="w-full text-opacity-60 mb-10">
-            Service fee 2.5%
+            Service fee 0% (waived)
           </Text>
         </div>
 
