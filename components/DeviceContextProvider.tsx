@@ -39,6 +39,7 @@ const DeviceContextProvider: React.FC<PropsWithChildren<{}>> = ({
     <DeviceContext.Provider
       value={{
         isChrome: !!(window as any).chrome,
+        isFirefox: navigator.userAgent.toLowerCase().indexOf("firefox") > -1,
         isMobile: detectMobile.isMobile(),
       }}
     >

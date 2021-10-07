@@ -75,8 +75,7 @@ const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
   ({ setShowViewOnDesktop }) => {
     const deviceContext = React.useContext(DeviceContext);
     return deviceContext.isMobile ||
-      !deviceContext.isChrome ||
-      !deviceContext.isFirefox ? (
+      (!deviceContext.isChrome && !deviceContext.isFirefox) ? (
       <button onClick={() => setShowViewOnDesktop(true)}>
         <Text variant="h6">Create</Text>
       </button>

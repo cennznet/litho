@@ -51,7 +51,8 @@ const Home: React.FC<{}> = () => {
             <Text variant="h4" className="mb-5 bg-litho-cream p-2">
               CREATE NFTs
             </Text>
-            {deviceContext.isMobile || !deviceContext.isChrome ? (
+            {deviceContext.isMobile ||
+            (!deviceContext.isChrome && !deviceContext.isFirefox) ? (
               <button
                 className="bg-litho-blue w-40 h-12 flex items-center justify-center"
                 onClick={() => setShowViewOnDesktop(true)}

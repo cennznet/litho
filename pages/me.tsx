@@ -52,6 +52,7 @@ const Me: React.FC<{}> = () => {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
                           serialNumber: 0,
+                          image: "hello",
                           owner,
                           attributes: attributes,
                           copies: count,
@@ -71,7 +72,7 @@ const Me: React.FC<{}> = () => {
                                 const [, ...words] = attributeBreakup;
                                 nft.title = words.join(" ");
                                 break;
-                              case "Video-URL":
+                              case "Video -URL":
                                 const [, video] = attributeBreakup;
                                 nft.videoUrl = video;
                                 break;

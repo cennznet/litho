@@ -9,8 +9,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@cennznet/api": "^1.5.0-alpha.3",
-    "@cennznet/types": "^1.5.0-alpha.3",
+    "@cennznet/api": "^1.4.0",
+    "@cennznet/types": "^1.4.0",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
     "@polkadot/extension-dapp": "^0.38.5",
