@@ -108,7 +108,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 href="https://use.typekit.net/txj7ase.css"
               />
             </Head>
-            <header className="h-20 py-5 flex items-center w-full justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
+            <header className="h-20 py-5 flex items-center justify-between top-0 left-0 w-full px-6 lg:px-20 z-20 bg-litho-cream bg-noise">
               <Link href="/">
                 <a>
                   <img src="/logo-beta.svg" alt="Litho" />
@@ -143,7 +143,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             <footer className="lg:h-20 px-6 py-4 lg:px-20 lg:py-0 bg-litho-cream flex flex-col lg:flex-row lg:items-center lg:flex-1">
               <div className="flex flex-wrap lg:flex-1 mb-2 lg:mb-0 lg:flex-row">
                 <Link href="/">
-                  <a className="mb-4 lg:mb-0 lg:w-auto">
+                  <a className="mb-4 lg:mb-0 w-full lg:w-auto">
                     <img src="/logo-beta.svg" alt="Litho" />
                   </a>
                 </Link>
