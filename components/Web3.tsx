@@ -126,7 +126,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
           localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
         } catch (e) {
           // any issue with metadata update should not ask to install extension
-          console.log(e);
+          console.log(`update metadata rejected ${e}`);
         }
       }
 
