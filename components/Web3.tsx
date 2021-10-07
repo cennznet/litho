@@ -120,9 +120,14 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       const metadata = cennznetWallet.metadata;
       const checkIfMetaUpdated = localStorage.getItem(`EXTENSION_META_UPDATED`);
       if (!checkIfMetaUpdated && api) {
-        const metadataDef = await extractMeta(api);
-        await metadata.provide(metadataDef as any);
-        localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
+        try {
+          const metadataDef = await extractMeta(api);
+          await metadata.provide(metadataDef as any);
+          localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
+        } catch (e) {
+          // any issue with metadata update should not ask to install extension
+          console.log(e);
+        }
       }
 
       setWallet(cennznetWallet);
@@ -172,15 +177,15 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       if (accounts.length === 0) {
         setWeb3Account(null);
         setShowZeroAccountMessage(true);
-        throw new Error("No accounts found in CENNZnet wallet");
-      }
-      setWeb3Account(accounts[0]);
+      } else {
+        setWeb3Account(accounts[0]);
 
-      const injector = await web3FromSource(accounts[0].meta.source);
-      const payload = { signer: injector.signer };
-      const signer = accounts[0].address;
-      setAccount({ ...accounts[0], payload, signer });
-      setShowZeroAccountMessage(false);
+        const injector = await web3FromSource(accounts[0].meta.source);
+        const payload = { signer: injector.signer };
+        const signer = accounts[0].address;
+        setAccount({ ...accounts[0], payload, signer });
+        setShowZeroAccountMessage(false);
+      }
 
       web3AccountsSubscribe(async (accounts) => {
         if (accounts.length) {
