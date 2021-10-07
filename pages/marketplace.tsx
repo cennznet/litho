@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import NFT from "../components/nft";
+import Loader from "../components/Loader";
 import Text from "../components/Text";
 import NFTRenderer from "../components/nft/NFTRenderer";
 import useSWR from "swr";
@@ -87,22 +88,6 @@ const MarketPlace: React.FC<{}> = () => {
   const [sort, setSort] = React.useState("newest-first");
   const { data } = useSWR("/api/getAllNFTs");
 
-  // React.useEffect(() => {
-  //   (async () => {
-  //     const res = await fetch("/api/getAllNFTs").then((res) => res.json());
-  //     const sortedNFTs = res.nfts.sort((n1, n2) => {
-  //       if (n1.close > n2.close) {
-  //         return sort === "oldest-first" ? 1 : -1;
-  //       } else if (n1.close < n2.close) {
-  //         return sort === "oldest-first" ? -1 : 1;
-  //       } else {
-  //         return 0;
-  //       }
-  //     });
-  //     setNFTs(sortedNFTs);
-  //   })();
-  // }, []);
-
   React.useEffect(() => {
     if (data && data.nfts && data.nfts.length > 0) {
       const sortedNFTs = data.nfts.sort((n1, n2) => {
@@ -151,6 +136,7 @@ const MarketPlace: React.FC<{}> = () => {
           }}
         />
       </div>
+      <Loader loading={data == undefined} />
       <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4">
         {nfts.map((nft, index) => {
           if (index > pageEnd) {
