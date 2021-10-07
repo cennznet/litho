@@ -367,9 +367,13 @@ const NFTDetail: React.FC<{}> = () => {
 
   return (
     <>
-      <Link href="/me">
-        <a className="font-bold" style={{ lineHeight: "31px" }}>
-          &lt; My Profile
+      <Link href="#">
+        <a
+          className="font-bold"
+          style={{ lineHeight: "31px" }}
+          onClick={() => history.go(-1)}
+        >
+          &lt; Back
         </a>
       </Link>
       {image ? (
