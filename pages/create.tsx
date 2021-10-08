@@ -92,20 +92,30 @@ const createCollection = async (
   });
 };
 
-const mintNFT = async (api, account, tokenArgs, setTransactionInProgress) => {
+const mintNFTAndCollection = async (
+  api,
+  account,
+  tokenArgs,
+  collectionExtrinsic,
+  setTransactionInProgress
+) => {
   const { collectionId, owner, attributes, metadataPath, royaltiesSchedule } =
     tokenArgs;
-  const mintUniqueExtrinsic = await api.tx.nft.mintUnique(
+  const mintUniqueExtrinsic = api.tx.nft.mintUnique(
     collectionId,
     owner,
     attributes,
     metadataPath,
     royaltiesSchedule
   );
+  const batchMinting = collectionExtrinsic
+    ? await api.tx.utility.batch([collectionExtrinsic, mintUniqueExtrinsic])
+    : await mintUniqueExtrinsic;
+
   let signer = account.signer;
   let payload = account.payload;
   return new Promise((resolve, reject) => {
-    mintUniqueExtrinsic
+    batchMinting
       .signAndSend(signer, payload, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
@@ -122,10 +132,11 @@ const mintNFT = async (api, account, tokenArgs, setTransactionInProgress) => {
   });
 };
 
-const mintNFTSeries = async (
+const mintNFTSeriesAndCollection = async (
   api,
   account,
   tokenArgs,
+  collectionExtrinsic,
   setTransactionInProgress
 ) => {
   const {
@@ -137,7 +148,7 @@ const mintNFTSeries = async (
     royaltiesSchedule,
   } = tokenArgs;
   console.log(attributes, royaltiesSchedule);
-  const mintUniqueExtrinsic = await api.tx.nft.mintSeries(
+  const mintSeriesExtrinsic = api.tx.nft.mintSeries(
     collectionId,
     quantity,
     owner,
@@ -145,10 +156,14 @@ const mintNFTSeries = async (
     metadataPath,
     royaltiesSchedule
   );
+  const batchMinting = collectionExtrinsic
+    ? await api.tx.utility.batch([collectionExtrinsic, mintSeriesExtrinsic])
+    : await mintSeriesExtrinsic;
+
   let signer = account.signer;
   let payload = account.payload;
   return new Promise((resolve, reject) => {
-    mintUniqueExtrinsic
+    batchMinting
       .signAndSend(signer, payload, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
@@ -505,19 +520,24 @@ const Create: React.FC<{}> = () => {
         { Url: `Metadata ipfs://${metadataPinPromise.IpfsHash}` },
       ];
 
-      let collectionId;
+      let collectionId, collectionExtrinsic;
       setModalState("signTransaction");
       if (
         state.nft.hasOwnProperty("collectionId") &&
         state.nft.collectionId !== null
       ) {
         collectionId = state.nft.collectionId;
+        collectionExtrinsic = null;
       } else {
-        collectionId = await createCollection(
-          web3Context.api,
-          web3Context.account,
+        // TODO fix --  potential race condition if collectionId changes before user signs
+        // when multiple users are minting at the same time
+        collectionId = (
+          await web3Context.api.query.nft.nextCollectionId()
+        ).toNumber();
+        collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
-          metadataBaseURI
+          metadataBaseURI,
+          null
         );
       }
 
@@ -536,10 +556,11 @@ const Create: React.FC<{}> = () => {
             ],
           };
         }
-        await mintNFTSeries(
+        await mintNFTSeriesAndCollection(
           web3Context.api,
           web3Context.account,
           tokenArgs,
+          collectionExtrinsic,
           () => setModalState("txInProgress")
         );
       } else {
@@ -557,8 +578,12 @@ const Create: React.FC<{}> = () => {
             ],
           };
         }
-        await mintNFT(web3Context.api, web3Context.account, tokenArgs, () =>
-          setModalState("txInProgress")
+        await mintNFTAndCollection(
+          web3Context.api,
+          web3Context.account,
+          tokenArgs,
+          collectionExtrinsic,
+          () => setModalState("txInProgress")
         );
       }
       setModalState("success");
