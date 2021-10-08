@@ -55,43 +55,6 @@ const initialState: State = {
   currentTab: 1,
 };
 
-const createCollection = async (
-  api,
-  account,
-  collectionName,
-  metadataBaseURI
-) => {
-  const collectionExtrinsic = await api.tx.nft.createCollection(
-    collectionName,
-    metadataBaseURI,
-    null
-  );
-  let signer = account.signer;
-  let payload = account.payload;
-  return new Promise((resolve, reject) => {
-    collectionExtrinsic
-      .signAndSend(signer, payload, (args) => {
-        const createCollectionEvent = args.findRecord(
-          "nft",
-          "CreateCollection"
-        );
-        if (createCollectionEvent) {
-          const collectionId = createCollectionEvent.event.data[0].toJSON();
-          resolve(collectionId);
-        }
-        if (args.status.isInBlock) {
-          console.log(
-            `Completed at block hash #${args.status.asInBlock.toString()}`
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(":( transaction failed", error);
-        reject(error);
-      });
-  });
-};
-
 const mintNFTAndCollection = async (
   api,
   account,
