@@ -529,6 +529,8 @@ const Create: React.FC<{}> = () => {
         collectionId = state.nft.collectionId;
         collectionExtrinsic = null;
       } else {
+        // TODO fix --  potential race condition if collectionId changes before user signs
+        // when multiple users are minting at the same time
         collectionId = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
