@@ -73,7 +73,7 @@ const Me: React.FC<{}> = () => {
                               const metadataUrl =
                                 gatewayTools.convertToDesiredGateway(
                                   metadata,
-                                  process.env.NEXT_PUBLIC_PINATA_PIN_ENDPOINT
+                                  process.env.NEXT_PUBLIC_PINATA_GATEWAY
                                 );
                               console.log("metadata url:", metadataUrl);
                               let metadataResponse;
