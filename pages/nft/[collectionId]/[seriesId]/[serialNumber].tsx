@@ -106,62 +106,51 @@ const NFTDetail: React.FC<{}> = () => {
         };
 
         const otherAttributes = [];
-        let metadataResponse = [];
-        await Promise.all(
-          attributes.map(async ({ Text, Url }) => {
-            const attributeString = Text || Url;
-            const response = await fetch(attributeString).then((res) =>
-              res.json()
-            );
-            metadataResponse.push(response);
-          })
-        );
-        metadataResponse.forEach((res) => {
-          nft.image = res.image;
-          nft.name = res.name;
-          nft.description = res.description;
+        attributes.forEach(({ Text, Url }) => {
+          const attributeString = Text || Url;
+          if (attributeString) {
+            const attributeBreakup = attributeString.split(" ");
+            switch (attributeBreakup[0]) {
+              case "Image-URL":
+                nft.image = attributeBreakup[1];
+                break;
+              case "Metadata-URL":
+                nft.metadata = attributeBreakup[1];
+                break;
+              case "Title":
+                const [_, ...words] = attributeBreakup;
+                nft.title = words.join(" ");
+              case "Description":
+                const [, ...description] = attributeBreakup;
+                nft.description = description.join(" ");
+                break;
+              case "File-Type":
+                const [, ...fileType] = attributeBreakup;
+                nft.fileType = fileType;
+                break;
+              case "Quantity":
+                break;
+              case "Video-URL":
+                const [, video] = attributeBreakup;
+                nft.videoUrl = video;
+                break;
+              default:
+                otherAttributes.push(attributeString);
+                break;
+            }
+          }
         });
-        // metadataResponse.forEach(({ Text, Url }) => {
-        //   const attributeString = Text || Url;
-        //   if (attributeString) {
-        //     const attributeBreakup = attributeString.split(" ");
-        //     console.log(attributeBreakup);
-        //     switch (attributeBreakup[0]) {
-        //       case "Image-URL":
-        //         nft.image = attributeBreakup[1];
-        //         break;
-        //       case "Metadata-URL":
-        //         nft.metadata = attributeBreakup[1];
-        //         break;
-        //       case "Title":
-        //         const [_, ...words] = attributeBreakup;
-        //         nft.title = words.join(" ");
-        //       case "Description":
-        //         const [, ...description] = attributeBreakup;
-        //         nft.description = description.join(" ");
-        //         break;
-        //       case "File-Type":
-        //         const [, ...fileType] = attributeBreakup;
-        //         nft.fileType = fileType;
-        //         break;
-        //       case "Quantity":
-        //         break;
-        //       case "Video-URL":
-        //         const [, video] = attributeBreakup;
-        //         nft.videoUrl = video;
-        //         break;
-        //       default:
-        //         otherAttributes.push(attributeString);
-        //         break;
-        //     }
-        //   }
-        // });
         nft.attributes = otherAttributes;
         setNFT(nft);
 
         let imageUrl;
         const image = nft.coverImage || nft.image;
-        const fileExtension = image ? getFileExtension(image) : undefined;
+        let fileExtension;
+        try {
+          fileExtension = image ? getFileExtension(image) : undefined;
+        } catch (e) {
+          console.log("Issue getting file extension", e);
+        }
 
         if (!fileExtension) {
           imageUrl = "/litho-default.jpg";

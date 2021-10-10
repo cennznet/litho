@@ -6,6 +6,11 @@ import Web3Context from "../components/Web3Context";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
 import Loader from "../components/Loader";
+import getMetadata from "../utils/getMetadata";
+import cache from "../utils/cache";
+import axios from "axios";
+const IPFSGatewayTools = require("@pinata/ipfs-gateway-tools/dist/node");
+const gatewayTools = new IPFSGatewayTools();
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -49,8 +54,9 @@ const Me: React.FC<{}> = () => {
                             seriesId: token.seriesId.toJSON(),
                             serialNumber: 0,
                           });
-                        const { attributes, owner } = tokenInfo;
-                        const nft: { [index: string]: any } = {
+                        let attributes = tokenInfo.attributes;
+                        const { owner } = tokenInfo;
+                        let nft: { [index: string]: any } = {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
                           serialNumber: 0,
@@ -58,6 +64,39 @@ const Me: React.FC<{}> = () => {
                           attributes: attributes,
                           copies: count,
                         };
+                        let metadata;
+
+                        if (attributes) {
+                          metadata = getMetadata(attributes);
+                          if (metadata) {
+                            try {
+                              const metadataUrl =
+                                gatewayTools.convertToDesiredGateway(
+                                  metadata,
+                                  process.env.NEXT_PUBLIC_PINATA_PIN_ENDPOINT
+                                );
+                              console.log("metadata url:", metadataUrl);
+                              let metadataResponse;
+                              if (cache.has(metadataUrl)) {
+                                metadataResponse = cache.get(metadataUrl);
+                              } else {
+                                metadataResponse = await axios.get(metadataUrl);
+                                console.log(
+                                  "metadata response:",
+                                  metadataResponse
+                                );
+                                cache.set(metadataUrl, metadataResponse);
+                              }
+
+                              attributes = {
+                                ...attributes,
+                                ...metadataResponse,
+                              };
+                            } catch (error) {
+                              console.error(error.message);
+                            }
+                          }
+                        }
                         attributes.forEach(({ Text, Url }) => {
                           const attributeString = Text || Url;
                           if (attributeString) {
