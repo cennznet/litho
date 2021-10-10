@@ -80,7 +80,14 @@ const Me: React.FC<{}> = () => {
                               if (cache.has(metadataUrl)) {
                                 metadataResponse = cache.get(metadataUrl);
                               } else {
-                                metadataResponse = await axios.get(metadataUrl);
+                                const response = await axios.get(metadataUrl);
+                                if (response.data) {
+                                  metadataResponse = JSON.parse(response.data);
+                                  console.log(
+                                    "Metadata response::::::::::",
+                                    metadataResponse
+                                  );
+                                }
                                 console.log(
                                   "metadata response:",
                                   metadataResponse
