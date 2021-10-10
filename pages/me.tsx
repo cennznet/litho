@@ -82,7 +82,7 @@ const Me: React.FC<{}> = () => {
                               } else {
                                 const response = await axios.get(metadataUrl);
                                 if (response.data) {
-                                  metadataResponse = JSON.parse(response.data);
+                                  metadataResponse = response.data;
                                   console.log(
                                     "Metadata response::::::::::",
                                     metadataResponse
