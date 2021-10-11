@@ -100,40 +100,41 @@ const Me: React.FC<{}> = () => {
                             }
                           }
 
-                          nftAttributes.forEach((attr) => {
-                            if (attr) {
-                              if (attr["image"]) {
-                                const imgUrl =
-                                  gatewayTools.convertToDesiredGateway(
-                                    metadata,
-                                    process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                                  );
-                                nft.image = imgUrl;
-                                delete attr.image;
+                          nftAttributes &&
+                            nftAttributes.forEach((attr) => {
+                              if (attr) {
+                                if (attr["image"]) {
+                                  const imgUrl =
+                                    gatewayTools.convertToDesiredGateway(
+                                      metadata,
+                                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                                    );
+                                  nft.image = imgUrl;
+                                  delete attr.image;
+                                }
+                                nft = { ...nft, ...attr };
+                                // const attributeBreakup = attr.split(":");
+                                // const attributeBreakup = attr.key;
+                                // switch (attr) {
+                                //   case attr["image"]:
+                                //     nft.image = attr["image"];
+                                //     break;
+                                //   case attr["Metadata-URL"]:
+                                //     nft.metadata = attr["Metadata-URL"];
+                                //     break;
+                                //   case attr["Title"]:
+                                //     const [, ...words] = attr["Title"];
+                                //     nft.title = words.join(" ");
+                                //     break;
+                                //   case attr["Video-URL"]:
+                                //     const [, video] = attr["Video-URL"];
+                                //     nft.videoUrl = video;
+                                //     break;
+                                //   default:
+                                //     break;
+                                // }
                               }
-                              nft = { ...nft, ...attr };
-                              // const attributeBreakup = attr.split(":");
-                              // const attributeBreakup = attr.key;
-                              // switch (attr) {
-                              //   case attr["image"]:
-                              //     nft.image = attr["image"];
-                              //     break;
-                              //   case attr["Metadata-URL"]:
-                              //     nft.metadata = attr["Metadata-URL"];
-                              //     break;
-                              //   case attr["Title"]:
-                              //     const [, ...words] = attr["Title"];
-                              //     nft.title = words.join(" ");
-                              //     break;
-                              //   case attr["Video-URL"]:
-                              //     const [, video] = attr["Video-URL"];
-                              //     nft.videoUrl = video;
-                              //     break;
-                              //   default:
-                              //     break;
-                              // }
-                            }
-                          });
+                            });
                         }
                         userNFTs.push(nft);
                         resolve(null);
