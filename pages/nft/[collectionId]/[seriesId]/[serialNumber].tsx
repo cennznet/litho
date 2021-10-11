@@ -11,6 +11,9 @@ import TxStatusModal from "../../../../components/sell/TxStatusModal";
 import { GetRemainingTime } from "../../../../utils/chainHelper";
 import Input from "../../../../components/Input";
 import Loader from "../../../../components/Loader";
+import getMetadata from "../../../../utils/getMetadata";
+import NFTRenderer from "../../../../components/nft/NFTRenderer";
+import NFT from "../../../../components/nft";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -105,64 +108,74 @@ const NFTDetail: React.FC<{}> = () => {
           copies: seriesIssuance.toJSON(),
         };
 
-        const otherAttributes = [];
-        attributes.forEach(({ Text, Url }) => {
-          const attributeString = Text || Url;
-          if (attributeString) {
-            const attributeBreakup = attributeString.split(" ");
-            switch (attributeBreakup[0]) {
-              case "Image-URL":
-                nft.image = attributeBreakup[1];
-                break;
-              case "Metadata-URL":
-                nft.metadata = attributeBreakup[1];
-                break;
-              case "Title":
-                const [_, ...words] = attributeBreakup;
-                nft.title = words.join(" ");
-              case "Description":
-                const [, ...description] = attributeBreakup;
-                nft.description = description.join(" ");
-                break;
-              case "File-Type":
-                const [, ...fileType] = attributeBreakup;
-                nft.fileType = fileType;
-                break;
-              case "Quantity":
-                break;
-              case "Video-URL":
-                const [, video] = attributeBreakup;
-                nft.videoUrl = video;
-                break;
-              default:
-                otherAttributes.push(attributeString);
-                break;
-            }
+        if (attributes) {
+          const metadata = getMetadata(attributes);
+          if (metadata) {
+            const metadataAttributes = metadata.split(" ");
+            const key = metadataAttributes[0].toLowerCase();
+            const value = metadataAttributes[1];
+            nft[key] = value;
           }
-        });
-        nft.attributes = otherAttributes;
+        }
+
+        // const otherAttributes = [];
+        // attributes.forEach(({ Text, Url }) => {
+        //   const attributeString = Text || Url;
+        //   if (attributeString) {
+        //     const attributeBreakup = attributeString.split(" ");
+        //     switch (attributeBreakup[0]) {
+        //       case "Image-URL":
+        //         nft.image = attributeBreakup[1];
+        //         break;
+        //       case "Metadata-URL":
+        //         nft.metadata = attributeBreakup[1];
+        //         break;
+        //       case "Title":
+        //         const [_, ...words] = attributeBreakup;
+        //         nft.title = words.join(" ");
+        //       case "Description":
+        //         const [, ...description] = attributeBreakup;
+        //         nft.description = description.join(" ");
+        //         break;
+        //       case "File-Type":
+        //         const [, ...fileType] = attributeBreakup;
+        //         nft.fileType = fileType;
+        //         break;
+        //       case "Quantity":
+        //         break;
+        //       case "Video-URL":
+        //         const [, video] = attributeBreakup;
+        //         nft.videoUrl = video;
+        //         break;
+        //       default:
+        //         otherAttributes.push(attributeString);
+        //         break;
+        //     }
+        //   }
+        // });
+        // nft.attributes = otherAttributes;
         setNFT(nft);
 
-        let imageUrl;
-        const image = nft.coverImage || nft.image;
-        let fileExtension;
-        try {
-          fileExtension = image ? getFileExtension(image) : undefined;
-        } catch (e) {
-          console.log("Issue getting file extension", e);
-        }
-
-        if (!fileExtension) {
-          imageUrl = "/litho-default.jpg";
-        } else {
-          if (typeof image === "object") {
-            imageUrl = URL.createObjectURL(image);
-          } else {
-            imageUrl = image;
-          }
-        }
-        setFileExtension(fileExtension);
-        setImage(imageUrl);
+        // let imageUrl;
+        // const image = nft.coverImage || nft.image;
+        // let fileExtension;
+        // try {
+        //   fileExtension = image ? getFileExtension(image) : undefined;
+        // } catch (e) {
+        //   console.log("Issue getting file extension", e);
+        // }
+        //
+        // if (!fileExtension) {
+        //   imageUrl = "/litho-default.jpg";
+        // } else {
+        //   if (typeof image === "object") {
+        //     imageUrl = URL.createObjectURL(image);
+        //   } else {
+        //     imageUrl = image;
+        //   }
+        // }
+        // setFileExtension(fileExtension);
+        // setImage(imageUrl);
         setLoading(false);
       });
     })();
@@ -406,36 +419,37 @@ const NFTDetail: React.FC<{}> = () => {
                 className="border-b border-litho-black flex items-center justify-center"
                 style={{ minHeight: "500px", maxHeight: "499px" }}
               >
-                {nft.videoUrl ? (
-                  <video
-                    src={nft.videoUrl}
-                    height="300"
-                    controls
-                    autoPlay
-                    width="300"
-                    loop
-                    controlsList="nodownload"
-                    className="object-contain object-center w-full bg-litho-black bg-no-repeat bg-center"
-                  />
-                ) : (
-                  <img
-                    src={image}
-                    className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
-                    onLoad={(event) => {
-                      if (event.target) {
-                        (event.target as HTMLImageElement).classList.remove(
-                          "bg-image-loading"
-                        );
-                      }
-                    }}
-                    onError={(event) => {
-                      (event.target as HTMLImageElement).src =
-                        "/litho-default.jpg";
-                      (event.target as HTMLImageElement).style.height = "499px";
-                    }}
-                    style={{ maxHeight: "499px" }}
-                  />
-                )}
+                <NFT nft={nft} renderer={NFTRenderer} />
+                {/*{nft.videoUrl ? (*/}
+                {/*  <video*/}
+                {/*    src={nft.videoUrl}*/}
+                {/*    height="300"*/}
+                {/*    controls*/}
+                {/*    autoPlay*/}
+                {/*    width="300"*/}
+                {/*    loop*/}
+                {/*    controlsList="nodownload"*/}
+                {/*    className="object-contain object-center w-full bg-litho-black bg-no-repeat bg-center"*/}
+                {/*  />*/}
+                {/*) : (*/}
+                {/*  <img*/}
+                {/*    src={image}*/}
+                {/*    className="object-contain object-center bg-image-loading bg-no-repeat bg-center"*/}
+                {/*    onLoad={(event) => {*/}
+                {/*      if (event.target) {*/}
+                {/*        (event.target as HTMLImageElement).classList.remove(*/}
+                {/*          "bg-image-loading"*/}
+                {/*        );*/}
+                {/*      }*/}
+                {/*    }}*/}
+                {/*    onError={(event) => {*/}
+                {/*      (event.target as HTMLImageElement).src =*/}
+                {/*        "/litho-default.jpg";*/}
+                {/*      (event.target as HTMLImageElement).style.height = "499px";*/}
+                {/*    }}*/}
+                {/*    style={{ maxHeight: "499px" }}*/}
+                {/*  />*/}
+                {/*)}*/}
               </div>
               <div className="p-5 flex items-center justify-around">
                 {nft.image && (

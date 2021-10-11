@@ -54,8 +54,7 @@ const Me: React.FC<{}> = () => {
                             seriesId: token.seriesId.toJSON(),
                             serialNumber: 0,
                           });
-                        let attributes = tokenInfo.attributes;
-                        const { owner } = tokenInfo;
+                        const { owner, attributes } = tokenInfo;
                         let nft: { [index: string]: any } = {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
@@ -64,7 +63,6 @@ const Me: React.FC<{}> = () => {
                           attributes: attributes,
                           copies: count,
                         };
-                        // let nftAttributes;
 
                         if (attributes) {
                           const metadata = getMetadata(attributes);
