@@ -4,12 +4,15 @@ import Link from "next/link";
 
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
-import getFileExtension from "../../../../utils/getFileExtension";
-import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
-import { GetRemaindedTime } from "../../../../utils/chainHelper";
+import { GetRemainingTime } from "../../../../utils/chainHelper";
 import Input from "../../../../components/Input";
+import Loader from "../../../../components/Loader";
+import getMetadata from "../../../../utils/getMetadata";
+import NFTRenderer from "../../../../components/nft/NFTRenderer";
+import NFT from "../../../../components/nft";
+import axios from "axios";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -93,71 +96,79 @@ const NFTDetail: React.FC<{}> = () => {
           router.query.collectionId,
           router.query.seriesId
         );
+        const owner = await web3Context.api.query.nft.tokenOwner(
+          [router.query.collectionId, router.query.seriesId],
+          router.query.serialNumber
+        );
 
-        const { attributes, owner, tokenId } = tokenInfo;
-
+        const { attributes } = tokenInfo;
         const nft: { [index: string]: any } = {
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
-          owner,
+          owner: owner.toString(),
           copies: seriesIssuance.toJSON(),
         };
-
-        const otherAttributes = [];
-
-        attributes.forEach(({ Text, Url }) => {
-          const attributeString = Text || Url;
-          if (attributeString) {
-            const attributeBreakup = attributeString.split(" ");
-            switch (attributeBreakup[0]) {
-              case "Image-URL":
-                nft.image = attributeBreakup[1];
-                break;
-              case "Metadata-URL":
-                nft.metadata = attributeBreakup[1];
-                break;
-              case "Title":
-                const [_, ...words] = attributeBreakup;
-                nft.title = words.join(" ");
-              case "Description":
-                const [, ...description] = attributeBreakup;
-                nft.description = description.join(" ");
-                break;
-              case "File-Type":
-                const [, ...fileType] = attributeBreakup;
-                nft.fileType = fileType;
-                break;
-              case "Quantity":
-                break;
-              case "Video-URL":
-                const [, video] = attributeBreakup;
-                nft.videoUrl = video;
-                break;
-              default:
-                otherAttributes.push(attributeString);
-                break;
-            }
-          }
-        });
-        nft.attributes = otherAttributes;
-        setNFT(nft);
-
-        let imageUrl;
-        const image = nft.coverImage || nft.image;
-        const fileExtension = getFileExtension(image);
-
-        if (!fileExtension) {
-          imageUrl = "/litho-default.jpg";
-        } else {
-          if (typeof image === "object") {
-            imageUrl = URL.createObjectURL(image);
+        if (attributes) {
+          const metadata = getMetadata(attributes);
+          if (metadata) {
+            const metadataAttributes = metadata.split(" ");
+            const metaAsObject = metadataAttributes.length > 1;
+            const key = metaAsObject
+              ? metadataAttributes[0].toLowerCase()
+              : "metadata";
+            const value = metaAsObject
+              ? metadataAttributes[1]
+              : metadataAttributes[0];
+            nft[key] = value;
+            const metadataUrl = value.startsWith("ipfs://")
+              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                  value.split("ipfs://")[1]
+                }`
+              : value;
+            nft.metadataLink = metadataUrl;
+            axios.get(metadataUrl).then(function (response) {
+              const { data } = response;
+              const attr = [];
+              Object.keys(data).forEach(function (key) {
+                switch (key) {
+                  case "title":
+                    nft.title = data[key];
+                    break;
+                  case "description": {
+                    nft.description = data[key];
+                    attributes.map((att) => {
+                      if (att["Text"]) {
+                        nft.description = `${nft.description} , ${att["Text"]}`;
+                      }
+                    });
+                    break;
+                  }
+                  case "image": {
+                    nft.imageLink = data.image.startsWith("ipfs://")
+                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                          data.image.split("ipfs://")[1]
+                        }`
+                      : data.image;
+                    break;
+                  }
+                  case "properties":
+                    Object.entries(data.properties).map((d) => attr.push(d));
+                    break;
+                  default:
+                    attr.push([key, data[key]]);
+                    break;
+                }
+              });
+              nft.attributes = attr;
+            });
           } else {
-            imageUrl = image;
+            nft.attributes = [];
           }
         }
-        setFileExtension(fileExtension);
-        setImage(imageUrl);
+
+        setNFT(nft);
+
         setLoading(false);
       });
     })();
@@ -291,11 +302,11 @@ const NFTDetail: React.FC<{}> = () => {
       let blocks = 0;
       if (listingInfo.fixedPriceInfo) {
         blocks = Number(listingInfo.fixedPriceInfo.close) - currentBlock;
-        return GetRemaindedTime(web3Context.api, blocks);
+        return GetRemainingTime(web3Context.api, blocks);
       }
       if (listingInfo.auctionInfo) {
         blocks = Number(listingInfo.auctionInfo.close) - currentBlock;
-        return GetRemaindedTime(web3Context.api, blocks);
+        return GetRemainingTime(web3Context.api, blocks);
       }
     }
   }, [listingInfo, web3Context.api, currentBlock]);
@@ -368,12 +379,13 @@ const NFTDetail: React.FC<{}> = () => {
 
   return (
     <>
-      <Link href="/me">
+      <Loader loading={loading} />
+      <Link href="javascript:history.back()">
         <a className="font-bold" style={{ lineHeight: "31px" }}>
-          &lt; My Profile
+          &lt; Back
         </a>
       </Link>
-      {image ? (
+      {nft ? (
         <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
           <div className="border-b border-litho-black px-10 py-5 flex items-center">
             <Text variant="h3" component="h3" className="flex-1">
@@ -400,54 +412,29 @@ const NFTDetail: React.FC<{}> = () => {
                 className="border-b border-litho-black flex items-center justify-center"
                 style={{ minHeight: "500px", maxHeight: "499px" }}
               >
-                {nft.videoUrl ? (
-                  <video
-                    src={nft.videoUrl}
-                    height="300"
-                    controls
-                    autoPlay
-                    width="300"
-                    loop
-                    controlsList="nodownload"
-                    className="object-contain object-center w-full bg-litho-black bg-no-repeat bg-center"
-                  />
-                ) : (
-                  <img
-                    src={image}
-                    className="object-contain object-center bg-image-loading bg-no-repeat bg-center"
-                    onLoad={(event) => {
-                      if (event.target) {
-                        (event.target as HTMLImageElement).classList.remove(
-                          "bg-image-loading"
-                        );
-                      }
-                    }}
-                    onError={(event) => {
-                      (event.target as HTMLImageElement).src =
-                        "/litho-default.jpg";
-                      (event.target as HTMLImageElement).style.height = "499px";
-                    }}
-                    style={{ maxHeight: "499px" }}
-                  />
-                )}
+                <NFT nft={nft} renderer={NFTRenderer} />
               </div>
               <div className="p-5 flex items-center justify-around">
-                <Link href={nft.image}>
-                  <a
-                    className="text-litho-blue font-medium text-lg underline"
-                    target="_blank"
-                  >
-                    View on IPFS
-                  </a>
-                </Link>
-                <Link href={nft.metadata}>
-                  <a
-                    className="text-litho-blue font-medium text-lg underline"
-                    target="_blank"
-                  >
-                    IPFS Metadata
-                  </a>
-                </Link>
+                {nft.imageLink && (
+                  <Link href={nft.imageLink}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      View on IPFS
+                    </a>
+                  </Link>
+                )}
+                {nft.metadataLink && (
+                  <Link href={nft.metadataLink}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      IPFS Metadata
+                    </a>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="w-1/3">
@@ -529,13 +516,6 @@ const NFTDetail: React.FC<{}> = () => {
                     </Text>
                     {editableSerialNumber !== undefined && (
                       <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
-                        <Link href="#" passHref>
-                          <a className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2">
-                            <Text variant="button" color="white">
-                              EDIT
-                            </Text>
-                          </a>
-                        </Link>
                         <Link
                           href={`/sell?collectionId=${router.query.collectionId}&seriesId=${router.query.seriesId}&serialNumber=${editableSerialNumber}`}
                         >
@@ -559,7 +539,7 @@ const NFTDetail: React.FC<{}> = () => {
                       </Text>
                     </div>
                   )}
-                  {nft.attributes.length > 0 && (
+                  {nft.attributes && nft.attributes.length > 0 && (
                     <div className="w-full p-8 flex flex-col border-b border-litho-black">
                       <Text variant="h6">Attributes</Text>
                       {nft.attributes.map((attribute) => {
@@ -572,7 +552,7 @@ const NFTDetail: React.FC<{}> = () => {
                             className="text-opacity-50 break-all my-2"
                             key={attribute}
                           >
-                            {attribute}
+                            {`${attribute[0]}: ${attribute[1]}`}
                           </Text>
                         );
                       })}

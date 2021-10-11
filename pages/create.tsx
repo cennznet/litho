@@ -2,8 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { NFTStorage, toGatewayURL } from "nft.storage";
-import { TokenInput } from "nft.storage/dist/src/lib/interface";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
@@ -11,7 +9,6 @@ import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
-import getFileExtension from "../utils/getFileExtension";
 import isImageOrVideo from "../utils/isImageOrVideo";
 
 export type NFT = {
@@ -25,6 +22,8 @@ export type NFT = {
   storage?: string;
   attributes: Array<{ [index: string]: string }>;
   royalty: number;
+  extension: string;
+  coverFileExtension?: string;
 };
 
 interface Action {
@@ -49,63 +48,37 @@ const initialState: State = {
     attributes: [],
     royalty: 0,
     collectionName: "Litho (default)",
+    extension: "",
   },
   isAboutFilled: false,
   isUploadFilled: false,
   currentTab: 1,
 };
 
-const createCollection = async (
+const mintNFTAndCollection = async (
   api,
   account,
-  collectionName,
-  metadataBaseURI
+  tokenArgs,
+  collectionExtrinsic,
+  setTransactionInProgress
 ) => {
-  const collectionExtrinsic = await api.tx.nft.createCollection(
-    collectionName,
-    metadataBaseURI,
-    null
-  );
-  let signer = account.signer;
-  let payload = account.payload;
-  return new Promise((resolve, reject) => {
-    collectionExtrinsic
-      .signAndSend(signer, payload, (args) => {
-        const createCollectionEvent = args.findRecord(
-          "nft",
-          "CreateCollection"
-        );
-        if (createCollectionEvent) {
-          const collectionId = createCollectionEvent.event.data[0].toJSON();
-          resolve(collectionId);
-        }
-        if (args.status.isInBlock) {
-          console.log(
-            `Completed at block hash #${args.status.asInBlock.toString()}`
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(":( transaction failed", error);
-        reject(error);
-      });
-  });
-};
-
-const mintNFT = async (api, account, tokenArgs, setTransactionInProgress) => {
   const { collectionId, owner, attributes, metadataPath, royaltiesSchedule } =
     tokenArgs;
-  const mintUniqueExtrinsic = await api.tx.nft.mintUnique(
+  const mintUniqueExtrinsic = api.tx.nft.mintUnique(
     collectionId,
     owner,
     attributes,
     metadataPath,
     royaltiesSchedule
   );
+  const batchMinting = collectionExtrinsic
+    ? await api.tx.utility.batch([collectionExtrinsic, mintUniqueExtrinsic])
+    : await mintUniqueExtrinsic;
+
   let signer = account.signer;
   let payload = account.payload;
   return new Promise((resolve, reject) => {
-    mintUniqueExtrinsic
+    batchMinting
       .signAndSend(signer, payload, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
@@ -122,10 +95,11 @@ const mintNFT = async (api, account, tokenArgs, setTransactionInProgress) => {
   });
 };
 
-const mintNFTSeries = async (
+const mintNFTSeriesAndCollection = async (
   api,
   account,
   tokenArgs,
+  collectionExtrinsic,
   setTransactionInProgress
 ) => {
   const {
@@ -136,7 +110,8 @@ const mintNFTSeries = async (
     metadataPath,
     royaltiesSchedule,
   } = tokenArgs;
-  const mintUniqueExtrinsic = await api.tx.nft.mintSeries(
+  console.log(attributes, royaltiesSchedule);
+  const mintSeriesExtrinsic = api.tx.nft.mintSeries(
     collectionId,
     quantity,
     owner,
@@ -144,10 +119,14 @@ const mintNFTSeries = async (
     metadataPath,
     royaltiesSchedule
   );
+  const batchMinting = collectionExtrinsic
+    ? await api.tx.utility.batch([collectionExtrinsic, mintSeriesExtrinsic])
+    : await mintSeriesExtrinsic;
+
   let signer = account.signer;
   let payload = account.payload;
   return new Promise((resolve, reject) => {
-    mintUniqueExtrinsic
+    batchMinting
       .signAndSend(signer, payload, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
@@ -188,7 +167,14 @@ const createReducer: React.Reducer<State, Action> = (state, action) => {
         isAboutFilled: true,
       };
     case "MOVE_TO_PREVIEW":
-      const { image, coverImage, storage, collectionId } = action.payload;
+      const {
+        image,
+        coverImage,
+        storage,
+        collectionId,
+        extension,
+        coverFileExtension,
+      } = action.payload;
       return {
         ...state,
         nft: {
@@ -197,6 +183,8 @@ const createReducer: React.Reducer<State, Action> = (state, action) => {
           coverImage,
           storage,
           collectionId,
+          extension,
+          coverFileExtension,
         },
         currentTab: 3,
         isUploadFilled: true,
@@ -341,7 +329,14 @@ const Create: React.FC<{}> = () => {
   };
 
   const moveToPreview = (uploadData) => {
-    const { image, coverImage, storage, collectionId } = uploadData;
+    const {
+      image,
+      coverImage,
+      storage,
+      collectionId,
+      fileExtension,
+      coverFileExtension,
+    } = uploadData;
 
     dispatch({
       type: "MOVE_TO_PREVIEW",
@@ -355,6 +350,8 @@ const Create: React.FC<{}> = () => {
         coverImage: coverImage || state.nft.coverImage,
         storage,
         collectionId,
+        extension: fileExtension,
+        coverFileExtension,
       },
     });
 
@@ -367,13 +364,8 @@ const Create: React.FC<{}> = () => {
 
   const mint = async () => {
     setModalState("mint");
-    const client = new NFTStorage({
-      token: process.env.NEXT_PUBLIC_NFT_STORAGE_API_KEY,
-    });
 
-    let storeOnIPFS: TokenInput;
-    const fileExtension = getFileExtension(state.nft.image.name);
-    const fileType = isImageOrVideo(fileExtension);
+    let storeOnIPFS;
     if (state.nft.coverImage) {
       storeOnIPFS = {
         name: state.nft.title,
@@ -381,98 +373,134 @@ const Create: React.FC<{}> = () => {
         image: state.nft.coverImage,
         properties: {
           file: state.nft.image,
-          title: state.nft.title,
-          description: state.nft.description,
           quantity: state.nft.copies,
+          owner: web3Context.account.address,
+          extension: state.nft.extension,
+          coverFileExtension: state.nft.coverFileExtension,
         },
       };
     } else {
-      if (fileType === "image") {
-        storeOnIPFS = {
-          name: state.nft.title,
-          description: state.nft.description,
-          image: state.nft.image,
-          properties: {
-            title: state.nft.title,
-            description: state.nft.description,
-            quantity: state.nft.copies,
-          },
-        };
-      } else if (fileType === "video") {
-        storeOnIPFS = {
-          name: state.nft.title,
-          description: state.nft.description,
-          image: new File([""], "no-image", { type: "image/jpg" }),
-          properties: {
-            video: state.nft.image,
-            title: state.nft.title,
-            description: state.nft.description,
-            quantity: state.nft.copies,
-          },
-        };
-      } else {
-        storeOnIPFS = {
-          name: state.nft.title,
-          description: state.nft.description,
-          image: new File([""], "no-image", { type: "image/jpg" }),
-          properties: {
-            file: state.nft.image,
-            title: state.nft.title,
-            description: state.nft.description,
-            quantity: state.nft.copies,
-          },
-        };
-      }
+      storeOnIPFS = {
+        name: state.nft.title,
+        description: state.nft.description,
+        image: state.nft.image,
+        properties: {
+          quantity: state.nft.copies,
+          owner: web3Context.account.address,
+          extension: state.nft.extension,
+        },
+      };
     }
 
-    const metadata = await client.store(storeOnIPFS);
-
-    const metadataBaseURI = "ipfs";
-    const metadataGatewayURL = toGatewayURL(metadata.url, {
-      gateway: "https://ipfs.io/",
-    });
-    const metadataURL = metadataGatewayURL.href;
-    const metadataPath = metadataGatewayURL.pathname;
-
-    const imageGatewayURL = toGatewayURL(metadata.data.image, {
-      gateway: "https://ipfs.io/",
-    });
-    const imageURL = imageGatewayURL.href;
-    const imagePath = imageGatewayURL.pathname;
-
-    const nftAttributes = [
-      ...state.nft.attributes,
-      { URL: `Image-URL ${imageURL}` },
-      { URL: `Metadata-URL ${metadataURL}` },
-      { Text: `Title ${state.nft.title}` },
-      { Text: `Description ${state.nft.description}` },
-      { Text: `Quantity ${state.nft.copies}` },
-      { Text: `File-Type ${getFileExtension(state.nft.image.name)}` },
-      {
-        URL: `Video-URL ${
-          fileType === "video"
-            ? toGatewayURL((metadata.data.properties as any).video, {
-                gateway: "https://ipfs.io/",
-              })
-            : ""
-        }`,
-      },
-    ];
-
-    let collectionId;
-    setModalState("signTransaction");
     try {
+      // upload file to ipfs and pin
+      const data = new FormData();
+      data.append("file", storeOnIPFS.image);
+      const imageMetadata = JSON.stringify({
+        name: storeOnIPFS.name,
+        keyvalues: {
+          description: storeOnIPFS.description,
+          owner: (storeOnIPFS.properties as any).owner,
+          quantity: (storeOnIPFS.properties as any).quantity,
+          extension: state.nft.extension,
+        },
+      });
+      data.append("pinataMetadata", imageMetadata);
+
+      const imagePinPromise = await fetch(
+        `${process.env.NEXT_PUBLIC_PINATA_PIN_ENDPOINT}/pinning/pinFileToIPFS`,
+        {
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
+          },
+        }
+      ).then((res) => res.json());
+
+      // upload other file, if any, to ipfs and pin
+      let filePinPromise;
+      if (storeOnIPFS.properties && (storeOnIPFS.properties as any).file) {
+        const otherFileData = new FormData();
+        otherFileData.append("file", (storeOnIPFS.properties as any).file);
+        const otherFileMetadata = JSON.stringify({
+          name: storeOnIPFS.name,
+          keyvalues: {
+            description: storeOnIPFS.description,
+            coverImage: `ipfs://${imagePinPromise.IpfsHash}`,
+            owner: (storeOnIPFS.properties as any).owner,
+            quantity: (storeOnIPFS.properties as any).quantity,
+            extension: state.nft.extension,
+            coverFileExtension: state.nft.coverFileExtension,
+          },
+        });
+
+        otherFileData.append("pinataMetadata", otherFileMetadata);
+        filePinPromise = await fetch(
+          `${process.env.NEXT_PUBLIC_PINATA_PIN_ENDPOINT}/pinning/pinFileToIPFS`,
+          {
+            method: "POST",
+            body: otherFileData,
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
+            },
+          }
+        ).then((res) => res.json());
+      }
+
+      const metadata = {
+        name: storeOnIPFS.name,
+        description: storeOnIPFS.description,
+        image: `ipfs://${imagePinPromise.IpfsHash}`,
+        properties: {
+          ...((storeOnIPFS.properties as any).file
+            ? { file: `ipfs://${filePinPromise.IpfsHash}` }
+            : {}),
+          quantity: (storeOnIPFS.properties as any).quantity,
+          owner: (storeOnIPFS.properties as any).owner,
+          extension: state.nft.extension,
+          coverFileExtension: state.nft.coverFileExtension,
+        },
+      };
+
+      const metadataPinPromise = await fetch(
+        `${process.env.NEXT_PUBLIC_PINATA_PIN_ENDPOINT}/pinning/pinJSONToIPFS`,
+        {
+          method: "POST",
+          body: JSON.stringify(metadata),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
+          },
+        }
+      ).then((res) => res.json());
+
+      // upload metadata json to ipfs
+      const metadataBaseURI = "ipfs";
+
+      const nftAttributes = [
+        ...state.nft.attributes,
+        { Url: `Metadata ipfs://${metadataPinPromise.IpfsHash}` },
+      ];
+
+      let collectionId, collectionExtrinsic;
+      setModalState("signTransaction");
       if (
         state.nft.hasOwnProperty("collectionId") &&
         state.nft.collectionId !== null
       ) {
         collectionId = state.nft.collectionId;
+        collectionExtrinsic = null;
       } else {
-        collectionId = await createCollection(
-          web3Context.api,
-          web3Context.account,
+        // TODO fix --  potential race condition if collectionId changes before user signs
+        // when multiple users are minting at the same time
+        collectionId = (
+          await web3Context.api.query.nft.nextCollectionId()
+        ).toNumber();
+        collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
-          metadataBaseURI
+          metadataBaseURI,
+          null
         );
       }
 
@@ -482,19 +510,20 @@ const Create: React.FC<{}> = () => {
           quantity: state.nft.copies,
           owner: web3Context.account.address,
           attributes: nftAttributes,
-          metadataPath: metadata.url,
+          metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
         };
         if (state.nft.royalty > 0) {
           tokenArgs.royaltiesSchedule = {
             entitlements: [
-              `${web3Context.account.address}, ${state.nft.royalty * 100000}`,
+              [web3Context.account.address, state.nft.royalty * 10000],
             ],
           };
         }
-        await mintNFTSeries(
+        await mintNFTSeriesAndCollection(
           web3Context.api,
           web3Context.account,
           tokenArgs,
+          collectionExtrinsic,
           () => setModalState("txInProgress")
         );
       } else {
@@ -502,7 +531,7 @@ const Create: React.FC<{}> = () => {
           collectionId,
           owner: web3Context.account.address,
           attributes: nftAttributes,
-          metadataPath: metadata.url,
+          metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
         };
 
         if (state.nft.royalty > 0) {
@@ -512,8 +541,12 @@ const Create: React.FC<{}> = () => {
             ],
           };
         }
-        await mintNFT(web3Context.api, web3Context.account, tokenArgs, () =>
-          setModalState("txInProgress")
+        await mintNFTAndCollection(
+          web3Context.api,
+          web3Context.account,
+          tokenArgs,
+          collectionExtrinsic,
+          () => setModalState("txInProgress")
         );
       }
       setModalState("success");

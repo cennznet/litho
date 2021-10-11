@@ -1,14 +1,17 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
+  const { data } = useSWR("/api/getAllNFTs");
 
   return (
     <>
@@ -45,10 +48,11 @@ const Home: React.FC<{}> = () => {
           />
 
           <div className="flex-1 p-6 pt-0 flex flex-col items-center justify-end w-full">
-            <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+            <Text variant="h4" className="mb-5 bg-litho-cream p-2">
               CREATE NFTs
             </Text>
-            {deviceContext.isMobile || !deviceContext.isChrome ? (
+            {deviceContext.isMobile ||
+            (!deviceContext.isChrome && !deviceContext.isFirefox) ? (
               <button
                 className="bg-litho-blue w-40 h-12 flex items-center justify-center"
                 onClick={() => setShowViewOnDesktop(true)}
@@ -74,17 +78,17 @@ const Home: React.FC<{}> = () => {
             className="object-center object-cover h-4/5"
           />
 
-          <div className="p-6 pt-0 pb-3 flex flex-col items-center justify-end w-full -mt-3">
-            <Text variant="h4" className="mb-8 bg-litho-cream p-2">
+          <div className="p-6 pt-0 pb-3 flex flex-col items-center justify-end w-full -mt-2">
+            <Text variant="h4" className="mb-5 bg-litho-cream p-2">
               MARKETPLACE
             </Text>
-            <Text
-              variant="button"
-              color="litho-blue"
-              className="flex items-center"
-            >
-              Coming Soon...
-            </Text>
+            <Link href="/marketplace">
+              <a className="bg-litho-blue w-40 h-12 flex items-center justify-center flex">
+                <Text variant="button" color="white">
+                  BROWSE NFTS
+                </Text>
+              </a>
+            </Link>
           </div>
         </div>
         {/* <div className="w-full flex items-center justify-center mb-16">
@@ -118,6 +122,38 @@ const Home: React.FC<{}> = () => {
           </Modal>
         )}
       </div>
+      {data && data.nfts && data.nfts.length > 0 && (
+        <div className="mt-16">
+          <div className="flex items-center justify-between">
+            <Text variant="h3">Marketplace</Text>
+            <Link href="/marketplace">
+              <a className="">
+                <Text variant="h6">View all</Text>
+              </a>
+            </Link>
+          </div>
+          {
+            <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr">
+              {data.nfts.map((nft, index) => {
+                if (index > 4) {
+                  return null;
+                }
+
+                return (
+                  <Link
+                    href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
+                    key={nft.listingId}
+                  >
+                    <a>
+                      <NFT nft={nft} renderer={NFTRenderer} />
+                    </a>
+                  </Link>
+                );
+              })}
+            </div>
+          }
+        </div>
+      )}
     </>
   );
 };

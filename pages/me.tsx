@@ -3,7 +3,10 @@ import Link from "next/link";
 
 import Text from "../components/Text";
 import Web3Context from "../components/Web3Context";
-import NFT from "../components/NFT";
+import NFT from "../components/nft";
+import NFTRenderer from "../components/nft/NFTRenderer";
+import Loader from "../components/Loader";
+import getMetadata from "../utils/getMetadata";
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -11,8 +14,9 @@ const Me: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
 
   React.useEffect(() => {
+    if (!web3Context.account) return;
+    setLoading(true);
     if (web3Context && web3Context.api && web3Context.account) {
-      setLoading(true);
       (async () => {
         web3Context.api.isReady.then(async () => {
           const tokensInCollections = await web3Context.api.derive.nft.tokensOf(
@@ -46,7 +50,7 @@ const Me: React.FC<{}> = () => {
                             seriesId: token.seriesId.toJSON(),
                             serialNumber: 0,
                           });
-                        const { attributes, owner } = tokenInfo;
+                        const { owner, attributes } = tokenInfo;
                         const nft: { [index: string]: any } = {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
@@ -55,30 +59,21 @@ const Me: React.FC<{}> = () => {
                           attributes: attributes,
                           copies: count,
                         };
-                        attributes.forEach(({ Text, Url }) => {
-                          const attributeString = Text || Url;
-                          if (attributeString) {
-                            const attributeBreakup = attributeString.split(" ");
-                            switch (attributeBreakup[0]) {
-                              case "Image-URL":
-                                nft.image = attributeBreakup[1];
-                                break;
-                              case "Metadata-URL":
-                                nft.metadata = attributeBreakup[1];
-                                break;
-                              case "Title":
-                                const [, ...words] = attributeBreakup;
-                                nft.title = words.join(" ");
-                                break;
-                              case "Video-URL":
-                                const [, video] = attributeBreakup;
-                                nft.videoUrl = video;
-                                break;
-                              default:
-                                break;
-                            }
+
+                        if (attributes) {
+                          const metadata = getMetadata(attributes);
+                          if (metadata) {
+                            const metadataAttributes = metadata.split(" ");
+                            const metaAsObject = metadataAttributes.length > 1;
+                            const key = metaAsObject
+                              ? metadataAttributes[0].toLowerCase()
+                              : "metadata";
+                            const value = metaAsObject
+                              ? metadataAttributes[1]
+                              : metadataAttributes[0];
+                            nft[key] = value;
                           }
-                        });
+                        }
                         userNFTs.push(nft);
                         resolve(null);
                       });
@@ -90,7 +85,8 @@ const Me: React.FC<{}> = () => {
               }
             })
           );
-          setNFTs(userNFTs.filter((nft) => nft.image));
+          // console.log('user nfts:', userNFTs);
+          setNFTs(userNFTs.filter((nft) => nft.metadata));
           setLoading(false);
         });
       })();
@@ -133,6 +129,7 @@ const Me: React.FC<{}> = () => {
             </button>
           </div>
         )}
+        <Loader loading={loading} />
         {web3Context.account && !loading && nfts.length === 0 && (
           <div className="flex-1 w-full flex flex-col items-center justify-center pt-32">
             <Text variant="h4" component="h4" className="mb-11">
@@ -157,7 +154,7 @@ const Me: React.FC<{}> = () => {
                   key={`${collectionId}-${seriesId}-${serialNumber}`}
                 >
                   <div className="rounded mb-10">
-                    <NFT nft={nft} />
+                    <NFT nft={nft} renderer={NFTRenderer} />
                   </div>
                 </Link>
               );

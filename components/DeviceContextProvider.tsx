@@ -9,6 +9,7 @@ const getMobileDetect = (userAgent: string) => {
   const isOpera = (): boolean => Boolean(userAgent.match(/Opera Mini/i));
   const isWindows = (): boolean => Boolean(userAgent.match(/IEMobile/i));
   const isSSR = (): boolean => Boolean(userAgent.match(/SSR/i));
+  const isFirefox = (): boolean => Boolean(userAgent.match(/Firefox/i));
 
   const isMobile = (): boolean =>
     Boolean(isAndroid() || isIos() || isOpera() || isWindows());
@@ -19,6 +20,7 @@ const getMobileDetect = (userAgent: string) => {
     isAndroid,
     isIos,
     isSSR,
+    isFirefox,
   };
 };
 
@@ -37,6 +39,7 @@ const DeviceContextProvider: React.FC<PropsWithChildren<{}>> = ({
     <DeviceContext.Provider
       value={{
         isChrome: !!(window as any).chrome,
+        isFirefox: navigator.userAgent.toLowerCase().indexOf("firefox") > -1,
         isMobile: detectMobile.isMobile(),
       }}
     >
