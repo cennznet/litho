@@ -103,14 +103,6 @@ const Me: React.FC<{}> = () => {
                           nftAttributes &&
                             nftAttributes.forEach((attr) => {
                               if (attr) {
-                                if (attr["image"]) {
-                                  const imgUrl =
-                                    gatewayTools.convertToDesiredGateway(
-                                      metadata,
-                                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                                    );
-                                  attr.image = imgUrl;
-                                }
                                 nft = { ...nft, ...attr };
                                 console.log("nft::", nft);
                                 // const attributeBreakup = attr.split(":");
