@@ -1,5 +1,4 @@
 import React from "react";
-import cache from "../../utils/cache";
 
 import getFileExtension from "../../utils/getFileExtension";
 import isImageOrVideo from "../../utils/isImageOrVideo";
