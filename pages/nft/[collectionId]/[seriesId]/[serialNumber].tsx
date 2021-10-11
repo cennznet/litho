@@ -126,15 +126,21 @@ const NFTDetail: React.FC<{}> = () => {
             nft.metadataLink = metadataUrl;
             axios.get(metadataUrl).then(function (response) {
               const { data } = response;
-              const attributes = [];
+              const attr = [];
               Object.keys(data).forEach(function (key) {
                 switch (key) {
                   case "title":
                     nft.title = data[key];
                     break;
-                  case "description":
+                  case "description": {
                     nft.description = data[key];
+                    attributes.map((att) => {
+                      if (att["Text"]) {
+                        nft.description = `${nft.description} , ${att["Text"]}`;
+                      }
+                    });
                     break;
+                  }
                   case "image": {
                     nft.imageLink = data.image.startsWith("ipfs://")
                       ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
@@ -144,16 +150,14 @@ const NFTDetail: React.FC<{}> = () => {
                     break;
                   }
                   case "properties":
-                    Object.entries(data.properties).map((d) =>
-                      attributes.push(d)
-                    );
+                    Object.entries(data.properties).map((d) => attr.push(d));
                     break;
                   default:
-                    attributes.push([key, data[key]]);
+                    attr.push([key, data[key]]);
                     break;
                 }
               });
-              nft.attributes = attributes;
+              nft.attributes = attr;
             });
           } else {
             nft.attributes = [];
@@ -545,7 +549,7 @@ const NFTDetail: React.FC<{}> = () => {
                             className="text-opacity-50 break-all my-2"
                             key={attribute}
                           >
-                            {`${attribute[0]}:${attribute[1]}`}
+                            {`${attribute[0]}: ${attribute[1]}`}
                           </Text>
                         );
                       })}
