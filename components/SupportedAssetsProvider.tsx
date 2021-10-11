@@ -54,7 +54,7 @@ const SupportedAssetsProvider = ({ children }) => {
       });
     }
     fetchSupportedAssets();
-  }, []);
+  });
 
   return (
     <SupportedAssetsContext.Provider value={{ supportedAssets }}>

@@ -56,33 +56,21 @@ export default async (req, res) => {
           const tokenInfo = await api.derive.nft.tokenInfo(tokenId);
           let metadata;
           let attributes = tokenInfo.attributes;
+          let nft = { ...restDetails, ...tokenInfo, tokenId, ...attributes, listingId: listingId.toString(), metadata: metadata};
           if(tokenInfo.attributes) {
             metadata = getMetadata(tokenInfo.attributes);
-            if(metadata) {
-              try {
-                const metadataUrl = gatewayTools.convertToDesiredGateway(
-                  metadata,
-                  process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                );
-                let metadataResponse;
-                if(cache.has(metadataUrl)) {
-                  metadataResponse = cache.get(metadataUrl);
-                } else {
-                  metadataResponse = await fetch(metadataUrl).then(res => res.json());
-                  cache.set(metadataUrl, metadataResponse);
-                }
+              if (metadata) {
+                const metadataAttributes = metadata.split(" ");
+                const metaAsObject = metadataAttributes.length > 1;
+                metadata = metaAsObject
+                    ? metadataAttributes[1]
+                    : metadataAttributes[0];
 
-                attributes = {
-                  ...attributes,
-                  ...metadataResponse,
-                }
-              } catch(error) {
-                console.error(error.message);
               }
-            }
+              nft = {...nft, metadata }
           }
 
-          nfts.push({ ...restDetails, ...tokenInfo, tokenId, ...attributes, listingId: listingId.toString(), metadata});
+          nfts.push(nft);
         }));
         resolve({});
       });
