@@ -9,4 +9,6 @@ module.exports = {
   images: {
     domains: ["", "ipfs.io"],
   },
+  // remove this after testing check nfts doesn't show up
+  productionBrowserSourceMaps: true,
 };
