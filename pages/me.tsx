@@ -64,10 +64,10 @@ const Me: React.FC<{}> = () => {
                           attributes: attributes,
                           copies: count,
                         };
-                        let metadata;
+                        let nftAttributes;
 
                         if (attributes) {
-                          metadata = getMetadata(attributes);
+                          const metadata = getMetadata(attributes);
                           if (metadata) {
                             try {
                               const metadataUrl =
@@ -94,40 +94,47 @@ const Me: React.FC<{}> = () => {
                                 );
                                 cache.set(metadataUrl, metadataResponse);
                               }
-
-                              attributes = {
-                                ...attributes,
-                                ...metadataResponse,
-                              };
+                              nftAttributes = [metadataResponse];
                             } catch (error) {
                               console.error(error.message);
                             }
                           }
-                        }
-                        attributes.forEach(({ Text, Url }) => {
-                          const attributeString = Text || Url;
-                          if (attributeString) {
-                            const attributeBreakup = attributeString.split(" ");
-                            switch (attributeBreakup[0]) {
-                              case "Image-URL":
-                                nft.image = attributeBreakup[1];
-                                break;
-                              case "Metadata-URL":
-                                nft.metadata = attributeBreakup[1];
-                                break;
-                              case "Title":
-                                const [, ...words] = attributeBreakup;
-                                nft.title = words.join(" ");
-                                break;
-                              case "Video-URL":
-                                const [, video] = attributeBreakup;
-                                nft.videoUrl = video;
-                                break;
-                              default:
-                                break;
+
+                          nftAttributes.forEach((attr) => {
+                            if (attr) {
+                              if (attr["image"]) {
+                                const imgUrl =
+                                  gatewayTools.convertToDesiredGateway(
+                                    metadata,
+                                    process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                                  );
+                                nft.image = imgUrl;
+                                delete attr.image;
+                              }
+                              nft = { ...nft, ...attr };
+                              // const attributeBreakup = attr.split(":");
+                              // const attributeBreakup = attr.key;
+                              // switch (attr) {
+                              //   case attr["image"]:
+                              //     nft.image = attr["image"];
+                              //     break;
+                              //   case attr["Metadata-URL"]:
+                              //     nft.metadata = attr["Metadata-URL"];
+                              //     break;
+                              //   case attr["Title"]:
+                              //     const [, ...words] = attr["Title"];
+                              //     nft.title = words.join(" ");
+                              //     break;
+                              //   case attr["Video-URL"]:
+                              //     const [, video] = attr["Video-URL"];
+                              //     nft.videoUrl = video;
+                              //     break;
+                              //   default:
+                              //     break;
+                              // }
                             }
-                          }
-                        });
+                          });
+                        }
                         userNFTs.push(nft);
                         resolve(null);
                       });
@@ -139,6 +146,7 @@ const Me: React.FC<{}> = () => {
               }
             })
           );
+          // console.log('user nfts:', userNFTs);
           setNFTs(userNFTs.filter((nft) => nft.image));
           setLoading(false);
         });
