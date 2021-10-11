@@ -155,7 +155,7 @@ const Me: React.FC<{}> = () => {
             })
           );
           // console.log('user nfts:', userNFTs);
-          setNFTs(userNFTs.filter((nft) => nft.image));
+          setNFTs(userNFTs.filter((nft) => nft.metadata));
           setLoading(false);
         });
       })();
