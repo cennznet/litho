@@ -14,9 +14,6 @@ import Loader from "../../../../components/Loader";
 import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
-import IPFSGatewayTools from "@pinata/ipfs-gateway-tools/dist/browser";
-import axios from "axios";
-const gatewayTools = new IPFSGatewayTools();
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -118,21 +115,9 @@ const NFTDetail: React.FC<{}> = () => {
             const key = metadataAttributes[0].toLowerCase();
             const value = metadataAttributes[1];
             nft[key] = value;
-            try {
-              const metaURL = gatewayTools.convertToDesiredGateway(
-                nft.metadata,
-                process.env.NEXT_PUBLIC_PINATA_GATEWAY
-              );
-              const attributeDetails = await axios(metaURL);
-              nft.attributes = attributeDetails ? attributeDetails.data : [];
-            } catch (e) {
-              nft.attributes = [];
-              console.log(`Error getting attributes:: ${nft.metadata} ${e}`);
-            }
-          } else {
-            nft.attributes = [];
           }
         }
+        nft.attributes = [];
 
         // const otherAttributes = [];
         // attributes.forEach(({ Text, Url }) => {
