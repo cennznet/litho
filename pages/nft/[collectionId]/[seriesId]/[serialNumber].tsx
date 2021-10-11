@@ -469,7 +469,7 @@ const NFTDetail: React.FC<{}> = () => {
                       </Text>
                     </div>
                   )}
-                  {nft.attributes.length > 0 && (
+                  {nft.attributes && nft.attributes.length > 0 && (
                     <div className="w-full p-8 flex flex-col border-b border-litho-black">
                       <Text variant="h6">Attributes</Text>
                       {nft.attributes.map((attribute) => {
