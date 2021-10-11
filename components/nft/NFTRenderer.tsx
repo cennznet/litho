@@ -1,4 +1,5 @@
 import React from "react";
+import cache from "../../utils/cache";
 
 import getFileExtension from "../../utils/getFileExtension";
 import isImageOrVideo from "../../utils/isImageOrVideo";
@@ -23,11 +24,8 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
     if (!error && !fileExtension) {
       (async () => {
         try {
-          console.log("Inside nft renderer...");
-          console.log("Fetch image:", image);
           const res = await fetch(image);
           const contentType = res.headers.get("content-type");
-          console.log(`ContentType for image ${image} is ${contentType}`);
           const extension = getFileExtension(contentType);
           setFileExtension(extension);
         } catch (error) {

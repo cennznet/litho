@@ -7,10 +7,6 @@ import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
 import Loader from "../components/Loader";
 import getMetadata from "../utils/getMetadata";
-import cache from "../utils/cache";
-import axios from "axios";
-const IPFSGatewayTools = require("@pinata/ipfs-gateway-tools/dist/node");
-const gatewayTools = new IPFSGatewayTools();
 
 const Me: React.FC<{}> = () => {
   const web3Context = React.useContext(Web3Context);
@@ -55,7 +51,7 @@ const Me: React.FC<{}> = () => {
                             serialNumber: 0,
                           });
                         const { owner, attributes } = tokenInfo;
-                        let nft: { [index: string]: any } = {
+                        const nft: { [index: string]: any } = {
                           collectionId: token.collectionId.toJSON(),
                           seriesId: token.seriesId.toJSON(),
                           serialNumber: 0,
@@ -72,74 +68,6 @@ const Me: React.FC<{}> = () => {
                             const value = metadataAttributes[1];
                             nft[key] = value;
                           }
-                          console.log("Nft metadata is ,", nft);
-                          // if (metadata) {
-                          //   try {
-                          //     const metadataUrl =
-                          //       gatewayTools.convertToDesiredGateway(
-                          //         metadata,
-                          //         process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                          //       );
-                          //     // console.log("metadata url:", metadataUrl);
-                          //     let metadataResponse;
-                          //     if (cache.has(metadataUrl)) {
-                          //       metadataResponse = cache.get(metadataUrl);
-                          //     } else {
-                          //       const response = await axios.get(metadataUrl);
-                          //       if (response.data) {
-                          //         metadataResponse = response.data;
-                          //         // console.log(
-                          //         //   "Metadata response::::::::::",
-                          //         //   metadataResponse
-                          //         // );
-                          //       }
-                          //       // console.log(
-                          //       //   "metadata response:",
-                          //       //   metadataResponse
-                          //       // );
-                          //       cache.set(metadataUrl, metadataResponse);
-                          //     }
-                          //     nftAttributes = [metadataResponse];
-                          //   } catch (error) {
-                          //     console.error(error.message);
-                          //   }
-                          // }
-
-                          // nftAttributes &&
-                          //   nftAttributes.forEach((attr) => {
-                          //     if (attr) {
-                          //       if (attr["image"]) {
-                          //         const imgUrl =
-                          //           gatewayTools.convertToDesiredGateway(
-                          //             metadata,
-                          //             process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                          //           );
-                          //         attr.image = imgUrl;
-                          //       }
-                          //       nft = { ...nft, ...attr };
-                          //       console.log("nft::", nft);
-                          //       // const attributeBreakup = attr.split(":");
-                          //       // const attributeBreakup = attr.key;
-                          //       // switch (attr) {
-                          //       //   case attr["image"]:
-                          //       //     nft.image = attr["image"];
-                          //       //     break;
-                          //       //   case attr["Metadata-URL"]:
-                          //       //     nft.metadata = attr["Metadata-URL"];
-                          //       //     break;
-                          //       //   case attr["Title"]:
-                          //       //     const [, ...words] = attr["Title"];
-                          //       //     nft.title = words.join(" ");
-                          //       //     break;
-                          //       //   case attr["Video-URL"]:
-                          //       //     const [, video] = attr["Video-URL"];
-                          //       //     nft.videoUrl = video;
-                          //       //     break;
-                          //       //   default:
-                          //       //     break;
-                          //       // }
-                          //     }
-                          //   });
                         }
                         userNFTs.push(nft);
                         resolve(null);
