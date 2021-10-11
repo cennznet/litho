@@ -70,7 +70,6 @@ const NFTDataWrapper: React.FC<{
                   process.env.NEXT_PUBLIC_PINATA_GATEWAY
                 ),
               };
-              //cache.set(metadataUrl, metadata);
               cache.set(metadataUrl, metadata);
               setNFTData({ ...nft, ...metadata });
             }
