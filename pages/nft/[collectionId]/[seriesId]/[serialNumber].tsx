@@ -126,14 +126,34 @@ const NFTDetail: React.FC<{}> = () => {
             nft.metadataLink = metadataUrl;
             axios.get(metadataUrl).then(function (response) {
               const { data } = response;
-              nft.title = data.title;
-              nft.description = data.description;
-              nft.imageLink = data.image.startsWith("ipfs://")
-                ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
-                    data.image.split("ipfs://")[1]
-                  }`
-                : data.image;
-              nft.attributes = data ? Object.entries(data.properties) : [];
+              const attributes = [];
+              Object.keys(data).forEach(function (key) {
+                switch (key) {
+                  case "title":
+                    nft.title = data[key];
+                    break;
+                  case "description":
+                    nft.description = data[key];
+                    break;
+                  case "image": {
+                    nft.imageLink = data.image.startsWith("ipfs://")
+                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                          data.image.split("ipfs://")[1]
+                        }`
+                      : data.image;
+                    break;
+                  }
+                  case "properties":
+                    Object.entries(data.properties).map((d) =>
+                      attributes.push(d)
+                    );
+                    break;
+                  default:
+                    attributes.push([key, data[key]]);
+                    break;
+                }
+              });
+              nft.attributes = attributes;
             });
           } else {
             nft.attributes = [];
