@@ -24,7 +24,7 @@ const NFTDataWrapper: React.FC<{
         setMetadataUrl(metaURL);
       } catch (e) {
         console.log("&&&&&&&&&&&&&&&&&");
-        console.log(e);
+        console.log(`Failed with CID err for URI ${nft.metadata} .... ${e}`);
       }
     }
   }, [nftData]);
