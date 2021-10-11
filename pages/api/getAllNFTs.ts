@@ -61,8 +61,11 @@ export default async (req, res) => {
             metadata = getMetadata(tokenInfo.attributes);
               if (metadata) {
                 const metadataAttributes = metadata.split(" ");
-                const value = metadataAttributes[1];
-                metadata = value;
+                const metaAsObject = metadataAttributes.length > 1;
+                metadata = metaAsObject
+                    ? metadataAttributes[1]
+                    : metadataAttributes[0];
+
               }
               nft = {...nft, metadata }
           }

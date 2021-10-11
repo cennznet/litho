@@ -4,8 +4,6 @@ import Link from "next/link";
 
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
-import getFileExtension from "../../../../utils/getFileExtension";
-import isImageOrVideo from "../../../../utils/isImageOrVideo";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
 import TxStatusModal from "../../../../components/sell/TxStatusModal";
 import { GetRemainingTime } from "../../../../utils/chainHelper";
@@ -14,6 +12,7 @@ import Loader from "../../../../components/Loader";
 import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
+import axios from "axios";
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -107,16 +106,6 @@ const NFTDetail: React.FC<{}> = () => {
           owner,
           copies: seriesIssuance.toJSON(),
         };
-        const foundText = attributes.map((attr) => attr["Text"]);
-        if (foundText) {
-          const data = foundText.reduce((acc, detail) => {
-            if (detail) {
-              acc = `${acc} ${detail}\n\r`;
-            }
-            return acc;
-          }, "");
-          nft.description = data;
-        }
         if (attributes) {
           const metadata = getMetadata(attributes);
           if (metadata) {
@@ -129,9 +118,27 @@ const NFTDetail: React.FC<{}> = () => {
               ? metadataAttributes[1]
               : metadataAttributes[0];
             nft[key] = value;
+            const metadataUrl = value.startsWith("ipfs://")
+              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                  value.split("ipfs://")[1]
+                }`
+              : value;
+            nft.metadataLink = metadataUrl;
+            axios.get(metadataUrl).then(function (response) {
+              const { data } = response;
+              nft.title = data.title;
+              nft.description = data.description;
+              nft.imageLink = data.image.startsWith("ipfs://")
+                ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                    data.image.split("ipfs://")[1]
+                  }`
+                : data.image;
+              nft.attributes = data ? Object.entries(data.properties) : [];
+            });
+          } else {
+            nft.attributes = [];
           }
         }
-        nft.attributes = [];
 
         setNFT(nft);
 
@@ -380,6 +387,28 @@ const NFTDetail: React.FC<{}> = () => {
               >
                 <NFT nft={nft} renderer={NFTRenderer} />
               </div>
+              <div className="p-5 flex items-center justify-around">
+                {nft.imageLink && (
+                  <Link href={nft.imageLink}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      View on IPFS
+                    </a>
+                  </Link>
+                )}
+                {nft.metadataLink && (
+                  <Link href={nft.metadataLink}>
+                    <a
+                      className="text-litho-blue font-medium text-lg underline"
+                      target="_blank"
+                    >
+                      IPFS Metadata
+                    </a>
+                  </Link>
+                )}
+              </div>
             </div>
             <div className="w-1/3">
               {!isPlaceABid ? (
@@ -496,7 +525,7 @@ const NFTDetail: React.FC<{}> = () => {
                             className="text-opacity-50 break-all my-2"
                             key={attribute}
                           >
-                            {attribute}
+                            {`${attribute[0]}:${attribute[1]}`}
                           </Text>
                         );
                       })}

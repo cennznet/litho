@@ -32,7 +32,6 @@ const NFTDataWrapper: React.FC<{
 
   React.useEffect(() => {
     if (!nft.metadata) {
-      console.log("NFT is::", nft);
       setError("Metadata not found");
     }
     if (metadataUrl) {
