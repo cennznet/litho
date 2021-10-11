@@ -64,77 +64,82 @@ const Me: React.FC<{}> = () => {
                           attributes: attributes,
                           copies: count,
                         };
-                        let nftAttributes;
+                        // let nftAttributes;
 
                         if (attributes) {
                           const metadata = getMetadata(attributes);
-                          if (metadata) {
-                            try {
-                              const metadataUrl =
-                                gatewayTools.convertToDesiredGateway(
-                                  metadata,
-                                  process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                                );
-                              // console.log("metadata url:", metadataUrl);
-                              let metadataResponse;
-                              if (cache.has(metadataUrl)) {
-                                metadataResponse = cache.get(metadataUrl);
-                              } else {
-                                const response = await axios.get(metadataUrl);
-                                if (response.data) {
-                                  metadataResponse = response.data;
-                                  // console.log(
-                                  //   "Metadata response::::::::::",
-                                  //   metadataResponse
-                                  // );
-                                }
-                                // console.log(
-                                //   "metadata response:",
-                                //   metadataResponse
-                                // );
-                                cache.set(metadataUrl, metadataResponse);
-                              }
-                              nftAttributes = [metadataResponse];
-                            } catch (error) {
-                              console.error(error.message);
-                            }
-                          }
+                          const metadataAttributes = metadata.split(" ");
+                          const key = metadataAttributes[0].toLowerCase();
+                          const value = metadataAttributes[1];
+                          nft[key] = value;
+                          console.log("Nft metadata is ,", nft);
+                          // if (metadata) {
+                          //   try {
+                          //     const metadataUrl =
+                          //       gatewayTools.convertToDesiredGateway(
+                          //         metadata,
+                          //         process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                          //       );
+                          //     // console.log("metadata url:", metadataUrl);
+                          //     let metadataResponse;
+                          //     if (cache.has(metadataUrl)) {
+                          //       metadataResponse = cache.get(metadataUrl);
+                          //     } else {
+                          //       const response = await axios.get(metadataUrl);
+                          //       if (response.data) {
+                          //         metadataResponse = response.data;
+                          //         // console.log(
+                          //         //   "Metadata response::::::::::",
+                          //         //   metadataResponse
+                          //         // );
+                          //       }
+                          //       // console.log(
+                          //       //   "metadata response:",
+                          //       //   metadataResponse
+                          //       // );
+                          //       cache.set(metadataUrl, metadataResponse);
+                          //     }
+                          //     nftAttributes = [metadataResponse];
+                          //   } catch (error) {
+                          //     console.error(error.message);
+                          //   }
+                          // }
 
-                          nftAttributes &&
-                            nftAttributes.forEach((attr) => {
-                              if (attr) {
-                                if (attr["image"]) {
-                                  const imgUrl =
-                                    gatewayTools.convertToDesiredGateway(
-                                      metadata,
-                                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                                    );
-                                  attr.image = imgUrl;
-                                }
-                                nft = { ...nft, ...attr };
-                                console.log("nft::", nft);
-                                // const attributeBreakup = attr.split(":");
-                                // const attributeBreakup = attr.key;
-                                // switch (attr) {
-                                //   case attr["image"]:
-                                //     nft.image = attr["image"];
-                                //     break;
-                                //   case attr["Metadata-URL"]:
-                                //     nft.metadata = attr["Metadata-URL"];
-                                //     break;
-                                //   case attr["Title"]:
-                                //     const [, ...words] = attr["Title"];
-                                //     nft.title = words.join(" ");
-                                //     break;
-                                //   case attr["Video-URL"]:
-                                //     const [, video] = attr["Video-URL"];
-                                //     nft.videoUrl = video;
-                                //     break;
-                                //   default:
-                                //     break;
-                                // }
-                              }
-                            });
+                          // nftAttributes &&
+                          //   nftAttributes.forEach((attr) => {
+                          //     if (attr) {
+                          //       if (attr["image"]) {
+                          //         const imgUrl =
+                          //           gatewayTools.convertToDesiredGateway(
+                          //             metadata,
+                          //             process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                          //           );
+                          //         attr.image = imgUrl;
+                          //       }
+                          //       nft = { ...nft, ...attr };
+                          //       console.log("nft::", nft);
+                          //       // const attributeBreakup = attr.split(":");
+                          //       // const attributeBreakup = attr.key;
+                          //       // switch (attr) {
+                          //       //   case attr["image"]:
+                          //       //     nft.image = attr["image"];
+                          //       //     break;
+                          //       //   case attr["Metadata-URL"]:
+                          //       //     nft.metadata = attr["Metadata-URL"];
+                          //       //     break;
+                          //       //   case attr["Title"]:
+                          //       //     const [, ...words] = attr["Title"];
+                          //       //     nft.title = words.join(" ");
+                          //       //     break;
+                          //       //   case attr["Video-URL"]:
+                          //       //     const [, video] = attr["Video-URL"];
+                          //       //     nft.videoUrl = video;
+                          //       //     break;
+                          //       //   default:
+                          //       //     break;
+                          //       // }
+                          //     }
+                          //   });
                         }
                         userNFTs.push(nft);
                         resolve(null);

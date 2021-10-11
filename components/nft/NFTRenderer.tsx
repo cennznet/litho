@@ -27,6 +27,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           console.log("Fetch image:", image);
           const res = await fetch(image);
           const contentType = res.headers.get("content-type");
+          console.log(`ContentType for image ${image} is ${contentType}`);
           const extension = getFileExtension(contentType);
           setFileExtension(extension);
         } catch (error) {
