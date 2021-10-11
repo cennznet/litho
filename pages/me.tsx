@@ -68,10 +68,12 @@ const Me: React.FC<{}> = () => {
 
                         if (attributes) {
                           const metadata = getMetadata(attributes);
-                          const metadataAttributes = metadata.split(" ");
-                          const key = metadataAttributes[0].toLowerCase();
-                          const value = metadataAttributes[1];
-                          nft[key] = value;
+                          if (metadata) {
+                            const metadataAttributes = metadata.split(" ");
+                            const key = metadataAttributes[0].toLowerCase();
+                            const value = metadataAttributes[1];
+                            nft[key] = value;
+                          }
                           console.log("Nft metadata is ,", nft);
                           // if (metadata) {
                           //   try {
