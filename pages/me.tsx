@@ -75,7 +75,7 @@ const Me: React.FC<{}> = () => {
                                   metadata,
                                   process.env.NEXT_PUBLIC_PINATA_GATEWAY
                                 );
-                              console.log("metadata url:", metadataUrl);
+                              // console.log("metadata url:", metadataUrl);
                               let metadataResponse;
                               if (cache.has(metadataUrl)) {
                                 metadataResponse = cache.get(metadataUrl);
@@ -83,15 +83,15 @@ const Me: React.FC<{}> = () => {
                                 const response = await axios.get(metadataUrl);
                                 if (response.data) {
                                   metadataResponse = response.data;
-                                  console.log(
-                                    "Metadata response::::::::::",
-                                    metadataResponse
-                                  );
+                                  // console.log(
+                                  //   "Metadata response::::::::::",
+                                  //   metadataResponse
+                                  // );
                                 }
-                                console.log(
-                                  "metadata response:",
-                                  metadataResponse
-                                );
+                                // console.log(
+                                //   "metadata response:",
+                                //   metadataResponse
+                                // );
                                 cache.set(metadataUrl, metadataResponse);
                               }
                               nftAttributes = [metadataResponse];
@@ -109,10 +109,10 @@ const Me: React.FC<{}> = () => {
                                       metadata,
                                       process.env.NEXT_PUBLIC_PINATA_GATEWAY
                                     );
-                                  nft.image = imgUrl;
-                                  delete attr.image;
+                                  attr.image = imgUrl;
                                 }
                                 nft = { ...nft, ...attr };
+                                console.log("nft::", nft);
                                 // const attributeBreakup = attr.split(":");
                                 // const attributeBreakup = attr.key;
                                 // switch (attr) {
