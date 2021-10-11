@@ -14,6 +14,9 @@ import Loader from "../../../../components/Loader";
 import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
+import IPFSGatewayTools from "@pinata/ipfs-gateway-tools/dist/browser";
+import axios from "axios";
+const gatewayTools = new IPFSGatewayTools();
 
 const buyWithFixedPrice = async (api, account, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -115,6 +118,19 @@ const NFTDetail: React.FC<{}> = () => {
             const key = metadataAttributes[0].toLowerCase();
             const value = metadataAttributes[1];
             nft[key] = value;
+            try {
+              const metaURL = gatewayTools.convertToDesiredGateway(
+                nft.metadata,
+                process.env.NEXT_PUBLIC_PINATA_GATEWAY
+              );
+              const attributeDetails = await axios(metaURL);
+              nft.attributes = attributeDetails ? attributeDetails.data : [];
+            } catch (e) {
+              nft.attributes = [];
+              console.log(`Error getting attributes:: ${nft.metadata} ${e}`);
+            }
+          } else {
+            nft.attributes = [];
           }
         }
 
@@ -154,6 +170,7 @@ const NFTDetail: React.FC<{}> = () => {
         //   }
         // });
         // nft.attributes = otherAttributes;
+        console.log("Nft::", nft);
         setNFT(nft);
 
         // let imageUrl;
@@ -392,7 +409,7 @@ const NFTDetail: React.FC<{}> = () => {
           &lt; Back
         </a>
       </Link>
-      {image ? (
+      {nft ? (
         <div className="border border-litho-black mt-7 mb-6 flex flex-col h-full">
           <div className="border-b border-litho-black px-10 py-5 flex items-center">
             <Text variant="h3" component="h3" className="flex-1">
@@ -451,28 +468,28 @@ const NFTDetail: React.FC<{}> = () => {
                 {/*  />*/}
                 {/*)}*/}
               </div>
-              <div className="p-5 flex items-center justify-around">
-                {nft.image && (
-                  <Link href={nft.image}>
-                    <a
-                      className="text-litho-blue font-medium text-lg underline"
-                      target="_blank"
-                    >
-                      View on IPFS
-                    </a>
-                  </Link>
-                )}
-                {nft.metadata && (
-                  <Link href={nft.metadata}>
-                    <a
-                      className="text-litho-blue font-medium text-lg underline"
-                      target="_blank"
-                    >
-                      IPFS Metadata
-                    </a>
-                  </Link>
-                )}
-              </div>
+              {/*<div className="p-5 flex items-center justify-around">*/}
+              {/*  {nft.image && (*/}
+              {/*    <Link href={nft.image}>*/}
+              {/*      <a*/}
+              {/*        className="text-litho-blue font-medium text-lg underline"*/}
+              {/*        target="_blank"*/}
+              {/*      >*/}
+              {/*        View on IPFS*/}
+              {/*      </a>*/}
+              {/*    </Link>*/}
+              {/*  )}*/}
+              {/*  {nft.metadata && (*/}
+              {/*    <Link href={nft.metadata}>*/}
+              {/*      <a*/}
+              {/*        className="text-litho-blue font-medium text-lg underline"*/}
+              {/*        target="_blank"*/}
+              {/*      >*/}
+              {/*        IPFS Metadata*/}
+              {/*      </a>*/}
+              {/*    </Link>*/}
+              {/*  )}*/}
+              {/*</div>*/}
             </div>
             <div className="w-1/3">
               {!isPlaceABid ? (
