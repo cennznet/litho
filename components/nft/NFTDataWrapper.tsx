@@ -40,9 +40,14 @@ const NFTDataWrapper: React.FC<{
         // if found in cache, update the copies
         if (nftData.showOne) {
           metadata.copies = 1;
-          if (!metadata.name.includes(" - ")) {
-            metadata.name = `${metadata.name} - [${nftData.tokenId[2]}]`;
+          if (metadata.originalCopies !== "1") {
+            metadata.name = `${metadata.name.split("-")[0]} - [${
+              nftData.tokenId[2]
+            }/${metadata.originalCopies}]`;
           }
+        } else {
+          metadata.name = metadata.name.split("-")[0];
+          metadata.copies = metadata.originalCopies;
         }
         setNFTData({ ...nft, ...metadata });
       } else {
@@ -52,9 +57,12 @@ const NFTDataWrapper: React.FC<{
             const { data } = response;
             if (data) {
               const metadata = {
-                name: nftData.showOne
-                  ? `${data.name} - [${nftData.tokenId[2]}]`
-                  : data.name,
+                name:
+                  nftData.showOne && data.properties.quantity !== "1"
+                    ? `${data.name} - [${nftData.tokenId[2]}/${
+                        data.properties && data.properties.quantity
+                      }]`
+                    : data.name,
                 description: data.description,
                 image: data.image.startsWith("ipfs://")
                   ? gatewayTools.convertToDesiredGateway(
@@ -80,6 +88,7 @@ const NFTDataWrapper: React.FC<{
                   nft.metadata,
                   process.env.NEXT_PUBLIC_PINATA_GATEWAY
                 ),
+                originalCopies: data.properties && data.properties.quantity,
               };
               cache.set(metadataUrl, metadata);
               setNFTData({ ...nft, ...metadata });
