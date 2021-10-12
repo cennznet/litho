@@ -39,7 +39,10 @@ const NFTDataWrapper: React.FC<{
         const metadata = cache.get(metadataUrl);
         // if found in cache, update the copies
         if (nftData.showOne) {
-          if (metadata.originalCopies.toString() !== "1") {
+          if (
+            metadata.originalCopies &&
+            metadata.originalCopies.toString() !== "1"
+          ) {
             metadata.copies = 1;
             metadata.name = `${metadata.name.split("-")[0]} - [${
               nftData.tokenId[2]
@@ -62,6 +65,7 @@ const NFTDataWrapper: React.FC<{
                 name:
                   nftData.showOne &&
                   data.properties &&
+                  data.properties.quantity &&
                   data.properties.quantity.toString() !== "1"
                     ? `${data.name} - [${nftData.tokenId[2]}/${
                         data.properties && data.properties.quantity
