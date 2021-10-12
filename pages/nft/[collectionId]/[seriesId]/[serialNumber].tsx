@@ -74,6 +74,7 @@ const NFTDetail: React.FC<{}> = () => {
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
+  const [txMessage, setTxMessage] = React.useState<any>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -320,7 +321,7 @@ const NFTDetail: React.FC<{}> = () => {
   const buyNow = useCallback(
     async (e) => {
       e.preventDefault();
-      if (web3Context.api && listingInfo && listingInfo.listingId) {
+      if (web3Context.api && listingInfo && listingInfo.listingId >= 0) {
         try {
           setModalState("txInProgress");
           await buyWithFixedPrice(
@@ -328,8 +329,10 @@ const NFTDetail: React.FC<{}> = () => {
             web3Context.account,
             listingInfo.listingId
           );
+          setTxMessage("Sale success");
           setModalState("success");
         } catch (e) {
+          setTxMessage("Error buying tokens for listing");
           setModalState("error");
         }
       }
@@ -367,9 +370,11 @@ const NFTDetail: React.FC<{}> = () => {
             listingInfo.listingId,
             priceInUnit
           );
+          setTxMessage("Bid placed");
           setModalState("success");
         } catch (e) {
           console.log(":( transaction failed", e);
+          setTxMessage("Bid failed");
           setModalState("error");
         }
       }
@@ -447,7 +452,7 @@ const NFTDetail: React.FC<{}> = () => {
               {!isPlaceABid ? (
                 <>
                   {listingInfo &&
-                    listingInfo.listingId &&
+                    listingInfo.listingId >= 0 &&
                     (listingInfo.auctionInfo || listingInfo.fixedPriceInfo) && (
                       <div className="w-full p-8 flex flex-col border-b border-litho-black">
                         {listingInfo.fixedPriceInfo && (
@@ -628,6 +633,7 @@ const NFTDetail: React.FC<{}> = () => {
           errorLink={"/marketplace"}
           modalState={modalState}
           setModalState={setModalState}
+          message={txMessage}
         />
       )}
     </>

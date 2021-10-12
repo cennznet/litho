@@ -58,6 +58,7 @@ const FixedPrice: React.FC<Props> = ({
   serialNumber,
   supportedAssets,
 }) => {
+  const [txMessage, setTxMessage] = React.useState<any>();
   const web3Context = React.useContext(Web3Context);
 
   const [showAdvanced, setShowAdvanced] = React.useState(false);
@@ -68,7 +69,9 @@ const FixedPrice: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (supportedAssets && supportedAssets.length > 0) {
-      setPaymentAsset(supportedAssets[0]);
+      if (!paymentAsset) {
+        setPaymentAsset(supportedAssets[0]);
+      }
     }
   }, [supportedAssets]);
 
@@ -137,8 +140,10 @@ const FixedPrice: React.FC<Props> = ({
             priceInUnit,
             duration
           );
+          setTxMessage("New listing created");
           setModalState("success");
         } catch (e) {
+          setTxMessage("Create listing failed");
           setModalState("error");
         }
       }
@@ -243,6 +248,7 @@ const FixedPrice: React.FC<Props> = ({
           errorLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
           modalState={modalState}
           setModalState={setModalState}
+          message={txMessage}
         />
       )}
     </>
