@@ -107,7 +107,12 @@ const NFTDetail: React.FC<{}> = () => {
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
           owner: owner.toString(),
-          copies: seriesIssuance.toJSON(),
+          showOne: true,
+          tokenId: [
+            router.query.collectionId,
+            router.query.seriesId,
+            router.query.serialNumber,
+          ],
         };
         if (attributes) {
           const metadata = getMetadata(attributes);
@@ -256,11 +261,12 @@ const NFTDetail: React.FC<{}> = () => {
                 Number(router.query.collectionId) &&
               listing.tokenId.seriesId.toNumber() ===
                 Number(router.query.seriesId) &&
-              listing.tokenId.serialNumber.toNumber() === i
+              listing.tokenId.serialNumber.toNumber() ===
+                Number(router.query.serialNumber)
             );
           });
           if (isOwner && !isOnSale) {
-            setEditableSerialNumber(i);
+            setEditableSerialNumber(Number(router.query.serialNumber));
             break;
           }
         }
