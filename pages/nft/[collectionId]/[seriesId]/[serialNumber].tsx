@@ -71,6 +71,7 @@ const NFTDetail: React.FC<{}> = () => {
   const [modalState, setModalState] = React.useState<string>();
   const [currentBlock, setCurrentBlock] = React.useState<number>();
   const [error, setError] = React.useState(null);
+  const [conversionRate, setConversionRate] = React.useState(null);
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
@@ -212,7 +213,7 @@ const NFTDetail: React.FC<{}> = () => {
         });
         let auctionInfo = undefined;
         let fixedPriceInfo = undefined;
-
+        let valueForConversion = undefined;
         if (listingInfo) {
           const listing = (
             await web3Context.api.query.nft.listings(listingInfo.listingId)
@@ -222,13 +223,21 @@ const NFTDetail: React.FC<{}> = () => {
               await web3Context.api.query.nft.listingWinningBid(
                 listingInfo.listingId
               );
+            let winningBid;
+            if (winningBidForListing && winningBidForListing.toJSON()) {
+              winningBid = winningBidForListing.toJSON()[1];
+            }
             auctionInfo = listing.asAuction.toJSON();
+            valueForConversion = winningBid
+              ? Number(winningBid)
+              : Number(auctionInfo.reservePrice);
             auctionInfo = {
               ...auctionInfo,
-              winningBid: winningBidForListing.toJSON(),
+              winningBid: winningBid,
             };
           } else {
             fixedPriceInfo = listing.asFixedPrice.toJSON();
+            valueForConversion = fixedPriceInfo.fixedPrice;
           }
         }
 
@@ -236,6 +245,7 @@ const NFTDetail: React.FC<{}> = () => {
           listingId: listingInfo?.listingId.toNumber(),
           auctionInfo: auctionInfo,
           fixedPriceInfo: fixedPriceInfo,
+          valueForConversion: valueForConversion,
         });
 
         const copies = await web3Context.api.query.nft.seriesIssuance(
@@ -309,6 +319,37 @@ const NFTDetail: React.FC<{}> = () => {
       return price / 10 ** paymentAsset.decimals;
     }
     return 0;
+  }, [listingInfo, paymentAsset]);
+
+  useEffect(() => {
+    if (
+      paymentAsset &&
+      paymentAsset.symbol &&
+      paymentAsset.symbol === "CENNZ" &&
+      listingInfo
+    ) {
+      if (!conversionRate) {
+        try {
+          const coinGeckoUrl =
+            "https://api.coingecko.com/api/v3/simple/price?ids=centrality&vs_currencies=usd";
+          axios.get(coinGeckoUrl).then(function (response) {
+            const { data } = response;
+            const price = data.centrality.usd;
+            console.log("price:::", data.centrality.usd);
+            console.log(listingInfo);
+            console.log("valueForConversion::", listingInfo.valueForConversion);
+            const conversionRateCal =
+              (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
+              price;
+            console.log("conversionRate::", conversionRateCal);
+            setConversionRate(conversionRateCal);
+          });
+        } catch (e) {
+          console.log("Error setting conversion rate");
+        }
+      }
+    }
+    //return undefined;
   }, [listingInfo, paymentAsset]);
 
   const endTime = useMemo(() => {
@@ -487,22 +528,41 @@ const NFTDetail: React.FC<{}> = () => {
                                   `Ending in ${endTime.days} days ${endTime.hours} hours`}
                               </Text>
                             </div>
-                            <Text variant="h3" className="mt-6">
-                              {reservePrice} {paymentAsset?.symbol}
-                            </Text>
                             {listingInfo.auctionInfo.winningBid && (
                               <>
-                                <Text className="mt-2">
-                                  Current Winning Bid -{" "}
-                                  {listingInfo.auctionInfo.winningBid[1]}{" "}
+                                <div className="flex justify-between">
+                                  <Text
+                                    variant="h6"
+                                    className="text-opacity-50"
+                                  >
+                                    Current Bid
+                                  </Text>
+                                  <Text variant="h6">Reserve Met</Text>
+                                </div>
+                              </>
+                            )}
+
+                            {listingInfo.auctionInfo.winningBid ? (
+                              <>
+                                <Text variant="h3" className="mt-6">
+                                  {listingInfo.auctionInfo.winningBid}{" "}
                                   {paymentAsset?.symbol}
                                 </Text>
-                                <Text className="mt-2">
-                                  Current Winning Bidder -{" "}
-                                  {listingInfo.auctionInfo.winningBid[0]}
+                              </>
+                            ) : (
+                              <>
+                                <Text variant="h3" className="mt-6">
+                                  {reservePrice} {paymentAsset?.symbol}
                                 </Text>
                               </>
                             )}
+                          </>
+                        )}
+                        {conversionRate && (
+                          <>
+                            <Text variant="h6" className="text-opacity-50">
+                              ({conversionRate} USD)
+                            </Text>
                           </>
                         )}
                         {listingInfo.auctionInfo && (
