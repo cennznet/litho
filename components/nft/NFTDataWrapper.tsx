@@ -1,5 +1,4 @@
 import React from "react";
-import useSWR from "swr";
 import IPFSGatewayTools from "@pinata/ipfs-gateway-tools/dist/browser";
 import axios from "axios";
 import cache from "../../utils/cache";
