@@ -1,17 +1,64 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import Link from "next/link";
-import useSWR from "swr";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
+import Web3Context from "../components/Web3Context";
+import { AuctionListing, FixedPriceListing, Listing } from "@cennznet/types";
+import getMetadata from "../utils/getMetadata";
+
+const FEATURED_COUNT = 5;
+const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
+const FEATURED_COLLECTION_ID = process.env.NEXT_FEATURED_COLLECTION_ID;
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
-  const { data } = useSWR("/api/getAllNFTs");
+  const web3context = React.useContext(Web3Context);
+  const [featured, setFeatured] = React.useState([]);
+
+  const getFeatured = async () => {
+    // TODO: replace default `10` testing only
+    let results =
+      await web3context.api.query.nft.openCollectionListings.entries(
+        FEATURED_COLLECTION_ID
+      );
+    let featureListings = results.slice(
+      0,
+      Math.min(FEATURED_COUNT, results.length)
+    );
+    let featured_ = [];
+    featureListings.forEach(async ([key, _active]) => {
+      let [collectionId, listingId] = key.args.map((k) => k.toHuman());
+      let listingRaw: Listing = (
+        await web3context.api.query.nft.listings(listingId)
+      ).unwrap();
+      let listing: FixedPriceListing | AuctionListing = listingRaw.isFixedPrice
+        ? listingRaw.asFixedPrice
+        : listingRaw.asAuction;
+      let [collectionId_, seriesId, serialNumber] = listing.tokens[0];
+      let attributes = await web3context.api.query.nft.seriesAttributes(
+        collectionId,
+        seriesId
+      );
+      let metadata = getMetadata(attributes.toJSON()).split(" ")[1];
+      featured_.push({
+        tokenId: listing.tokens[0],
+        listingId,
+        attributes,
+        metadata,
+      });
+      setFeatured(featured_);
+    });
+  };
+
+  useMemo(() => {
+    if (!web3context.api) return;
+    getFeatured();
+  }, [web3context.api]);
 
   return (
     <>
@@ -122,23 +169,14 @@ const Home: React.FC<{}> = () => {
           </Modal>
         )}
       </div>
-      {data && data.nfts && data.nfts.length > 0 && (
+      {featured && featured.length > 0 && (
         <div className="mt-16">
-          <div className="flex items-center justify-between">
-            <Text variant="h3">Marketplace</Text>
-            <Link href="/marketplace">
-              <a className="">
-                <Text variant="h6">View all</Text>
-              </a>
-            </Link>
+          <div className="flex items-center">
+            <Text variant="h2">Featured {FEATURED_COLLECTION_TITLE}</Text>
           </div>
           {
             <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr">
-              {data.nfts.map((nft, index) => {
-                if (index > 4) {
-                  return null;
-                }
-
+              {featured.map((nft) => {
                 return (
                   <Link
                     href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
