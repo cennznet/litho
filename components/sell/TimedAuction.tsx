@@ -66,7 +66,9 @@ const TimedAuction: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (supportedAssets && supportedAssets.length > 0) {
-      setPaymentAsset(supportedAssets[0]);
+      if (!paymentAsset) {
+        setPaymentAsset(supportedAssets[0]);
+      }
     }
   }, [supportedAssets]);
 
