@@ -335,9 +335,6 @@ const NFTDetail: React.FC<{}> = () => {
           axios.get(coinGeckoUrl).then(function (response) {
             const { data } = response;
             const price = data.centrality.usd;
-            console.log("price:::", data.centrality.usd);
-            console.log(listingInfo);
-            console.log("valueForConversion::", listingInfo.valueForConversion);
             const conversionRateCal =
               (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
               price;
@@ -542,11 +539,13 @@ const NFTDetail: React.FC<{}> = () => {
                               </>
                             )}
 
-                            {listingInfo.auctionInfo.winningBid ? (
+                            {listingInfo.auctionInfo.winningBid &&
+                            paymentAsset ? (
                               <>
                                 <Text variant="h3" className="mt-6">
-                                  {listingInfo.auctionInfo.winningBid}{" "}
-                                  {paymentAsset?.symbol}
+                                  {listingInfo.auctionInfo.winningBid /
+                                    10 ** paymentAsset.decimals}{" "}
+                                  {paymentAsset.symbol}
                                 </Text>
                               </>
                             ) : (
