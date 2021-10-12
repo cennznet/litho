@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +9,8 @@ import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
-import isImageOrVideo from "../utils/isImageOrVideo";
+
+const LITHO_COLLECTION_NAME = "Litho (default)";
 
 export type NFT = {
   title: string;
@@ -47,7 +48,7 @@ const initialState: State = {
     storage: "ipfs",
     attributes: [],
     royalty: 0,
-    collectionName: "Litho (default)",
+    collectionName: LITHO_COLLECTION_NAME,
     extension: "",
   },
   isAboutFilled: false,
@@ -203,6 +204,26 @@ const Create: React.FC<{}> = () => {
   );
   const [modalState, setModalState] = React.useState<string>();
   const [transactionFee, setTransactionFee] = React.useState<number>();
+  const [collectionId, setCollectionId] = React.useState<string | null>(null);
+
+  // Check all collection
+  useMemo(() => {
+    if (!web3Context.api) return;
+    web3Context.api.query.nft.collectionOwner
+      .entries()
+      .then(([[key, maybeOwner]]) => {
+        console.log(key);
+        let collectionId_ = key;
+        if (web3Context.account.address == maybeOwner.unwrapOr("")) {
+          web3Context.api.query.nft.collectionName().then((name) => {
+            if (name.toString() == LITHO_COLLECTION_NAME) {
+              setCollectionId(collectionId_.toNumber());
+              return;
+            }
+          });
+        }
+      });
+  }, [web3Context.api]);
 
   const modalStates = {
     mint: {
@@ -489,11 +510,11 @@ const Create: React.FC<{}> = () => {
         state.nft.hasOwnProperty("collectionId") &&
         state.nft.collectionId !== null
       ) {
+        console.log(`using collectionId`, state.nft.collectionId);
         collectionId = state.nft.collectionId;
         collectionExtrinsic = null;
       } else {
-        // TODO fix --  potential race condition if collectionId changes before user signs
-        // when multiple users are minting at the same time
+        console.log(`no collectionId`);
         collectionId = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
