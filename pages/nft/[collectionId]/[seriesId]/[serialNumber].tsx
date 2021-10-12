@@ -74,6 +74,7 @@ const NFTDetail: React.FC<{}> = () => {
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
+  const [txMessage, setTxMessage] = React.useState<any>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -328,8 +329,10 @@ const NFTDetail: React.FC<{}> = () => {
             web3Context.account,
             listingInfo.listingId
           );
+          setTxMessage("Successfully bought tokens for listing");
           setModalState("success");
         } catch (e) {
+          setTxMessage("Error buying tokens for listing");
           setModalState("error");
         }
       }
@@ -367,9 +370,11 @@ const NFTDetail: React.FC<{}> = () => {
             listingInfo.listingId,
             priceInUnit
           );
+          setTxMessage("Successfully placed bid for token");
           setModalState("success");
         } catch (e) {
           console.log(":( transaction failed", e);
+          setTxMessage("Issue placing bid for token");
           setModalState("error");
         }
       }
@@ -628,6 +633,7 @@ const NFTDetail: React.FC<{}> = () => {
           errorLink={"/marketplace"}
           modalState={modalState}
           setModalState={setModalState}
+          message={txMessage}
         />
       )}
     </>
