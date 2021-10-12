@@ -39,15 +39,20 @@ const NFTDataWrapper: React.FC<{
         const metadata = cache.get(metadataUrl);
         // if found in cache, update the copies
         if (nftData.showOne) {
-          metadata.copies = 1;
           if (metadata.originalCopies !== "1") {
+            if (!metadata.originalCopies) {
+              metadata.originalCopies = metadata.copies;
+            }
+            metadata.copies = 1;
             metadata.name = `${metadata.name.split("-")[0]} - [${
               nftData.tokenId[2]
             }/${metadata.originalCopies}]`;
           }
         } else {
           metadata.name = metadata.name.split("-")[0];
-          metadata.copies = metadata.originalCopies;
+          metadata.copies = metadata.originalCopies
+            ? metadata.originalCopies
+            : metadata.copies;
         }
         setNFTData({ ...nft, ...metadata });
       } else {
