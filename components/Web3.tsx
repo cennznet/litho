@@ -14,7 +14,7 @@ import { hexToString } from "@polkadot/util";
 import store from "store";
 
 import Web3Context from "./Web3Context";
-
+import axios from "axios";
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 
 async function extractMeta(api) {
@@ -67,6 +67,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     React.useState(false);
   const [isRefresh, setIsRefresh] = React.useState(false);
   const [api, setAPI] = React.useState(null);
+  const [cennzUSDPrice, setCennzUSDPrice] = React.useState(null);
 
   const getAccountAssets = async (address: string) => {
     await api.isReady;
@@ -204,6 +205,19 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   useEffect(() => {
     if (!wallet) {
       setWallet(store.get("CENNZNET-EXTENSION"));
+      if (cennzUSDPrice === null) {
+        try {
+          const coinGeckoUrl =
+            "https://api.coingecko.com/api/v3/simple/price?ids=centrality&vs_currencies=usd";
+          axios.get(coinGeckoUrl).then(function (response) {
+            const { data } = response;
+            const price = data.centrality.usd;
+            setCennzUSDPrice(price);
+          });
+        } catch (e) {
+          console.log("Error setting conversion rate");
+        }
+      }
     }
   });
 
@@ -215,6 +229,7 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         extension: wallet,
         account,
         api,
+        cennzUSDPrice,
       }}
     >
       {children}

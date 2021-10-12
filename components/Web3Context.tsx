@@ -7,6 +7,7 @@ const Web3Context = React.createContext({
   extension: null,
   account: null,
   api: null,
+  cennzUSDPrice: null,
 });
 
 export default Web3Context;

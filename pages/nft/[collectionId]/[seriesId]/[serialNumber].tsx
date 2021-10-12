@@ -71,7 +71,7 @@ const NFTDetail: React.FC<{}> = () => {
   const [modalState, setModalState] = React.useState<string>();
   const [currentBlock, setCurrentBlock] = React.useState<number>();
   const [error, setError] = React.useState(null);
-  const [conversionRate, setConversionRate] = React.useState(null);
+  const [conversionRate, setConversionRate] = React.useState(-1);
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
@@ -328,26 +328,21 @@ const NFTDetail: React.FC<{}> = () => {
       paymentAsset.symbol === "CENNZ" &&
       listingInfo
     ) {
-      if (!conversionRate) {
+      const price = web3Context.cennzUSDPrice;
+      if (conversionRate === -1) {
         try {
-          const coinGeckoUrl =
-            "https://api.coingecko.com/api/v3/simple/price?ids=centrality&vs_currencies=usd";
-          axios.get(coinGeckoUrl).then(function (response) {
-            const { data } = response;
-            const price = data.centrality.usd;
-            const conversionRateCal =
-              (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
-              price;
-            console.log("conversionRate::", conversionRateCal);
-            setConversionRate(conversionRateCal);
-          });
+          let conversionRateCal =
+            (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
+            price;
+          conversionRateCal = Number(conversionRateCal.toFixed(2));
+          setConversionRate(conversionRateCal);
         } catch (e) {
           console.log("Error setting conversion rate");
         }
       }
     }
     //return undefined;
-  }, [listingInfo, paymentAsset]);
+  }, [listingInfo, paymentAsset, web3Context.cennzUSDPrice]);
 
   const endTime = useMemo(() => {
     if (listingInfo && web3Context.api) {
@@ -557,7 +552,7 @@ const NFTDetail: React.FC<{}> = () => {
                             )}
                           </>
                         )}
-                        {conversionRate && (
+                        {conversionRate >= 0 && (
                           <>
                             <Text variant="h6" className="text-opacity-50">
                               ({conversionRate} USD)
