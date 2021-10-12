@@ -492,15 +492,14 @@ const NFTDetail: React.FC<{}> = () => {
                             </Text>
                             {listingInfo.auctionInfo.winningBid && (
                               <>
-                                <Text className="mt-6">
+                                <Text className="mt-2">
                                   Current Winning Bid -{" "}
                                   {listingInfo.auctionInfo.winningBid[1]}{" "}
                                   {paymentAsset?.symbol}
                                 </Text>
-                                <Text className="mt-6">
+                                <Text className="mt-2">
                                   Current Winning Bidder -{" "}
-                                  {listingInfo.auctionInfo.winningBid[0]}{" "}
-                                  {paymentAsset?.symbol}
+                                  {listingInfo.auctionInfo.winningBid[0]}
                                 </Text>
                               </>
                             )}
