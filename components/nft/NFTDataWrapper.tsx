@@ -63,7 +63,9 @@ const NFTDataWrapper: React.FC<{
             if (data) {
               const metadata = {
                 name:
-                  nftData.showOne && data.properties.quantity !== "1"
+                  nftData.showOne &&
+                  data.properties &&
+                  data.properties.quantity !== "1"
                     ? `${data.name} - [${nftData.tokenId[2]}/${
                         data.properties && data.properties.quantity
                       }]`
