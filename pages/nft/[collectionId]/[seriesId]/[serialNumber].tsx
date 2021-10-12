@@ -218,7 +218,15 @@ const NFTDetail: React.FC<{}> = () => {
             await web3Context.api.query.nft.listings(listingInfo.listingId)
           ).unwrapOrDefault();
           if (listing.isAuction) {
+            const winningBidForListing =
+              await web3Context.api.query.nft.listingWinningBid(
+                listingInfo.listingId
+              );
             auctionInfo = listing.asAuction.toJSON();
+            auctionInfo = {
+              ...auctionInfo,
+              winningBid: winningBidForListing.toJSON(),
+            };
           } else {
             fixedPriceInfo = listing.asFixedPrice.toJSON();
           }
@@ -482,6 +490,20 @@ const NFTDetail: React.FC<{}> = () => {
                             <Text variant="h3" className="mt-6">
                               {reservePrice} {paymentAsset?.symbol}
                             </Text>
+                            {listingInfo.auctionInfo.winningBid && (
+                              <>
+                                <Text className="mt-6">
+                                  Current Winning Bid -{" "}
+                                  {listingInfo.auctionInfo.winningBid[1]}{" "}
+                                  {paymentAsset?.symbol}
+                                </Text>
+                                <Text className="mt-6">
+                                  Current Winning Bidder -{" "}
+                                  {listingInfo.auctionInfo.winningBid[0]}{" "}
+                                  {paymentAsset?.symbol}
+                                </Text>
+                              </>
+                            )}
                           </>
                         )}
                         {listingInfo.auctionInfo && (
