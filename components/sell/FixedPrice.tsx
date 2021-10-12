@@ -140,10 +140,10 @@ const FixedPrice: React.FC<Props> = ({
             priceInUnit,
             duration
           );
-          setTxMessage("Successfully fixed sell listing done");
+          setTxMessage("New listing created");
           setModalState("success");
         } catch (e) {
-          setTxMessage("Issue with fixed sell listing");
+          setTxMessage("Create listing failed");
           setModalState("error");
         }
       }

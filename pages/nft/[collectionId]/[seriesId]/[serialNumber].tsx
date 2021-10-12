@@ -329,7 +329,7 @@ const NFTDetail: React.FC<{}> = () => {
             web3Context.account,
             listingInfo.listingId
           );
-          setTxMessage("Successfully bought tokens for listing");
+          setTxMessage("Sale success");
           setModalState("success");
         } catch (e) {
           setTxMessage("Error buying tokens for listing");
@@ -370,11 +370,11 @@ const NFTDetail: React.FC<{}> = () => {
             listingInfo.listingId,
             priceInUnit
           );
-          setTxMessage("Successfully placed bid for token");
+          setTxMessage("Bid placed");
           setModalState("success");
         } catch (e) {
           console.log(":( transaction failed", e);
-          setTxMessage("Issue placing bid for token");
+          setTxMessage("Bid failed");
           setModalState("error");
         }
       }

@@ -129,10 +129,10 @@ const TimedAuction: React.FC<Props> = ({
             duration
           );
           setModalState("success");
-          setTxMessage("Successfully open auction listing done");
+          setTxMessage("New auction created");
         } catch (e) {
           setModalState("error");
-          setTxMessage("Issue with open auction listing done");
+          setTxMessage("Creating auction failed");
         }
       }
     },
