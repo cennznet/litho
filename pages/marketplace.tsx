@@ -111,9 +111,9 @@ const MarketPlace: React.FC<{}> = () => {
   React.useEffect(() => {
     if (nfts.length > 0) {
       const sortedNFTs = nfts.sort((n1, n2) => {
-        if (n1.close > n2.close) {
+        if (n1.close < n2.close) {
           return sort === "oldest-first" ? 1 : -1;
-        } else if (n1.close < n2.close) {
+        } else if (n1.close > n2.close) {
           return sort === "oldest-first" ? -1 : 1;
         } else {
           return 0;
