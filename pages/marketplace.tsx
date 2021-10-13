@@ -14,12 +14,12 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [showSortList, setShowSortList] = React.useState(false);
   const sorters = [
     {
-      name: "newest-first",
-      text: "Newest First",
-    },
-    {
       name: "oldest-first",
       text: "Oldest First",
+    },
+    {
+      name: "newest-first",
+      text: "Newest First",
     },
   ];
 
