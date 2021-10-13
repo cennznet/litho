@@ -14,12 +14,12 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [showSortList, setShowSortList] = React.useState(false);
   const sorters = [
     {
-      name: "oldest-first",
-      text: "Oldest First",
-    },
-    {
       name: "newest-first",
       text: "Newest First",
+    },
+    {
+      name: "oldest-first",
+      text: "Oldest First",
     },
   ];
 
@@ -91,9 +91,9 @@ const MarketPlace: React.FC<{}> = () => {
   React.useEffect(() => {
     if (data && data.nfts && data.nfts.length > 0) {
       const sortedNFTs = data.nfts.sort((n1, n2) => {
-        if (n1.close > n2.close) {
+        if (n1.close < n2.close) {
           return sort === "oldest-first" ? 1 : -1;
-        } else if (n1.close < n2.close) {
+        } else if (n1.close > n2.close) {
           return sort === "oldest-first" ? -1 : 1;
         } else {
           return 0;
