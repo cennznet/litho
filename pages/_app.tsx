@@ -174,6 +174,16 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                     <Text variant="subtitle1">Privacy Policy</Text>
                   </a>
                 </Link>
+                <Link href="https://litho.a2hosted.com">
+                  <a className="lg:ml-12 flex items-center" target="_blank">
+                    <Text variant="subtitle1">Resources</Text>
+                  </a>
+                </Link>
+                <Link href="https://litho.a2hosted.com/terms-of-use/">
+                  <a className="lg:ml-12 flex items-center" target="_blank">
+                    <Text variant="subtitle1">Terms of use</Text>
+                  </a>
+                </Link>
               </div>
               <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
                 <Link href="https://twitter.com/Lithoverse_">
