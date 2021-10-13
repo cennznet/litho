@@ -9,6 +9,7 @@ import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
+import store from "store";
 
 const LITHO_COLLECTION_NAME = "Litho (default)";
 
@@ -209,20 +210,24 @@ const Create: React.FC<{}> = () => {
   // Check all collection
   useMemo(() => {
     if (!web3Context.api) return;
-    web3Context.api.query.nft.collectionOwner
-      .entries()
-      .then(([[key, maybeOwner]]) => {
-        console.log(key);
-        let collectionId_ = key;
-        if (web3Context.account.address == maybeOwner.unwrapOr("")) {
-          web3Context.api.query.nft.collectionName().then((name) => {
-            if (name.toString() == LITHO_COLLECTION_NAME) {
-              setCollectionId(collectionId_.toNumber());
-              return;
-            }
-          });
-        }
-      });
+    if (collectionId === null) {
+      const collectionIdFromStore = store.get("collectionId");
+      if (collectionIdFromStore) {
+        setCollectionId(collectionIdFromStore);
+      } else {
+        web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
+          if (web3Context.account) {
+            const collectionIdsFetched = entries
+              .filter(
+                (detail) => detail[1].toString() === web3Context.account.address
+              )
+              .flatMap((detail) => detail[0].toHuman());
+            store.set("collectionId", collectionIdsFetched[0]);
+            setCollectionId(collectionIdsFetched[0]);
+          }
+        });
+      }
+    }
   }, [web3Context.api]);
 
   const modalStates = {
@@ -504,20 +509,16 @@ const Create: React.FC<{}> = () => {
         { Url: `Metadata ipfs://${metadataPinPromise.IpfsHash}` },
       ];
 
-      let collectionId, collectionExtrinsic;
+      let collectionExtrinsic;
       setModalState("signTransaction");
-      if (
-        state.nft.hasOwnProperty("collectionId") &&
-        state.nft.collectionId !== null
-      ) {
-        console.log(`using collectionId`, state.nft.collectionId);
-        collectionId = state.nft.collectionId;
+      if (collectionId !== null) {
         collectionExtrinsic = null;
       } else {
-        console.log(`no collectionId`);
-        collectionId = (
+        const collectionId_ = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
+        store.set("collectionId", collectionId_);
+        setCollectionId(collectionId_);
         collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
           metadataBaseURI,
