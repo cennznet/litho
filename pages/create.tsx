@@ -222,13 +222,15 @@ const Create: React.FC<{}> = () => {
                 (detail) => detail[1].toString() === web3Context.account.address
               )
               .flatMap((detail) => detail[0].toHuman());
-            store.set("collectionId", collectionIdsFetched[0]);
-            setCollectionId(collectionIdsFetched[0]);
+            if (collectionIdsFetched.length > 0) {
+              store.set("collectionId", collectionIdsFetched[0]);
+              setCollectionId(collectionIdsFetched[0]);
+            }
           }
         });
       }
     }
-  }, [web3Context.api]);
+  }, [web3Context.api, web3Context.account]);
 
   const modalStates = {
     mint: {
@@ -511,14 +513,13 @@ const Create: React.FC<{}> = () => {
 
       let collectionExtrinsic, useCollectionId;
       setModalState("signTransaction");
-      if (collectionId !== null) {
+      if (collectionId !== null && collectionId !== undefined) {
         collectionExtrinsic = null;
         useCollectionId = collectionId;
       } else {
         const collectionId_ = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
-        store.set("collectionId", collectionId_);
         useCollectionId = collectionId_;
         collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
