@@ -162,10 +162,17 @@ const NFTDetail: React.FC<{}> = () => {
                     break;
                 }
               });
+
               attributes.map((att) => {
                 if (att["Text"]) {
-                  const data = JSON.parse(att["Text"]);
-                  attr.push([Object.keys(data)[0], Object.values(data)[0]]);
+                  try {
+                    const data = JSON.parse(att["Text"]);
+                    attr.push([Object.keys(data)[0], Object.values(data)[0]]);
+                  } catch (e) {
+                    // the older nfts created are not in json format
+                    const data = att["Text"];
+                    attr.push(["#", data]);
+                  }
                 }
               });
               nft.attributes = attr;
