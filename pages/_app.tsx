@@ -59,6 +59,18 @@ const SearchBar: React.FC<{}> = () => {
   );
 };
 
+const ResourcesLink: React.FC<{}> = () => {
+  return (
+    <Link href="https://litho.a2hosted.com">
+      <a className="mr-9 hidden lg:flex" target="_blank">
+        <Text variant="h6" color="litho-blue">
+          Resources
+        </Text>
+      </a>
+    </Link>
+  );
+};
+
 const MarketplaceLink: React.FC<{}> = () => {
   return (
     <Link href="/marketplace">
@@ -127,6 +139,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </a>
               </Link>
               <div className="ml-24 h-12 flex items-center flex-1 justify-end">
+                <ResourcesLink />
                 <MarketplaceLink />
                 <CreateButton setShowViewOnDesktop={setShowViewOnDesktop} />
                 <ConnectWallet />
@@ -172,11 +185,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 <Link href="https://cennz.net/privacy-policy/">
                   <a className="lg:ml-12 flex items-center" target="_blank">
                     <Text variant="subtitle1">Privacy Policy</Text>
-                  </a>
-                </Link>
-                <Link href="https://litho.a2hosted.com">
-                  <a className="lg:ml-12 flex items-center" target="_blank">
-                    <Text variant="subtitle1">Resources</Text>
                   </a>
                 </Link>
                 <Link href="https://litho.a2hosted.com/terms-of-use/">
