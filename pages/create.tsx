@@ -509,16 +509,17 @@ const Create: React.FC<{}> = () => {
         { Url: `Metadata ipfs://${metadataPinPromise.IpfsHash}` },
       ];
 
-      let collectionExtrinsic;
+      let collectionExtrinsic, useCollectionId;
       setModalState("signTransaction");
       if (collectionId !== null) {
         collectionExtrinsic = null;
+        useCollectionId = collectionId;
       } else {
         const collectionId_ = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
         store.set("collectionId", collectionId_);
-        setCollectionId(collectionId_);
+        useCollectionId = collectionId_;
         collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
           metadataBaseURI,
@@ -528,7 +529,7 @@ const Create: React.FC<{}> = () => {
 
       if (state.nft.copies > 1) {
         let tokenArgs: { [index: string]: any } = {
-          collectionId,
+          collectionId: useCollectionId,
           quantity: state.nft.copies,
           owner: web3Context.account.address,
           attributes: nftAttributes,
@@ -550,7 +551,7 @@ const Create: React.FC<{}> = () => {
         );
       } else {
         let tokenArgs: { [index: string]: any } = {
-          collectionId,
+          collectionId: useCollectionId,
           owner: web3Context.account.address,
           attributes: nftAttributes,
           metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
