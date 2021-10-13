@@ -43,7 +43,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
           <div className="mt-2">
             <Text variant="body1" color="litho-red" component="div">
               You don’t have enough balance in your wallet.{" "}
-              <Link href="https://cennzx.io/">
+              <Link href="https://www.mexc.com">
                 <a className="underline font-bold" target="_blank">
                   Top Up
                 </a>
