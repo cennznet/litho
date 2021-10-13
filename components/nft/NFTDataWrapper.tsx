@@ -35,6 +35,7 @@ const NFTDataWrapper: React.FC<{
       setError("Metadata not found");
     }
     if (metadataUrl) {
+      const showSerialNo = nftData.tokenId ? Number(nftData.tokenId[2]) + 1 : 0;
       if (cache.has(metadataUrl)) {
         const metadata = cache.get(metadataUrl);
         // if found in cache, update the copies
@@ -44,9 +45,9 @@ const NFTDataWrapper: React.FC<{
             metadata.originalCopies.toString() !== "1"
           ) {
             metadata.copies = 1;
-            metadata.name = `${metadata.name.split("-")[0]} - [${
-              nftData.tokenId[2]
-            }/${metadata.originalCopies}]`;
+            metadata.name = `${
+              metadata.name.split("-")[0]
+            } - [${showSerialNo}/${metadata.originalCopies}]`;
           }
         } else {
           metadata.name = metadata.name.split("-")[0];
@@ -67,7 +68,7 @@ const NFTDataWrapper: React.FC<{
                   data.properties &&
                   data.properties.quantity &&
                   data.properties.quantity.toString() !== "1"
-                    ? `${data.name} - [${nftData.tokenId[2]}/${
+                    ? `${data.name} - [${showSerialNo}/${
                         data.properties && data.properties.quantity
                       }]`
                     : data.name,
