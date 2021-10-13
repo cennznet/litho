@@ -187,7 +187,7 @@ const NFTDetail: React.FC<{}> = () => {
   ]);
 
   useEffect(() => {
-    if (!web3Context.api || !web3Context.account) {
+    if (!web3Context.api) {
       return;
     }
     (async () => {
@@ -271,22 +271,25 @@ const NFTDetail: React.FC<{}> = () => {
         const copyOwers = await web3Context.api.query.nft.tokenOwner.multi(
           copyParams
         );
-        for (let i = 0; i < copyOwers.length; i++) {
-          const isOwner =
-            copyOwers[i].toString() === web3Context.account.address.toString();
-          const isOnSale = openListing.find((listing) => {
-            return (
-              listing.tokenId.collectionId.toNumber() ===
-                Number(router.query.collectionId) &&
-              listing.tokenId.seriesId.toNumber() ===
-                Number(router.query.seriesId) &&
-              listing.tokenId.serialNumber.toNumber() ===
-                Number(router.query.serialNumber)
-            );
-          });
-          if (isOwner && !isOnSale) {
-            setEditableSerialNumber(Number(router.query.serialNumber));
-            break;
+        if (web3Context.account) {
+          for (let i = 0; i < copyOwers.length; i++) {
+            const isOwner =
+              copyOwers[i].toString() ===
+              web3Context.account.address.toString();
+            const isOnSale = openListing.find((listing) => {
+              return (
+                listing.tokenId.collectionId.toNumber() ===
+                  Number(router.query.collectionId) &&
+                listing.tokenId.seriesId.toNumber() ===
+                  Number(router.query.seriesId) &&
+                listing.tokenId.serialNumber.toNumber() ===
+                  Number(router.query.serialNumber)
+              );
+            });
+            if (isOwner && !isOnSale) {
+              setEditableSerialNumber(Number(router.query.serialNumber));
+              break;
+            }
           }
         }
       }
@@ -362,7 +365,12 @@ const NFTDetail: React.FC<{}> = () => {
   const buyNow = useCallback(
     async (e) => {
       e.preventDefault();
-      if (web3Context.api && listingInfo && listingInfo.listingId >= 0) {
+      if (
+        web3Context.api &&
+        web3Context.account &&
+        listingInfo &&
+        listingInfo.listingId >= 0
+      ) {
         try {
           setModalState("txInProgress");
           await buyWithFixedPrice(
@@ -402,7 +410,7 @@ const NFTDetail: React.FC<{}> = () => {
 
       const priceInUnit = +price.value * 10 ** paymentAsset.decimals;
 
-      if (web3Context.api) {
+      if (web3Context.api && web3Context.account) {
         try {
           setModalState("txInProgress");
           await placeABid(
