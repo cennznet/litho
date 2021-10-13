@@ -10,6 +10,7 @@ import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
 import store from "store";
+import { hexToString } from "@polkadot/util";
 
 const LITHO_COLLECTION_NAME = "Litho (default)";
 
@@ -222,10 +223,18 @@ const Create: React.FC<{}> = () => {
                 (detail) => detail[1].toString() === web3Context.account.address
               )
               .flatMap((detail) => detail[0].toHuman());
-            if (collectionIdsFetched.length > 0) {
-              store.set("collectionId", collectionIdsFetched[0]);
-              setCollectionId(collectionIdsFetched[0]);
-            }
+            web3Context.api.query.nft.collectionName
+              .multi(collectionIdsFetched)
+              .then((names) => {
+                if (names.length > 0) {
+                  const index = names.findIndex(
+                    (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
+                  );
+                  const collectionIdAtIndex = collectionIdsFetched[index];
+                  store.set("collectionId", collectionIdAtIndex);
+                  setCollectionId(collectionIdAtIndex);
+                }
+              });
           }
         });
       }
