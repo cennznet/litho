@@ -70,7 +70,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
             );
           })
         : ""}
-      <Link href="https://cennzx.io/">
+      <Link href="https://www.mexc.com">
         <a
           className="flex items-center justify-center bg-litho-blue w-full py-3 h-12"
           target="_blank"
