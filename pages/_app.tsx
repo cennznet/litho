@@ -181,11 +181,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                     <Text variant="subtitle1">Twitter</Text>
                   </a>
                 </Link>
-                {/* <Link href="https://discord.gg/hsRbe4gb">
-              <a target="_blank">
-                <Text variant="subtitle1">Discord</Text>
-              </a>
-            </Link> */}
+                <Link href="https://www.instagram.com/lithoverse/">
+                  <a target="_blank">
+                    <Text variant="subtitle1">Instagram</Text>
+                  </a>
+                </Link>
               </div>
             </footer>
           </SupportedAssetsProvider>

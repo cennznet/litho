@@ -55,6 +55,7 @@ const TimedAuction: React.FC<Props> = ({
   serialNumber,
   supportedAssets,
 }) => {
+  const [txMessage, setTxMessage] = React.useState<any>();
   const web3Context = React.useContext(Web3Context);
 
   const [showAdvanced, setShowAdvanced] = React.useState(false);
@@ -65,7 +66,9 @@ const TimedAuction: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (supportedAssets && supportedAssets.length > 0) {
-      setPaymentAsset(supportedAssets[0]);
+      if (!paymentAsset) {
+        setPaymentAsset(supportedAssets[0]);
+      }
     }
   }, [supportedAssets]);
 
@@ -126,8 +129,10 @@ const TimedAuction: React.FC<Props> = ({
             duration
           );
           setModalState("success");
+          setTxMessage("New auction created");
         } catch (e) {
           setModalState("error");
+          setTxMessage("Creating auction failed");
         }
       }
     },
@@ -221,6 +226,7 @@ const TimedAuction: React.FC<Props> = ({
           errorLink={`/nft/${collectionId}/${seriesId}/${serialNumber}`}
           modalState={modalState}
           setModalState={setModalState}
+          message={txMessage}
         />
       )}
     </>

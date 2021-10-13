@@ -10,6 +10,7 @@ interface Props {
   errorLink: string;
   modalState: string;
   setModalState: (status: string) => void;
+  message: string;
 }
 
 const TxStatusModal: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const TxStatusModal: React.FC<Props> = ({
   errorLink,
   modalState,
   setModalState,
+  message,
 }) => {
   const router = useRouter();
 
@@ -28,7 +30,7 @@ const TxStatusModal: React.FC<Props> = ({
     },
     success: {
       message: "CONGRATULATIONS!",
-      subText: "Your transaction was successfully proccessed.",
+      subText: message,
       buttons: [
         {
           text: "OK",
@@ -41,7 +43,7 @@ const TxStatusModal: React.FC<Props> = ({
     },
     error: {
       message: "OOPS... SOMETHING WENT WRONG",
-      subText: "Your transaction failed to proccess. Please try again.",
+      subText: message,
       buttons: [
         {
           text: "CANCEL",
