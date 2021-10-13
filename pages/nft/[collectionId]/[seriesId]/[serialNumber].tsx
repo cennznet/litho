@@ -144,11 +144,6 @@ const NFTDetail: React.FC<{}> = () => {
                     break;
                   case "description": {
                     nft.description = data[key];
-                    attributes.map((att) => {
-                      if (att["Text"]) {
-                        nft.description = `${nft.description} , ${att["Text"]}`;
-                      }
-                    });
                     break;
                   }
                   case "image": {
@@ -165,6 +160,12 @@ const NFTDetail: React.FC<{}> = () => {
                   default:
                     attr.push([key, data[key]]);
                     break;
+                }
+              });
+              attributes.map((att) => {
+                if (att["Text"]) {
+                  const data = JSON.parse(att["Text"]);
+                  attr.push([Object.keys(data)[0], Object.values(data)[0]]);
                 }
               });
               nft.attributes = attr;
