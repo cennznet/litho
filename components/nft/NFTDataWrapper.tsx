@@ -34,8 +34,26 @@ const NFTDataWrapper: React.FC<{
       setError("Metadata not found");
     }
     if (metadataUrl) {
+      const showSerialNo = nftData.tokenId ? Number(nftData.tokenId[2]) + 1 : 0;
       if (cache.has(metadataUrl)) {
         const metadata = cache.get(metadataUrl);
+        // if found in cache, update the copies
+        if (nftData.showOne) {
+          if (
+            metadata.originalCopies &&
+            metadata.originalCopies.toString() !== "1"
+          ) {
+            metadata.copies = 1;
+            metadata.name = `${
+              metadata.name.split("-")[0]
+            } - [${showSerialNo}/${metadata.originalCopies}]`;
+          }
+        } else {
+          metadata.name = metadata.name.split("-")[0];
+          metadata.copies = metadata.originalCopies
+            ? metadata.originalCopies
+            : metadata.copies;
+        }
         setNFTData({ ...nft, ...metadata });
       } else {
         axios
@@ -44,7 +62,15 @@ const NFTDataWrapper: React.FC<{
             const { data } = response;
             if (data) {
               const metadata = {
-                name: data.name,
+                name:
+                  nftData.showOne &&
+                  data.properties &&
+                  data.properties.quantity &&
+                  data.properties.quantity.toString() !== "1"
+                    ? `${data.name} - [${showSerialNo}/${
+                        data.properties && data.properties.quantity
+                      }]`
+                    : data.name,
                 description: data.description,
                 image: data.image.startsWith("ipfs://")
                   ? gatewayTools.convertToDesiredGateway(
@@ -52,7 +78,9 @@ const NFTDataWrapper: React.FC<{
                       process.env.NEXT_PUBLIC_PINATA_GATEWAY
                     )
                   : data.image,
-                copies: (data.properties && data.properties.quantity) || 1,
+                copies: nftData.showOne
+                  ? 1
+                  : (data.properties && data.properties.quantity) || 1,
                 owner: data.properties && data.properties.owner,
                 file:
                   data.properties && data.properties.file
@@ -68,6 +96,7 @@ const NFTDataWrapper: React.FC<{
                   nft.metadata,
                   process.env.NEXT_PUBLIC_PINATA_GATEWAY
                 ),
+                originalCopies: data.properties && data.properties.quantity,
               };
               cache.set(metadataUrl, metadata);
               setNFTData({ ...nft, ...metadata });

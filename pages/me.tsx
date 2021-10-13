@@ -44,17 +44,21 @@ const Me: React.FC<{}> = () => {
                   Object.values(tokensInCollection).map(
                     async ({ token, count }) => {
                       return new Promise(async (resolve) => {
+                        const collectionId = token.collectionId.toString();
+                        const seriesId = token.seriesId.toString();
+                        let serialNumber = 0;
                         const tokenInfo =
                           await web3Context.api.derive.nft.tokenInfo({
-                            collectionId: token.collectionId.toJSON(),
-                            seriesId: token.seriesId.toJSON(),
-                            serialNumber: 0,
+                            collectionId,
+                            seriesId,
+                            serialNumber,
                           });
                         const { owner, attributes } = tokenInfo;
+
                         const nft: { [index: string]: any } = {
-                          collectionId: token.collectionId.toJSON(),
-                          seriesId: token.seriesId.toJSON(),
-                          serialNumber: 0,
+                          collectionId,
+                          seriesId,
+                          serialNumber,
                           owner,
                           attributes: attributes,
                           copies: count,
@@ -74,7 +78,18 @@ const Me: React.FC<{}> = () => {
                             nft[key] = value;
                           }
                         }
-                        userNFTs.push(nft);
+                        if (count === 1) {
+                          userNFTs.push(nft);
+                        } else {
+                          for (let i = 0; i < count; i++) {
+                            let obj = {};
+                            const serialNumber = i;
+                            const tokenId = [collectionId, seriesId, i];
+                            const showOne = true;
+                            obj = { ...nft, serialNumber, showOne, tokenId };
+                            userNFTs.push(obj);
+                          }
+                        }
                         resolve(null);
                       });
                     }

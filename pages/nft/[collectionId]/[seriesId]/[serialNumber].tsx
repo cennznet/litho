@@ -71,9 +71,11 @@ const NFTDetail: React.FC<{}> = () => {
   const [modalState, setModalState] = React.useState<string>();
   const [currentBlock, setCurrentBlock] = React.useState<number>();
   const [error, setError] = React.useState(null);
+  const [conversionRate, setConversionRate] = React.useState(-1);
   const [editableSerialNumber, setEditableSerialNumber] =
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
+  const [txMessage, setTxMessage] = React.useState<any>();
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -107,7 +109,12 @@ const NFTDetail: React.FC<{}> = () => {
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
           owner: owner.toString(),
-          copies: seriesIssuance.toJSON(),
+          showOne: true,
+          tokenId: [
+            router.query.collectionId,
+            router.query.seriesId,
+            router.query.serialNumber,
+          ],
         };
         if (attributes) {
           const metadata = getMetadata(attributes);
@@ -207,15 +214,31 @@ const NFTDetail: React.FC<{}> = () => {
         });
         let auctionInfo = undefined;
         let fixedPriceInfo = undefined;
-
+        let valueForConversion = undefined;
         if (listingInfo) {
           const listing = (
             await web3Context.api.query.nft.listings(listingInfo.listingId)
           ).unwrapOrDefault();
           if (listing.isAuction) {
+            const winningBidForListing =
+              await web3Context.api.query.nft.listingWinningBid(
+                listingInfo.listingId
+              );
+            let winningBid;
+            if (winningBidForListing && winningBidForListing.toJSON()) {
+              winningBid = winningBidForListing.toJSON()[1];
+            }
             auctionInfo = listing.asAuction.toJSON();
+            valueForConversion = winningBid
+              ? Number(winningBid)
+              : Number(auctionInfo.reservePrice);
+            auctionInfo = {
+              ...auctionInfo,
+              winningBid: winningBid,
+            };
           } else {
             fixedPriceInfo = listing.asFixedPrice.toJSON();
+            valueForConversion = fixedPriceInfo.fixedPrice;
           }
         }
 
@@ -223,6 +246,7 @@ const NFTDetail: React.FC<{}> = () => {
           listingId: listingInfo?.listingId.toNumber(),
           auctionInfo: auctionInfo,
           fixedPriceInfo: fixedPriceInfo,
+          valueForConversion: valueForConversion,
         });
 
         const copies = await web3Context.api.query.nft.seriesIssuance(
@@ -256,11 +280,12 @@ const NFTDetail: React.FC<{}> = () => {
                 Number(router.query.collectionId) &&
               listing.tokenId.seriesId.toNumber() ===
                 Number(router.query.seriesId) &&
-              listing.tokenId.serialNumber.toNumber() === i
+              listing.tokenId.serialNumber.toNumber() ===
+                Number(router.query.serialNumber)
             );
           });
           if (isOwner && !isOnSale) {
-            setEditableSerialNumber(i);
+            setEditableSerialNumber(Number(router.query.serialNumber));
             break;
           }
         }
@@ -297,6 +322,29 @@ const NFTDetail: React.FC<{}> = () => {
     return 0;
   }, [listingInfo, paymentAsset]);
 
+  useEffect(() => {
+    if (
+      paymentAsset &&
+      paymentAsset.symbol &&
+      paymentAsset.symbol === "CENNZ" &&
+      listingInfo
+    ) {
+      const price = web3Context.cennzUSDPrice;
+      if (conversionRate === -1) {
+        try {
+          let conversionRateCal =
+            (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
+            price;
+          conversionRateCal = Number(conversionRateCal.toFixed(2));
+          setConversionRate(conversionRateCal);
+        } catch (e) {
+          console.log("Error setting conversion rate");
+        }
+      }
+    }
+    //return undefined;
+  }, [listingInfo, paymentAsset, web3Context.cennzUSDPrice]);
+
   const endTime = useMemo(() => {
     if (listingInfo && web3Context.api) {
       let blocks = 0;
@@ -314,7 +362,7 @@ const NFTDetail: React.FC<{}> = () => {
   const buyNow = useCallback(
     async (e) => {
       e.preventDefault();
-      if (web3Context.api && listingInfo && listingInfo.listingId) {
+      if (web3Context.api && listingInfo && listingInfo.listingId >= 0) {
         try {
           setModalState("txInProgress");
           await buyWithFixedPrice(
@@ -322,8 +370,10 @@ const NFTDetail: React.FC<{}> = () => {
             web3Context.account,
             listingInfo.listingId
           );
+          setTxMessage("Sale success");
           setModalState("success");
         } catch (e) {
+          setTxMessage("Error buying tokens for listing");
           setModalState("error");
         }
       }
@@ -361,9 +411,11 @@ const NFTDetail: React.FC<{}> = () => {
             listingInfo.listingId,
             priceInUnit
           );
+          setTxMessage("Bid placed");
           setModalState("success");
         } catch (e) {
           console.log(":( transaction failed", e);
+          setTxMessage("Bid failed");
           setModalState("error");
         }
       }
@@ -441,7 +493,7 @@ const NFTDetail: React.FC<{}> = () => {
               {!isPlaceABid ? (
                 <>
                   {listingInfo &&
-                    listingInfo.listingId &&
+                    listingInfo.listingId >= 0 &&
                     (listingInfo.auctionInfo || listingInfo.fixedPriceInfo) && (
                       <div className="w-full p-8 flex flex-col border-b border-litho-black">
                         {listingInfo.fixedPriceInfo && (
@@ -473,8 +525,42 @@ const NFTDetail: React.FC<{}> = () => {
                                   `Ending in ${endTime.days} days ${endTime.hours} hours`}
                               </Text>
                             </div>
-                            <Text variant="h3" className="mt-6">
-                              {reservePrice} {paymentAsset?.symbol}
+                            {listingInfo.auctionInfo.winningBid && (
+                              <>
+                                <div className="flex justify-between">
+                                  <Text
+                                    variant="h6"
+                                    className="text-opacity-50"
+                                  >
+                                    Current Bid
+                                  </Text>
+                                  <Text variant="h6">Reserve Met</Text>
+                                </div>
+                              </>
+                            )}
+
+                            {listingInfo.auctionInfo.winningBid &&
+                            paymentAsset ? (
+                              <>
+                                <Text variant="h3" className="mt-6">
+                                  {listingInfo.auctionInfo.winningBid /
+                                    10 ** paymentAsset.decimals}{" "}
+                                  {paymentAsset.symbol}
+                                </Text>
+                              </>
+                            ) : (
+                              <>
+                                <Text variant="h3" className="mt-6">
+                                  {reservePrice} {paymentAsset?.symbol}
+                                </Text>
+                              </>
+                            )}
+                          </>
+                        )}
+                        {conversionRate >= 0 && (
+                          <>
+                            <Text variant="h6" className="text-opacity-50">
+                              ({conversionRate} USD)
                             </Text>
                           </>
                         )}
@@ -622,6 +708,7 @@ const NFTDetail: React.FC<{}> = () => {
           errorLink={"/marketplace"}
           modalState={modalState}
           setModalState={setModalState}
+          message={txMessage}
         />
       )}
     </>
