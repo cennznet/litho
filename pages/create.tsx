@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,7 +9,10 @@ import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
-import isImageOrVideo from "../utils/isImageOrVideo";
+import store from "store";
+import { hexToString } from "@polkadot/util";
+
+const LITHO_COLLECTION_NAME = "Litho (default)";
 
 export type NFT = {
   title: string;
@@ -47,7 +50,7 @@ const initialState: State = {
     storage: "ipfs",
     attributes: [],
     royalty: 0,
-    collectionName: "Litho (default)",
+    collectionName: LITHO_COLLECTION_NAME,
     extension: "",
   },
   isAboutFilled: false,
@@ -203,6 +206,40 @@ const Create: React.FC<{}> = () => {
   );
   const [modalState, setModalState] = React.useState<string>();
   const [transactionFee, setTransactionFee] = React.useState<number>();
+  const [collectionId, setCollectionId] = React.useState<string | null>(null);
+
+  // Check all collection
+  useMemo(() => {
+    if (!web3Context.api) return;
+    if (collectionId === null) {
+      const collectionIdFromStore = store.get("collectionId");
+      if (collectionIdFromStore) {
+        setCollectionId(collectionIdFromStore);
+      } else {
+        web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
+          if (web3Context.account) {
+            const collectionIdsFetched = entries
+              .filter(
+                (detail) => detail[1].toString() === web3Context.account.address
+              )
+              .flatMap((detail) => detail[0].toHuman());
+            web3Context.api.query.nft.collectionName
+              .multi(collectionIdsFetched)
+              .then((names) => {
+                if (names.length > 0) {
+                  const index = names.findIndex(
+                    (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
+                  );
+                  const collectionIdAtIndex = collectionIdsFetched[index];
+                  store.set("collectionId", collectionIdAtIndex);
+                  setCollectionId(collectionIdAtIndex);
+                }
+              });
+          }
+        });
+      }
+    }
+  }, [web3Context.api, web3Context.account]);
 
   const modalStates = {
     mint: {
@@ -483,20 +520,16 @@ const Create: React.FC<{}> = () => {
         { Url: `Metadata ipfs://${metadataPinPromise.IpfsHash}` },
       ];
 
-      let collectionId, collectionExtrinsic;
+      let collectionExtrinsic, useCollectionId;
       setModalState("signTransaction");
-      if (
-        state.nft.hasOwnProperty("collectionId") &&
-        state.nft.collectionId !== null
-      ) {
-        collectionId = state.nft.collectionId;
+      if (collectionId !== null && collectionId !== undefined) {
         collectionExtrinsic = null;
+        useCollectionId = collectionId;
       } else {
-        // TODO fix --  potential race condition if collectionId changes before user signs
-        // when multiple users are minting at the same time
-        collectionId = (
+        const collectionId_ = (
           await web3Context.api.query.nft.nextCollectionId()
         ).toNumber();
+        useCollectionId = collectionId_;
         collectionExtrinsic = web3Context.api.tx.nft.createCollection(
           state.nft.collectionName,
           metadataBaseURI,
@@ -506,7 +539,7 @@ const Create: React.FC<{}> = () => {
 
       if (state.nft.copies > 1) {
         let tokenArgs: { [index: string]: any } = {
-          collectionId,
+          collectionId: useCollectionId,
           quantity: state.nft.copies,
           owner: web3Context.account.address,
           attributes: nftAttributes,
@@ -528,7 +561,7 @@ const Create: React.FC<{}> = () => {
         );
       } else {
         let tokenArgs: { [index: string]: any } = {
-          collectionId,
+          collectionId: useCollectionId,
           owner: web3Context.account.address,
           attributes: nftAttributes,
           metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
