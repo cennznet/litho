@@ -25,21 +25,28 @@ const About: React.FC<{
   const renderAttributeInputs = (num) => {
     const attributeContainers = [];
     for (let i = 0; i < num; i++) {
-      let attribute;
+      let attributeKey, attributeValue;
       if (nft.attributes[i]) {
-        attribute = nft.attributes[i].hasOwnProperty("Text")
-          ? nft.attributes[i].Text
-          : nft.attributes[i].hasOwnProperty("URL")
-          ? nft.attributes[i].URL
-          : null;
+        if (nft.attributes[i].Text) {
+          let attri = nft.attributes[i].Text;
+          attri = JSON.parse(attri);
+          attributeKey = Object.keys(attri) ? Object.keys(attri)[0] : "";
+          attributeValue = Object.values(attri) ? Object.values(attri)[0] : "";
+        }
       }
       attributeContainers.push(
         <div className="flex w-full items-center" key={i}>
           <Input
-            name={`attribute-${i + 1}`}
-            placeholder="Example: Size 20px"
+            name={`key-attribute-${i + 1}`}
+            placeholder="Key (Size)"
+            className="flex-2 mr-3"
+            defaultValue={attributeKey}
+          />
+          <Input
+            name={`value-attribute-${i + 1}`}
+            placeholder="Value: (20px)"
             className="flex-1"
-            defaultValue={attribute}
+            defaultValue={attributeValue}
           />
         </div>
       );
@@ -71,10 +78,18 @@ const About: React.FC<{
 
     const attributes = [];
     for (let i = 0; i < numOfAttributes; i++) {
-      const attributeInput = event.target[`attribute-${i + 1}`];
-      if (attributeInput && attributeInput.value) {
+      const attributeInputKey = event.target[`key-attribute-${i + 1}`];
+      const attributeInputVal = event.target[`value-attribute-${i + 1}`];
+      if (
+        attributeInputKey &&
+        attributeInputKey.value &&
+        attributeInputVal &&
+        attributeInputVal.value
+      ) {
+        const attrObj = {};
+        attrObj[attributeInputKey.value] = attributeInputVal.value;
         attributes.push({
-          Text: attributeInput.value,
+          Text: JSON.stringify(attrObj),
         });
       }
     }

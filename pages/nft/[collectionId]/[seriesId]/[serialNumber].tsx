@@ -129,7 +129,7 @@ const NFTDetail: React.FC<{}> = () => {
               : metadataAttributes[0];
             nft[key] = value;
             const metadataUrl = value.startsWith("ipfs://")
-              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${
                   value.split("ipfs://")[1]
                 }`
               : value;
@@ -144,16 +144,11 @@ const NFTDetail: React.FC<{}> = () => {
                     break;
                   case "description": {
                     nft.description = data[key];
-                    attributes.map((att) => {
-                      if (att["Text"]) {
-                        nft.description = `${nft.description} , ${att["Text"]}`;
-                      }
-                    });
                     break;
                   }
                   case "image": {
                     nft.imageLink = data.image.startsWith("ipfs://")
-                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${
                           data.image.split("ipfs://")[1]
                         }`
                       : data.image;
@@ -165,6 +160,19 @@ const NFTDetail: React.FC<{}> = () => {
                   default:
                     attr.push([key, data[key]]);
                     break;
+                }
+              });
+
+              attributes.map((att) => {
+                if (att["Text"]) {
+                  try {
+                    const data = JSON.parse(att["Text"]);
+                    attr.push([Object.keys(data)[0], Object.values(data)[0]]);
+                  } catch (e) {
+                    // the older nfts created are not in json format
+                    const data = att["Text"];
+                    attr.push(["#", data]);
+                  }
                 }
               });
               nft.attributes = attr;
@@ -599,7 +607,7 @@ const NFTDetail: React.FC<{}> = () => {
                       </div>
                     )}
                   <div className="w-full p-8 flex flex-col border-b border-litho-black">
-                    <Text variant="h6">Creator</Text>
+                    <Text variant="h6">Owner</Text>
                     <Text variant="h6" className="text-opacity-50">
                       {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
                       {web3Context.account
@@ -639,6 +647,9 @@ const NFTDetail: React.FC<{}> = () => {
                       {nft.attributes.map((attribute) => {
                         if (!attribute) {
                           return null;
+                        }
+                        if (attribute[0] === "owner") {
+                          attribute[0] = "creator";
                         }
                         return (
                           <Text
