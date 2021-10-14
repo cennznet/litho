@@ -648,6 +648,7 @@ const NFTDetail: React.FC<{}> = () => {
                         if (!attribute) {
                           return null;
                         }
+                        // for the nft initially created, metadata on ipfs has attribute as owner, we want it to be creator
                         if (attribute[0] === "owner") {
                           attribute[0] = "creator";
                         }
