@@ -121,12 +121,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               />
               <link
                 rel="preload"
-                href="/api/getFeaturedListings"
-                as="fetch"
-                crossOrigin="anonymous"
-              />
-              <link
-                rel="preload"
                 href="/api/getAllNfts"
                 as="fetch"
                 crossOrigin="anonymous"
