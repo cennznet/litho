@@ -6,7 +6,6 @@ import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
-import useSWR from "swr";
 
 const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
 
@@ -23,7 +22,7 @@ export async function getStaticProps() {
   };
 }
 
-const Home: React.FC<{ featuredData }> = (featuredData) => {
+const Home: React.FC<{ featuredData }> = (featuredData: any) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
   const data = featuredData;
