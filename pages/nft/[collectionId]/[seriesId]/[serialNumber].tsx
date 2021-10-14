@@ -607,7 +607,7 @@ const NFTDetail: React.FC<{}> = () => {
                       </div>
                     )}
                   <div className="w-full p-8 flex flex-col border-b border-litho-black">
-                    <Text variant="h6">Creator</Text>
+                    <Text variant="h6">Owner</Text>
                     <Text variant="h6" className="text-opacity-50">
                       {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
                       {web3Context.account
@@ -647,6 +647,9 @@ const NFTDetail: React.FC<{}> = () => {
                       {nft.attributes.map((attribute) => {
                         if (!attribute) {
                           return null;
+                        }
+                        if (attribute[0] === "owner") {
+                          attribute[0] = "creator";
                         }
                         return (
                           <Text
