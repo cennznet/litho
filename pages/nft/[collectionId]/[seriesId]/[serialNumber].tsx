@@ -129,7 +129,7 @@ const NFTDetail: React.FC<{}> = () => {
               : metadataAttributes[0];
             nft[key] = value;
             const metadataUrl = value.startsWith("ipfs://")
-              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+              ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${
                   value.split("ipfs://")[1]
                 }`
               : value;
@@ -153,7 +153,7 @@ const NFTDetail: React.FC<{}> = () => {
                   }
                   case "image": {
                     nft.imageLink = data.image.startsWith("ipfs://")
-                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}./ipfs/${
+                      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${
                           data.image.split("ipfs://")[1]
                         }`
                       : data.image;
