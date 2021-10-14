@@ -47,6 +47,8 @@ const Me: React.FC<{}> = () => {
                             seriesId
                           );
                       }
+                      // Copies in collection is used by NFTRenderer to show name of nfts with 4/5, 5/5 sufix in case of series nft
+                      // so for series we set copies as 2 and for unique we keep it 1 (later we can change it to bool)
                       const nft: { [index: string]: any } = {
                         collectionId,
                         seriesId,
