@@ -411,7 +411,7 @@ const Create: React.FC<{}> = () => {
         properties: {
           file: state.nft.image,
           quantity: state.nft.copies,
-          owner: web3Context.account.address,
+          creator: web3Context.account.address,
           extension: state.nft.extension,
           coverFileExtension: state.nft.coverFileExtension,
         },
@@ -423,7 +423,7 @@ const Create: React.FC<{}> = () => {
         image: state.nft.image,
         properties: {
           quantity: state.nft.copies,
-          owner: web3Context.account.address,
+          creator: web3Context.account.address,
           extension: state.nft.extension,
         },
       };
@@ -437,7 +437,7 @@ const Create: React.FC<{}> = () => {
         name: storeOnIPFS.name,
         keyvalues: {
           description: storeOnIPFS.description,
-          owner: (storeOnIPFS.properties as any).owner,
+          creator: (storeOnIPFS.properties as any).creator,
           quantity: (storeOnIPFS.properties as any).quantity,
           extension: state.nft.extension,
         },
@@ -465,7 +465,7 @@ const Create: React.FC<{}> = () => {
           keyvalues: {
             description: storeOnIPFS.description,
             coverImage: `ipfs://${imagePinPromise.IpfsHash}`,
-            owner: (storeOnIPFS.properties as any).owner,
+            creator: (storeOnIPFS.properties as any).creator,
             quantity: (storeOnIPFS.properties as any).quantity,
             extension: state.nft.extension,
             coverFileExtension: state.nft.coverFileExtension,
@@ -494,7 +494,7 @@ const Create: React.FC<{}> = () => {
             ? { file: `ipfs://${filePinPromise.IpfsHash}` }
             : {}),
           quantity: (storeOnIPFS.properties as any).quantity,
-          owner: (storeOnIPFS.properties as any).owner,
+          creator: (storeOnIPFS.properties as any).creator,
           extension: state.nft.extension,
           coverFileExtension: state.nft.coverFileExtension,
         },
