@@ -13,7 +13,12 @@ const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
 export async function getStaticProps() {
   // Call an external API endpoint to get posts
   const res = await fetch(`${process.env.BASE_PATH}/api/getFeaturedListings`);
-  const featuredData = await res.json();
+  let featuredData;
+  try {
+    featuredData = await res.json();
+  } catch (e) {
+    featuredData = {};
+  }
 
   // By returning { props: featuredData }, the Home component
   // will receive `featuredData` as a prop at build time
