@@ -3,7 +3,7 @@ import { AuctionListing, FixedPriceListing, Listing } from "@cennznet/types";
 import cache from '../../utils/cache';
 import getMetadata from "../../utils/getMetadata";
 
-const FEATURED_COUNT = 5;
+const FEATURED_COUNT = 15;
 const FEATURED_COLLECTION_ID = process.env.NEXT_FEATURED_COLLECTION_ID;
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 let api = null;
