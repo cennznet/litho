@@ -39,7 +39,7 @@ const Me: React.FC<{}> = () => {
                           serialNumber,
                         });
                       const { owner, attributes } = tokenInfo;
-                      let checkIfSingleIssue = false;
+                      let checkIfSingleIssue = serialNumber === "0";
                       if (serialNumber === "0") {
                         checkIfSingleIssue =
                           await web3Context.api.query.nft.isSingleIssue(
