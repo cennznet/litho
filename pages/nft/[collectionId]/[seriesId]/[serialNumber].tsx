@@ -689,10 +689,7 @@ const NFTDetail: React.FC<{}> = () => {
                         variant="caption"
                         className="w-full text-opacity-60 mt-10 mb-10"
                       >
-                        Once a bid is placed it cant be withdrawn, additional Ts
-                        andCs here Lorem ipsum dolor sit amet, consectetur
-                        adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua.
+                        Once a bid is placed it can't be withdrawn
                       </Text>
                     </div>
                     <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
