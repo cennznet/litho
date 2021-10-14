@@ -31,7 +31,7 @@ const Me: React.FC<{}> = () => {
                     return new Promise(async (resolve) => {
                       const collectionId = token.collectionId.toString();
                       const seriesId = token.seriesId.toString();
-                      let serialNumber = token.serialNumber.toString();
+                      const serialNumber = token.serialNumber.toString();
                       const tokenInfo =
                         await web3Context.api.derive.nft.tokenInfo({
                           collectionId,
@@ -39,17 +39,20 @@ const Me: React.FC<{}> = () => {
                           serialNumber,
                         });
                       const { owner, attributes } = tokenInfo;
-                      const checkIfSingleIssue =
-                        await web3Context.api.query.nft.isSingleIssue(
-                          collectionId,
-                          seriesId
-                        );
+                      let checkIfSingleIssue = false;
+                      if (serialNumber === "0") {
+                        checkIfSingleIssue =
+                          await web3Context.api.query.nft.isSingleIssue(
+                            collectionId,
+                            seriesId
+                          );
+                      }
                       const nft: { [index: string]: any } = {
                         collectionId,
                         seriesId,
                         serialNumber,
                         owner,
-                        attributes: attributes,
+                        attributes,
                         copies: checkIfSingleIssue ? 1 : 2, // copies here is just to show it in format 1/2 2/2 (in case of series nfts)
                         showOne: true,
                         tokenId: [collectionId, seriesId, serialNumber],
