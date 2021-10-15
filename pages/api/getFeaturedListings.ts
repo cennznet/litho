@@ -1,27 +1,18 @@
 import { Api as ApiPromise } from "@cennznet/api";
 import { AuctionListing, FixedPriceListing, Listing } from "@cennznet/types";
-import cache from '../../utils/cache';
 import getMetadata from "../../utils/getMetadata";
 
-const FEATURED_COUNT = 15;
 const FEATURED_COLLECTION_ID = process.env.NEXT_FEATURED_COLLECTION_ID;
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 let api = null;
 
 export default async (req, res) => {
-    if (cache.has('featuredListings')) {
-        res.statusCode = 200;
-        const cachedListings = cache.get('featuredListings');
-        res.json({ featuredListings: cachedListings, total: Object.keys(cachedListings).length, cacheHit: true });
-        return;
-    }
     // Create api instance only if it does not exist
     if (!api) {
         api = await ApiPromise.create({ provider: endpoint });
     }
 
-    const results = await api.query.nft.openCollectionListings.entries(FEATURED_COLLECTION_ID);
-    const featureListings = results.slice(0, Math.min(FEATURED_COUNT, results.length));
+    const featureListings = await api.query.nft.openCollectionListings.entries(FEATURED_COLLECTION_ID);
     const featuredListings = [];
 
     await Promise.all(
@@ -34,7 +25,7 @@ export default async (req, res) => {
                 let listing: FixedPriceListing | AuctionListing = listingRaw.isFixedPrice
                     ? listingRaw.asFixedPrice
                     : listingRaw.asAuction;
-                let [collectionId_, seriesId, serialNumber] = listing.tokens[0];
+                let [, seriesId] = listing.tokens[0];
                 let attributes = (await api.query.nft.seriesAttributes(
                     collectionId,
                     seriesId
@@ -57,7 +48,6 @@ export default async (req, res) => {
                 resolve({});
             })
         }));
-    cache.set('featuredListings', featuredListings);
     res.statusCode = 200;
-    res.json({ featuredListings, total: featuredListings.length, cacheHit: false });
+    res.json({ featuredListings, total: featuredListings.length });
 };
