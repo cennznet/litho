@@ -60,7 +60,8 @@ const FixedPrice: React.FC<Props> = ({
 }) => {
   const [txMessage, setTxMessage] = React.useState<any>();
   const web3Context = React.useContext(Web3Context);
-
+  const [fixedPrice, setFixedPrice] = React.useState("-1");
+  const [convertedRate, setConvertedRate] = React.useState("-1");
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [paymentAsset, setPaymentAsset] = React.useState<SupportedAssetInfo>();
@@ -74,6 +75,22 @@ const FixedPrice: React.FC<Props> = ({
       }
     }
   }, [supportedAssets]);
+
+  React.useEffect(() => {
+    const price = web3Context.cennzUSDPrice;
+    if (
+      fixedPrice !== "-1" &&
+      price &&
+      paymentAsset &&
+      paymentAsset.symbol === "CENNZ"
+    ) {
+      const conversionRateCal = Number(fixedPrice) * price;
+      let conversionRate = conversionRateCal.toFixed(2);
+      setConvertedRate(conversionRate);
+    } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
+      setConvertedRate("-1");
+    }
+  }, [fixedPrice, paymentAsset, web3Context.cennzUSDPrice]);
 
   const tokenId = useMemo(() => {
     if (web3Context.api) {
@@ -177,10 +194,18 @@ const FixedPrice: React.FC<Props> = ({
             name="price"
             type="text"
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
+            defaultValue={fixedPrice !== "-1" ? fixedPrice : ""}
+            onChange={(val) => {
+              setFixedPrice(val.target.value);
+            }}
           />
-          <Text variant="caption" className="w-full text-opacity-60 mb-10">
-            Service fee 0% (waived)
-          </Text>
+          {convertedRate !== "-1" && (
+            <>
+              <Text variant="caption" className="w-full text-opacity-60 mb-10">
+                (~{convertedRate}) USD
+              </Text>
+            </>
+          )}
         </div>
 
         <div

@@ -56,9 +56,10 @@ const TimedAuction: React.FC<Props> = ({
   supportedAssets,
 }) => {
   const [txMessage, setTxMessage] = React.useState<any>();
+  const [reservedPrice, setReservedPrice] = React.useState("-1");
+  const [convertedRate, setConvertedRate] = React.useState("-1");
   const web3Context = React.useContext(Web3Context);
 
-  const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [paymentAsset, setPaymentAsset] = React.useState<SupportedAssetInfo>();
 
@@ -71,6 +72,22 @@ const TimedAuction: React.FC<Props> = ({
       }
     }
   }, [supportedAssets]);
+
+  React.useEffect(() => {
+    const price = web3Context.cennzUSDPrice;
+    if (
+      reservedPrice !== "-1" &&
+      price &&
+      paymentAsset &&
+      paymentAsset.symbol === "CENNZ"
+    ) {
+      const conversionRateCal = Number(reservedPrice) * price;
+      let conversionRate = conversionRateCal.toFixed(2);
+      setConvertedRate(conversionRate);
+    } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
+      setConvertedRate("-1");
+    }
+  }, [reservedPrice, paymentAsset, web3Context.cennzUSDPrice]);
 
   const tokenId = useMemo(() => {
     if (web3Context.api) {
@@ -165,34 +182,21 @@ const TimedAuction: React.FC<Props> = ({
             name="price"
             type="text"
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
+            defaultValue={reservedPrice !== "-1" ? reservedPrice : ""}
+            onChange={(val) => {
+              setReservedPrice(val.target.value);
+            }}
           />
-          <Text variant="caption" className="w-full text-opacity-60 mb-10">
-            Service fee 0% (waived)
-          </Text>
+          {convertedRate !== "-1" && (
+            <>
+              <Text variant="caption" className="w-full text-opacity-60 mb-10">
+                (~{convertedRate}) USD
+              </Text>
+            </>
+          )}
         </div>
 
-        <div
-          className="flex item-center"
-          onClick={() => setShowAdvanced((val) => !val)}
-        >
-          <Text variant="h5">Advanced (optional)</Text>
-          <span className="ml-4 top-1">
-            <Image
-              src="/arrow.svg"
-              height="12"
-              width="12"
-              className={`transform transition-transform ${
-                !showAdvanced ? "rotate-180" : "rotate-0"
-              }`}
-            />
-          </span>
-        </div>
-
-        <div
-          className={`${
-            showAdvanced ? "h-auto py-4" : "h-0"
-          } flex flex-col overflow-hidden`}
-        >
+        <div className={`h-auto py-4 flex flex-col overflow-hidden`}>
           <label>
             <Text variant="h6">Auction end date</Text>
           </label>

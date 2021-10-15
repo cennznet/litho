@@ -160,6 +160,18 @@ const About: React.FC<{
         min={1}
         defaultValue={nft.copies}
       />
+      <label>
+        <Text variant="h6">Royalty in %</Text>
+      </label>
+      <Input
+        name="royalty"
+        type="number"
+        placeholder="5%"
+        className="mb-10"
+        defaultValue={nft.royalty}
+        min={0}
+        max={100}
+      />
 
       <div
         className="flex item-center"
@@ -182,18 +194,6 @@ const About: React.FC<{
           showAdvanced ? "h-auto py-4" : "h-0"
         } flex flex-col overflow-hidden`}
       >
-        <label>
-          <Text variant="h6">Royalty in %</Text>
-        </label>
-        <Input
-          name="royalty"
-          type="number"
-          placeholder="5%"
-          className="mb-10"
-          defaultValue={nft.royalty}
-          min={0}
-          max={100}
-        />
         <label>
           <Text variant="h6">
             Attributes (function as category, theme or descriptive tags to

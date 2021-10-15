@@ -94,10 +94,16 @@ const NFTDetail: React.FC<{}> = () => {
         ).block.header.number.toNumber();
         setCurrentBlock(Number(currentBlock));
 
-        const seriesIssuance = await web3Context.api.query.nft.seriesIssuance(
-          router.query.collectionId,
-          router.query.seriesId
-        );
+        let royalty = (
+          await web3Context.api.query.nft.seriesRoyalties(
+            router.query.collectionId,
+            router.query.seriesId
+          )
+        ).unwrapOrDefault();
+
+        if (royalty) {
+          royalty = royalty.toHuman()?.entitlements;
+        }
         const owner = await web3Context.api.query.nft.tokenOwner(
           [router.query.collectionId, router.query.seriesId],
           router.query.serialNumber
@@ -115,6 +121,7 @@ const NFTDetail: React.FC<{}> = () => {
             router.query.seriesId,
             router.query.serialNumber,
           ],
+          royalty: royalty,
         };
         if (attributes) {
           const metadata = getMetadata(attributes);
@@ -662,6 +669,18 @@ const NFTDetail: React.FC<{}> = () => {
                           </Text>
                         );
                       })}
+                    </div>
+                  )}
+                  {nft.royalty && nft.royalty.length > 0 && (
+                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                      <Text variant="h6">Royalty</Text>
+                      <Text
+                        variant="body1"
+                        className="text-opacity-50 break-all my-2"
+                        key={nft.royalty}
+                      >
+                        {`${nft.royalty[0][1]}`}
+                      </Text>
                     </div>
                   )}
                 </>
