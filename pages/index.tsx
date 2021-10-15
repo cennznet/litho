@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
-import NFT from "../components/nft";
-import NFTRenderer from "../components/nft/NFTRenderer";
 import useSWR from "swr";
+import Web3Context from "../components/Web3Context";
+import FeaturedListing from "../components/FeaturedListing";
 
 const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
 
 const Home: React.FC<{}> = () => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
+  const web3Context = useContext(Web3Context);
   const { data } = useSWR("/api/getFeaturedListings");
 
   return (
@@ -129,22 +130,16 @@ const Home: React.FC<{}> = () => {
           <div className="flex items-center">
             <Text variant="h2">Featured {FEATURED_COLLECTION_TITLE}</Text>
           </div>
-          {
-            <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr">
-              {data.featuredListings.map((nft) => {
-                return (
-                  <Link
-                    href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
-                    key={nft.listingId}
-                  >
-                    <a>
-                      <NFT nft={nft} renderer={NFTRenderer} />
-                    </a>
-                  </Link>
-                );
-              })}
-            </div>
-          }
+          {data.featuredListings.map(([collectionId, listingId]) => {
+            return (
+              <FeaturedListing
+                key={`listing-${listingId}`}
+                api={web3Context.api}
+                collectionId={collectionId}
+                listingId={listingId}
+              ></FeaturedListing>
+            );
+          })}
         </div>
       )}
     </>
