@@ -648,6 +648,7 @@ const NFTDetail: React.FC<{}> = () => {
                         if (!attribute) {
                           return null;
                         }
+                        // older NFTs created with Litho incorrectly set this field as ""owner"
                         if (attribute[0] === "owner") {
                           attribute[0] = "creator";
                         }

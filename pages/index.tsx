@@ -6,14 +6,26 @@ import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
 import NFT from "../components/nft";
 import NFTRenderer from "../components/nft/NFTRenderer";
-import useSWR from "swr";
 
 const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
 
-const Home: React.FC<{}> = () => {
+// This function gets called at build time
+export async function getStaticProps() {
+  // Call an external API endpoint to get posts
+  const res = await fetch(`${process.env.BASE_PATH}/api/getFeaturedListings`);
+  const featuredData = await res.json();
+
+  // By returning { props: featuredData }, the Home component
+  // will receive `featuredData` as a prop at build time
+  return {
+    props: featuredData,
+  };
+}
+
+const Home: React.FC<{ featuredData }> = (featuredData: any) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   const deviceContext = React.useContext(DeviceContext);
-  const { data } = useSWR("/api/getFeaturedListings");
+  const data = featuredData;
 
   return (
     <>
