@@ -25,7 +25,7 @@ export default async (req, res) => {
                 let listing: FixedPriceListing | AuctionListing = listingRaw.isFixedPrice
                     ? listingRaw.asFixedPrice
                     : listingRaw.asAuction;
-                let [, seriesId] = listing.tokens[0];
+                let [, seriesId, serialNumber] = listing.tokens[0];
                 let attributes = (await api.query.nft.seriesAttributes(
                     collectionId,
                     seriesId
@@ -38,11 +38,22 @@ export default async (req, res) => {
                         ? metadataAttributes[1]
                         : metadataAttributes[0];
                 }
+                let checkIfSingleIssue = serialNumber.toString() === "0";
+                if (checkIfSingleIssue) {
+                    checkIfSingleIssue =
+                        await api.query.nft.isSingleIssue(
+                            collectionId,
+                            seriesId
+                        );
+                }
                 featuredListings.push({
                     tokenId: listing.tokens[0],
                     listingId,
                     attributes,
                     metadata,
+                    showOne: true,
+                    copies: checkIfSingleIssue ? 1 : 2,
+
                 });
 
                 resolve({});
