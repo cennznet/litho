@@ -85,7 +85,10 @@ const FixedPrice: React.FC<Props> = ({
       paymentAsset.symbol === "CENNZ"
     ) {
       const conversionRateCal = Number(fixedPrice) * price;
-      let conversionRate = conversionRateCal.toFixed(2);
+      let conversionRate = "-1";
+      if (!isNaN(conversionRateCal)) {
+        conversionRate = conversionRateCal.toFixed(2);
+      }
       setConvertedRate(conversionRate);
     } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
       setConvertedRate("-1");
@@ -199,13 +202,27 @@ const FixedPrice: React.FC<Props> = ({
               setFixedPrice(val.target.value);
             }}
           />
-          {convertedRate !== "-1" && (
+          {convertedRate !== "-1" ? (
             <>
-              <Text variant="caption" className="w-full text-opacity-60 mb-10">
+              <Text variant="caption" className="w-full text-opacity-60 mb-5">
                 (~{convertedRate}) USD
               </Text>
             </>
+          ) : (
+            <>
+              <Text variant="caption" className="w-full text-opacity-60 mb-5">
+                Service fee 0% (waived)
+              </Text>
+            </>
           )}
+
+          <label>
+            <Text variant="h6">Expiration date</Text>
+          </label>
+          <Input name="endDate" type="text" placeholder="DD/MM/YYYY" />
+          <Text variant="caption" className="w-full text-opacity-60 mb-10">
+            By default, this sale will be closed after 3 days.
+          </Text>
         </div>
 
         <div
@@ -239,14 +256,6 @@ const FixedPrice: React.FC<Props> = ({
             placeholder="Enter a specific address that's allowed to buy it"
             className="mb-10"
           />
-
-          <label>
-            <Text variant="h6">Expiration date</Text>
-          </label>
-          <Input name="endDate" type="text" placeholder="DD/MM/YYYY" />
-          <Text variant="caption" className="w-full text-opacity-60 mb-10">
-            By default, this sale will be closed after 3 days.
-          </Text>
         </div>
 
         <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">

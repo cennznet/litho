@@ -82,7 +82,10 @@ const TimedAuction: React.FC<Props> = ({
       paymentAsset.symbol === "CENNZ"
     ) {
       const conversionRateCal = Number(reservedPrice) * price;
-      let conversionRate = conversionRateCal.toFixed(2);
+      let conversionRate = "-1";
+      if (!isNaN(conversionRateCal)) {
+        conversionRate = conversionRateCal.toFixed(2);
+      }
       setConvertedRate(conversionRate);
     } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
       setConvertedRate("-1");
@@ -187,10 +190,16 @@ const TimedAuction: React.FC<Props> = ({
               setReservedPrice(val.target.value);
             }}
           />
-          {convertedRate !== "-1" && (
+          {convertedRate !== "-1" ? (
             <>
-              <Text variant="caption" className="w-full text-opacity-60 mb-10">
+              <Text variant="caption" className="w-full text-opacity-60 mb-5">
                 (~{convertedRate}) USD
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text variant="caption" className="w-full text-opacity-60 mb-5">
+                Service fee 0% (waived)
               </Text>
             </>
           )}
