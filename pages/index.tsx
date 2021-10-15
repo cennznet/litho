@@ -17,6 +17,7 @@ export async function getStaticProps() {
   try {
     featuredData = await res.json();
   } catch (e) {
+    console.log("Err fetching feature listing:", e);
     featuredData = {};
   }
 
