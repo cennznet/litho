@@ -45,7 +45,7 @@ class ConvertImageWebp extends Component {
       const {
         props: { format, quality, imageUrl },
       } = this;
-      if (imageUrl !== this.stateurlConverted) {
+      if (imageUrl !== this.state.urlConverted) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         ctx.drawImage(this.node, 0, 0);
@@ -65,6 +65,7 @@ class ConvertImageWebp extends Component {
 
     return (
       <img
+        alt={""}
         width={width}
         height={height}
         crossOrigin={"anonymous"}
