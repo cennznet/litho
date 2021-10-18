@@ -10,23 +10,23 @@ import NFTRenderer from "../components/nft/NFTRenderer";
 const FEATURED_COLLECTION_TITLE = process.env.NEXT_FEATURED_COLLECTION_TITLE;
 
 // This function gets called at build time
-export async function getStaticProps() {
-  // Call an external API endpoint to get posts
-  const res = await fetch(`${process.env.BASE_PATH}/api/getFeaturedListings`);
-  let featuredData;
-  try {
-    featuredData = await res.json();
-  } catch (e) {
-    console.log("Err fetching feature listing:", e);
-    featuredData = {};
-  }
-
-  // By returning { props: featuredData }, the Home component
-  // will receive `featuredData` as a prop at build time
-  return {
-    props: featuredData,
-  };
-}
+// export async function getStaticProps() {
+//   // Call an external API endpoint to get posts
+//   const res = await fetch(`${process.env.BASE_PATH}/api/getFeaturedListings`);
+//   let featuredData;
+//   try {
+//     featuredData = await res.json();
+//   } catch (e) {
+//     console.log("Err fetching feature listing:", e);
+//     featuredData = {};
+//   }
+//
+//   // By returning { props: featuredData }, the Home component
+//   // will receive `featuredData` as a prop at build time
+//   return {
+//     props: featuredData,
+//   };
+// }
 
 const Home: React.FC<{ featuredData }> = (featuredData: any) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);

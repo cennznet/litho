@@ -20,11 +20,10 @@ class ConvertImageWebp extends Component {
 
   static defaultProps = {
     format: "webp",
-    quality: 0.92,
+    quality: 0.4,
   };
 
   state = {
-    convertedImage: undefined,
     urlConverted: undefined,
   };
 
@@ -43,15 +42,15 @@ class ConvertImageWebp extends Component {
   convert = () => {
     try {
       const {
-        props: { format, quality, imageUrl },
+        props: { format, quality, imageUrl, width, height },
       } = this;
-      if (imageUrl !== this.state.urlConverted) {
+      const cid = imageUrl.split("ipfs/")[1]; // only for image from ipfs... not for image user uploads
+      if (imageUrl !== this.state.urlConverted && cid) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        ctx.drawImage(this.node, 0, 0);
+        ctx.drawImage(this.node, 0, 0, width, height);
         const convertedImage = canvas.toDataURL(`image/${format}`, quality);
         this.setState({ urlConverted: imageUrl });
-        this.setState({ convertedImage: convertedImage });
       }
     } catch (e) {
       console.log("err:", e);
@@ -72,8 +71,8 @@ class ConvertImageWebp extends Component {
         className={className}
         ref={this.setRef}
         src={imageUrl}
-        onload={onLoad}
-        onerror={onError}
+        onLoad={onLoad}
+        onError={onError}
       />
     );
   }
