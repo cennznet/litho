@@ -2,6 +2,7 @@ import React from "react";
 
 import getFileExtension from "../../utils/getFileExtension";
 import isImageOrVideo from "../../utils/isImageOrVideo";
+import ConvertImage from "../ConvertImageWebp";
 
 interface Props {
   nft: any;
@@ -72,10 +73,10 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
               className="object-contain object-center h-72 w-72 bg-litho-black bg-no-repeat bg-center"
             />
           ) : (
-            <img
-              src={imageUrl}
-              height="300"
-              width="300"
+            <ConvertImage
+              imageUrl={imageUrl}
+              height={300}
+              width={300}
               className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
               onLoad={(event) => {
                 if (event.target) {
@@ -88,6 +89,22 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
                 (event.target as HTMLImageElement).src = "/litho-default.jpg";
               }}
             />
+            // <img
+            //   src={imageUrl}
+            //   height="300"
+            //   width="300"
+            //   className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
+            //   onLoad={(event)  => {
+            //     if (event.target) {
+            //       (event.target as HTMLImageElement).classList.remove(
+            //         "bg-image-loading"
+            //       );
+            //     }
+            //   }}
+            //   onError={(event) => {
+            //     (event.target as HTMLImageElement).src = "/litho-default.jpg";
+            //   }}
+            // />
           )}
 
           {error && (
