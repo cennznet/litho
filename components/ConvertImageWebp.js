@@ -77,19 +77,21 @@ class ConvertImageWebp extends Component {
     } = this;
 
     return (
-      <img
-        alt={""}
-        crossOrigin={"anonymous"}
-        className={className}
-        ref={this.setRef}
-        src={
-          imageUrl === this.state.image.url
-            ? `data:image/webp;base64,${this.state.image.data}`
-            : imageUrl
-        }
-        onLoad={onLoad}
-        onError={onError}
-      />
+      <a href={imageUrl}>
+        <img
+          alt={""}
+          crossOrigin={"anonymous"}
+          className={className}
+          ref={this.setRef}
+          src={
+            imageUrl === this.state.image.url
+              ? `data:image/webp;base64,${this.state.image.data}`
+              : imageUrl
+          }
+          onLoad={onLoad}
+          onError={onError}
+        />
+      </a>
     );
   }
 }

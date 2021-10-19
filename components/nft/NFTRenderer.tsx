@@ -87,22 +87,6 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
                 (event.target as HTMLImageElement).src = "/litho-default.jpg";
               }}
             />
-            // <img
-            //   src={imageUrl}
-            //   height="300"
-            //   width="300"
-            //   className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
-            //   onLoad={(event)  => {
-            //     if (event.target) {
-            //       (event.target as HTMLImageElement).classList.remove(
-            //         "bg-image-loading"
-            //       );
-            //     }
-            //   }}
-            //   onError={(event) => {
-            //     (event.target as HTMLImageElement).src = "/litho-default.jpg";
-            //   }}
-            // />
           )}
 
           {error && (
