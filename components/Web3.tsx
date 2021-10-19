@@ -20,40 +20,43 @@ const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
   const genesisHashExpected = api.genesisHash.toString();
-  const xmlHttp = new XMLHttpRequest();
-  // One source of truth to get the types
-  xmlHttp.open(
-    "GET",
-    "https://raw.githubusercontent.com/cennznet/api.js/master/extension-releases/runtimeModuleTypes.json",
-    false
+  const response = await axios.get(
+    "https://raw.githubusercontent.com/cennznet/api.js/master/extension-releases/runtimeModuleTypes.json"
   );
-  xmlHttp.send(null);
-  let response = xmlHttp.responseText;
-  const additionalTypes = JSON.parse(response);
-  const typesForCurrentChain = additionalTypes[genesisHashExpected];
-  let specTypes, userExtensions;
-  if (typesForCurrentChain) {
-    specTypes = typesForCurrentChain.types;
-    userExtensions = typesForCurrentChain.userExtensions;
+  const { data } = response;
+  const additionalTypes = data;
+  if (additionalTypes) {
+    let typesForCurrentChain = additionalTypes[genesisHashExpected];
+    // if not able to find types, take the first element (in case of local node the genesis Hash keep changing)
+    typesForCurrentChain =
+      typesForCurrentChain === undefined
+        ? Object.values(additionalTypes)[0]
+        : typesForCurrentChain;
+    let specTypes, userExtensions;
+    if (typesForCurrentChain) {
+      specTypes = typesForCurrentChain.types;
+      userExtensions = typesForCurrentChain.userExtensions;
+    }
+    const DEFAULT_SS58 = api.registry.createType("u32", addressDefaults.prefix);
+    const DEFAULT_DECIMALS = api.registry.createType("u32", 4);
+    const metadata = {
+      chain: systemChain,
+      color: "#191a2e",
+      genesisHash: api.genesisHash.toHex(),
+      icon: "CENNZnet",
+      metaCalls: Buffer.from(api.runtimeMetadata.asCallsOnly.toU8a()).toString(
+        "base64"
+      ),
+      specVersion: api.runtimeVersion.specVersion.toNumber(),
+      ss58Format: DEFAULT_SS58.toNumber(),
+      tokenDecimals: DEFAULT_DECIMALS.toNumber(),
+      tokenSymbol: "CENNZ",
+      types: specTypes,
+      userExtensions: userExtensions,
+    };
+    return metadata;
   }
-  const DEFAULT_SS58 = api.registry.createType("u32", addressDefaults.prefix);
-  const DEFAULT_DECIMALS = api.registry.createType("u32", 4);
-  const metadata = {
-    chain: systemChain,
-    color: "#191a2e",
-    genesisHash: api.genesisHash.toHex(),
-    icon: "CENNZnet",
-    metaCalls: Buffer.from(api.runtimeMetadata.asCallsOnly.toU8a()).toString(
-      "base64"
-    ),
-    specVersion: api.runtimeVersion.specVersion.toNumber(),
-    ss58Format: DEFAULT_SS58.toNumber(),
-    tokenDecimals: DEFAULT_DECIMALS.toNumber(),
-    tokenSymbol: "CENNZ",
-    types: specTypes,
-    userExtensions: userExtensions,
-  };
-  return metadata;
+  return null;
 }
 
 const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
@@ -123,8 +126,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       if (!checkIfMetaUpdated && api) {
         try {
           const metadataDef = await extractMeta(api);
-          await metadata.provide(metadataDef as any);
-          localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
+          if (metadataDef) {
+            await metadata.provide(metadataDef as any);
+            localStorage.setItem(`EXTENSION_META_UPDATED`, "true");
+          }
         } catch (e) {
           // any issue with metadata update should not ask to install extension
           console.log(`update metadata rejected ${e}`);
