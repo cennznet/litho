@@ -24,7 +24,7 @@ class ConvertImageWebp extends Component {
   };
 
   state = {
-    urlConverted: undefined,
+    image: {},
   };
 
   componentDidMount() {
@@ -44,13 +44,33 @@ class ConvertImageWebp extends Component {
       const {
         props: { format, quality, imageUrl, width, height },
       } = this;
-      const cid = imageUrl.split("ipfs/")[1]; // only for image from ipfs... not for image user uploads
-      if (imageUrl !== this.state.urlConverted && cid) {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(this.node, 0, 0, width, height);
-        const convertedImage = canvas.toDataURL(`image/${format}`, quality);
-        this.setState({ urlConverted: imageUrl });
+      const dataImage = localStorage.getItem(imageUrl);
+      if (dataImage) {
+        this.setState({ image: { data: dataImage, url: imageUrl } });
+      } else {
+        const cid = imageUrl.split("ipfs/")[1]; // only for image from ipfs... not for image user uploads
+        if (imageUrl !== this.state.image.url && cid) {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(
+            this.node,
+            0,
+            0,
+            this.node.naturalWidth,
+            this.node.naturalHeight,
+            0,
+            0,
+            width,
+            height
+          );
+          const convertedImage = canvas.toDataURL(`image/${format}`, quality);
+          const imgData = convertedImage.replace(
+            /^data:image\/(png|jpg|webp);base64,/,
+            ""
+          );
+          this.setState({ image: { data: imgData, url: imageUrl } });
+          localStorage.setItem(imageUrl, imgData);
+        }
       }
     } catch (e) {
       console.log("err:", e);
@@ -70,7 +90,11 @@ class ConvertImageWebp extends Component {
         crossOrigin={"anonymous"}
         className={className}
         ref={this.setRef}
-        src={imageUrl}
+        src={
+          imageUrl === this.state.image.url
+            ? `data:image/webp;base64,${this.state.image.data}`
+            : imageUrl
+        }
         onLoad={onLoad}
         onError={onError}
       />
