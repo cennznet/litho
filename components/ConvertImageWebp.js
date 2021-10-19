@@ -14,13 +14,11 @@ class ConvertImageWebp extends Component {
     onError: PropTypes.func,
     format: PropTypes.oneOf(["webp", "jpeg", "png"]),
     quality: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
   };
 
   static defaultProps = {
     format: "webp",
-    quality: 0.4,
+    quality: 0.92,
   };
 
   state = {
@@ -32,7 +30,7 @@ class ConvertImageWebp extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.imageUrl !== this.state.urlConverted;
+    return nextProps.imageUrl !== this.state.image.url;
   }
 
   setRef = (node) => {
@@ -42,7 +40,7 @@ class ConvertImageWebp extends Component {
   convert = () => {
     try {
       const {
-        props: { format, quality, imageUrl, width, height },
+        props: { format, quality, imageUrl },
       } = this;
       const dataImage = localStorage.getItem(imageUrl);
       if (dataImage) {
@@ -56,12 +54,10 @@ class ConvertImageWebp extends Component {
             this.node,
             0,
             0,
-            this.node.naturalWidth,
-            this.node.naturalHeight,
+            this.node.width,
+            this.node.height,
             0,
-            0,
-            width,
-            height
+            0
           );
           const convertedImage = canvas.toDataURL(`image/${format}`, quality);
           const imgData = convertedImage.replace(
@@ -72,21 +68,17 @@ class ConvertImageWebp extends Component {
           localStorage.setItem(imageUrl, imgData);
         }
       }
-    } catch (e) {
-      console.log("err:", e);
-    }
+    } catch (e) {}
   };
 
   render() {
     const {
-      props: { imageUrl, className, width, height, onLoad, onError },
+      props: { imageUrl, className, onLoad, onError },
     } = this;
 
     return (
       <img
         alt={""}
-        width={width}
-        height={height}
         crossOrigin={"anonymous"}
         className={className}
         ref={this.setRef}
