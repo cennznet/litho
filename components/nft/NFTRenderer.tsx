@@ -2,7 +2,7 @@ import React from "react";
 
 import getFileExtension from "../../utils/getFileExtension";
 import isImageOrVideo from "../../utils/isImageOrVideo";
-import ConvertImage from "../ConvertImageWebp";
+import ConvertImage from "../ConvertImage";
 
 interface Props {
   nft: any;

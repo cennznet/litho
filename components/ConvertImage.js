@@ -7,7 +7,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-class ConvertImageWebp extends Component {
+class ConvertImage extends Component {
   static propTypes = {
     imageUrl: PropTypes.string.isRequired,
     onLoad: PropTypes.func,
@@ -116,4 +116,4 @@ class ConvertImageWebp extends Component {
   }
 }
 
-export default ConvertImageWebp;
+export default ConvertImage;
