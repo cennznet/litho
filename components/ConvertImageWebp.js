@@ -13,17 +13,16 @@ class ConvertImageWebp extends Component {
     onLoad: PropTypes.func,
     onError: PropTypes.func,
     format: PropTypes.oneOf(["webp", "jpeg", "png"]),
-    quality: PropTypes.number,
   };
 
   static defaultProps = {
-    format: "webp",
-    quality: 0.92,
+    format: "png",
   };
 
   state = {
     image: {},
   };
+  highResPixel = 10000000;
 
   componentDidMount() {
     this.node.addEventListener("load", this.convert);
@@ -40,7 +39,7 @@ class ConvertImageWebp extends Component {
   convert = () => {
     try {
       const {
-        props: { format, quality, imageUrl },
+        props: { format, imageUrl },
       } = this;
       const dataImage = localStorage.getItem(imageUrl);
       if (dataImage) {
@@ -50,16 +49,35 @@ class ConvertImageWebp extends Component {
         if (imageUrl !== this.state.image.url && cid) {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
+          canvas.width = 500;
+          canvas.height = 500;
+          const imgWidth = this.node.naturalWidth;
+          const imgHeight = this.node.naturalHeight;
+
+          const resolution = imgHeight * imgWidth;
+          if (resolution > this.highResPixel) {
+            canvas.width = 1000;
+            canvas.height = 1000;
+          }
+
+          const hRatio = canvas.width / imgWidth;
+          const vRatio = canvas.height / imgHeight;
+          const ratio = Math.min(hRatio, vRatio);
+          const centerShift_x = (canvas.width - imgWidth * ratio) / 2;
+          const centerShift_y = (canvas.height - imgHeight * ratio) / 2;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(
             this.node,
             0,
             0,
-            this.node.width,
-            this.node.height,
-            0,
-            0
+            imgWidth,
+            imgHeight,
+            centerShift_x,
+            centerShift_y,
+            imgWidth * ratio,
+            imgHeight * ratio
           );
-          const convertedImage = canvas.toDataURL(`image/${format}`, quality);
+          const convertedImage = canvas.toDataURL(`image/${format}`);
           const imgData = convertedImage.replace(
             /^data:image\/(png|jpg|webp);base64,/,
             ""
@@ -77,21 +95,23 @@ class ConvertImageWebp extends Component {
     } = this;
 
     return (
-      <a href={imageUrl}>
-        <img
-          alt={""}
-          crossOrigin={"anonymous"}
-          className={className}
-          ref={this.setRef}
-          src={
-            imageUrl === this.state.image.url
-              ? `data:image/webp;base64,${this.state.image.data}`
-              : imageUrl
-          }
-          onLoad={onLoad}
-          onError={onError}
-        />
-      </a>
+      <div>
+        <a href={imageUrl}>
+          <img
+            alt={""}
+            crossOrigin={"anonymous"}
+            className={className}
+            ref={this.setRef}
+            src={
+              imageUrl === this.state.image.url
+                ? `data:image/png;base64,${this.state.image.data}`
+                : imageUrl
+            }
+            onLoad={onLoad}
+            onError={onError}
+          />
+        </a>
+      </div>
     );
   }
 }
