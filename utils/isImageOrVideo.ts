@@ -15,10 +15,10 @@ const videoExtensions = [
 ];
 
 const isImageOrVideo = (fileExtension) => {
-  if(imageExtensions.includes(fileExtension)) {
+  if(imageExtensions.includes(fileExtension.toLowerCase())) {
     return 'image'
   }
-  if(videoExtensions.includes(fileExtension)) {
+  if(videoExtensions.includes(fileExtension.toLowerCase())) {
     return 'video';
 
   }
