@@ -4,7 +4,7 @@ import {
   web3AccountsSubscribe,
   web3FromSource,
   web3Accounts,
-} from "@polkadot/extension-dapp";
+} from "@cennznet/extension-dapp";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
 import { defaults as addressDefaults } from "@polkadot/util-crypto/address/defaults";
@@ -179,7 +179,6 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const getSelectedAccount = async () => {
       await web3Enable("Litho");
       const accounts = await web3Accounts();
-
       if (accounts.length === 0) {
         setWeb3Account(null);
         setShowZeroAccountMessage(true);
