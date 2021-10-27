@@ -76,7 +76,8 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
             />
           ) : (
             <img
-              src={imageUrl}
+              // TODO: use imagekit React lib
+              src={imageUrl + "?tr=w-300,h-300"}
               height="300"
               width="300"
               className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
