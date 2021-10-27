@@ -3,11 +3,12 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import Link from "next/link";
 
-import NFT from "../components/nft";
-import Loader from "../components/Loader";
-import Text from "../components/Text";
-import NFTRenderer from "../components/nft/NFTRenderer";
+import NFT from "../../components/nft";
+import Loader from "../../components/Loader";
+import Text from "../../components/Text";
+import NFTRenderer from "../../components/nft/NFTRenderer";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -85,12 +86,14 @@ const MarketPlace: React.FC<{}> = () => {
   const { ref, inView, entry } = useInView({
     threshold: 1,
   });
+  const router = useRouter();
+  const collectionId = router.query.collectionId;
   const [sort, setSort] = React.useState("newest-first");
-  const { data } = useSWR("/api/getAllCollections");
+  const { data } = useSWR(`/api/NftInCollection/${collectionId}`);
 
   React.useEffect(() => {
-    if (data && data.nftsCollection && data.nftsCollection.length > 0) {
-      const sortedNFTs = data.nftsCollection.sort((n1, n2) => {
+    if (data && data.nftsInCollection && data.nftsInCollection.length > 0) {
+      const sortedNFTs = data.nftsInCollection.sort((n1, n2) => {
         if (n1.close < n2.close) {
           return sort === "oldest-first" ? 1 : -1;
         } else if (n1.close > n2.close) {
@@ -128,7 +131,7 @@ const MarketPlace: React.FC<{}> = () => {
     <div>
       <div className="flex lg:items-center justify-between mb-20 flex-col lg:flex-row">
         <Text variant="h3" className="mb-4 lg:mb-0">
-          Marketplace
+          Listed Tokens
         </Text>
         <Sort
           onChange={(val) => {
@@ -145,7 +148,7 @@ const MarketPlace: React.FC<{}> = () => {
 
           return (
             <Link
-              href={`/marketplaceCollection/${nft.tokenId[0]}`}
+              href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
               key={nft.listingId}
             >
               <a>
