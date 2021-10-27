@@ -70,8 +70,8 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
             <img
               // TODO: use imagekit React lib
               src={imageUrl + "?tr=w-600,h-600"}
-              height="300px"
-              width="300px"
+              height="100%"
+              width="100%"
               className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
               onLoad={(event) => {
                 if (event.target) {
