@@ -66,10 +66,8 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           {isImageOrVideo(fileExtension) === "video" ? (
             <video
               src={imageUrl}
-              height="300"
               controls
               autoPlay
-              width="300"
               loop
               controlsList="nodownload"
               className="object-contain object-center h-72 w-72 bg-litho-black bg-no-repeat bg-center"
@@ -77,9 +75,9 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           ) : (
             <img
               // TODO: use imagekit React lib
-              src={imageUrl + "?tr=w-300,h-300"}
-              height="300"
-              width="300"
+              src={imageUrl + "?tr=w-600,h-600"}
+              height="300px"
+              width="300px"
               className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
               onLoad={(event) => {
                 if (event.target) {
