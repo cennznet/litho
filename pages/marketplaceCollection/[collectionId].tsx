@@ -3,13 +3,14 @@ import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import Link from "next/link";
 
-import NFT from "../components/nft";
-import Loader from "../components/Loader";
-import Text from "../components/Text";
-import NFTRenderer from "../components/nft/NFTRenderer";
-import Web3Context from "../components/Web3Context";
+import NFT from "../../components/nft";
+import Loader from "../../components/Loader";
+import Text from "../../components/Text";
+import NFTRenderer from "../../components/nft/NFTRenderer";
+import { useRouter } from "next/router";
 import { Listing, TokenId } from "@cennznet/types";
-import getMetadata from "../utils/getMetadata";
+import getMetadata from "../../utils/getMetadata";
+import Web3Context from "../../components/Web3Context";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -81,51 +82,37 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   );
 };
 
-const MarketPlace: React.FC<{}> = () => {
+const MarketPlaceCollection: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
   const [pageEnd, setPageEnd] = React.useState(10);
-  const [nextCollectionId, setNextCollectionId] = React.useState(null);
   const { ref, inView, entry } = useInView({
     threshold: 1,
   });
+  const router = useRouter();
+  const collectionId = router.query.collectionId;
   const [sort, setSort] = React.useState("newest-first");
   const web3Context = React.useContext(Web3Context);
 
   React.useEffect(() => {
     if (!web3Context.api) return;
     (async () => {
-      const nextCollectionId_ =
-        await web3Context.api.query.nft.nextCollectionId();
-      if (nextCollectionId_ !== nextCollectionId) {
-        setNextCollectionId(nextCollectionId_);
-      }
-    })();
-  }, [web3Context.api]);
-
-  React.useEffect(() => {
-    (async () => {
-      if (nextCollectionId) {
-        const collections = nextCollectionId.toNumber() - 1;
-        const collectionIds = Array.from(Array(collections).keys());
-        const nfts = [];
-        await Promise.all(
-          collectionIds.map(async (collectionId) => {
-            const openListingKeys =
-              await web3Context.api.query.nft.openCollectionListings.keys(
-                collectionId
+      const nfts = [];
+      if (collectionId) {
+        const openListingKeys =
+          await web3Context.api.query.nft.openCollectionListings.keys(
+            collectionId
+          );
+        // check if listing exist
+        if (openListingKeys.length !== 0) {
+          const listingIDs = openListingKeys.map((storageKey) => {
+            return storageKey.args.map((k) => k.toHuman())[1];
+          });
+          await Promise.all(
+            listingIDs.map(async (listingId) => {
+              const listingInfo = await web3Context.api.query.nft.listings(
+                listingId
               );
-            // check if listing exist
-            if (openListingKeys.length !== 0) {
-              const listingIDs = openListingKeys.map((storageKey) => {
-                return storageKey.args.map((k) => k.toHuman())[1];
-              });
-              // Get info for first listing
-              const firstListingInfo = await web3Context.api.query.nft.listings(
-                listingIDs[0]
-              );
-              const collectionOwner =
-                await web3Context.api.query.nft.collectionOwner(collectionId);
-              const listing: Listing = firstListingInfo.unwrapOrDefault();
+              const listing: Listing = listingInfo.unwrapOrDefault();
               const tokenId: TokenId = listing.isAuction
                 ? listing.asAuction.toJSON().tokens[0]
                 : listing.asFixedPrice.toJSON().tokens[0];
@@ -133,13 +120,7 @@ const MarketPlace: React.FC<{}> = () => {
                 tokenId
               );
               let attributes = tokenInfo.attributes;
-              let nft = {
-                ...tokenInfo,
-                tokenId,
-                ...attributes,
-                owner: collectionOwner.toString(),
-                source: "marketplace",
-              };
+              let nft = { ...tokenInfo, tokenId, ...attributes, showOne: true };
               if (attributes) {
                 let metadata = getMetadata(tokenInfo.attributes);
                 if (metadata) {
@@ -152,13 +133,28 @@ const MarketPlace: React.FC<{}> = () => {
                 nft = { ...nft, metadata };
               }
               nfts.push(nft);
-            }
-          })
-        );
-        setNFTs(nfts);
+            })
+          );
+          setNFTs(nfts);
+        }
       }
     })();
-  }, [nextCollectionId]);
+  }, [web3Context.api]);
+
+  // React.useEffect(() => {
+  //   if (data && data.nftsInCollection && data.nftsInCollection.length > 0) {
+  //     const sortedNFTs = data.nftsInCollection.sort((n1, n2) => {
+  //       if (n1.close < n2.close) {
+  //         return sort === "oldest-first" ? 1 : -1;
+  //       } else if (n1.close > n2.close) {
+  //         return sort === "oldest-first" ? -1 : 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     });
+  //     setNFTs(sortedNFTs);
+  //   }
+  // }, [data]);
 
   React.useEffect(() => {
     if (entry && entry.isIntersecting && nfts.length > 0) {
@@ -185,7 +181,7 @@ const MarketPlace: React.FC<{}> = () => {
     <div>
       <div className="flex lg:items-center justify-between mb-20 flex-col lg:flex-row">
         <Text variant="h3" className="mb-4 lg:mb-0">
-          Marketplace Collections
+          Listings
         </Text>
         {/*<Sort*/}
         {/*  onChange={(val) => {*/}
@@ -202,7 +198,7 @@ const MarketPlace: React.FC<{}> = () => {
 
           return (
             <Link
-              href={`/marketplaceCollection/${nft.tokenId[0]}`}
+              href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
               key={nft.listingId}
             >
               <a>
@@ -217,4 +213,4 @@ const MarketPlace: React.FC<{}> = () => {
   );
 };
 
-export default MarketPlace;
+export default MarketPlaceCollection;

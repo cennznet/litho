@@ -38,7 +38,7 @@ const NFTDataWrapper: React.FC<{
       if (cache.has(metadataUrl)) {
         const metadata = cache.get(metadataUrl);
         // if found in cache, update the copies
-        if (nftData.showOne) {
+        if (nftData.showOne && nftData.source !== "marketplace") {
           if (
             metadata.originalCopies &&
             metadata.originalCopies.toString() !== "1"
@@ -65,6 +65,7 @@ const NFTDataWrapper: React.FC<{
                 name:
                   nftData.showOne &&
                   data.properties &&
+                  nftData.source !== "marketplace" &&
                   data.properties.quantity &&
                   data.properties.quantity.toString() !== "1"
                     ? `${data.name} - [${showSerialNo}/${
@@ -81,7 +82,9 @@ const NFTDataWrapper: React.FC<{
                 copies: nftData.showOne
                   ? 1
                   : (data.properties && data.properties.quantity) || 1,
-                owner: data.properties && data.properties.owner,
+                owner:
+                  data.properties &&
+                  (data.properties.owner || data.properties.creator),
                 file:
                   data.properties && data.properties.file
                     ? gatewayTools.convertToDesiredGateway(
