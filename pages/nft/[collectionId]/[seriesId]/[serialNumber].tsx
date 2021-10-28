@@ -487,7 +487,7 @@ const NFTDetail: React.FC<{}> = () => {
                 className="border-b border-litho-black p-10 flex items-center justify-center"
                 style={{ minHeight: "80%", maxHeight: "95%" }}
               >
-                <NFT nft={nft} renderer={NFTRenderer} thumbnail={false} />
+                <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
               </div>
               <div className="p-5 flex items-center justify-around">
                 {nft.imageLink && (

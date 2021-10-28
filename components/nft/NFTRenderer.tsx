@@ -5,11 +5,11 @@ import isImageOrVideo from "../../utils/isImageOrVideo";
 
 interface Props {
   nft: any;
-  thumbnail?: boolean;
+  thumbnail: boolean;
   error?: string;
 }
 
-const NFTRenderer: React.FC<Props> = ({ nft, thumbnail = true, error }) => {
+const NFTRenderer: React.FC<Props> = ({ nft, thumbnail, error }) => {
   const image = nft.coverImage || nft.image;
   const [imageUrl, setImageUrl] = React.useState(null);
   const [fileExtension, setFileExtension] = React.useState(
