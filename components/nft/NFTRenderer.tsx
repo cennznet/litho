@@ -58,7 +58,10 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
       className="bg-litho-nft relative flex justify-center"
       // style={{ height: "400px", width: "300px" }}
     >
-      <div className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black">
+      <div
+        className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
+        style={{ minHeight: "400px" }}
+      >
         <div className="relative flex items-center justify-center">
           {isImageOrVideo(fileExtension) === "video" ? (
             <video
@@ -103,12 +106,14 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           >
             {nft.title || nft.name || ""}
           </span>
-          <span
-            className="text-sm font-semibold"
-            style={{ lineHeight: "18px" }}
-          >
-            x{nft.copies || 1}
-          </span>
+          {nft.source !== "marketplace" && (
+            <span
+              className="text-sm font-semibold"
+              style={{ lineHeight: "18px" }}
+            >
+              x{nft.copies || 1}
+            </span>
+          )}
         </div>
         {nft.owner && (
           <div
@@ -119,7 +124,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           </div>
         )}
       </div>
-      {nft.copies && nft.copies > 1 && (
+      {((nft.copies && nft.copies > 1) || nft.source === "marketplace") && (
         <>
           <div className="absolute w-10/12 h-4 -bottom-4 border border-litho-black bg-litho-nft" />
           <div className="absolute w-11/12 h-4 -bottom-2 border border-litho-black bg-litho-nft" />

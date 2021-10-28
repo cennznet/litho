@@ -7,8 +7,10 @@ import NFT from "../../components/nft";
 import Loader from "../../components/Loader";
 import Text from "../../components/Text";
 import NFTRenderer from "../../components/nft/NFTRenderer";
-import useSWR from "swr";
 import { useRouter } from "next/router";
+import { Listing, TokenId } from "@cennznet/types";
+import getMetadata from "../../utils/getMetadata";
+import Web3Context from "../../components/Web3Context";
 
 const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   const [sortSelected, setSortSelected] = React.useState(0);
@@ -80,7 +82,7 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
   );
 };
 
-const MarketPlace: React.FC<{}> = () => {
+const MarketPlaceCollection: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
   const [pageEnd, setPageEnd] = React.useState(10);
   const { ref, inView, entry } = useInView({
@@ -89,22 +91,70 @@ const MarketPlace: React.FC<{}> = () => {
   const router = useRouter();
   const collectionId = router.query.collectionId;
   const [sort, setSort] = React.useState("newest-first");
-  const { data } = useSWR(`/api/NftInCollection/${collectionId}`);
+  const web3Context = React.useContext(Web3Context);
 
   React.useEffect(() => {
-    if (data && data.nftsInCollection && data.nftsInCollection.length > 0) {
-      const sortedNFTs = data.nftsInCollection.sort((n1, n2) => {
-        if (n1.close < n2.close) {
-          return sort === "oldest-first" ? 1 : -1;
-        } else if (n1.close > n2.close) {
-          return sort === "oldest-first" ? -1 : 1;
-        } else {
-          return 0;
+    if (!web3Context.api) return;
+    (async () => {
+      const nfts = [];
+      if (collectionId) {
+        const openListingKeys =
+          await web3Context.api.query.nft.openCollectionListings.keys(
+            collectionId
+          );
+        // check if listing exist
+        if (openListingKeys.length !== 0) {
+          const listingIDs = openListingKeys.map((storageKey) => {
+            return storageKey.args.map((k) => k.toHuman())[1];
+          });
+          await Promise.all(
+            listingIDs.map(async (listingId) => {
+              const listingInfo = await web3Context.api.query.nft.listings(
+                listingId
+              );
+              const listing: Listing = listingInfo.unwrapOrDefault();
+              const tokenId: TokenId = listing.isAuction
+                ? listing.asAuction.toJSON().tokens[0]
+                : listing.asFixedPrice.toJSON().tokens[0];
+              const tokenInfo = await web3Context.api.derive.nft.tokenInfo(
+                tokenId
+              );
+              let attributes = tokenInfo.attributes;
+              let nft = { ...tokenInfo, tokenId, ...attributes, showOne: true };
+              if (attributes) {
+                let metadata = getMetadata(tokenInfo.attributes);
+                if (metadata) {
+                  const metadataAttributes = metadata.split(" ");
+                  const metaAsObject = metadataAttributes.length > 1;
+                  metadata = metaAsObject
+                    ? metadataAttributes[1]
+                    : metadataAttributes[0];
+                }
+                nft = { ...nft, metadata };
+              }
+              nfts.push(nft);
+            })
+          );
+          setNFTs(nfts);
         }
-      });
-      setNFTs(sortedNFTs);
-    }
-  }, [data]);
+      }
+    })();
+  }, [web3Context.api]);
+
+  // React.useEffect(() => {
+  //   if (data && data.nftsInCollection && data.nftsInCollection.length > 0) {
+  //     const sortedNFTs = data.nftsInCollection.sort((n1, n2) => {
+  //       if (n1.close < n2.close) {
+  //         return sort === "oldest-first" ? 1 : -1;
+  //       } else if (n1.close > n2.close) {
+  //         return sort === "oldest-first" ? -1 : 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     });
+  //     setNFTs(sortedNFTs);
+  //   }
+  // }, [data]);
 
   React.useEffect(() => {
     if (entry && entry.isIntersecting && nfts.length > 0) {
@@ -139,7 +189,7 @@ const MarketPlace: React.FC<{}> = () => {
           }}
         />
       </div>
-      <Loader loading={data == undefined} />
+      <Loader loading={nfts.length == 0} />
       <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4">
         {nfts.map((nft, index) => {
           if (index > pageEnd) {
@@ -163,4 +213,4 @@ const MarketPlace: React.FC<{}> = () => {
   );
 };
 
-export default MarketPlace;
+export default MarketPlaceCollection;
