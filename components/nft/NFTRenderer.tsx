@@ -5,10 +5,18 @@ import isImageOrVideo from "../../utils/isImageOrVideo";
 
 interface Props {
   nft: any;
+  thumbnail: boolean;
+  // preview should link to a browser local image
+  preview?: boolean;
   error?: string;
 }
 
-const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
+const NFTRenderer: React.FC<Props> = ({
+  nft,
+  thumbnail,
+  preview = false,
+  error,
+}) => {
   const image = nft.coverImage || nft.image;
   const [imageUrl, setImageUrl] = React.useState(null);
   const [fileExtension, setFileExtension] = React.useState(
@@ -18,6 +26,12 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
       ? nft.extension
       : null
   );
+
+  // tailwind css quirk requires we embed the entire class string
+  const imgClass =
+    thumbnail === true
+      ? "object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
+      : "object-contain object-center h-76 w-76 bg-image-loading bg-no-repeat bg-center m-auto";
 
   React.useEffect(() => {
     if (!error && !fileExtension) {
@@ -54,10 +68,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
   }
 
   return (
-    <div
-      className="bg-litho-nft relative flex justify-center"
-      // style={{ height: "400px", width: "300px" }}
-    >
+    <div className="bg-litho-nft relative flex justify-center">
       <div
         className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
         style={{ minHeight: "400px" }}
@@ -66,20 +77,16 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           {isImageOrVideo(fileExtension) === "video" ? (
             <video
               src={imageUrl}
-              height="300"
               controls
               autoPlay
-              width="300"
               loop
               controlsList="nodownload"
-              className="object-contain object-center h-72 w-72 bg-litho-black bg-no-repeat bg-center"
+              className={imgClass}
             />
           ) : (
             <img
-              src={imageUrl}
-              height="300"
-              width="300"
-              className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
+              src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
+              className={imgClass}
               onLoad={(event) => {
                 if (event.target) {
                   (event.target as HTMLImageElement).classList.remove(

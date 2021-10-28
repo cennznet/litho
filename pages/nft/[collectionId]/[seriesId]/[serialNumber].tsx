@@ -484,14 +484,19 @@ const NFTDetail: React.FC<{}> = () => {
           <div className="flex">
             <div className="w-2/3 border-r border-litho-black">
               <div
-                className="border-b border-litho-black flex items-center justify-center"
-                style={{ minHeight: "500px", maxHeight: "499px" }}
+                className="border-b border-litho-black p-10 flex items-center justify-center"
+                style={{ minHeight: "80%", maxHeight: "95%" }}
               >
-                <NFT nft={nft} renderer={NFTRenderer} />
+                <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
               </div>
               <div className="p-5 flex items-center justify-around">
                 {nft.imageLink && (
-                  <Link href={nft.imageLink}>
+                  <Link
+                    href={nft.imageLink.replace(
+                      process.env.NEXT_PUBLIC_IMAGE_CDN,
+                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                    )}
+                  >
                     <a
                       className="text-litho-blue font-medium text-lg underline"
                       target="_blank"
@@ -512,7 +517,7 @@ const NFTDetail: React.FC<{}> = () => {
                 )}
               </div>
             </div>
-            <div className="w-1/3">
+            <div className="w-2/5">
               {!isPlaceABid ? (
                 <>
                   {listingInfo &&
