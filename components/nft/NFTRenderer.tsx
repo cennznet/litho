@@ -5,10 +5,11 @@ import isImageOrVideo from "../../utils/isImageOrVideo";
 
 interface Props {
   nft: any;
+  thumbnail?: boolean;
   error?: string;
 }
 
-const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
+const NFTRenderer: React.FC<Props> = ({ nft, thumbnail = true, error }) => {
   const image = nft.coverImage || nft.image;
   const [imageUrl, setImageUrl] = React.useState(null);
   const [fileExtension, setFileExtension] = React.useState(
@@ -18,6 +19,8 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
       ? nft.extension
       : null
   );
+
+  const size = thumbnail ? 72 : 76;
 
   React.useEffect(() => {
     if (!error && !fileExtension) {
@@ -54,9 +57,9 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
   }
 
   return (
-    <div className="bg-litho-nft relative flex justify-center">
-      <div className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black">
-        <div className="relative flex items-center justify-center">
+    <div className="bg-litho-nft flex justify-center">
+      <div className="w-full h-full bg-litho-nft p-3 border border-litho-black">
+        <div className="flex items-center justify-center">
           {isImageOrVideo(fileExtension) === "video" ? (
             <video
               src={imageUrl}
@@ -64,15 +67,13 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
               autoPlay
               loop
               controlsList="nodownload"
-              className="object-contain object-center h-72 w-72 bg-litho-black bg-no-repeat bg-center"
+              className={`object-contain object-center h-${size} w-${size} bg-image-loading bg-no-repeat bg-center m-auto`}
             />
           ) : (
             <img
               // TODO: use imagekit React lib
-              src={imageUrl + "?tr=w-500,h-500"}
-              height="100%"
-              width="100%"
-              className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
+              src={imageUrl + "?tr=w-600,h-600,c-at_max"}
+              className={`object-contain object-center h-${size} w-${size} bg-image-loading bg-no-repeat bg-center m-auto`}
               onLoad={(event) => {
                 if (event.target) {
                   (event.target as HTMLImageElement).classList.remove(
