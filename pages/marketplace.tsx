@@ -187,11 +187,11 @@ const MarketPlace: React.FC<{}> = () => {
         <Text variant="h3" className="mb-4 lg:mb-0">
           Marketplace Collections
         </Text>
-        <Sort
-          onChange={(val) => {
-            setSort(val);
-          }}
-        />
+        {/*<Sort*/}
+        {/*  onChange={(val) => {*/}
+        {/*    setSort(val);*/}
+        {/*  }}*/}
+        {/*/>*/}
       </div>
       <Loader loading={nfts.length == 0} />
       <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4">
