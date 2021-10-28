@@ -485,6 +485,14 @@ const Create: React.FC<{}> = () => {
         ).then((res) => res.json());
       }
 
+      // If the image is undefined, then should not go ahead to mint nft
+      if (
+        imagePinPromise === undefined ||
+        imagePinPromise.IpfsHash === undefined
+      ) {
+        throw new Error("Error with image upload to ipfs");
+      }
+
       const metadata = {
         name: storeOnIPFS.name,
         description: storeOnIPFS.description,
