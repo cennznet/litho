@@ -206,7 +206,7 @@ const MarketPlace: React.FC<{}> = () => {
               key={nft.listingId}
             >
               <a>
-                <NFT nft={nft} renderer={NFTRenderer} />
+                <NFT nft={nft} thumbnail={true} renderer={NFTRenderer} />
               </a>
             </Link>
           );
