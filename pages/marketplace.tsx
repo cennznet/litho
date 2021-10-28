@@ -185,7 +185,7 @@ const MarketPlace: React.FC<{}> = () => {
     <div>
       <div className="flex lg:items-center justify-between mb-20 flex-col lg:flex-row">
         <Text variant="h3" className="mb-4 lg:mb-0">
-          Marketplace
+          Marketplace Collections
         </Text>
         <Sort
           onChange={(val) => {
