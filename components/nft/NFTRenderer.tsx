@@ -20,7 +20,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail = true, error }) => {
       : null
   );
 
-  const size = thumbnail ? 72 : 76;
+  const size = thumbnail === true ? 72 : 76;
 
   React.useEffect(() => {
     if (!error && !fileExtension) {
@@ -57,9 +57,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail = true, error }) => {
   }
 
   return (
-    <div
-      className="bg-litho-nft relative flex justify-center"
-    >
+    <div className="bg-litho-nft relative flex justify-center">
       <div
         className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
         style={{ minHeight: "400px" }}
