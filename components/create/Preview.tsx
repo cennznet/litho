@@ -30,7 +30,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
   return (
     <div className="flex flex-col lg:w-3/5 m-auto">
       <div className="flex flex-col items-center">
-        <NFTRenderer nft={nft} />
+        <NFTRenderer nft={nft} preview={true} thumbnail={false} />
         {transactionFee && (
           <div className="mt-10">
             <Text variant="body1" className="text-opacity-60">
