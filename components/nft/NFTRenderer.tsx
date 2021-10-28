@@ -56,11 +56,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
   return (
     <div className="bg-litho-nft relative flex justify-center">
       <div className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black">
-        <a
-          className="relative flex items-center justify-center"
-          href={nft.imageLink}
-          target="_blank"
-        >
+        <div className="relative flex items-center justify-center">
           {isImageOrVideo(fileExtension) === "video" ? (
             <video
               src={imageUrl}
@@ -95,7 +91,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
               {error}
             </span>
           )}
-        </a>
+        </div>
         <div className="mt-3 flex justify-between items-center">
           <span
             className="text-lg font-bold break-all mr-4"

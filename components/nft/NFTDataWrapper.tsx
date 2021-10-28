@@ -75,7 +75,7 @@ const NFTDataWrapper: React.FC<{
                 image: data.image.startsWith("ipfs://")
                   ? gatewayTools.convertToDesiredGateway(
                       data.image,
-                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                      process.env.NEXT_PUBLIC_IMAGE_CDN
                     )
                   : data.image,
                 copies: nftData.showOne
@@ -108,7 +108,7 @@ const NFTDataWrapper: React.FC<{
                 setMetadataUrl(
                   gatewayTools.convertToDesiredGateway(
                     nft.metadata,
-                    "https://ik.imagekit.io/i4ryln6htzn"
+                    process.env.NEXT_PUBLIC_PINATA_GATEWAY
                   )
                 );
               } else {
