@@ -6,10 +6,17 @@ import isImageOrVideo from "../../utils/isImageOrVideo";
 interface Props {
   nft: any;
   thumbnail: boolean;
+  // preview should link to a browser local image
+  preview?: boolean;
   error?: string;
 }
 
-const NFTRenderer: React.FC<Props> = ({ nft, thumbnail, error }) => {
+const NFTRenderer: React.FC<Props> = ({
+  nft,
+  thumbnail,
+  preview = false,
+  error,
+}) => {
   const image = nft.coverImage || nft.image;
   const [imageUrl, setImageUrl] = React.useState(null);
   const [fileExtension, setFileExtension] = React.useState(
@@ -78,7 +85,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail, error }) => {
             />
           ) : (
             <img
-              src={imageUrl + "?tr=w-600,h-600,c-at_max"}
+              src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
               className={imgClass}
               onLoad={(event) => {
                 if (event.target) {
