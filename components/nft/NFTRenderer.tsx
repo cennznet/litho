@@ -96,7 +96,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
               {error}
             </span>
           )}
-        </a>
+        </div>
         <div className="mt-3 flex justify-between items-center">
           <span
             className="text-lg font-bold break-all mr-4"

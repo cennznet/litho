@@ -491,7 +491,12 @@ const NFTDetail: React.FC<{}> = () => {
               </div>
               <div className="p-5 flex items-center justify-around">
                 {nft.imageLink && (
-                  <Link href={nft.imageLink}>
+                  <Link
+                    href={nft.imageLink.replace(
+                      process.env.NEXT_PUBLIC_IMAGE_CDN,
+                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                    )}
+                  >
                     <a
                       className="text-litho-blue font-medium text-lg underline"
                       target="_blank"
