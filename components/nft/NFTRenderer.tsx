@@ -20,7 +20,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail = true, error }) => {
       : null
   );
 
-  const size = thumbnail ? 72 : 76;
+  const size = thumbnail === true ? 72 : 76;
 
   React.useEffect(() => {
     if (!error && !fileExtension) {
