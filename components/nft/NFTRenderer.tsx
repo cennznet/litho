@@ -20,7 +20,11 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail, error }) => {
       : null
   );
 
-  const size = thumbnail === true ? 72 : 76;
+  // tailwind css quirk requires we embed the entire class string
+  const imgClass =
+    thumbnail === true
+      ? "object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
+      : "object-contain object-center h-76 w-76 bg-image-loading bg-no-repeat bg-center m-auto";
 
   React.useEffect(() => {
     if (!error && !fileExtension) {
@@ -70,13 +74,12 @@ const NFTRenderer: React.FC<Props> = ({ nft, thumbnail, error }) => {
               autoPlay
               loop
               controlsList="nodownload"
-              className={`object-contain object-center h-${size} w-${size} bg-image-loading bg-no-repeat bg-center m-auto`}
+              className={imgClass}
             />
           ) : (
             <img
-              // TODO: use imagekit React lib
               src={imageUrl + "?tr=w-600,h-600,c-at_max"}
-              className={`object-contain object-center h-${size} w-${size} bg-image-loading bg-no-repeat bg-center m-auto`}
+              className={imgClass}
               onLoad={(event) => {
                 if (event.target) {
                   (event.target as HTMLImageElement).classList.remove(
