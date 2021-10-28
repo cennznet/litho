@@ -6,8 +6,9 @@ const gatewayTools = new IPFSGatewayTools();
 
 const NFTDataWrapper: React.FC<{
   nft: any;
-  renderer: React.FC<{ nft: any; error: any }>;
-}> = ({ nft, renderer: Renderer }) => {
+  thumbnail: boolean;
+  renderer: React.FC<{ nft: any; thumbnail: boolean; error: any }>;
+}> = ({ nft, thumbnail, renderer: Renderer }) => {
   const [nftData, setNFTData] = React.useState(nft);
   const [nftError, setError] = React.useState<string>(null);
   const [metadataUrl, setMetadataUrl] = React.useState(null);
@@ -127,7 +128,7 @@ const NFTDataWrapper: React.FC<{
     return null;
   }
 
-  return <Renderer nft={nftData} error={nftError} />;
+  return <Renderer nft={nftData} thumbnail={thumbnail} error={nftError} />;
 };
 
 export default NFTDataWrapper;
