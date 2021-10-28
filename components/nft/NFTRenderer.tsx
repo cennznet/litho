@@ -56,7 +56,6 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
   return (
     <div
       className="bg-litho-nft relative flex justify-center"
-      // style={{ height: "400px", width: "300px" }}
     >
       <div
         className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
@@ -75,7 +74,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
           ) : (
             <img
               // TODO: use imagekit React lib
-              src={imageUrl + "?tr=w-600,h-600"}
+              src={imageUrl + "?tr=w-500,h-500"}
               height="100%"
               width="100%"
               className="object-contain object-center h-72 w-72 bg-image-loading bg-no-repeat bg-center m-auto"
@@ -97,7 +96,7 @@ const NFTRenderer: React.FC<Props> = ({ nft, error }) => {
               {error}
             </span>
           )}
-        </div>
+        </a>
         <div className="mt-3 flex justify-between items-center">
           <span
             className="text-lg font-bold break-all mr-4"
