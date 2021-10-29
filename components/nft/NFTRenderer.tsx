@@ -74,32 +74,33 @@ const NFTRenderer: React.FC<Props> = ({
         style={{ minHeight: "400px" }}
       >
         <div className="relative flex items-center justify-center">
-          {isImageOrVideo(fileExtension) === "video" ? (
-            <video
-              src={imageUrl}
-              controls
-              autoPlay
-              loop
-              controlsList="nodownload"
-              className={imgClass}
-            />
-          ) : (
-            <img
-              src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
-              className={imgClass}
-              onLoad={(event) => {
-                if (event.target) {
-                  (event.target as HTMLImageElement).classList.remove(
-                    "bg-image-loading"
-                  );
-                }
-              }}
-              onError={(event) => {
-                (event.target as HTMLImageElement).src = "/litho-default.jpg";
-              }}
-            />
-          )}
-
+          <a href={imageUrl}>
+            {isImageOrVideo(fileExtension) === "video" ? (
+              <video
+                src={imageUrl}
+                controls
+                autoPlay
+                loop
+                controlsList="nodownload"
+                className={imgClass}
+              />
+            ) : (
+              <img
+                src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
+                className={imgClass}
+                onLoad={(event) => {
+                  if (event.target) {
+                    (event.target as HTMLImageElement).classList.remove(
+                      "bg-image-loading"
+                    );
+                  }
+                }}
+                onError={(event) => {
+                  (event.target as HTMLImageElement).src = "/litho-default.jpg";
+                }}
+              />
+            )}
+          </a>
           {error && (
             <span className="text-red-500 text-center text-xl absolute w-3/4 break-all">
               {error}
