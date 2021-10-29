@@ -665,7 +665,8 @@ const NFTDetail: React.FC<{}> = () => {
                         )}
                       </div>
                     )}
-                  {web3Context.account.address === nft.owner &&
+                  {web3Context.account &&
+                    web3Context.account.address === nft.owner &&
                     listingInfo &&
                     listingInfo.listingId >= 0 && (
                       <div className="w-full p-8 flex flex-col border-b border-litho-black">
