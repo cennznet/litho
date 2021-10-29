@@ -117,9 +117,11 @@ const MarketPlace: React.FC<{}> = () => {
               );
             // check if listing exist
             if (openListingKeys.length !== 0) {
-              const listingIDs = openListingKeys.map((storageKey) => {
+              let listingIDs = openListingKeys.map((storageKey) => {
                 return storageKey.args.map((k) => k.toHuman())[1];
               });
+              // show the first from the listing
+              listingIDs = listingIDs.sort();
               // Get info for first listing
               const firstListingInfo = await web3Context.api.query.nft.listings(
                 listingIDs[0]
