@@ -188,7 +188,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </Link>
               </div>
               <div className="flex items-center lg:justify-end lg:w-6/12 space-x-4">
-                <Link href="https://twitter.com/Lithoverse_">
+                <Link href="https://twitter.com/Lithoverse">
                   <a target="_blank">
                     <Text variant="subtitle1">Twitter</Text>
                   </a>
