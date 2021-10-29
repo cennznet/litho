@@ -199,7 +199,7 @@ const MarketPlaceCollection: React.FC<{}> = () => {
           return (
             <Link
               href={`/nft/${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
-              key={nft.listingId}
+              key={`${nft.tokenId[0]}/${nft.tokenId[1]}/${nft.tokenId[2]}`}
             >
               <a>
                 <NFT nft={nft} renderer={NFTRenderer} />

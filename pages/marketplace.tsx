@@ -83,6 +83,7 @@ const Sort: React.FC<{ onChange: (sort: string) => void }> = ({ onChange }) => {
 
 const MarketPlace: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [pageEnd, setPageEnd] = React.useState(10);
   const [nextCollectionId, setNextCollectionId] = React.useState(null);
   const { ref, inView, entry } = useInView({
@@ -105,7 +106,7 @@ const MarketPlace: React.FC<{}> = () => {
   React.useEffect(() => {
     (async () => {
       if (nextCollectionId) {
-        const collections = nextCollectionId.toNumber() - 1;
+        const collections = nextCollectionId.toNumber();
         const collectionIds = Array.from(Array(collections).keys());
         const nfts = [];
         await Promise.all(
@@ -116,9 +117,11 @@ const MarketPlace: React.FC<{}> = () => {
               );
             // check if listing exist
             if (openListingKeys.length !== 0) {
-              const listingIDs = openListingKeys.map((storageKey) => {
+              let listingIDs = openListingKeys.map((storageKey) => {
                 return storageKey.args.map((k) => k.toHuman())[1];
               });
+              // show the first from the listing
+              listingIDs = listingIDs.sort();
               // Get info for first listing
               const firstListingInfo = await web3Context.api.query.nft.listings(
                 listingIDs[0]
@@ -156,6 +159,7 @@ const MarketPlace: React.FC<{}> = () => {
           })
         );
         setNFTs(nfts);
+        setLoading(false);
       }
     })();
   }, [nextCollectionId]);
@@ -193,7 +197,7 @@ const MarketPlace: React.FC<{}> = () => {
         {/*  }}*/}
         {/*/>*/}
       </div>
-      <Loader loading={nfts.length == 0} />
+      <Loader loading={loading} />
       <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4">
         {nfts.map((nft, index) => {
           if (index > pageEnd) {
@@ -203,7 +207,7 @@ const MarketPlace: React.FC<{}> = () => {
           return (
             <Link
               href={`/marketplaceCollection/${nft.tokenId[0]}`}
-              key={nft.listingId}
+              key={nft.tokenId[0]}
             >
               <a>
                 <NFT nft={nft} renderer={NFTRenderer} />
@@ -211,6 +215,11 @@ const MarketPlace: React.FC<{}> = () => {
             </Link>
           );
         })}
+        {!loading && nfts.length === 0 && (
+          <div className="grid grid-row lg:grid-cols-1 gap-5 grid-flow-4">
+            No Collections Available
+          </div>
+        )}
       </div>
       {nfts.length > 10 && <div id="sentinel" ref={ref} />}
     </div>

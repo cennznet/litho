@@ -54,6 +54,26 @@ const placeABid = async (api, account, listingId, amount) => {
   });
 };
 
+const cancelListing = async (api, account, listingId) => {
+  const extrinsic = await api.tx.nft.cancelSale(listingId);
+
+  return new Promise((resolve, reject) => {
+    extrinsic
+      .signAndSend(account.signer, account.payload, ({ status }) => {
+        if (status.isInBlock) {
+          resolve(status.asInBlock.toString());
+          console.log(
+            `Completed at block hash #${status.asInBlock.toString()}`
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(":( transaction failed", error);
+        reject(error);
+      });
+  });
+};
+
 const NFTDetail: React.FC<{}> = () => {
   const router = useRouter();
   const supportedAssetContext = React.useContext(SupportedAssetsContext);
@@ -452,6 +472,33 @@ const NFTDetail: React.FC<{}> = () => {
     ]
   );
 
+  const confirmCancelListing = useCallback(
+    async (e) => {
+      e.preventDefault();
+      if (!listingInfo || listingInfo.listingId < 0) {
+        return;
+      }
+
+      if (web3Context.api && web3Context.account) {
+        try {
+          setModalState("txInProgress");
+          await cancelListing(
+            web3Context.api,
+            web3Context.account,
+            listingInfo.listingId
+          );
+          setTxMessage("Listing canceled");
+          setModalState("success");
+        } catch (e) {
+          console.log(":( transaction failed", e);
+          setTxMessage("listing cancelation failed");
+          setModalState("error");
+        }
+      }
+    },
+    [listingInfo, web3Context.api, web3Context.account]
+  );
+
   return (
     <>
       <Loader loading={loading} />
@@ -616,6 +663,21 @@ const NFTDetail: React.FC<{}> = () => {
                             </button>
                           </div>
                         )}
+                      </div>
+                    )}
+                  {web3Context.account &&
+                    web3Context.account.address === nft.owner &&
+                    listingInfo &&
+                    listingInfo.listingId >= 0 && (
+                      <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                        <button
+                          className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                          onClick={confirmCancelListing}
+                        >
+                          <Text variant="button" color="white">
+                            Cancel Listing
+                          </Text>
+                        </button>
                       </div>
                     )}
                   <div className="w-full p-8 flex flex-col border-b border-litho-black">
