@@ -74,7 +74,7 @@ const NFTRenderer: React.FC<Props> = ({
         style={{ minHeight: "400px" }}
       >
         <div className="relative flex items-center justify-center">
-          <a href={imageUrl}>
+          <a href={`https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}`}>
             {isImageOrVideo(fileExtension) === "video" ? (
               <video
                 src={imageUrl}
