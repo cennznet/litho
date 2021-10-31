@@ -240,7 +240,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       {children}
 
       {showNoExtensionMessage && (
-        <div className="fixed top-0 left-0 h-full w-full bg-litho-cream bg-opacity-75 flex items-center justify-center">
+        <div
+          style={{ zIndex: 1000 }}
+          className="fixed top-0 left-0 h-full w-full bg-litho-cream bg-opacity-75 flex items-center justify-center"
+        >
           <div className="px-4 pb-8 bg-white flex flex-col justify-between text-litho-blue">
             <button
               className="h-12 self-end text-2xl font-light"
