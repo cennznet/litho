@@ -38,18 +38,11 @@ const ConnectedWalletModal: React.FC<Props> = ({
       hideClose
     >
       <select
-        style={{
-          width: "90%",
-          border: "1px solid #856060",
-          borderRadius: "0.25em",
-          padding: "0.25em",
-          cursor: "pointer",
-        }}
         value={web3Context.selectedAccount}
         onChange={(e) => {
           web3Context.updateSelectedAccount(e.target.value);
         }}
-        className="mt-4 tailwind font-bold text-2xl text-litho-blue "
+        className="mt-4 tailwind font-bold text-2xl text-litho-blue w-full  border-solid border-2 border-litho-blue border-opacity-50 rounded"
       >
         {web3Context.accounts.map((account) => {
           return (
