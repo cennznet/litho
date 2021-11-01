@@ -206,43 +206,47 @@ const Create: React.FC<{}> = () => {
   const [transactionFee, setTransactionFee] = React.useState<number>();
   const [collectionId, setCollectionId] = React.useState<string | null>(null);
 
+  useEffect(() => {
+    const collectionIdFromStore = store.get(
+      `collectionId.${web3Context.selectedAccount}`
+    );
+    if (collectionIdFromStore) {
+      setCollectionId(collectionIdFromStore);
+    } else {
+      setCollectionId(null);
+    }
+  }, [web3Context.selectedAccount]);
+
   // Check all collection
   useMemo(() => {
     if (!web3Context.api) return;
     if (collectionId === null) {
-      const collectionIdFromStore = store.get(
-        `collectionId.${web3Context.selectedAccount}`
-      );
-      if (collectionIdFromStore) {
-        setCollectionId(collectionIdFromStore);
-      } else {
-        web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
-          if (web3Context.selectedAccount) {
-            const collectionIdsFetched = entries
-              .filter(
-                (detail) => detail[1].toString() === web3Context.selectedAccount
-              )
-              .flatMap((detail) => detail[0].toHuman());
-            web3Context.api.query.nft.collectionName
-              .multi(collectionIdsFetched)
-              .then((names) => {
-                if (names.length > 0) {
-                  const index = names.findIndex(
-                    (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
-                  );
-                  const collectionIdAtIndex = collectionIdsFetched[index];
-                  store.set(
-                    `collectionId.${web3Context.selectedAccount}`,
-                    collectionIdAtIndex
-                  );
-                  setCollectionId(collectionIdAtIndex);
-                }
-              });
-          }
-        });
-      }
+      web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
+        if (web3Context.selectedAccount) {
+          const collectionIdsFetched = entries
+            .filter(
+              (detail) => detail[1].toString() === web3Context.selectedAccount
+            )
+            .flatMap((detail) => detail[0].toHuman());
+          web3Context.api.query.nft.collectionName
+            .multi(collectionIdsFetched)
+            .then((names) => {
+              if (names.length > 0) {
+                const index = names.findIndex(
+                  (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
+                );
+                const collectionIdAtIndex = collectionIdsFetched[index];
+                store.set(
+                  `collectionId.${web3Context.selectedAccount}`,
+                  collectionIdAtIndex
+                );
+                setCollectionId(collectionIdAtIndex);
+              }
+            });
+        }
+      });
     }
-  }, [web3Context.api, web3Context.selectedAccount]);
+  }, [web3Context.api, web3Context.selectedAccount, collectionId]);
 
   const modalStates = {
     mint: {
