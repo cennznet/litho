@@ -566,6 +566,7 @@ const Create: React.FC<{}> = () => {
         await mintNFTSeriesAndCollection(
           web3Context.api,
           web3Context.selectedAccount,
+          web3Context.signer,
           tokenArgs,
           collectionExtrinsic,
           () => setModalState("txInProgress")
