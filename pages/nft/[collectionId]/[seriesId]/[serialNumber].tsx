@@ -521,12 +521,6 @@ const NFTDetail: React.FC<{}> = () => {
                 </span>
               </Text>
             )}
-            <Text variant="h6">
-              Copies:{" "}
-              <span className="text-litho-black text-opacity-50">
-                {nft.copies}
-              </span>
-            </Text>
           </div>
           <div className="flex">
             <div className="w-2/3 border-r border-litho-black">
