@@ -107,19 +107,29 @@ const NFTRenderer: React.FC<Props> = ({
             </span>
           )}
         </div>
+        {console.log(nft.source)}
+        {console.log(nft.name)}
         <div className="mt-3 flex justify-between items-center">
-          <span
-            className="text-lg font-bold break-all mr-4"
-            style={{ lineHeight: "21.6px", maxWidth: 300 }}
-          >
-            {nft.title || nft.name || ""}
-          </span>
-          {nft.source !== "marketplace" && (
+          {nft.source === "listings" || nft.source === "marketplace" ? (
+            <span
+              className="text-lg font-bold break-all mr-4"
+              style={{
+                lineHeight: "21.6px",
+                maxWidth: 350,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {nft.name.length <= 37
+                ? nft.name
+                : nft.name.substring(0, 38).concat("...")}
+            </span>
+          ) : (
             <span
               className="text-sm font-semibold"
               style={{ lineHeight: "18px" }}
             >
-              x{nft.copies || 1}
+              {nft.name} x{nft.copies || 1}
             </span>
           )}
         </div>
