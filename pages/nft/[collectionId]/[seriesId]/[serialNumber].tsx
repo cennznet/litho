@@ -60,7 +60,6 @@ const cancelListing = async (api, account, signer, listingId) => {
   return new Promise((resolve, reject) => {
     extrinsic
       .signAndSend(account, { signer }, ({ status }) => {
-        // .signAndSend(account.signer, account.payload, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(

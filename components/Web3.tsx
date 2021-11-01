@@ -218,13 +218,13 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       await web3Enable("Litho");
       if (signer === null || signer === undefined) {
         const injector = await web3FromSource(EXTENSION);
-        // const payload = { signer: injector.signer };
         setSigner(injector.signer);
       }
       if (
         (selectedAccount === undefined || selectedAccount === null) &&
         accounts.length > 0
       ) {
+        //  select the 0th account by default if no accounts are selected
         setSelectedAccount(accounts[0].address);
       }
     })();
@@ -259,9 +259,8 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         extension: wallet,
         balances,
         signer,
-        // account,
-        accounts: accounts,
-        selectedAccount: selectedAccount,
+        accounts,
+        selectedAccount,
         api,
         cennzUSDPrice,
       }}

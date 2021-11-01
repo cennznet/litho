@@ -9,7 +9,6 @@ const Web3Context = React.createContext({
   extension: null,
   balances: null,
   signer: null,
-  // account: null,
   accounts: null,
   api: null,
   cennzUSDPrice: null,
