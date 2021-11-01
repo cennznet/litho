@@ -16,11 +16,6 @@ const ConnectedWalletModal: React.FC<Props> = ({
   setShowToast,
 }) => {
   const web3Context = React.useContext(Web3Context);
-  const [selectedAccountName, setSelectedAccountName] = React.useState(
-    web3Context.accounts.find(
-      (acc) => acc.address === web3Context.selectedAccount
-    ).name
-  );
   const showAddress = `${web3Context.selectedAccount.substr(
     0,
     8
@@ -42,27 +37,19 @@ const ConnectedWalletModal: React.FC<Props> = ({
       }}
       hideClose
     >
-      <Text component="h4" variant="h4" color="litho-blue">
-        {selectedAccountName}
-      </Text>
       <select
         style={{
           width: "90%",
           border: "1px solid #856060",
           borderRadius: "0.25em",
           padding: "0.25em",
-          fontSize: "1.25rem",
           cursor: "pointer",
         }}
         value={web3Context.selectedAccount}
         onChange={(e) => {
-          setSelectedAccountName(
-            web3Context.accounts.find((acc) => acc.address === e.target.value)
-              .name
-          );
           web3Context.updateSelectedAccount(e.target.value);
         }}
-        className="mt-4 "
+        className="mt-4 tailwind font-bold text-2xl text-litho-blue "
       >
         {web3Context.accounts.map((account) => {
           return (
