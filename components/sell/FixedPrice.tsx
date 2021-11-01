@@ -16,6 +16,7 @@ import TxStatusModal from "./TxStatusModal";
 const sell = async (
   api,
   account,
+  signer,
   tokenId,
   buyerAddress,
   paymentAssetId,
@@ -32,7 +33,7 @@ const sell = async (
 
   return new Promise((resolve, reject) => {
     sellExtrinsic
-      .signAndSend(account.signer, account.payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -153,7 +154,8 @@ const FixedPrice: React.FC<Props> = ({
           setModalState("txInProgress");
           await sell(
             web3Context.api,
-            web3Context.account,
+            web3Context.selectedAccount,
+            web3Context.signer,
             tokenId,
             buyerAddress,
             paymentAsset.id,
@@ -168,7 +170,7 @@ const FixedPrice: React.FC<Props> = ({
         }
       }
     },
-    [paymentAsset, web3Context.api, web3Context.account]
+    [paymentAsset, web3Context.api, web3Context.selectedAccount]
   );
 
   return (

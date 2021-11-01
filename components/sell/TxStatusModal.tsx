@@ -4,6 +4,7 @@ import Link from "next/link";
 import Text from "../Text";
 import { useRouter } from "next/router";
 import Modal from "../Modal";
+import ModalSpinner from "../ModalSpinner";
 
 interface Props {
   successLink: string;
@@ -25,7 +26,7 @@ const TxStatusModal: React.FC<Props> = ({
   const modalStates = {
     txInProgress: {
       message: "PLEASE STAY ON THIS PAGE",
-      subText: "Please stay on the page until it has been successfully sent.",
+      subText: <ModalSpinner />,
       onClose: () => setModalState(null),
     },
     success: {

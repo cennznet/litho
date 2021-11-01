@@ -14,12 +14,12 @@ import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
 import axios from "axios";
 
-const buyWithFixedPrice = async (api, account, listingId) => {
+const buyWithFixedPrice = async (api, account, signer, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
 
   return new Promise((resolve, reject) => {
     buyExtrinsic
-      .signAndSend(account.signer, account.payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -34,12 +34,12 @@ const buyWithFixedPrice = async (api, account, listingId) => {
   });
 };
 
-const placeABid = async (api, account, listingId, amount) => {
+const placeABid = async (api, account, signer, listingId, amount) => {
   const extrinsic = await api.tx.nft.bid(listingId, amount);
 
   return new Promise((resolve, reject) => {
     extrinsic
-      .signAndSend(account.signer, account.payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -54,12 +54,12 @@ const placeABid = async (api, account, listingId, amount) => {
   });
 };
 
-const cancelListing = async (api, account, listingId) => {
+const cancelListing = async (api, account, signer, listingId) => {
   const extrinsic = await api.tx.nft.cancelSale(listingId);
 
   return new Promise((resolve, reject) => {
     extrinsic
-      .signAndSend(account.signer, account.payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -166,7 +166,7 @@ const NFTDetail: React.FC<{}> = () => {
               const attr = [];
               Object.keys(data).forEach(function (key) {
                 switch (key) {
-                  case "title":
+                  case "name":
                     nft.title = data[key];
                     break;
                   case "description": {
@@ -306,11 +306,11 @@ const NFTDetail: React.FC<{}> = () => {
         const copyOwers = await web3Context.api.query.nft.tokenOwner.multi(
           copyParams
         );
-        if (web3Context.account) {
+        if (web3Context.selectedAccount) {
           for (let i = 0; i < copyOwers.length; i++) {
             const isOwner =
               copyOwers[i].toString() ===
-              web3Context.account.address.toString();
+              web3Context.selectedAccount.toString();
             const isOnSale = openListing.find((listing) => {
               return (
                 listing.tokenId.collectionId.toNumber() ===
@@ -329,7 +329,7 @@ const NFTDetail: React.FC<{}> = () => {
         }
       }
     })();
-  }, [web3Context.api, web3Context.account]);
+  }, [web3Context.api, web3Context.selectedAccount]);
 
   const paymentAsset = useMemo(() => {
     let paymentAssetId = undefined;
@@ -402,7 +402,7 @@ const NFTDetail: React.FC<{}> = () => {
       e.preventDefault();
       if (
         web3Context.api &&
-        web3Context.account &&
+        web3Context.selectedAccount &&
         listingInfo &&
         listingInfo.listingId >= 0
       ) {
@@ -410,7 +410,8 @@ const NFTDetail: React.FC<{}> = () => {
           setModalState("txInProgress");
           await buyWithFixedPrice(
             web3Context.api,
-            web3Context.account,
+            web3Context.selectedAccount,
+            web3Context.signer,
             listingInfo.listingId
           );
           setTxMessage("Sale success");
@@ -421,7 +422,7 @@ const NFTDetail: React.FC<{}> = () => {
         }
       }
     },
-    [listingInfo, web3Context.api, web3Context.account]
+    [listingInfo, web3Context.api, web3Context.selectedAccount]
   );
 
   const confirmBid = useCallback(
@@ -445,12 +446,13 @@ const NFTDetail: React.FC<{}> = () => {
 
       const priceInUnit = +price.value * 10 ** paymentAsset.decimals;
 
-      if (web3Context.api && web3Context.account) {
+      if (web3Context.api && web3Context.selectedAccount) {
         try {
           setModalState("txInProgress");
           await placeABid(
             web3Context.api,
-            web3Context.account,
+            web3Context.selectedAccount,
+            web3Context.signer,
             listingInfo.listingId,
             priceInUnit
           );
@@ -468,7 +470,7 @@ const NFTDetail: React.FC<{}> = () => {
       listingInfo,
       web3Context.api,
       reservePrice,
-      web3Context.account,
+      web3Context.selectedAccount,
     ]
   );
 
@@ -479,12 +481,13 @@ const NFTDetail: React.FC<{}> = () => {
         return;
       }
 
-      if (web3Context.api && web3Context.account) {
+      if (web3Context.api && web3Context.selectedAccount) {
         try {
           setModalState("txInProgress");
           await cancelListing(
             web3Context.api,
-            web3Context.account,
+            web3Context.selectedAccount,
+            web3Context.signer,
             listingInfo.listingId
           );
           setTxMessage("Listing canceled");
@@ -496,7 +499,7 @@ const NFTDetail: React.FC<{}> = () => {
         }
       }
     },
-    [listingInfo, web3Context.api, web3Context.account]
+    [listingInfo, web3Context.api, web3Context.selectedAccount]
   );
 
   return (
@@ -521,12 +524,6 @@ const NFTDetail: React.FC<{}> = () => {
                 </span>
               </Text>
             )}
-            <Text variant="h6">
-              Copies:{" "}
-              <span className="text-litho-black text-opacity-50">
-                {nft.copies}
-              </span>
-            </Text>
           </div>
           <div className="flex">
             <div className="w-2/3 border-r border-litho-black">
@@ -665,8 +662,7 @@ const NFTDetail: React.FC<{}> = () => {
                         )}
                       </div>
                     )}
-                  {web3Context.account &&
-                    web3Context.account.address === nft.owner &&
+                  {web3Context.selectedAccount === nft.owner &&
                     listingInfo &&
                     listingInfo.listingId >= 0 && (
                       <div className="w-full p-8 flex flex-col border-b border-litho-black">
@@ -684,10 +680,8 @@ const NFTDetail: React.FC<{}> = () => {
                     <Text variant="h6">Owner</Text>
                     <Text variant="h6" className="text-opacity-50">
                       {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
-                      {web3Context.account
-                        ? web3Context.account.address === nft.owner
-                          ? "(You)"
-                          : null
+                      {web3Context.selectedAccount === nft.owner
+                        ? "(You)"
                         : null}
                     </Text>
                     {editableSerialNumber !== undefined && (
