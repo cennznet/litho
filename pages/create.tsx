@@ -5,13 +5,13 @@ import { useRouter } from "next/router";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
+import ModalSpinner from "../components/ModalSpinner";
 import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
 import store from "store";
 import { hexToString } from "@polkadot/util";
-import Spinner from "../components/create/Spinner";
 
 const LITHO_COLLECTION_NAME = "Litho (default)";
 
@@ -245,7 +245,7 @@ const Create: React.FC<{}> = () => {
   const modalStates = {
     mint: {
       message: "UPLOADING ASSETS TO IPFS",
-      subText: <Spinner />,
+      subText: <ModalSpinner />,
       onClose: () => setModalState(null),
     },
     signTransaction: {
@@ -256,7 +256,7 @@ const Create: React.FC<{}> = () => {
     },
     txInProgress: {
       message: "YOUR ASSET IS BEING MINTED AS AN NFT ON CENNZnet",
-      subText: <Spinner />,
+      subText: <ModalSpinner />,
       onClose: () => setModalState(null),
     },
     success: {
