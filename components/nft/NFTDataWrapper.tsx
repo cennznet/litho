@@ -55,7 +55,8 @@ const NFTDataWrapper: React.FC<{
             ? metadata.originalCopies
             : metadata.copies;
         }
-        setNFTData({ ...nft, ...metadata });
+        // over write the owner from metadata(ipfs) to current owner
+        setNFTData({ ...metadata, ...nft });
       } else {
         axios
           .get(metadataUrl)
@@ -83,9 +84,7 @@ const NFTDataWrapper: React.FC<{
                 copies: nftData.showOne
                   ? 1
                   : (data.properties && data.properties.quantity) || 1,
-                owner:
-                  data.properties &&
-                  (data.properties.owner || data.properties.creator),
+                owner: nftData.owner, // This is from chain
                 file:
                   data.properties && data.properties.file
                     ? gatewayTools.convertToDesiredGateway(

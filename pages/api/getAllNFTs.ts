@@ -55,7 +55,7 @@ export default async (req, res) => {
         await Promise.all((listingDetails as any).tokens.map(async (tokenId) => {
           const tokenInfo = await api.derive.nft.tokenInfo(tokenId);
           let metadata;
-          let attributes = tokenInfo.attributes;
+          let attributes = tokenInfo.attributes?.toJSON();
           let nft = { ...restDetails, ...tokenInfo, tokenId, ...attributes, listingId: listingId.toString(), showOne: true};
           if(tokenInfo.attributes) {
             metadata = getMetadata(tokenInfo.attributes);

@@ -124,17 +124,14 @@ const NFTDetail: React.FC<{}> = () => {
         if (royalty) {
           royalty = royalty.toHuman()?.entitlements;
         }
-        const owner = await web3Context.api.query.nft.tokenOwner(
-          [router.query.collectionId, router.query.seriesId],
-          router.query.serialNumber
-        );
 
-        const { attributes } = tokenInfo;
+        let { attributes, owner } = tokenInfo;
+        attributes = attributes.toJSON();
         const nft: { [index: string]: any } = {
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
-          owner: owner.toString(),
+          owner,
           showOne: true,
           tokenId: [
             router.query.collectionId,
