@@ -16,6 +16,7 @@ import store from "store";
 import Web3Context from "./Web3Context";
 import axios from "axios";
 const endpoint = process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT;
+const EXTENSION = "cennznet-extension";
 
 async function extractMeta(api) {
   const systemChain = await api.rpc.system.chain();
@@ -62,8 +63,10 @@ async function extractMeta(api) {
 const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [hasWeb3injected, setHasWeb3Injected] = React.useState(false);
   const [wallet, setWallet] = React.useState<InjectedExtension>();
-  const [web3Account, setWeb3Account] = React.useState(null);
-  const [account, setAccount] = React.useState(null);
+  const [balances, setBalances] = React.useState(null);
+  const [signer, setSigner] = React.useState(null);
+  const [accounts, setAccounts] = React.useState([]);
+  const [selectedAccount, setSelectedAccount] = React.useState(null);
   const [showNoExtensionMessage, setShowNoExtensionMessage] =
     React.useState(false);
   const [showZeroAccountMessage, setShowZeroAccountMessage] =
@@ -101,12 +104,14 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             decimalPlaces: token.decimalPlaces,
           };
         });
-        setAccount((account) => ({
-          ...account,
-          balances: userBalances,
-        }));
+
+        setBalances(userBalances);
       }
     );
+  };
+
+  const updateSelectedAccount = async (account) => {
+    setSelectedAccount(account);
   };
 
   const connectWallet = async (callback) => {
@@ -169,10 +174,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   // Get balances for extension account when api or web3Account has changed
   useEffect(() => {
-    if (api && web3Account) {
-      getAccountAssets(web3Account.address);
+    if (api && selectedAccount) {
+      getAccountAssets(selectedAccount);
     }
-  }, [api, web3Account]);
+  }, [api, selectedAccount]);
 
   // Set account/signer when wallet has changed
   useEffect(() => {
@@ -181,21 +186,23 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       const accounts = await web3Accounts();
 
       if (accounts.length === 0) {
-        setWeb3Account(null);
+        setSelectedAccount(null);
         setShowZeroAccountMessage(true);
       } else {
-        setWeb3Account(accounts[0]);
-
-        const injector = await web3FromSource(accounts[0].meta.source);
-        const payload = { signer: injector.signer };
-        const signer = accounts[0].address;
-        setAccount({ ...accounts[0], payload, signer });
-        setShowZeroAccountMessage(false);
+        const acc = accounts.map((acc) => ({
+          address: acc.address,
+          name: acc.meta.name,
+        }));
+        setAccounts(acc);
       }
 
       web3AccountsSubscribe(async (accounts) => {
         if (accounts.length) {
-          setWeb3Account(accounts[0]);
+          const acc = accounts.map((acc) => ({
+            address: acc.address,
+            name: acc.meta.name,
+          }));
+          setAccounts(acc);
         }
       });
     };
@@ -205,6 +212,23 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       getSelectedAccount();
     }
   }, [wallet]);
+
+  useEffect(() => {
+    (async () => {
+      await web3Enable("Litho");
+      if (signer === null || signer === undefined) {
+        const injector = await web3FromSource(EXTENSION);
+        setSigner(injector.signer);
+      }
+      if (
+        (selectedAccount === undefined || selectedAccount === null) &&
+        accounts.length > 0
+      ) {
+        //  select the 0th account by default if no accounts are selected
+        setSelectedAccount(accounts[0].address);
+      }
+    })();
+  }, [accounts]);
 
   // on mount if wallet is not set, check store and load the wallet
   useEffect(() => {
@@ -231,8 +255,12 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       value={{
         hasWeb3injected,
         connectWallet,
+        updateSelectedAccount,
         extension: wallet,
-        account,
+        balances,
+        signer,
+        accounts,
+        selectedAccount,
         api,
         cennzUSDPrice,
       }}
@@ -240,7 +268,10 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       {children}
 
       {showNoExtensionMessage && (
-        <div className="fixed top-0 left-0 h-full w-full bg-litho-cream bg-opacity-75 flex items-center justify-center">
+        <div
+          style={{ zIndex: 1000 }}
+          className="fixed top-0 left-0 h-full w-full bg-litho-cream bg-opacity-75 flex items-center justify-center"
+        >
           <div className="px-4 pb-8 bg-white flex flex-col justify-between text-litho-blue">
             <button
               className="h-12 self-end text-2xl font-light"

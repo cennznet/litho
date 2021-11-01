@@ -38,10 +38,7 @@ const Sell: React.FC<{}> = () => {
           [collectionId, seriesId],
           serialNumber
         );
-        if (
-          web3Context.account &&
-          tokenOwner.toString() !== web3Context.account.address
-        ) {
+        if (tokenOwner.toString() !== web3Context.selectedAccount) {
           router.push("/me");
           return;
         }
@@ -49,7 +46,7 @@ const Sell: React.FC<{}> = () => {
     })();
   }, [
     web3Context.api,
-    web3Context.account,
+    web3Context.selectedAccount,
     collectionId,
     seriesId,
     serialNumber,
@@ -60,7 +57,7 @@ const Sell: React.FC<{}> = () => {
       <Text variant="h3" component="h3" className="text-center py-4">
         Sell on marketplace
       </Text>
-      {!web3Context.account ? (
+      {!web3Context.selectedAccount ? (
         <div className="flex-1 w-full flex flex-col items-center justify-center pt-32">
           <button
             className="bg-litho-blue py-3 w-80 text-center mb-10"
