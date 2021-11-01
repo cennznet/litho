@@ -94,7 +94,7 @@ const About: React.FC<{
       }
     }
 
-    if (!web3Context.account) {
+    if (!web3Context.selectedAccount) {
       web3Context.connectWallet(() => {
         moveToUploadAsset({
           title: titleValue,
@@ -241,7 +241,7 @@ const About: React.FC<{
         </Link>
         <button className="w-full md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 md:ml-6 text-center py-2">
           <Text variant="button" color="white">
-            {!web3Context.account
+            {!web3Context.selectedAccount
               ? "CONNECT WALLET TO CONTINUE"
               : "NEXT: UPLOAD ASSETS"}
           </Text>

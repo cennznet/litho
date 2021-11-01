@@ -62,6 +62,7 @@ const initialState: State = {
 const mintNFTAndCollection = async (
   api,
   account,
+  signer,
   tokenArgs,
   collectionExtrinsic,
   setTransactionInProgress
@@ -79,11 +80,9 @@ const mintNFTAndCollection = async (
     ? await api.tx.utility.batch([collectionExtrinsic, mintUniqueExtrinsic])
     : await mintUniqueExtrinsic;
 
-  let signer = account.signer;
-  let payload = account.payload;
   return new Promise((resolve, reject) => {
     batchMinting
-      .signAndSend(signer, payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
@@ -102,6 +101,7 @@ const mintNFTAndCollection = async (
 const mintNFTSeriesAndCollection = async (
   api,
   account,
+  signer,
   tokenArgs,
   collectionExtrinsic,
   setTransactionInProgress
@@ -127,11 +127,9 @@ const mintNFTSeriesAndCollection = async (
     ? await api.tx.utility.batch([collectionExtrinsic, mintSeriesExtrinsic])
     : await mintSeriesExtrinsic;
 
-  let signer = account.signer;
-  let payload = account.payload;
   return new Promise((resolve, reject) => {
     batchMinting
-      .signAndSend(signer, payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         setTransactionInProgress();
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
@@ -209,38 +207,47 @@ const Create: React.FC<{}> = () => {
   const [transactionFee, setTransactionFee] = React.useState<number>();
   const [collectionId, setCollectionId] = React.useState<string | null>(null);
 
+  useEffect(() => {
+    const collectionIdFromStore = store.get(
+      `collectionId.${web3Context.selectedAccount}`
+    );
+    if (collectionIdFromStore) {
+      setCollectionId(collectionIdFromStore);
+    } else {
+      setCollectionId(null);
+    }
+  }, [web3Context.selectedAccount]);
+
   // Check all collection
   useMemo(() => {
     if (!web3Context.api) return;
     if (collectionId === null) {
-      const collectionIdFromStore = store.get("collectionId");
-      if (collectionIdFromStore) {
-        setCollectionId(collectionIdFromStore);
-      } else {
-        web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
-          if (web3Context.account) {
-            const collectionIdsFetched = entries
-              .filter(
-                (detail) => detail[1].toString() === web3Context.account.address
-              )
-              .flatMap((detail) => detail[0].toHuman());
-            web3Context.api.query.nft.collectionName
-              .multi(collectionIdsFetched)
-              .then((names) => {
-                if (names.length > 0) {
-                  const index = names.findIndex(
-                    (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
-                  );
-                  const collectionIdAtIndex = collectionIdsFetched[index];
-                  store.set("collectionId", collectionIdAtIndex);
-                  setCollectionId(collectionIdAtIndex);
-                }
-              });
-          }
-        });
-      }
+      web3Context.api.query.nft.collectionOwner.entries().then((entries) => {
+        if (web3Context.selectedAccount) {
+          const collectionIdsFetched = entries
+            .filter(
+              (detail) => detail[1].toString() === web3Context.selectedAccount
+            )
+            .flatMap((detail) => detail[0].toHuman());
+          web3Context.api.query.nft.collectionName
+            .multi(collectionIdsFetched)
+            .then((names) => {
+              if (names.length > 0) {
+                const index = names.findIndex(
+                  (n) => hexToString(n.toHex()) === LITHO_COLLECTION_NAME
+                );
+                const collectionIdAtIndex = collectionIdsFetched[index];
+                store.set(
+                  `collectionId.${web3Context.selectedAccount}`,
+                  collectionIdAtIndex
+                );
+                setCollectionId(collectionIdAtIndex);
+              }
+            });
+        }
+      });
     }
-  }, [web3Context.api, web3Context.account]);
+  }, [web3Context.api, web3Context.selectedAccount, collectionId]);
 
   const modalStates = {
     mint: {
@@ -319,19 +326,19 @@ const Create: React.FC<{}> = () => {
       const createCollectionFee = await web3Context.api.derive.fees.estimateFee(
         {
           extrinsic: collectionExtrinsic,
-          userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+          userFeeAssetId: web3Context.balances.CPAY.tokenId,
         }
       );
       transactionFee =
         createCollectionFee.toNumber() /
-        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+        Math.pow(10, web3Context.balances.CPAY.decimalPlaces);
     }
 
     if (state.nft.copies > 1) {
       const mintSeriesExtrinsic = await web3Context.api.tx.nft.mintSeries(
         1,
         state.nft.copies,
-        web3Context.account.address,
+        web3Context.selectedAccount,
         null,
         null,
         null
@@ -339,15 +346,15 @@ const Create: React.FC<{}> = () => {
 
       const mintSeriesFee = await web3Context.api.derive.fees.estimateFee({
         extrinsic: mintSeriesExtrinsic,
-        userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+        userFeeAssetId: web3Context.balances.CPAY.tokenId,
       });
       transactionFee +=
         mintSeriesFee.toNumber() /
-        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+        Math.pow(10, web3Context.balances.CPAY.decimalPlaces);
     } else {
       const mintUniqueExtrinsic = await web3Context.api.tx.nft.mintUnique(
         1,
-        web3Context.account.address,
+        web3Context.selectedAccount,
         null,
         null,
         null
@@ -355,11 +362,11 @@ const Create: React.FC<{}> = () => {
 
       const mintUniqueFee = await web3Context.api.derive.fees.estimateFee({
         extrinsic: mintUniqueExtrinsic,
-        userFeeAssetId: web3Context.account.balances.CPAY.tokenId,
+        userFeeAssetId: web3Context.balances.CPAY.tokenId,
       });
       transactionFee +=
         mintUniqueFee.toNumber() /
-        Math.pow(10, web3Context.account.balances.CPAY.decimalPlaces);
+        Math.pow(10, web3Context.balances.CPAY.decimalPlaces);
     }
 
     setTransactionFee(transactionFee);
@@ -411,7 +418,7 @@ const Create: React.FC<{}> = () => {
         properties: {
           file: state.nft.image,
           quantity: state.nft.copies,
-          creator: web3Context.account.address,
+          creator: web3Context.selectedAccount,
           extension: state.nft.extension,
           coverFileExtension: state.nft.coverFileExtension,
         },
@@ -423,7 +430,7 @@ const Create: React.FC<{}> = () => {
         image: state.nft.image,
         properties: {
           quantity: state.nft.copies,
-          creator: web3Context.account.address,
+          creator: web3Context.selectedAccount,
           extension: state.nft.extension,
         },
       };
@@ -549,20 +556,21 @@ const Create: React.FC<{}> = () => {
         let tokenArgs: { [index: string]: any } = {
           collectionId: useCollectionId,
           quantity: state.nft.copies,
-          owner: web3Context.account.address,
+          owner: web3Context.selectedAccount,
           attributes: nftAttributes,
           metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
         };
         if (state.nft.royalty > 0) {
           tokenArgs.royaltiesSchedule = {
             entitlements: [
-              [web3Context.account.address, state.nft.royalty * 10000],
+              [web3Context.selectedAccount, state.nft.royalty * 10000],
             ],
           };
         }
         await mintNFTSeriesAndCollection(
           web3Context.api,
-          web3Context.account,
+          web3Context.selectedAccount,
+          web3Context.signer,
           tokenArgs,
           collectionExtrinsic,
           () => setModalState("txInProgress")
@@ -570,7 +578,7 @@ const Create: React.FC<{}> = () => {
       } else {
         let tokenArgs: { [index: string]: any } = {
           collectionId: useCollectionId,
-          owner: web3Context.account.address,
+          owner: web3Context.selectedAccount,
           attributes: nftAttributes,
           metadataPath: `ipfs://${metadataPinPromise.IpfsHash}`,
         };
@@ -578,13 +586,14 @@ const Create: React.FC<{}> = () => {
         if (state.nft.royalty > 0) {
           tokenArgs.royaltiesSchedule = {
             entitlements: [
-              [web3Context.account.address, state.nft.royalty * 10000],
+              [web3Context.selectedAccount, state.nft.royalty * 10000],
             ],
           };
         }
         await mintNFTAndCollection(
           web3Context.api,
-          web3Context.account,
+          web3Context.selectedAccount,
+          web3Context.signer,
           tokenArgs,
           collectionExtrinsic,
           () => setModalState("txInProgress")
