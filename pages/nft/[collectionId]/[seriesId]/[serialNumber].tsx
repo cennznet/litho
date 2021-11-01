@@ -166,7 +166,7 @@ const NFTDetail: React.FC<{}> = () => {
               const attr = [];
               Object.keys(data).forEach(function (key) {
                 switch (key) {
-                  case "title":
+                  case "name":
                     nft.title = data[key];
                     break;
                   case "description": {
