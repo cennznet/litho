@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import Text from "../components/Text";
 import Modal from "../components/Modal";
+import ModalSpinner from "../components/ModalSpinner";
 import About from "../components/create/About";
 import Upload from "../components/create/Upload";
 import Preview from "../components/create/Preview";
@@ -244,7 +245,7 @@ const Create: React.FC<{}> = () => {
   const modalStates = {
     mint: {
       message: "UPLOADING ASSETS TO IPFS",
-      subText: "Please wait while the assets are uploaded",
+      subText: <ModalSpinner />,
       onClose: () => setModalState(null),
     },
     signTransaction: {
@@ -254,9 +255,8 @@ const Create: React.FC<{}> = () => {
       onClose: () => setModalState(null),
     },
     txInProgress: {
-      message: "PLEASE STAY ON THIS PAGE",
-      subText:
-        "Your asset is being minted as an NFT on CENNZnet. Please stay on the page until it has been successfully minted.",
+      message: "YOUR ASSET IS BEING MINTED AS AN NFT ON CENNZnet",
+      subText: <ModalSpinner />,
       onClose: () => setModalState(null),
     },
     success: {
