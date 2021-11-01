@@ -11,6 +11,7 @@ import Preview from "../components/create/Preview";
 import Web3Context from "../components/Web3Context";
 import store from "store";
 import { hexToString } from "@polkadot/util";
+import Spinner from "../components/create/Spinner";
 
 const LITHO_COLLECTION_NAME = "Litho (default)";
 
@@ -244,7 +245,7 @@ const Create: React.FC<{}> = () => {
   const modalStates = {
     mint: {
       message: "UPLOADING ASSETS TO IPFS",
-      subText: "Please wait while the assets are uploaded",
+      subText: <Spinner />,
       onClose: () => setModalState(null),
     },
     signTransaction: {
@@ -254,9 +255,8 @@ const Create: React.FC<{}> = () => {
       onClose: () => setModalState(null),
     },
     txInProgress: {
-      message: "PLEASE STAY ON THIS PAGE",
-      subText:
-        "Your asset is being minted as an NFT on CENNZnet. Please stay on the page until it has been successfully minted.",
+      message: "YOUR ASSET IS BEING MINTED AS AN NFT ON CENNZnet",
+      subText: <Spinner />,
       onClose: () => setModalState(null),
     },
     success: {
