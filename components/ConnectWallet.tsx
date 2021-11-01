@@ -13,12 +13,13 @@ const ConnectWallet: React.FC<{}> = () => {
   const [showToast, setShowToast] = React.useState(false);
 
   React.useEffect(() => {
-    if (web3Context.account) {
+    // console.log('web3Context.selectedAccount::',web3Context.selectedAccount);
+    if (web3Context.selectedAccount) {
       setIsWalletConnected(true);
     } else {
       setIsWalletConnected(false);
     }
-  }, [web3Context.account]);
+  }, [web3Context.selectedAccount]);
 
   React.useEffect(() => {
     if (showToast) {
@@ -46,7 +47,7 @@ const ConnectWallet: React.FC<{}> = () => {
       >
         <img src="/wallet.svg" alt="Connect Wallet" className="mr-2" />
         <Text variant="button" color="litho-blue">
-          {isWalletConnected && web3Context.account.address
+          {isWalletConnected && web3Context.selectedAccount
             ? `WALLET CONNECTED`
             : "CONNECT WALLET"}
         </Text>

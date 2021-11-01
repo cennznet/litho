@@ -5,6 +5,7 @@ import Modal from "../Modal";
 import Text from "../Text";
 import Web3Context from "../Web3Context";
 import copyTextToClipboard from "../../utils/copyTextToClipboard";
+import { account } from "@cennznet/api/derives/balances";
 
 interface Props {
   closeModal: () => void;
@@ -16,6 +17,18 @@ const ConnectedWalletModal: React.FC<Props> = ({
   setShowToast,
 }) => {
   const web3Context = React.useContext(Web3Context);
+  // const [selectedAccount, setSelectedAccount] = React.useState('');
+  const [selectedAccountName, setSelectedAccountName] = React.useState(
+    web3Context.accounts.find(
+      (acc) => acc.address === web3Context.selectedAccount
+    ).name
+  );
+  const showAddress = `${web3Context.selectedAccount.substr(
+    0,
+    8
+  )}...${web3Context.selectedAccount.substr(-8)}`;
+
+  // web3Context.accounts
   const tokenLogoURLs = {
     CENNZ: "/cennznet-logo.svg",
     CPAY: "/cpay-logo.svg",
@@ -32,24 +45,48 @@ const ConnectedWalletModal: React.FC<Props> = ({
       hideClose
     >
       <Text component="h4" variant="h4" color="litho-blue">
-        {web3Context.account.meta.name}
+        {selectedAccountName}
       </Text>
-      <Text
-        variant="body1"
-        className="mt-4 flex justify-between items-center cursor-pointer break-all"
-        component="div"
-        onClick={() => {
-          copyTextToClipboard(web3Context.account.address);
-          setShowToast(true);
+      <select
+        style={{ width: "90%" }}
+        value={web3Context.selectedAccount}
+        onChange={(e) => {
+          setSelectedAccountName(
+            web3Context.accounts.find((acc) => acc.address === e.target.value)
+              .name
+          );
+          web3Context.updateSelectedAccount(e.target.value);
         }}
+        className="mt-4 "
       >
-        <span>{web3Context.account.address.substr(0, 20)}...</span>
-        <img src="/copy.svg" alt="Copy address" />
+        {web3Context.accounts.map((account) => {
+          return (
+            <option key={account.address} value={account.address}>
+              {account.name}
+            </option>
+          );
+        })}
+      </select>
+      <Text variant="body2" className="mt-4">
+        Address: {showAddress}
       </Text>
+
+      {/*<Text*/}
+      {/*  variant="body1"*/}
+      {/*  className="mt-4 flex justify-between items-center cursor-pointer break-all"*/}
+      {/*  component="div"*/}
+      {/*  onClick={() => {*/}
+      {/*    copyTextToClipboard(web3Context.account.address);*/}
+      {/*    setShowToast(true);*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <span>{web3Context.account.address.substr(0, 20)}...</span>*/}
+      {/*  <img src="/copy.svg" alt="Copy address" />*/}
+      {/*</Text>*/}
       <div className="h-0.5 w-full my-6 bg-litho-black bg-opacity-10" />
       <Text variant="subtitle1">Balance</Text>
-      {web3Context.account.balances
-        ? Object.keys(web3Context.account.balances).map((symbol) => {
+      {web3Context.balances
+        ? Object.keys(web3Context.balances).map((symbol) => {
             return (
               <div className="mt-4 mb-6" key={symbol}>
                 <div className="flex items-center">
@@ -61,7 +98,7 @@ const ConnectedWalletModal: React.FC<Props> = ({
                     />
                   </div>
                   <Text variant="subtitle1">
-                    {web3Context.account.balances[symbol].balance}
+                    {web3Context.balances[symbol].balance}
                   </Text>
                   &nbsp;
                   <Text variant="body1">{symbol}</Text>

@@ -4,8 +4,13 @@ import React from "react";
 const Web3Context = React.createContext({
   hasWeb3injected: false,
   connectWallet: (callback?: () => void) => {},
+  updateSelectedAccount: (account) => {},
+  selectedAccount: null,
   extension: null,
-  account: null,
+  balances: null,
+  signer: null,
+  // account: null,
+  accounts: null,
   api: null,
   cennzUSDPrice: null,
 });

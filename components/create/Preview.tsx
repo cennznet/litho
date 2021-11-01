@@ -24,8 +24,7 @@ const Preview: React.FC<Props> = ({ nft, mint, transactionFee, goBack }) => {
   };
 
   const isBalanceLow =
-    transactionFee &&
-    transactionFee > web3Context.account.balances.CPAY.balance;
+    transactionFee && transactionFee > web3Context.balances.CPAY.balance;
 
   return (
     <div className="flex flex-col lg:w-3/5 m-auto">
