@@ -107,8 +107,6 @@ const NFTRenderer: React.FC<Props> = ({
             </span>
           )}
         </div>
-        {console.log(nft.source)}
-        {console.log(nft.name)}
         <div className="mt-3 flex justify-between items-center">
           {nft.source === "listings" || nft.source === "marketplace" ? (
             <span
