@@ -46,7 +46,14 @@ const ConnectedWalletModal: React.FC<Props> = ({
         {selectedAccountName}
       </Text>
       <select
-        style={{ width: "90%" }}
+        style={{
+          width: "90%",
+          border: "1px solid #856060",
+          borderRadius: "0.25em",
+          padding: "0.25em",
+          fontSize: "1.25rem",
+          cursor: "pointer",
+        }}
         value={web3Context.selectedAccount}
         onChange={(e) => {
           setSelectedAccountName(
