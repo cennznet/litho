@@ -98,7 +98,7 @@ const Home: React.FC<{ featuredData }> = (featuredData: any) => {
             className="object-center object-cover h-4/5"
           />
 
-          <div className="p-6 pt-0 pb-3 flex flex-col items-center justify-end w-full -mt-2">
+          <div className="flex-1 p-6 pt-0 pb-3 flex flex-col items-center justify-end w-full mb-3">
             <Text variant="h4" className="mb-5 bg-litho-cream p-2">
               MARKETPLACE
             </Text>
@@ -156,7 +156,10 @@ const Home: React.FC<{ featuredData }> = (featuredData: any) => {
                     key={nft.listingId}
                   >
                     <a>
-                      <NFT nft={nft} renderer={NFTRenderer} />
+                      <NFT
+                        nft={{ ...nft, source: "featured" }}
+                        renderer={NFTRenderer}
+                      />
                     </a>
                   </Link>
                 );

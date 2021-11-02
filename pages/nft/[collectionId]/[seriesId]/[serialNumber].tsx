@@ -529,11 +529,11 @@ const NFTDetail: React.FC<{}> = () => {
             <div className="w-2/3 border-r border-litho-black">
               <div
                 className="border-b border-litho-black p-10 flex items-center justify-center"
-                style={{ minHeight: "80%", maxHeight: "95%" }}
+                style={{ height: "90%" }}
               >
                 <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
               </div>
-              <div className="p-5 flex items-center justify-around">
+              <div className="p-8 flex items-center justify-around">
                 {nft.imageLink && (
                   <Link
                     href={nft.imageLink.replace(
@@ -733,7 +733,7 @@ const NFTDetail: React.FC<{}> = () => {
                     </div>
                   )}
                   {nft.royalty && nft.royalty.length > 0 && (
-                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                    <div className="w-full p-8 flex flex-col">
                       <Text variant="h6">Royalty</Text>
                       <Text
                         variant="body1"
