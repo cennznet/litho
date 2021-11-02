@@ -67,12 +67,14 @@ const NFTRenderer: React.FC<Props> = ({
     return null;
   }
 
+  const nftDisplay =
+    nft.source === "marketplace"
+      ? "w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
+      : "w-full h-full bg-litho-nft p-3 border border-litho-black";
+
   return (
     <div className="bg-litho-nft relative flex justify-center">
-      <div
-        className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
-        style={{ minHeight: "200px" }}
-      >
+      <div className={nftDisplay} style={{ minHeight: "200px" }}>
         <div className="relative flex items-center justify-center">
           <a
             {...(imageUrl
