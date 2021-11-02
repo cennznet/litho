@@ -120,7 +120,13 @@ const MarketPlaceCollection: React.FC<{}> = () => {
                 tokenId
               );
               let attributes = tokenInfo.attributes;
-              let nft = { ...tokenInfo, tokenId, ...attributes, showOne: true };
+              let nft = {
+                ...tokenInfo,
+                tokenId,
+                ...attributes,
+                showOne: true,
+                source: "listings",
+              };
               if (attributes) {
                 let metadata = getMetadata(tokenInfo.attributes);
                 if (metadata) {
