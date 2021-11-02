@@ -76,7 +76,11 @@ const NFTRenderer: React.FC<Props> = ({
     <div className="bg-litho-nft relative flex justify-center">
       <div className={nftDisplay} style={{ minHeight: "200px" }}>
         <div className="relative flex items-center justify-center">
-          <a href={`https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}`}>
+          <a
+            {...(imageUrl
+              ? { href: `https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}` }
+              : "{}")}
+          >
             {isImageOrVideo(fileExtension) === "video" ? (
               <video
                 src={imageUrl}
