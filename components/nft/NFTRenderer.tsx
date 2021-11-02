@@ -67,12 +67,14 @@ const NFTRenderer: React.FC<Props> = ({
     return null;
   }
 
+  const nftDisplay =
+    nft.source === "marketplace"
+      ? "w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
+      : "w-full h-full bg-litho-nft p-3 border border-litho-black";
+
   return (
     <div className="bg-litho-nft relative flex justify-center">
-      <div
-        className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
-        style={{ minHeight: "400px" }}
-      >
+      <div className={nftDisplay} style={{ minHeight: "400px" }}>
         <div className="relative flex items-center justify-center">
           <a href={`https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}`}>
             {isImageOrVideo(fileExtension) === "video" ? (
