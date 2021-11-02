@@ -15,6 +15,7 @@ import TxStatusModal from "./TxStatusModal";
 const openAuction = async (
   api,
   account,
+  signer,
   tokenId,
   paymentAssetId,
   priceInUnit,
@@ -29,7 +30,7 @@ const openAuction = async (
 
   return new Promise((resolve, reject) => {
     extrinsic
-      .signAndSend(account.signer, account.payload, ({ status }) => {
+      .signAndSend(account, { signer }, ({ status }) => {
         if (status.isInBlock) {
           resolve(status.asInBlock.toString());
           console.log(
@@ -142,7 +143,8 @@ const TimedAuction: React.FC<Props> = ({
           setModalState("txInProgress");
           await openAuction(
             web3Context.api,
-            web3Context.account,
+            web3Context.selectedAccount,
+            web3Context.signer,
             tokenId,
             paymentAsset.id,
             priceInUnit,
@@ -156,7 +158,7 @@ const TimedAuction: React.FC<Props> = ({
         }
       }
     },
-    [paymentAsset, web3Context.api, web3Context.account]
+    [paymentAsset, web3Context.api, web3Context.selectedAccount]
   );
 
   return (
