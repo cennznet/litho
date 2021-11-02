@@ -14,13 +14,13 @@ const Me: React.FC<{}> = () => {
   const [nfts, setNFTs] = React.useState([]);
 
   React.useEffect(() => {
-    if (!web3Context.account) return;
+    if (!web3Context.selectedAccount) return;
     setLoading(true);
-    if (web3Context && web3Context.api && web3Context.account) {
+    if (web3Context && web3Context.api && web3Context.selectedAccount) {
       (async () => {
         web3Context.api.isReady.then(async () => {
           const tokensInCollections = await web3Context.api.derive.nft.tokensOf(
-            web3Context.account.address
+            web3Context.selectedAccount
           );
           const userNFTs = [];
           await Promise.all(
@@ -89,7 +89,7 @@ const Me: React.FC<{}> = () => {
         });
       })();
     }
-  }, [web3Context.account]);
+  }, [web3Context.selectedAccount]);
 
   return (
     <div className="border border-litho-black mb-6 flex flex-col min-h-litho-app">
@@ -115,7 +115,7 @@ const Me: React.FC<{}> = () => {
         </Text>
       </div>
       <div className="p-12 overflow-auto relative min-h-customScreen2">
-        {!web3Context.account && (
+        {!web3Context.selectedAccount && (
           <div className="flex-1 w-full flex flex-col items-center justify-center pt-32">
             <button
               className="bg-litho-blue py-3 w-80 text-center"
@@ -128,7 +128,7 @@ const Me: React.FC<{}> = () => {
           </div>
         )}
         <Loader loading={loading} />
-        {web3Context.account && !loading && nfts.length === 0 && (
+        {web3Context.selectedAccount && !loading && nfts.length === 0 && (
           <div className="flex-1 w-full flex flex-col items-center justify-center pt-32">
             <Text variant="h4" component="h4" className="mb-11">
               You don't have any NFT yet.

@@ -52,10 +52,10 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
        * Load user collections and check if default Litho collection is already created for the user.
        * If the collection exists use the existing collection id else create a new collection while minting.
        */
-      if (web3Context.account) {
+      if (web3Context.selectedAccount) {
         const tokensInCollections = await getCollectionWiseTokens(
           api,
-          web3Context.account.address
+          web3Context.selectedAccount
         );
 
         let collectionIds = tokensInCollections
@@ -78,7 +78,7 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
         }
       }
     })();
-  }, [web3Context.account]);
+  }, [web3Context.selectedAccount]);
 
   const submitHandler: React.FormEventHandler<HTMLFormElement> = async (
     event: React.FormEvent<HTMLFormElement>
