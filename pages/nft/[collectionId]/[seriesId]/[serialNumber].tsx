@@ -733,7 +733,7 @@ const NFTDetail: React.FC<{}> = () => {
                     </div>
                   )}
                   {nft.royalty && nft.royalty.length > 0 && (
-                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                    <div className="w-full p-8 flex flex-col">
                       <Text variant="h6">Royalty</Text>
                       <Text
                         variant="body1"
