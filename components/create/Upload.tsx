@@ -11,6 +11,7 @@ interface Props {
   moveToPreview: (nftData: any) => void;
   nft: NFTType;
   goBack: () => void;
+  setModalState: (modalState: string) => void;
 }
 
 type Collection = {
@@ -27,7 +28,12 @@ const getFileExtensionFromName = (fileName) => {
   return fileExtension;
 };
 
-const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
+const Upload: React.FC<Props> = ({
+  moveToPreview,
+  nft,
+  goBack,
+  setModalState,
+}) => {
   const web3Context = React.useContext(Web3Context);
   const [defaultCollection, setDefaultCollection] =
     React.useState<Collection>();
@@ -107,17 +113,23 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
     if (!currentTarget || files.length === 0) {
       return;
     }
-    const fileName = files[0].name;
 
-    const fileExtension = getFileExtensionFromName(fileName);
-
-    if (name === "file") {
-      setFileName(fileName);
-      setFileExtension(fileExtension);
+    const fileSize = files[0].size / 1024 / 1024; // in MB
+    if (fileSize > 10) {
+      setModalState("fileSizeExceeded");
     } else {
-      setCoverImageName(fileName);
-      const cfileExtension = getFileExtensionFromName(fileName);
-      setCoverFileExtension(cfileExtension);
+      const fileName = files[0].name;
+
+      const fileExtension = getFileExtensionFromName(fileName);
+
+      if (name === "file") {
+        setFileName(fileName);
+        setFileExtension(fileExtension);
+      } else {
+        setCoverImageName(fileName);
+        const cfileExtension = getFileExtensionFromName(fileName);
+        setCoverFileExtension(cfileExtension);
+      }
     }
   };
 
@@ -151,7 +163,8 @@ const Upload: React.FC<Props> = ({ moveToPreview, nft, goBack }) => {
         }`}
       >
         We support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, quicktime,
-        webm, glb, mp3, oga, wav, xwav, flac, pdf, html (zip archive), md
+        webm, glb, mp3, oga, wav, xwav, flac, pdf, html (zip archive), md up to
+        10MB
       </Text>
       <input
         name="file"
