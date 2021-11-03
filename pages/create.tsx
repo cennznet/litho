@@ -280,6 +280,19 @@ const Create: React.FC<{}> = () => {
       ],
       onClose: () => router.push("/"),
     },
+    fileSizeExceeded: {
+      message: "FILE SIZE EXCEEDED",
+      subText: "Please try again with a file smaller than 10MB",
+      buttons: [
+        {
+          text: "TRY AGAIN",
+          onClick: () => setModalState(null),
+          isPrimary: true,
+          type: "button",
+        },
+      ],
+      onClose: () => setModalState(null),
+    },
     error: {
       message: "OOPS... SOMETHING WENT WRONG",
       subText: " Your NFT failed to mint. Please try again.",
@@ -699,6 +712,7 @@ const Create: React.FC<{}> = () => {
           <Upload
             moveToPreview={moveToPreview}
             nft={state.nft}
+            setModalState={setModalState}
             goBack={() =>
               dispatch({ type: "GO_TO_TAB", payload: { currentTab: 1 } })
             }
