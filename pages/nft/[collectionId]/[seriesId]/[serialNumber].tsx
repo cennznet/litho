@@ -96,6 +96,7 @@ const NFTDetail: React.FC<{}> = () => {
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
   const [txMessage, setTxMessage] = React.useState<any>();
+  const [fullAddress, showFullAddress] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -673,14 +674,27 @@ const NFTDetail: React.FC<{}> = () => {
                         </button>
                       </div>
                     )}
-                  <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                  <div
+                    className="w-full p-8 flex flex-col border-b border-litho-black"
+                    onMouseEnter={() => showFullAddress(true)}
+                    onMouseLeave={() => showFullAddress(false)}
+                  >
                     <Text variant="h6">Owner</Text>
-                    <Text variant="h6" className="text-opacity-50">
-                      {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
-                      {web3Context.selectedAccount === nft.owner
-                        ? "(You)"
-                        : null}
-                    </Text>
+                    {fullAddress ? (
+                      <Text variant="subtitle2" className="text-opacity-50">
+                        {nft.owner}{" "}
+                        {web3Context.selectedAccount === nft.owner
+                          ? "(You)"
+                          : null}
+                      </Text>
+                    ) : (
+                      <Text variant="h6" className="text-opacity-50">
+                        {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
+                        {web3Context.selectedAccount === nft.owner
+                          ? "(You)"
+                          : null}
+                      </Text>
+                    )}
                     {editableSerialNumber !== undefined && (
                       <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
                         <Link
