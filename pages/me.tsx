@@ -22,63 +22,61 @@ const Me: React.FC<{}> = () => {
           const tokensInCollections = await web3Context.api.derive.nft.tokensOf(
             web3Context.selectedAccount
           );
+
           const userNFTs = [];
           await Promise.all(
-            tokensInCollections.map(async (tokens) => {
-              if (tokens.length > 0) {
-                return Promise.all(
-                  tokens.map(async (token) => {
-                    return new Promise(async (resolve) => {
-                      const collectionId = token.collectionId.toString();
-                      const seriesId = token.seriesId.toString();
-                      const serialNumber = token.serialNumber.toString();
-                      const tokenInfo =
-                        await web3Context.api.derive.nft.tokenInfo({
-                          collectionId,
-                          seriesId,
-                          serialNumber,
-                        });
-                      const { owner, attributes } = tokenInfo;
-                      let checkIfSingleIssue = serialNumber === "0";
-                      if (serialNumber === "0") {
-                        checkIfSingleIssue =
-                          await web3Context.api.query.nft.isSingleIssue(
-                            collectionId,
-                            seriesId
-                          );
-                      }
-                      // Copies in collection is used by NFTRenderer to show name of nfts with 4/5, 5/5 sufix in case of series nft
-                      // so for series we set copies as 2 and for unique we keep it 1 (later we can change it to bool)
-                      const nft: { [index: string]: any } = {
+            tokensInCollections.map(async (token) => {
+              if (token) {
+                return new Promise(async (resolve) => {
+                  const collectionId = token.collectionId.toString();
+                  const seriesId = token.seriesId.toString();
+                  const serialNumber = token.serialNumber.toString();
+                  console.log("collectionId:", collectionId);
+                  const tokenInfo = await web3Context.api.derive.nft.tokenInfo({
+                    collectionId,
+                    seriesId,
+                    serialNumber,
+                  });
+                  const { owner } = tokenInfo;
+                  let attributes = tokenInfo.attributes?.toJSON();
+                  let checkIfSingleIssue = serialNumber === "0";
+                  if (serialNumber === "0") {
+                    checkIfSingleIssue =
+                      await web3Context.api.query.nft.isSingleIssue(
                         collectionId,
-                        seriesId,
-                        serialNumber,
-                        owner,
-                        attributes,
-                        copies: checkIfSingleIssue ? 1 : 2, // copies here is just to show it in format 1/2 2/2 (in case of series nfts)
-                        showOne: true,
-                        tokenId: [collectionId, seriesId, serialNumber],
-                      };
+                        seriesId
+                      );
+                  }
+                  // Copies in collection is used by NFTRenderer to show name of nfts with 4/5, 5/5 sufix in case of series nft
+                  // so for series we set copies as 2 and for unique we keep it 1 (later we can change it to bool)
+                  const nft: { [index: string]: any } = {
+                    collectionId,
+                    seriesId,
+                    serialNumber,
+                    owner,
+                    attributes: attributes,
+                    copies: checkIfSingleIssue ? 1 : 2, // copies here is just to show it in format 1/2 2/2 (in case of series nfts)
+                    showOne: true,
+                    tokenId: [collectionId, seriesId, serialNumber],
+                  };
 
-                      if (attributes) {
-                        const metadata = getMetadata(attributes);
-                        if (metadata) {
-                          const metadataAttributes = metadata.split(" ");
-                          const metaAsObject = metadataAttributes.length > 1;
-                          const key = metaAsObject
-                            ? metadataAttributes[0].toLowerCase()
-                            : "metadata";
-                          const value = metaAsObject
-                            ? metadataAttributes[1]
-                            : metadataAttributes[0];
-                          nft[key] = value;
-                        }
-                      }
-                      userNFTs.push(nft);
-                      resolve(null);
-                    });
-                  })
-                );
+                  if (attributes) {
+                    const metadata = getMetadata(attributes);
+                    if (metadata) {
+                      const metadataAttributes = metadata.split(" ");
+                      const metaAsObject = metadataAttributes.length > 1;
+                      const key = metaAsObject
+                        ? metadataAttributes[0].toLowerCase()
+                        : "metadata";
+                      const value = metaAsObject
+                        ? metadataAttributes[1]
+                        : metadataAttributes[0];
+                      nft[key] = value;
+                    }
+                  }
+                  userNFTs.push(nft);
+                  resolve(null);
+                });
               } else {
                 return Promise.resolve();
               }

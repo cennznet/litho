@@ -67,14 +67,20 @@ const NFTRenderer: React.FC<Props> = ({
     return null;
   }
 
+  const nftDisplay =
+    nft.source === "marketplace"
+      ? "w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
+      : "w-full h-full bg-litho-nft p-3 border border-litho-black";
+
   return (
     <div className="bg-litho-nft relative flex justify-center">
-      <div
-        className="w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
-        style={{ minHeight: "400px" }}
-      >
+      <div className={nftDisplay} style={{ minHeight: "200px" }}>
         <div className="relative flex items-center justify-center">
-          <a href={`https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}`}>
+          <a
+            {...(imageUrl && imageUrl.split("ipfs/")
+              ? { href: `https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}` }
+              : "{}")}
+          >
             {isImageOrVideo(fileExtension) === "video" ? (
               <video
                 src={imageUrl}
@@ -108,18 +114,28 @@ const NFTRenderer: React.FC<Props> = ({
           )}
         </div>
         <div className="mt-3 flex justify-between items-center">
-          <span
-            className="text-lg font-bold break-all mr-4"
-            style={{ lineHeight: "21.6px", maxWidth: 300 }}
-          >
-            {nft.title || nft.name || ""}
-          </span>
-          {nft.source !== "marketplace" && (
+          {nft.source === "listings" ||
+          nft.source === "marketplace" ||
+          nft.source === "featured" ? (
+            <span
+              className="text-lg font-bold break-all mr-4"
+              style={{
+                lineHeight: "21.6px",
+                maxWidth: 350,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {nft.name && nft.name.length > 37
+                ? nft.name.substring(0, 38).concat("...")
+                : nft.name}
+            </span>
+          ) : (
             <span
               className="text-sm font-semibold"
               style={{ lineHeight: "18px" }}
             >
-              x{nft.copies || 1}
+              {nft.name} x{nft.copies || 1}
             </span>
           )}
         </div>

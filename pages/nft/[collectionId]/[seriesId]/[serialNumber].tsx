@@ -96,6 +96,7 @@ const NFTDetail: React.FC<{}> = () => {
     React.useState<number>(undefined);
   const [listingInfo, setListingInfo] = React.useState<any>();
   const [txMessage, setTxMessage] = React.useState<any>();
+  const [fullAddress, showFullAddress] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -124,17 +125,14 @@ const NFTDetail: React.FC<{}> = () => {
         if (royalty) {
           royalty = royalty.toHuman()?.entitlements;
         }
-        const owner = await web3Context.api.query.nft.tokenOwner(
-          [router.query.collectionId, router.query.seriesId],
-          router.query.serialNumber
-        );
 
-        const { attributes } = tokenInfo;
+        let { attributes, owner } = tokenInfo;
+        attributes = attributes.toJSON();
         const nft: { [index: string]: any } = {
           collectionId: router.query.collectionId,
           seriesId: router.query.seriesId,
           serialNumber: router.query.serialNumber,
-          owner: owner.toString(),
+          owner,
           showOne: true,
           tokenId: [
             router.query.collectionId,
@@ -529,11 +527,11 @@ const NFTDetail: React.FC<{}> = () => {
             <div className="w-2/3 border-r border-litho-black">
               <div
                 className="border-b border-litho-black p-10 flex items-center justify-center"
-                style={{ minHeight: "80%", maxHeight: "95%" }}
+                style={{ height: "90%" }}
               >
                 <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
               </div>
-              <div className="p-5 flex items-center justify-around">
+              <div className="p-8 flex items-center justify-around">
                 {nft.imageLink && (
                   <Link
                     href={nft.imageLink.replace(
@@ -676,14 +674,27 @@ const NFTDetail: React.FC<{}> = () => {
                         </button>
                       </div>
                     )}
-                  <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                  <div
+                    className="w-full p-8 flex flex-col border-b border-litho-black"
+                    onMouseEnter={() => showFullAddress(true)}
+                    onMouseLeave={() => showFullAddress(false)}
+                  >
                     <Text variant="h6">Owner</Text>
-                    <Text variant="h6" className="text-opacity-50">
-                      {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
-                      {web3Context.selectedAccount === nft.owner
-                        ? "(You)"
-                        : null}
-                    </Text>
+                    {fullAddress ? (
+                      <Text variant="subtitle2" className="text-opacity-50">
+                        {nft.owner}{" "}
+                        {web3Context.selectedAccount === nft.owner
+                          ? "(You)"
+                          : null}
+                      </Text>
+                    ) : (
+                      <Text variant="h6" className="text-opacity-50">
+                        {nft.owner.substr(0, 8)}...{nft.owner.substr(-8)}{" "}
+                        {web3Context.selectedAccount === nft.owner
+                          ? "(You)"
+                          : null}
+                      </Text>
+                    )}
                     {editableSerialNumber !== undefined && (
                       <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
                         <Link
@@ -733,7 +744,7 @@ const NFTDetail: React.FC<{}> = () => {
                     </div>
                   )}
                   {nft.royalty && nft.royalty.length > 0 && (
-                    <div className="w-full p-8 flex flex-col border-b border-litho-black">
+                    <div className="w-full p-8 flex flex-col">
                       <Text variant="h6">Royalty</Text>
                       <Text
                         variant="body1"

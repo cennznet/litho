@@ -119,10 +119,17 @@ const MarketPlaceCollection: React.FC<{}> = () => {
               const tokenInfo = await web3Context.api.derive.nft.tokenInfo(
                 tokenId
               );
-              let attributes = tokenInfo.attributes;
-              let nft = { ...tokenInfo, tokenId, ...attributes, showOne: true };
+
+              let attributes = tokenInfo.attributes?.toJSON();
+              let nft = {
+                ...tokenInfo,
+                tokenId,
+                ...attributes,
+                showOne: true,
+                source: "listings",
+              };
               if (attributes) {
-                let metadata = getMetadata(tokenInfo.attributes);
+                let metadata = getMetadata(attributes);
                 if (metadata) {
                   const metadataAttributes = metadata.split(" ");
                   const metaAsObject = metadataAttributes.length > 1;
