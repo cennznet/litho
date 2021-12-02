@@ -21,6 +21,9 @@ const getFileExtension = (contentType) => {
     if(contentType.includes("mp4")) {
       return "mp4";
     }
+    if(contentType.includes("mov")) {
+      return "mov";
+    }
     if(contentType.includes("ogg")) {
       return "ogg";
     }

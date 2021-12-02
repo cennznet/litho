@@ -11,7 +11,8 @@ const videoExtensions = [
   "mp4",
   "ogg",
   "wmv",
-  "webm"
+  "webm",
+  "mov"
 ];
 
 const isImageOrVideo = (fileExtension) => {
