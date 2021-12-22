@@ -26,6 +26,9 @@ const ConnectedWalletModal: React.FC<Props> = ({
     CENNZ: "/cennznet-logo.svg",
     CPAY: "/cpay-logo.svg",
     cUSD: "/cusd-logo.svg",
+    ETH: "/ethereum-logo.svg",
+    DAI: "/dai-logo.svg",
+    USDC: "/usdc-logo.svg",
   };
 
   return (

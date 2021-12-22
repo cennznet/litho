@@ -12,7 +12,9 @@ import Loader from "../../../../components/Loader";
 import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
+import TokenSelect from "../../../../components/sell/Select";
 import axios from "axios";
+import { SupportedAssetInfo } from "../../../../components/SupportedAssetsProvider";
 
 const buyWithFixedPrice = async (api, account, signer, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -97,6 +99,9 @@ const NFTDetail: React.FC<{}> = () => {
   const [listingInfo, setListingInfo] = React.useState<any>();
   const [txMessage, setTxMessage] = React.useState<any>();
   const [fullAddress, showFullAddress] = React.useState<boolean>(false);
+  const [selectedToken, setSelectedToken] = React.useState<SupportedAssetInfo>(
+    supportedAssets[0]
+  );
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -332,7 +337,10 @@ const NFTDetail: React.FC<{}> = () => {
   const paymentAsset = useMemo(() => {
     let paymentAssetId = undefined;
     if (listingInfo && listingInfo.fixedPriceInfo) {
-      paymentAssetId = listingInfo.fixedPriceInfo.paymentAsset;
+      paymentAssetId =
+        selectedToken === supportedAssets[0]
+          ? listingInfo.fixedPriceInfo.paymentAsset
+          : selectedToken.id;
     }
     if (listingInfo && listingInfo.auctionInfo) {
       paymentAssetId = listingInfo.auctionInfo.paymentAsset;
@@ -647,16 +655,25 @@ const NFTDetail: React.FC<{}> = () => {
                           </div>
                         )}
                         {listingInfo.fixedPriceInfo && (
-                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
-                            <button
-                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
-                              onClick={buyNow}
-                            >
-                              <Text variant="button" color="white">
-                                BUY NOW
-                              </Text>
-                            </button>
-                          </div>
+                          <>
+                            <div className="w-full flex mt-6">
+                              <TokenSelect
+                                selectedToken={selectedToken}
+                                supportedAssets={supportedAssets}
+                                onTokenSelected={setSelectedToken}
+                              />
+                            </div>
+                            <div className="w-full flex-row md:flex-row flex items-center justify-between">
+                              <button
+                                className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                                onClick={buyNow}
+                              >
+                                <Text variant="button" color="white">
+                                  BUY NOW
+                                </Text>
+                              </button>
+                            </div>
+                          </>
                         )}
                       </div>
                     )}

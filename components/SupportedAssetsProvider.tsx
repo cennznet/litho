@@ -7,10 +7,20 @@ const SupportedAssetIds =
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS &&
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(",");
 
+const tokenLogoURLs = {
+  CENNZ: "/cennznet-logo.svg",
+  CPAY: "/cpay-logo.svg",
+  cUSD: "/cusd-logo.svg",
+  ETH: "/ethereum-logo.svg",
+  DAI: "/dai-logo.svg",
+  USDC: "/usdc-logo.svg",
+};
+
 export type SupportedAssetInfo = {
   id: number;
   symbol: string;
   decimals: number;
+  logoURL: string;
 };
 
 const SupportedAssetsProvider = ({ children }) => {
@@ -38,6 +48,7 @@ const SupportedAssetsProvider = ({ children }) => {
               id: Number(tokenId),
               symbol: u8aToString(symbol),
               decimals: decimalPlaces.toNumber(),
+              logoURL: tokenLogoURLs[u8aToString(symbol)],
             };
           });
         } else {
@@ -47,6 +58,7 @@ const SupportedAssetsProvider = ({ children }) => {
               id: tokenId.toString(),
               symbol: u8aToString(symbol),
               decimals: decimalPlaces.toNumber(),
+              logoURL: tokenLogoURLs[symbol],
             };
           });
         }

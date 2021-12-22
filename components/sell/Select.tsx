@@ -50,6 +50,13 @@ const TokenSelect: React.FC<SelectProps> = ({
                   }}
                   key={token.symbol}
                 >
+                  <div className="h-12 w-12 bg-gray-200 mr-4 flex items-center justify-center">
+                    <img
+                      src={token.logoURL || "/cennznet-logo.svg"}
+                      alt="CENNZ balance"
+                      className="h-6 w-6 object-contain"
+                    />
+                  </div>
                   <Text variant="subtitle1" className="group-hover:text-white">
                     {token.symbol}
                   </Text>
