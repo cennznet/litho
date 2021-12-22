@@ -77,7 +77,7 @@ const NFTRenderer: React.FC<Props> = ({
       <div className={nftDisplay} style={{ minHeight: "200px" }}>
         <div className="relative flex items-center justify-center">
           <a
-            {...(imageUrl
+            {...(imageUrl && imageUrl.split("ipfs/")
               ? { href: `https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}` }
               : "{}")}
           >
@@ -126,9 +126,9 @@ const NFTRenderer: React.FC<Props> = ({
                 whiteSpace: "nowrap",
               }}
             >
-              {nft.name.length <= 37
-                ? nft.name
-                : nft.name.substring(0, 38).concat("...")}
+              {nft.name && nft.name.length > 37
+                ? nft.name.substring(0, 38).concat("...")
+                : nft.name}
             </span>
           ) : (
             <span
