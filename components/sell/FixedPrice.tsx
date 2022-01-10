@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
-
 import Text from "../Text";
 import Web3Context from "../Web3Context";
 import Image from "next/image";
@@ -12,6 +11,7 @@ import { isValidAddressPolkadotAddress } from "../../utils/chainHelper";
 import dayjs from "dayjs";
 import { BLOCK_TIME } from "../../pages/sell";
 import TxStatusModal from "./TxStatusModal";
+import { coinGeckoIds, convertToUSD } from "../../utils/currencyHelpers";
 
 const sell = async (
   api,
@@ -78,23 +78,18 @@ const FixedPrice: React.FC<Props> = ({
   }, [supportedAssets]);
 
   React.useEffect(() => {
-    const price = web3Context.cennzUSDPrice;
-    if (
-      fixedPrice !== "-1" &&
-      price &&
-      paymentAsset &&
-      paymentAsset.symbol === "CENNZ"
-    ) {
-      const conversionRateCal = Number(fixedPrice) * price;
-      let conversionRate = "-1";
-      if (!isNaN(conversionRateCal)) {
-        conversionRate = conversionRateCal.toFixed(2);
+    if (fixedPrice !== "-1" && paymentAsset) {
+      const coinGeckoId = coinGeckoIds[paymentAsset.symbol];
+      if (coinGeckoId) {
+        (async () => {
+          let converted = await convertToUSD(coinGeckoId, fixedPrice);
+          setConvertedRate(converted);
+        })();
+      } else {
+        setConvertedRate("-1");
       }
-      setConvertedRate(conversionRate);
-    } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
-      setConvertedRate("-1");
     }
-  }, [fixedPrice, paymentAsset, web3Context.cennzUSDPrice]);
+  }, [fixedPrice, paymentAsset]);
 
   const tokenId = useMemo(() => {
     if (web3Context.api) {
@@ -123,6 +118,7 @@ const FixedPrice: React.FC<Props> = ({
       }
 
       const priceInUnit = +price.value * 10 ** paymentAsset.decimals;
+
       if (priceInUnit <= 0) {
         setError("Please provide a proper price");
         return;
@@ -159,7 +155,7 @@ const FixedPrice: React.FC<Props> = ({
             tokenId,
             buyerAddress,
             paymentAsset.id,
-            priceInUnit,
+            String(priceInUnit),
             duration
           );
           setTxMessage("New listing created");

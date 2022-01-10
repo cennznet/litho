@@ -11,6 +11,7 @@ import { SupportedAssetInfo } from "../SupportedAssetsProvider";
 import dayjs from "dayjs";
 import { BLOCK_TIME } from "../../pages/sell";
 import TxStatusModal from "./TxStatusModal";
+import { coinGeckoIds, convertToUSD } from "../../utils/currencyHelpers";
 
 const openAuction = async (
   api,
@@ -75,23 +76,18 @@ const TimedAuction: React.FC<Props> = ({
   }, [supportedAssets]);
 
   React.useEffect(() => {
-    const price = web3Context.cennzUSDPrice;
-    if (
-      reservedPrice !== "-1" &&
-      price &&
-      paymentAsset &&
-      paymentAsset.symbol === "CENNZ"
-    ) {
-      const conversionRateCal = Number(reservedPrice) * price;
-      let conversionRate = "-1";
-      if (!isNaN(conversionRateCal)) {
-        conversionRate = conversionRateCal.toFixed(2);
+    if (reservedPrice !== "-1" && paymentAsset) {
+      const coinGeckoId = coinGeckoIds[paymentAsset.symbol];
+      if (coinGeckoId) {
+        (async () => {
+          let converted = await convertToUSD(coinGeckoId, reservedPrice);
+          setConvertedRate(converted);
+        })();
+      } else {
+        setConvertedRate("-1");
       }
-      setConvertedRate(conversionRate);
-    } else if (paymentAsset && paymentAsset.symbol !== "CENNZ") {
-      setConvertedRate("-1");
     }
-  }, [reservedPrice, paymentAsset, web3Context.cennzUSDPrice]);
+  }, [reservedPrice, paymentAsset]);
 
   const tokenId = useMemo(() => {
     if (web3Context.api) {
@@ -147,7 +143,7 @@ const TimedAuction: React.FC<Props> = ({
             web3Context.signer,
             tokenId,
             paymentAsset.id,
-            priceInUnit,
+            String(priceInUnit),
             duration
           );
           setModalState("success");

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import Web3Context from "../../../../components/Web3Context";
 import Text from "../../../../components/Text";
 import SupportedAssetsContext from "../../../../components/SupportedAssetsContext";
@@ -12,9 +11,9 @@ import Loader from "../../../../components/Loader";
 import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
-import TokenSelect from "../../../../components/sell/Select";
 import axios from "axios";
 import { SupportedAssetInfo } from "../../../../components/SupportedAssetsProvider";
+import { coinGeckoIds, convertToUSD } from "../../../../utils/currencyHelpers";
 
 const buyWithFixedPrice = async (api, account, signer, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);
@@ -99,9 +98,6 @@ const NFTDetail: React.FC<{}> = () => {
   const [listingInfo, setListingInfo] = React.useState<any>();
   const [txMessage, setTxMessage] = React.useState<any>();
   const [fullAddress, showFullAddress] = React.useState<boolean>(false);
-  const [selectedToken, setSelectedToken] = React.useState<SupportedAssetInfo>(
-    supportedAssets[0]
-  );
 
   React.useEffect(() => {
     if (!web3Context.api) {
@@ -337,10 +333,7 @@ const NFTDetail: React.FC<{}> = () => {
   const paymentAsset = useMemo(() => {
     let paymentAssetId = undefined;
     if (listingInfo && listingInfo.fixedPriceInfo) {
-      paymentAssetId =
-        selectedToken === supportedAssets[0]
-          ? listingInfo.fixedPriceInfo.paymentAsset
-          : selectedToken.id;
+      paymentAssetId = listingInfo.fixedPriceInfo.paymentAsset;
     }
     if (listingInfo && listingInfo.auctionInfo) {
       paymentAssetId = listingInfo.auctionInfo.paymentAsset;
@@ -370,24 +363,26 @@ const NFTDetail: React.FC<{}> = () => {
     if (
       paymentAsset &&
       paymentAsset.symbol &&
-      paymentAsset.symbol === "CENNZ" &&
-      listingInfo
+      listingInfo &&
+      conversionRate === -1
     ) {
-      const price = web3Context.cennzUSDPrice;
-      if (conversionRate === -1) {
-        try {
-          let conversionRateCal =
-            (listingInfo.valueForConversion / 10 ** paymentAsset.decimals) *
-            price;
-          conversionRateCal = Number(conversionRateCal.toFixed(2));
-          setConversionRate(conversionRateCal);
-        } catch (e) {
-          console.log("Error setting conversion rate");
-        }
+      try {
+        const coinGeckoId = coinGeckoIds[paymentAsset.symbol];
+        (async () => {
+          let converted;
+          if (reservePrice === 0) {
+            converted = await convertToUSD(coinGeckoId, fixedPrice);
+          } else if (fixedPrice === 0) {
+            converted = await convertToUSD(coinGeckoId, reservePrice);
+          }
+          setConversionRate(+converted);
+        })();
+      } catch (e) {
+        console.log("Error setting conversion rate");
       }
     }
     //return undefined;
-  }, [listingInfo, paymentAsset, web3Context.cennzUSDPrice]);
+  }, [listingInfo, paymentAsset]);
 
   const endTime = useMemo(() => {
     if (listingInfo && web3Context.api) {
@@ -460,7 +455,7 @@ const NFTDetail: React.FC<{}> = () => {
             web3Context.selectedAccount,
             web3Context.signer,
             listingInfo.listingId,
-            priceInUnit
+            String(priceInUnit)
           );
           setTxMessage("Bid placed");
           setModalState("success");
@@ -655,25 +650,16 @@ const NFTDetail: React.FC<{}> = () => {
                           </div>
                         )}
                         {listingInfo.fixedPriceInfo && (
-                          <>
-                            <div className="w-full flex mt-6">
-                              <TokenSelect
-                                selectedToken={selectedToken}
-                                supportedAssets={supportedAssets}
-                                onTokenSelected={setSelectedToken}
-                              />
-                            </div>
-                            <div className="w-full flex-row md:flex-row flex items-center justify-between">
-                              <button
-                                className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
-                                onClick={buyNow}
-                              >
-                                <Text variant="button" color="white">
-                                  BUY NOW
-                                </Text>
-                              </button>
-                            </div>
-                          </>
+                          <div className="w-full flex-col md:flex-row flex items-center justify-between mt-10">
+                            <button
+                              className="md:w-auto border bg-litho-blue flex-1 mt-4 md:mt-0 text-center py-2"
+                              onClick={buyNow}
+                            >
+                              <Text variant="button" color="white">
+                                BUY NOW
+                              </Text>
+                            </button>
+                          </div>
                         )}
                       </div>
                     )}

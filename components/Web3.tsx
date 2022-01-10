@@ -81,10 +81,11 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const tokenMap = {};
     assets.forEach((asset) => {
       const [tokenId, { symbol, decimalPlaces }] = asset;
-      tokenMap[tokenId] = {
-        symbol: hexToString(symbol.toJSON()),
-        decimalPlaces: decimalPlaces.toNumber(),
-      };
+      if (hexToString(symbol.toJSON()) !== "")
+        tokenMap[tokenId] = {
+          symbol: hexToString(symbol.toJSON()),
+          decimalPlaces: decimalPlaces.toNumber(),
+        };
     });
     const balanceSubscriptionArg = Object.keys(tokenMap).map(
       (tokenId, index) => {
@@ -98,11 +99,13 @@ const Web3: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         const userBalances = {};
         Object.keys(tokenMap).forEach((tokenId) => {
           const token = tokenMap[tokenId];
-          userBalances[token.symbol] = {
-            balance: balances[token.index] / Math.pow(10, token.decimalPlaces),
-            tokenId,
-            decimalPlaces: token.decimalPlaces,
-          };
+          if (balances[token.index] / Math.pow(10, token.decimalPlaces) > 0)
+            userBalances[token.symbol] = {
+              balance:
+                balances[token.index] / Math.pow(10, token.decimalPlaces),
+              tokenId,
+              decimalPlaces: token.decimalPlaces,
+            };
         });
 
         setBalances(userBalances);
