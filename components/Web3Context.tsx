@@ -11,7 +11,6 @@ const Web3Context = React.createContext({
   signer: null,
   accounts: null,
   api: null,
-  cennzUSDPrice: null,
 });
 
 export default Web3Context;
