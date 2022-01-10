@@ -12,8 +12,7 @@ import getMetadata from "../../../../utils/getMetadata";
 import NFTRenderer from "../../../../components/nft/NFTRenderer";
 import NFT from "../../../../components/nft";
 import axios from "axios";
-import { SupportedAssetInfo } from "../../../../components/SupportedAssetsProvider";
-import { coinGeckoIds, convertToUSD } from "../../../../utils/currencyHelpers";
+import { coinGeckoIds, convertToUSD } from "../../../../utils/assetHelpers";
 
 const buyWithFixedPrice = async (api, account, signer, listingId) => {
   const buyExtrinsic = await api.tx.nft.buy(listingId);

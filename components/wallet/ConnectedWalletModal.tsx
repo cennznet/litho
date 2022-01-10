@@ -5,6 +5,7 @@ import Modal from "../Modal";
 import Text from "../Text";
 import Web3Context from "../Web3Context";
 import copyTextToClipboard from "../../utils/copyTextToClipboard";
+import { tokenLogoURLs } from "../../utils/assetHelpers";
 
 interface Props {
   closeModal: () => void;
@@ -20,16 +21,6 @@ const ConnectedWalletModal: React.FC<Props> = ({
     0,
     8
   )}...${web3Context.selectedAccount.substr(-8)}`;
-
-  // web3Context.accounts
-  const tokenLogoURLs = {
-    CENNZ: "/cennznet-logo.svg",
-    CPAY: "/cpay-logo.svg",
-    cUSD: "/cusd-logo.svg",
-    ETH: "/ethereum-logo.svg",
-    DAI: "/dai-logo.svg",
-    USDC: "/usdc-logo.svg",
-  };
 
   return (
     <Modal

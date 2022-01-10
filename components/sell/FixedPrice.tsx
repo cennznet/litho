@@ -11,7 +11,7 @@ import { isValidAddressPolkadotAddress } from "../../utils/chainHelper";
 import dayjs from "dayjs";
 import { BLOCK_TIME } from "../../pages/sell";
 import TxStatusModal from "./TxStatusModal";
-import { coinGeckoIds, convertToUSD } from "../../utils/currencyHelpers";
+import { coinGeckoIds, convertToUSD } from "../../utils/assetHelpers";
 
 const sell = async (
   api,

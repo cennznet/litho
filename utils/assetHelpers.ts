@@ -1,5 +1,13 @@
 import axios from "axios";
 
+const tokenLogoURLs = {
+  CENNZ: "/cennznet-logo.svg",
+  CPAY: "/cpay-logo.svg",
+  ETH: "/ethereum-logo.svg",
+  DAI: "/dai-logo.svg",
+  USDC: "/usdc-logo.svg",
+};
+
 const coinGeckoIds = {
   CENNZ: "centrality",
   ETH: "ethereum",
@@ -21,4 +29,4 @@ function convertToUSD(coinGeckoId, priceToConvert) {
   });
 }
 
-export { coinGeckoIds, convertToUSD };
+export { tokenLogoURLs, coinGeckoIds, convertToUSD };

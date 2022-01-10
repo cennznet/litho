@@ -2,19 +2,11 @@ import React, { useEffect, useState } from "react";
 import Web3Context from "./Web3Context";
 import SupportedAssetsContext from "./SupportedAssetsContext";
 import { u8aToString } from "@polkadot/util";
+import { tokenLogoURLs } from "../utils/assetHelpers";
 
 const SupportedAssetIds =
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS &&
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(",");
-
-const tokenLogoURLs = {
-  CENNZ: "/cennznet-logo.svg",
-  CPAY: "/cpay-logo.svg",
-  cUSD: "/cusd-logo.svg",
-  ETH: "/ethereum-logo.svg",
-  DAI: "/dai-logo.svg",
-  USDC: "/usdc-logo.svg",
-};
 
 export type SupportedAssetInfo = {
   id: number;
