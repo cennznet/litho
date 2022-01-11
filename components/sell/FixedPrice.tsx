@@ -197,12 +197,10 @@ const FixedPrice: React.FC<Props> = ({
           </label>
           <Input
             name="price"
-            type="text"
+            type="number"
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
             defaultValue={fixedPrice !== "-1" ? fixedPrice : ""}
-            onChange={(val) => {
-              setFixedPrice(val.target.value);
-            }}
+            onChange={(val) => setFixedPrice(String(val.target.value))}
           />
           {convertedRate !== "-1" ? (
             <>
