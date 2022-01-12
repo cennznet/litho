@@ -87,7 +87,13 @@ const NFTRenderer: React.FC<Props> = ({
             />
           ) : (
             <img
-              src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
+              src={
+                imageUrl
+                  ? preview
+                    ? imageUrl
+                    : imageUrl + "?tr=w-600,h-600,c-at_max"
+                  : null
+              }
               className={imgClass}
               onLoad={(event) => {
                 if (event.target) {
