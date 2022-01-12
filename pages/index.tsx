@@ -144,11 +144,11 @@ const Home: React.FC<{ featuredData }> = (featuredData: any) => {
       </div>
       {data && data.featuredListings && data.featuredListings.length > 0 && (
         <div className="mt-16">
-          <div className="flex items-center">
+          <div className="flex items-center mb-10">
             <Text variant="h2">Featured {FEATURED_COLLECTION_TITLE}</Text>
           </div>
           {
-            <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr">
+            <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4 auto-rows-fr mb-10">
               {data.featuredListings.map((nft) => {
                 return (
                   <Link

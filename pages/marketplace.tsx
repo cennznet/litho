@@ -198,7 +198,7 @@ const MarketPlace: React.FC<{}> = () => {
         {/*/>*/}
       </div>
       <Loader loading={loading} />
-      <div className="grid grid-row lg:grid-cols-4 gap-5 grid-flow-4">
+      <div className="grid grid-row lg:grid-cols-4 gap-8 grid-flow-4 mb-10">
         {nfts.map((nft, index) => {
           if (index > pageEnd) {
             return null;
