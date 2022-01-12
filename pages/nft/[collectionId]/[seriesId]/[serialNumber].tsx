@@ -503,8 +503,12 @@ const NFTDetail: React.FC<{}> = () => {
   return (
     <>
       <Loader loading={loading} />
-      <Link href="javascript:history.back()">
-        <a className="font-bold" style={{ lineHeight: "31px" }}>
+      <Link href="#">
+        <a
+          className="font-bold"
+          style={{ lineHeight: "31px" }}
+          onClick={() => router.back()}
+        >
           &lt; Back
         </a>
       </Link>
