@@ -185,12 +185,10 @@ const TimedAuction: React.FC<Props> = ({
           </label>
           <Input
             name="price"
-            type="text"
+            type="number"
             placeholder={`Enter your price in ${paymentAsset?.symbol}`}
             defaultValue={reservedPrice !== "-1" ? reservedPrice : ""}
-            onChange={(val) => {
-              setReservedPrice(val.target.value);
-            }}
+            onChange={(val) => setReservedPrice(String(val.target.value))}
           />
           {convertedRate !== "-1" ? (
             <>

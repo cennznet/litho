@@ -68,7 +68,7 @@ const NFTRenderer: React.FC<Props> = ({
   }
 
   const nftDisplay =
-    nft.source === "marketplace"
+    nft.source === "marketplace" || nft.source === "featured"
       ? "w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
       : "w-full h-full bg-litho-nft p-3 border border-litho-black";
 
@@ -76,37 +76,37 @@ const NFTRenderer: React.FC<Props> = ({
     <div className="bg-litho-nft relative flex justify-center">
       <div className={nftDisplay} style={{ minHeight: "200px" }}>
         <div className="relative flex items-center justify-center">
-          <a
-            {...(imageUrl && imageUrl.split("ipfs/")
-              ? { href: `https://ipfs.io/ipfs/${imageUrl.split("ipfs/")[1]}` }
-              : "{}")}
-          >
-            {isImageOrVideo(fileExtension) === "video" ? (
-              <video
-                src={imageUrl}
-                controls
-                autoPlay
-                loop
-                controlsList="nodownload"
-                className={imgClass}
-              />
-            ) : (
-              <img
-                src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
-                className={imgClass}
-                onLoad={(event) => {
-                  if (event.target) {
-                    (event.target as HTMLImageElement).classList.remove(
-                      "bg-image-loading"
-                    );
-                  }
-                }}
-                onError={(event) => {
-                  (event.target as HTMLImageElement).src = "/litho-default.jpg";
-                }}
-              />
-            )}
-          </a>
+          {isImageOrVideo(fileExtension) === "video" ? (
+            <video
+              src={imageUrl}
+              controls
+              autoPlay
+              loop
+              controlsList="nodownload"
+              className={imgClass}
+            />
+          ) : (
+            <img
+              src={
+                imageUrl
+                  ? preview
+                    ? imageUrl
+                    : imageUrl + "?tr=w-600,h-600,c-at_max"
+                  : null
+              }
+              className={imgClass}
+              onLoad={(event) => {
+                if (event.target) {
+                  (event.target as HTMLImageElement).classList.remove(
+                    "bg-image-loading"
+                  );
+                }
+              }}
+              onError={(event) => {
+                (event.target as HTMLImageElement).src = "/litho-default.jpg";
+              }}
+            />
+          )}
           {error && (
             <span className="text-red-500 text-center text-xl absolute w-3/4 break-all">
               {error}
