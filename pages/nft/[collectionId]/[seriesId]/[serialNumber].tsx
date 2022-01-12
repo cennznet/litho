@@ -533,7 +533,20 @@ const NFTDetail: React.FC<{}> = () => {
                 className="border-b border-litho-black p-10 flex items-center justify-center"
                 style={{ height: "90%" }}
               >
-                <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
+                {nft.imageLink ? (
+                  <Link
+                    href={nft.imageLink.replace(
+                      process.env.NEXT_PUBLIC_IMAGE_CDN,
+                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
+                    )}
+                  >
+                    <a target="_blank">
+                      <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
+                    </a>
+                  </Link>
+                ) : (
+                  <NFT nft={nft} thumbnail={false} renderer={NFTRenderer} />
+                )}
               </div>
               <div className="p-8 flex items-center justify-around">
                 {nft.imageLink && (
