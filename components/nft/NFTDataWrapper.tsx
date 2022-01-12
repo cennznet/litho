@@ -62,7 +62,8 @@ const NFTDataWrapper: React.FC<{
           .get(metadataUrl)
           .then(function (response) {
             const { data } = response;
-            if (data) {
+            if (!data.image) setError("Image not found");
+            else if (data) {
               const metadata = {
                 name:
                   nftData.showOne &&
