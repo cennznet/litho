@@ -12,8 +12,10 @@
   "dependencies": {
     "@cennznet/api": "^1.5.0-alpha.4",
     "@cennznet/types": "^1.5.0-alpha.4",
+    "@jahed/bem": "^1.2.12",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
+    "clsx": "^1.1.1",
     "dayjs": "^1.10.7",
     "next": "^11.0.0",
     "node-cache": "^5.1.2",
