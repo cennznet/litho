@@ -12,7 +12,7 @@ export default function createBEMHelper(styles: {
 	[key: string]: string;
 }): (
 	block: string,
-	modifiers: { [key: string]: boolean } | string,
+	modifiers?: { [key: string]: boolean } | string,
 	...args: string[]
 ) => string {
 	const bem = bemModule(styles);
