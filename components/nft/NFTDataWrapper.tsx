@@ -62,48 +62,47 @@ const NFTDataWrapper: React.FC<{
           .get(metadataUrl)
           .then(function (response) {
             const { data } = response;
-            if (data) {
-              const metadata = {
-                name:
-                  nftData.showOne &&
-                  data.properties &&
-                  nftData.source !== "marketplace" &&
-                  data.properties.quantity &&
-                  data.properties.quantity.toString() !== "1"
-                    ? `${data.name} - [${showSerialNo}/${
-                        data.properties && data.properties.quantity
-                      }]`
-                    : data.name,
-                description: data.description,
-                image: data.image.startsWith("ipfs://")
+            if (!data?.image) return setError("Image not found");
+            const metadata = {
+              name:
+                nftData.showOne &&
+                data.properties &&
+                nftData.source !== "marketplace" &&
+                data.properties.quantity &&
+                data.properties.quantity.toString() !== "1"
+                  ? `${data.name} - [${showSerialNo}/${
+                      data.properties && data.properties.quantity
+                    }]`
+                  : data.name,
+              description: data.description,
+              image: data.image.startsWith("ipfs://")
+                ? gatewayTools.convertToDesiredGateway(
+                    data.image,
+                    process.env.NEXT_PUBLIC_IMAGE_CDN
+                  )
+                : data.image,
+              copies: nftData.showOne
+                ? 1
+                : (data.properties && data.properties.quantity) || 1,
+              owner: nftData.owner, // This is from chain
+              file:
+                data.properties && data.properties.file
                   ? gatewayTools.convertToDesiredGateway(
-                      data.image,
-                      process.env.NEXT_PUBLIC_IMAGE_CDN
+                      data.properties.file,
+                      process.env.NEXT_PUBLIC_PINATA_GATEWAY
                     )
-                  : data.image,
-                copies: nftData.showOne
-                  ? 1
-                  : (data.properties && data.properties.quantity) || 1,
-                owner: nftData.owner, // This is from chain
-                file:
-                  data.properties && data.properties.file
-                    ? gatewayTools.convertToDesiredGateway(
-                        data.properties.file,
-                        process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                      )
-                    : null,
-                extension: data.properties && data.properties.extension,
-                coverFileExtension:
-                  data.properties && data.properties.coverFileExtension,
-                metadata: gatewayTools.convertToDesiredGateway(
-                  nft.metadata,
-                  process.env.NEXT_PUBLIC_PINATA_GATEWAY
-                ),
-                originalCopies: data.properties && data.properties.quantity,
-              };
-              cache.set(metadataUrl, metadata);
-              setNFTData({ ...nft, ...metadata });
-            }
+                  : null,
+              extension: data.properties && data.properties.extension,
+              coverFileExtension:
+                data.properties && data.properties.coverFileExtension,
+              metadata: gatewayTools.convertToDesiredGateway(
+                nft.metadata,
+                process.env.NEXT_PUBLIC_PINATA_GATEWAY
+              ),
+              originalCopies: data.properties && data.properties.quantity,
+            };
+            cache.set(metadataUrl, metadata);
+            setNFTData({ ...nft, ...metadata });
           })
           .catch((error) => {
             if (error) {

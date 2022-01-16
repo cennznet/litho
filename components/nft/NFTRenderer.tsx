@@ -68,7 +68,7 @@ const NFTRenderer: React.FC<Props> = ({
   }
 
   const nftDisplay =
-    nft.source === "marketplace"
+    nft.source === "marketplace" || nft.source === "featured"
       ? "w-full h-full bg-litho-nft z-10 p-3 border border-litho-black"
       : "w-full h-full bg-litho-nft p-3 border border-litho-black";
 
@@ -87,7 +87,13 @@ const NFTRenderer: React.FC<Props> = ({
             />
           ) : (
             <img
-              src={preview ? imageUrl : imageUrl + "?tr=w-600,h-600,c-at_max"}
+              src={
+                imageUrl
+                  ? preview
+                    ? imageUrl
+                    : imageUrl + "?tr=w-600,h-600,c-at_max"
+                  : null
+              }
               className={imgClass}
               onLoad={(event) => {
                 if (event.target) {
