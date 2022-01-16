@@ -1,0 +1,32 @@
+/**
+ * Breakpoints
+ */
+$phone: 375px;
+$tablet: 768px;
+$landscape: 1024px;
+$laptop: 1280px;
+$desktop: 1680px;
+$widescreen: 1920px;
+
+/**
+ * Breakpoint maps
+ */
+// List of min breakpoints (used for @media mixin)
+$media-breakpoints: (
+	phone: $phone,
+	tablet: $tablet,
+	landscape: $landscape,
+	laptop: $laptop,
+	desktop: $desktop,
+	widescreen: $widescreen,
+);
+
+// List of mid breakpoints (used for @interpolation mixin)
+$interpolate-breakpoints: (
+	phone: $phone,
+	tablet: $tablet,
+	landscape: $landscape,
+	laptop: $laptop,
+	desktop: $desktop,
+	widescreen: $widescreen,
+);

@@ -1,5 +1,5 @@
-import createBEMHelper from "@/utils/createBEMHelper";
-import { DOMComponentProps } from "@/custom";
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+import { DOMComponentProps } from "@refactor/custom";
 import styles from "./Main.module.scss";
 const bem = createBEMHelper(styles);
 

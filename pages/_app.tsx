@@ -102,6 +102,8 @@ const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
+  // short-circute to use the new system
+  if(pageProps.refactored) return <Component {...pageProps}/>
   return (
     <SWRConfig
       value={{
