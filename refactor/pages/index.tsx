@@ -1,4 +1,4 @@
-import { DOMComponentProps } from "@refactor/custom";
+import { DOMComponentProps } from "@refactor/types";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 

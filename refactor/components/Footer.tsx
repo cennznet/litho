@@ -1,4 +1,4 @@
-import { DOMComponentProps } from "@refactor/custom";
+import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import styles from "./Footer.module.scss";
 const bem = createBEMHelper(styles);
