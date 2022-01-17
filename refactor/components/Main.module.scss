@@ -2,6 +2,12 @@
 
 .main {
 	height: 100%;
+	background: figma-color("Litho Cream")
+		url("~@refactor/assets/bitmaps/background-noise.png") repeat;
+}
+
+.inner {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	max-width: $desktop;
