@@ -53,8 +53,13 @@
 	font-size: 1.125rem;
 	line-height: 1;
 	font-weight: 600;
+	transition: color 0.2s;
 
 	&--active {
-		color: figma-color("Litho Color");
+		color: figma-color("Litho Blue");
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
 	}
 }

@@ -1,5 +1,7 @@
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
+import Link from "@refactor/components/Link";
+import { ReactComponent as LithoSVG } from "@refactor/assets/vectors/litho-beta.svg";
 import styles from "./Footer.module.scss";
 const bem = createBEMHelper(styles);
 
@@ -7,12 +9,38 @@ type FooterProps = {};
 
 export default function Footer({
 	className,
-	children,
 	...props
 }: DOMComponentProps<FooterProps, "footer">) {
 	return (
 		<footer {...props} className={bem("footer", className)}>
-			{children}
+			<nav className={bem("navLeft")}>
+				<Link href="/" className={bem("logo")}>
+					<LithoSVG />
+				</Link>
+				<Link
+					href="https://cennz.net/privacy-policy/"
+					className={bem("navLeftItem")}>
+					Privacy Policy
+				</Link>
+				<Link
+					href="https://litho.a2hosted.com/terms-of-use/"
+					className={bem("navLeftItem")}>
+					Terms of use
+				</Link>
+			</nav>
+
+			<nav className={bem("navRight")}>
+				<Link
+					href="https://twitter.com/Lithoverse"
+					className={bem("navRightItem")}>
+					Twitter
+				</Link>
+				<Link
+					href="https://www.instagram.com/lithoverse/"
+					className={bem("navRightItem")}>
+					Instagram
+				</Link>
+			</nav>
 		</footer>
 	);
 }
