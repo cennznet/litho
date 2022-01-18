@@ -8,9 +8,9 @@ export async function getStaticProps() {
   };
 }
 
-type HomeProps = {};
+type PageProps = {};
 
-export function Home(props: DOMComponentProps<HomeProps, "div">) {
+export function Home(props: DOMComponentProps<PageProps, "div">) {
   return (
     <App>
       <Main></Main>

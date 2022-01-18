@@ -5,7 +5,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 const bem = createBEMHelper(styles);
 
-type WalletConnectProps = {
+type ComponentProps = {
 	connectLabel?: string;
 	connectedLabel?: string;
 };
@@ -15,7 +15,7 @@ export default function WalletConnect({
 	connectLabel = "Connect Wallet",
 	className,
 	...props
-}: DOMComponentProps<WalletConnectProps, "button">) {
+}: DOMComponentProps<ComponentProps, "button">) {
 	const { wallet, connectWallet } = useWallet();
 
 	return (

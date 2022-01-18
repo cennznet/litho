@@ -6,13 +6,13 @@ import styles from "./Main.module.scss";
 import WalletConnect from "./WalletConnect";
 const bem = createBEMHelper(styles);
 
-type MainProps = {};
+type ComponentProps = {};
 
 export default function Main({
 	className,
 	children,
 	...props
-}: DOMComponentProps<MainProps, "main">) {
+}: DOMComponentProps<ComponentProps, "main">) {
 	return (
 		<main {...props} className={bem("main", className)}>
 			<div className={bem("inner")}>

@@ -5,12 +5,12 @@ import { ReactComponent as LithoSVG } from "@refactor/assets/vectors/litho-beta.
 import styles from "./Footer.module.scss";
 const bem = createBEMHelper(styles);
 
-type FooterProps = {};
+type ComponentProps = {};
 
 export default function Footer({
 	className,
 	...props
-}: DOMComponentProps<FooterProps, "footer">) {
+}: DOMComponentProps<ComponentProps, "footer">) {
 	return (
 		<footer {...props} className={bem("footer", className)}>
 			<nav className={bem("navLeft")}>

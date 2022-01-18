@@ -7,12 +7,12 @@ import styles from "./Header.module.scss";
 
 const bem = createBEMHelper(styles);
 
-type HeaderProps = {};
+type ComponentProps = {};
 
 export default function Header({
 	className,
 	...props
-}: DOMComponentProps<HeaderProps, "header">) {
+}: DOMComponentProps<ComponentProps, "header">) {
 	return (
 		<header {...props} className={bem("header", className)}>
 			<Link href="/" className={bem("logo")}>
