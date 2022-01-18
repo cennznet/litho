@@ -11,7 +11,7 @@ export default class Document extends NextDocument {
             <>
               <script
                 async
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${gaID}`}
               />
               <script
                 dangerouslySetInnerHTML={{
@@ -19,7 +19,7 @@ export default class Document extends NextDocument {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+              gtag('config', '${gaID}', {
                 page_path: window.location.pathname,
               });
             `,
