@@ -9,14 +9,14 @@ import {
 
 const CENNZApiContext = createContext<Api>(null);
 
-type CENNZApiProviderProps = {
+type ProviderProps = {
 	endpoint: string;
 };
 
 export default function CENNZApiProvider({
 	endpoint,
 	children,
-}: PropsWithChildren<CENNZApiProviderProps>) {
+}: PropsWithChildren<ProviderProps>) {
 	const [api, setApi] = useState<Api>(null);
 
 	useEffect(() => {
@@ -38,6 +38,6 @@ export default function CENNZApiProvider({
 	);
 }
 
-export function useCENNZApi() {
+export function useCENNZApi(): Api {
 	return useContext(CENNZApiContext);
 }

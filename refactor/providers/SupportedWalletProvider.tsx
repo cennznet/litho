@@ -8,23 +8,23 @@ import {
 } from "react";
 import { Wallet } from "@refactor/enums";
 
-type SupportedWalletContext = {
+type WalletContext = {
 	wallet: InjectedExtension;
 	connectWallet: (name: Wallet, callback?: () => void) => Promise<void>;
 	disconnectWallet: (callback?: () => void) => Promise<void>;
 };
 
-const SupportedWalletContext = createContext<SupportedWalletContext>({
+const SupportedWalletContext = createContext<WalletContext>({
 	wallet: null,
 	connectWallet: null,
 	disconnectWallet: null,
 });
 
-type SupportedWalletProviderProps = {};
+type ProviderProps = {};
 
 export default function SupportedWalletProvider({
 	children,
-}: PropsWithChildren<SupportedWalletProviderProps>) {
+}: PropsWithChildren<ProviderProps>) {
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const connectWallet = useCallback(async (name, callback) => {}, []);
 	const disconnectWallet = useCallback(async (callback) => {}, []);
@@ -37,6 +37,6 @@ export default function SupportedWalletProvider({
 	);
 }
 
-export function useWallet(): SupportedWalletContext {
+export function useWallet(): WalletContext {
 	return useContext(SupportedWalletContext);
 }
