@@ -2,7 +2,7 @@ import { DOMComponentProps } from "@refactor/types";
 import { ReactComponent as WalletSVG } from "@refactor/assets/vectors/wallet.svg";
 import styles from "./WalletConnect.module.scss";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import { useWallet } from "@refactor/providers/WalletProvider";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 const bem = createBEMHelper(styles);
 
 type WalletConnectProps = {
