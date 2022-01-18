@@ -6,11 +6,14 @@ import {
 	useContext,
 	useState,
 } from "react";
-import { Wallet } from "@refactor/enums";
+import { SupportedWallet } from "@refactor/enums";
 
 type WalletContext = {
 	wallet: InjectedExtension;
-	connectWallet: (name: Wallet, callback?: () => void) => Promise<void>;
+	connectWallet: (
+		name: SupportedWallet,
+		callback?: () => void
+	) => Promise<void>;
 	disconnectWallet: (callback?: () => void) => Promise<void>;
 };
 

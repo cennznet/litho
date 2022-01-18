@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ReactModal, { Props as ModalProps } from "react-modal";
@@ -15,6 +15,7 @@ export default function Modal({
 	children,
 	onRequestClose,
 	isOpen,
+	...props
 }: DOMComponentProps<
 	ComponentProps & Pick<ModalProps, "onRequestClose" | "isOpen">,
 	"div"
@@ -29,15 +30,33 @@ export default function Modal({
 		enablePageScroll();
 	}, [isOpen]);
 
+	const [contentRef, setContentRef] = useState<HTMLDivElement>();
+	// add a workaround to close modal when click on empty space around `content`
+	useEffect(() => {
+		if (!contentRef) return;
+
+		const onContentClick = (event: Event) => {
+			if (event.composedPath()[0] !== contentRef) return;
+			onCloseClick(event);
+		};
+		contentRef.addEventListener("click", onContentClick);
+		return () => contentRef.removeEventListener("click", onContentClick);
+	}, [contentRef, onCloseClick]);
+
 	return (
 		<ReactModal
 			isOpen={isOpen}
 			portalClassName={bem("container")}
 			overlayClassName={bem("overlay")}
-			className={bem("content", className)}
-			onRequestClose={onRequestClose}>
-			<XSVG className={bem("close")} onClick={onCloseClick} />
-			{children}
+			className={bem("inner")}
+			onRequestClose={onRequestClose}
+			shouldCloseOnEsc={true}
+			shouldCloseOnOverlayClick={true}
+			contentRef={setContentRef}>
+			<div className={bem("content", className)} {...props}>
+				<XSVG className={bem("close")} onClick={onCloseClick} />
+				{children}
+			</div>
 		</ReactModal>
 	);
 }

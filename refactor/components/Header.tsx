@@ -1,7 +1,7 @@
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { ReactComponent as LithoSVG } from "@refactor/assets/vectors/litho-beta.svg";
-import WalletConnect from "@refactor/components/WalletConnect";
+import WalletButton from "@refactor/components/WalletButton";
 import Link from "@refactor/components/Link";
 import styles from "./Header.module.scss";
 
@@ -34,7 +34,7 @@ export default function Header({
 					activeClassName={bem("navLink", { active: true })}>
 					Create
 				</Link>
-				<WalletConnect />
+				<WalletButton />
 			</nav>
 		</header>
 	);

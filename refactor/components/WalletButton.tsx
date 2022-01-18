@@ -5,7 +5,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import Modal from "@refactor/components/Modal";
 
-import styles from "./WalletConnect.module.scss";
+import styles from "./WalletButton.module.scss";
 const bem = createBEMHelper(styles);
 
 type ComponentProps = {
@@ -13,7 +13,7 @@ type ComponentProps = {
 	connectedLabel?: string;
 };
 
-export default function WalletConnect({
+export default function WalletButton({
 	connectedLabel = "Wallet Connected",
 	connectLabel = "Connect Wallet",
 	className,

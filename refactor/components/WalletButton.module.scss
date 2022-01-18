@@ -1,18 +1,18 @@
+@use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
 
 .root {
 	position: relative;
 	text-transform: uppercase;
-	font-size: 0.875rem;
 	padding: 0.5rem 0.875rem;
 	color: figma-color("Litho Blue");
 	border: 2px solid figma-color("Litho Blue");
 	display: flex;
 	flex-direction: row;
-	font-weight: 700;
 	justify-content: center;
 	align-items: center;
 	background-color: figma-color("Litho Cream");
+	@include types.button();
 
 	&:before {
 		content: "";
@@ -32,7 +32,6 @@
 		&::before {
 			opacity: 1;
 		}
-
 		> svg path {
 			fill: white;
 		}
@@ -56,5 +55,6 @@
 	height: auto;
 	position: absolute;
 	top: 5rem;
-	@include interpolate("right", 16px phone, 48px landscape, 80px desktop);
+	right: 0;
+	// @include interpolate("right", 16px phone, 48px landscape, 80px desktop);
 }

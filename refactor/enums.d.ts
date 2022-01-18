@@ -1,3 +1,3 @@
-export enum Wallet {
+export enum SupportedWallet {
 	CENNZnet = "CENNZNET-EXTENSION",
 }
