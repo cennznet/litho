@@ -49,3 +49,12 @@
 	position: relative;
 	cursor: pointer;
 }
+
+.modal {
+	width: 100%;
+	max-width: 400px;
+	height: auto;
+	position: absolute;
+	top: 5rem;
+	@include interpolate("right", 16px phone, 48px landscape, 80px desktop);
+}

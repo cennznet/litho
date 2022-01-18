@@ -24,12 +24,15 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-intersection-observer": "^8.32.1",
+    "react-modal": "^3.14.4",
+    "scroll-lock": "^2.1.5",
     "store": "^2.0.12",
     "swr": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.37",
     "@types/react": "^17.0.3",
+    "@types/react-modal": "^3.13.1",
     "autoprefixer": "^10.2.5",
     "babel-plugin-inline-react-svg": "^2.0.1",
     "babel-plugin-module-resolver": "^4.1.0",

@@ -4,6 +4,9 @@ import CENNZApiProvider from "@refactor/providers/CENNZApiProvider";
 import SupportedAssetsProvider from "@refactor/providers/SupportedAssetsProvider";
 import SupportedWalletProvider from "@refactor/providers/SupportedWalletProvider";
 import { PropsWithChildren } from "react";
+import Modal from "react-modal";
+
+Modal.setAppElement("#__next");
 
 type ComponentProps = {};
 
