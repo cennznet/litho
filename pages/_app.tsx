@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import Text from "../components/Text";
 import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
 import { SWRConfig } from "swr";
+import trackPageview from "../utils/trackPageview";
 
 const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 const Device = dynamic(() => import("../components/DeviceContextProvider"), {
@@ -102,6 +103,16 @@ const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", trackPageview);
+    return () => {
+      router.events.off("routeChangeComplete", trackPageview);
+    };
+  }, [router.events]);
+
   return (
     <SWRConfig
       value={{
