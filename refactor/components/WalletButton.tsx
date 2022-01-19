@@ -4,8 +4,10 @@ import { ReactComponent as WalletSVG } from "@refactor/assets/vectors/wallet.svg
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import Modal from "@refactor/components/Modal";
+import WalletConnect from "@refactor/components/WalletConnect";
 
 import styles from "./WalletButton.module.scss";
+
 const bem = createBEMHelper(styles);
 
 type ComponentProps = {
@@ -41,7 +43,9 @@ export default function WalletButton({
 			<Modal
 				isOpen={modalOpened}
 				onRequestClose={onModalRequestClose}
-				className={bem("modal")}></Modal>
+				className={bem("modal")}>
+				{!wallet && <WalletConnect />}
+			</Modal>
 		</>
 	);
 }

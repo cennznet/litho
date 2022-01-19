@@ -1,3 +1,4 @@
+@use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
 
 .main {
@@ -6,6 +7,7 @@
 		url("~@refactor/assets/bitmaps/background-noise.png") repeat;
 	display: flex;
 	justify-content: center;
+	@include types.body(b1);
 }
 
 .inner {

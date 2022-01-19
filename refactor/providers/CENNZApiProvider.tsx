@@ -20,17 +20,8 @@ export default function CENNZApiProvider({
 	const [api, setApi] = useState<Api>(null);
 
 	useEffect(() => {
-		try {
-			const instance = new Api({ provider: endpoint });
-			if (!instance)
-				throw new Error(
-					`API with endpoint \`${endpoint}\` failed to instantiate.`
-				);
-
-			instance.isReady.then(() => setApi(instance));
-		} catch (err) {
-			console.error(`[CENNZnet] ${err}`);
-		}
+		const instance = new Api({ provider: endpoint });
+		instance.isReady.then(() => setApi(instance));
 	}, [endpoint]);
 
 	return (

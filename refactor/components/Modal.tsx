@@ -60,3 +60,7 @@ export default function Modal({
 		</ReactModal>
 	);
 }
+
+export function Hr() {
+	return <hr className={bem("hr")} />;
+}

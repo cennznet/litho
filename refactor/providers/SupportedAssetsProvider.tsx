@@ -31,7 +31,9 @@ export default function SupportedAssetsProvider({
   useEffect(() => {
     if (!cennzApi) return;
     async function fetchSupportedAssets() {
-      const assets = await cennzApi.rpc.genericAsset.registeredAssets();
+      const assets = await (
+        cennzApi.rpc as any
+      ).genericAsset.registeredAssets();
       if (!assets?.length) return;
       const assetInfos = assetIds.map((assetId) => {
         const [tokenId, { symbol, decimalPlaces }] = assets.find(

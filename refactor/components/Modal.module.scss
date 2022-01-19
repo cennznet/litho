@@ -29,7 +29,7 @@
 }
 
 .content {
-	padding: 2.75rem 1.25rem 2rem 2.75rem;
+	padding: 2.75rem 1.25rem 2rem 1.25rem;
 	border: 1px solid #f2f2f2;
 	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
 	background-color: white;
@@ -53,4 +53,10 @@
 			fill: figma-color("Litho Blue");
 		}
 	}
+}
+
+.hr {
+	border-top: 1px solid rgba(25, 27, 29, 0.15);
+	margin: 1.25rem 0;
+	width: 100%;
 }
