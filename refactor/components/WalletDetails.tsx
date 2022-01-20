@@ -21,14 +21,14 @@ export default function WalletDetails({
 
 	return (
 		<div className={bem("root")} {...props}>
-			<div className={bem("top")}>
+			<div className={bem("account")}>
 				<Identicon
 					value={account.address}
 					theme="beachball"
 					size={48}
-					className={bem("icon")}
+					className={bem("accountIcon")}
 				/>
-				<div>
+				<div className={bem("accountDetails")}>
 					<Text className={bem("title")} variant="headline4">
 						{account.meta.name}
 					</Text>

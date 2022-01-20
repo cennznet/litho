@@ -1,13 +1,18 @@
 @use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
 
-.top {
+.account {
 	display: flex;
 	align-items: center;
 }
 
-.icon {
+.accountIcon {
 	margin-right: 1rem;
+}
+
+.accountDetails {
+	flex: 1;
+	min-width: 0;
 }
 
 .title {

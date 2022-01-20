@@ -19,6 +19,7 @@ import {
 	AssetInfo,
 } from "@refactor/providers/SupportedAssetsProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
+import { useWeb3Accounts } from "./Web3AccountsProvider";
 
 export type BalanceInfo = AssetInfo & {
 	value: number;
@@ -46,10 +47,12 @@ export default function SupportedWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const { browser } = useUserAgent();
-	const { web3Enable, web3Accounts } = useDAppModule();
 	const api = useCENNZApi();
+	const accounts = useWeb3Accounts();
+	const { web3Enable } = useDAppModule();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
+
 	const connectWallet = useCallback(
 		async (callback) => {
 			if (!web3Enable || !api) return;
@@ -109,33 +112,27 @@ export default function SupportedWalletProvider({
 
 	// 2. pick the right account once a `wallet` as been set
 	useEffect(() => {
-		if (!wallet || !web3Accounts) return;
+		if (!wallet || !accounts) return;
 		function pickFirstAccount(accounts: Array<InjectedAccountWithMeta>) {
 			const firstAccount = accounts[0];
 			setAccount(firstAccount);
 			store.set("CENNZNET-ACCOUNT", firstAccount);
 		}
 
-		async function selectWalletAccount() {
-			await web3Enable("Litho");
-			const accounts = await web3Accounts();
-			if (!accounts.length)
-				return alert("Please create an account in the CENNZnet extension.");
+		if (!accounts.length)
+			return alert("Please create an account in the CENNZnet extension.");
 
-			const storedAccount = store.get("CENNZNET-ACCOUNT");
-			if (!storedAccount) return pickFirstAccount(accounts);
+		const storedAccount = store.get("CENNZNET-ACCOUNT");
+		if (!storedAccount) return pickFirstAccount(accounts);
 
-			const matchedAccount = accounts.find(
-				(account) => account.address === storedAccount.address
-			);
-			if (!matchedAccount) return pickFirstAccount(accounts);
+		const matchedAccount = accounts.find(
+			(account) => account.address === storedAccount.address
+		);
+		if (!matchedAccount) return pickFirstAccount(accounts);
 
-			setAccount(matchedAccount);
-			store.set("CENNZNET-ACCOUNT", matchedAccount);
-		}
-
-		selectWalletAccount();
-	}, [wallet, web3Enable, web3Accounts]);
+		setAccount(matchedAccount);
+		store.set("CENNZNET-ACCOUNT", matchedAccount);
+	}, [wallet, web3Enable, accounts]);
 
 	// 3. Fetch `account` balance
 	const assets = useAssets();
