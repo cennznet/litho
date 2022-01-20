@@ -12,7 +12,7 @@ const assetIds =
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS &&
   process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(",");
 
-type AssetInfo = {
+export type AssetInfo = {
   id: number;
   symbol: string;
   decimals: number;
@@ -59,6 +59,6 @@ export default function SupportedAssetsProvider({
   );
 }
 
-export function useAssetInfos(): Array<AssetInfo> {
+export function useAssets(): Array<AssetInfo> {
   return useContext(SupportedAssetsContext);
 }

@@ -7,7 +7,6 @@ import { ReactComponent as CENNZnetSVG } from "@refactor/assets/vectors/cennznet
 import Spinner from "@refactor/components/Spinner";
 
 import styles from "./WalletConnect.module.scss";
-
 const bem = createBEMHelper(styles);
 
 type ComponentProps = {};

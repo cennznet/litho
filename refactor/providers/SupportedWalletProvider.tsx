@@ -1,24 +1,40 @@
-import { InjectedExtension } from "@polkadot/extension-inject/types";
+import {
+	InjectedExtension,
+	InjectedAccountWithMeta,
+} from "@polkadot/extension-inject/types";
 import {
 	createContext,
 	PropsWithChildren,
 	useCallback,
 	useContext,
+	useEffect,
 	useState,
 } from "react";
 import store from "store";
 import { useDAppModule } from "@refactor/providers/DAppModuleProvider";
 import { useUserAgent } from "@refactor/providers/UserAgentProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
+import {
+	useAssets,
+	AssetInfo,
+} from "@refactor/providers/SupportedAssetsProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
 
+export type BalanceInfo = AssetInfo & {
+	value: number;
+};
+
 type WalletContext = {
+	balances: Array<BalanceInfo>;
+	account: InjectedAccountWithMeta;
 	wallet: InjectedExtension;
 	connectWallet: (callback?: () => void) => Promise<void>;
-	disconnectWallet: () => Promise<void>;
+	disconnectWallet: () => void;
 };
 
 const SupportedWalletContext = createContext<WalletContext>({
+	balances: null,
+	account: null,
 	wallet: null,
 	connectWallet: null,
 	disconnectWallet: null,
@@ -30,9 +46,10 @@ export default function SupportedWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const { browser } = useUserAgent();
-	const { web3Enable } = useDAppModule();
+	const { web3Enable, web3Accounts } = useDAppModule();
 	const api = useCENNZApi();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
+	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 	const connectWallet = useCallback(
 		async (callback) => {
 			if (!web3Enable || !api) return;
@@ -43,7 +60,7 @@ export default function SupportedWalletProvider({
 
 			if (!extension) {
 				const confirmed = confirm(
-					"Please install the CENNZnet extension then refresh page."
+					"Please install the CENNZnet extension then refresh the page."
 				);
 
 				if (!confirmed) return;
@@ -62,7 +79,6 @@ export default function SupportedWalletProvider({
 
 			if (!metaUpdated) {
 				const metadataDef = await extractExtensionMetadata(api);
-				console.log(metadataDef);
 				if (!metadataDef) return;
 				await extension.metadata.provide(metadataDef as any);
 				store.set("EXTENSION_META_UPDATED", "true");
@@ -75,11 +91,79 @@ export default function SupportedWalletProvider({
 		[web3Enable, browser, api]
 	);
 
-	const disconnectWallet = useCallback(async () => {}, []);
+	const disconnectWallet = useCallback(() => {
+		if (!confirm("Are you sure?")) return;
+		store.remove("CENNZNET-EXTENSION");
+		store.remove("CENNZNET-ACCOUNT");
+		store.remove("EXTENSION_META_UPDATED");
+		setWallet(null);
+		setAccount(null);
+	}, []);
+
+	// 1. Restore the wallet from the store if it exists
+	useEffect(() => {
+		const storedWallet = store.get("CENNZNET-EXTENSION");
+		if (storedWallet) setWallet(storedWallet);
+	}, []);
+
+	// 2. pick the right account once a `wallet` as been set
+	useEffect(() => {
+		if (!wallet || !web3Accounts) return;
+		function pickFirstAccount(accounts: Array<InjectedAccountWithMeta>) {
+			const firstAccount = accounts[0];
+			setAccount(firstAccount);
+			store.set("CENNZNET-ACCOUNT", firstAccount);
+		}
+
+		async function selectWalletAccount() {
+			await web3Enable("Litho");
+			const accounts = await web3Accounts();
+			if (!accounts.length)
+				return alert("Please create an account in the CENNZnet extension.");
+
+			const storedAccount = store.get("CENNZNET-ACCOUNT");
+			if (!storedAccount) return pickFirstAccount(accounts);
+
+			const matchedAccount = accounts.find(
+				(account) => account.address === storedAccount.address
+			);
+			if (!matchedAccount) return pickFirstAccount(accounts);
+
+			setAccount(matchedAccount);
+			store.set("CENNZNET-ACCOUNT", matchedAccount);
+		}
+
+		selectWalletAccount();
+	}, [wallet, web3Enable, web3Accounts]);
+
+	// 3. Fetch `account` balance
+	const assets = useAssets();
+	const [balances, setBalances] = useState<Array<BalanceInfo>>();
+	useEffect(() => {
+		if (!assets || !account || !api) return;
+
+		async function fetchAssetBalances() {
+			const balances = (
+				await api.query.genericAsset.freeBalance.multi(
+					assets.map(({ id }) => [id, account.address])
+				)
+			).map((balance, index) => {
+				const asset = assets[index];
+				return {
+					...asset,
+					value: (balance as any) / Math.pow(10, asset.decimals),
+				};
+			});
+
+			setBalances(balances);
+		}
+
+		fetchAssetBalances();
+	}, [assets, account, api]);
 
 	return (
 		<SupportedWalletContext.Provider
-			value={{ wallet, connectWallet, disconnectWallet }}>
+			value={{ balances, account, wallet, connectWallet, disconnectWallet }}>
 			{children}
 		</SupportedWalletContext.Provider>
 	);
