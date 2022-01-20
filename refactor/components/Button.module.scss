@@ -1,0 +1,21 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	@include types.button();
+	display: inline-block;
+	padding: 0.875rem 1rem;
+	line-height: 1em;
+	transition: color 0.2s, background-color 0.2s;
+
+	&--blue {
+		background-color: figma-color("Litho Blue");
+		color: white;
+		text-transform: uppercase;
+
+		@include on-hover {
+			background-color: #f2f2f2;
+			color: figma-color("Litho Blue");
+		}
+	}
+}

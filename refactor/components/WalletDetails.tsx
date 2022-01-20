@@ -10,6 +10,7 @@ import Link from "@refactor/components/Link";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
 import { useCallback } from "react";
+import Button from "@refactor/components/Button";
 
 const bem = createBEMHelper(require("./WalletDetails.module.scss"));
 
@@ -88,6 +89,10 @@ export default function WalletDetails({
 					</li>
 				))}
 			</ul>
+
+			<Link href="https://www.mexc.com">
+				<Button className={bem("topUp")}>Top up</Button>
+			</Link>
 
 			<Hr />
 

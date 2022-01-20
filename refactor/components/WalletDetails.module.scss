@@ -92,7 +92,7 @@
 		color: figma-color("Litho Blue");
 		transition: color 0.2s;
 
-		&:hover {
+		@include on-hover {
 			color: figma-color("Litho Black");
 		}
 	}
@@ -105,7 +105,11 @@
 	cursor: pointer;
 	transition: color 0.2s;
 
-	&:hover {
+	@include on-hover {
 		color: figma-color("Litho Red");
 	}
+}
+
+.topUp {
+	width: 100%;
 }

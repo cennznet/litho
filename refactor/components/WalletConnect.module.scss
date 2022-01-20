@@ -21,20 +21,7 @@
 	position: relative;
 	align-items: center;
 	justify-content: center;
-
-	&:before {
-		content: "";
-		display: block;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: figma-color("Litho Blue");
-		opacity: 0;
-		transition: opacity 0.2s;
-		z-index: 0;
-	}
+	transition: color 0.2s, background-color 0.2s;
 
 	&:disabled {
 		opacity: 0.5;
@@ -42,10 +29,7 @@
 
 	@include on-hover {
 		color: figma-color("Litho Cream");
-
-		&::before {
-			opacity: 1;
-		}
+		background-color: figma-color("Litho Blue");
 
 		> svg {
 			circle {
