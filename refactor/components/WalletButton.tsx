@@ -8,9 +8,7 @@ import WalletConnect from "@refactor/components/WalletConnect";
 import WalletDetails from "@refactor/components/WalletDetails";
 import Identicon from "@polkadot/react-identicon";
 
-import styles from "./WalletButton.module.scss";
-
-const bem = createBEMHelper(styles);
+const bem = createBEMHelper(require("./WalletButton.module.scss"));
 
 type ComponentProps = {};
 

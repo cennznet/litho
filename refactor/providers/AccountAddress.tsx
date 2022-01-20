@@ -1,8 +1,8 @@
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useEffect, useState } from "react";
-import styles from "./AccountAddress.module.scss";
-const bem = createBEMHelper(styles);
+
+const bem = createBEMHelper(require("./AccountAddress.module.scss"));
 
 type ComponentProps = {
 	address: string;

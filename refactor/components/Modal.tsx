@@ -5,8 +5,7 @@ import ReactModal, { Props as ModalProps } from "react-modal";
 import { ReactComponent as XSVG } from "@refactor/assets/vectors/x.svg";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
-import styles from "./Modal.module.scss";
-const bem = createBEMHelper(styles);
+const bem = createBEMHelper(require("./Modal.module.scss"));
 
 type ComponentProps = {};
 

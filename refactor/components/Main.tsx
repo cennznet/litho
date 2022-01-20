@@ -2,9 +2,9 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { DOMComponentProps } from "@refactor/types";
 import Header from "@refactor/components/Header";
 import Footer from "@refactor/components/Footer";
-import styles from "./Main.module.scss";
 import WalletConnect from "./WalletConnect";
-const bem = createBEMHelper(styles);
+
+const bem = createBEMHelper(require("./Main.module.scss"));
 
 type ComponentProps = {};
 

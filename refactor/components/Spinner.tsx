@@ -2,8 +2,7 @@ import { DOMComponentProps } from "@refactor/types";
 import { ReactComponent as SpinnerSVG } from "@refactor/assets/vectors/spinner.svg";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 
-import styles from "./Spinner.module.scss";
-const bem = createBEMHelper(styles);
+const bem = createBEMHelper(require("./Spinner.module.scss"));
 
 type ComponentProps = {};
 

@@ -3,9 +3,8 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { ReactComponent as LithoSVG } from "@refactor/assets/vectors/litho-logo.svg";
 import WalletButton from "@refactor/components/WalletButton";
 import Link from "@refactor/components/Link";
-import styles from "./Header.module.scss";
 
-const bem = createBEMHelper(styles);
+const bem = createBEMHelper(require("./Header.module.scss"));
 
 type ComponentProps = {};
 

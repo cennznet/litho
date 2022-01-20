@@ -7,10 +7,9 @@ import Text from "@refactor/components/Text";
 import { ReactComponent as CENNZnetSVG } from "@refactor/assets/vectors/cennznet-logo.svg";
 import { ReactComponent as CPAYSVG } from "@refactor/assets/vectors/cpay-logo.svg";
 import Link from "@refactor/components/Link";
-
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import styles from "./WalletDetails.module.scss";
-const bem = createBEMHelper(styles);
+
+const bem = createBEMHelper(require("./WalletDetails.module.scss"));
 
 type ComponentProps = {};
 
