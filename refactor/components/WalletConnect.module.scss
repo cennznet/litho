@@ -5,8 +5,8 @@
 }
 
 .title {
-	@include types.headline(h4);
 	color: figma-color("Litho Blue");
+	margin-bottom: 1rem;
 }
 
 .wallet {

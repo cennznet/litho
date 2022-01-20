@@ -98,6 +98,7 @@ export default function SupportedWalletProvider({
 		store.remove("EXTENSION_META_UPDATED");
 		setWallet(null);
 		setAccount(null);
+		setBalances(null);
 	}, []);
 
 	// 1. Restore the wallet from the store if it exists

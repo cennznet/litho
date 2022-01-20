@@ -5,7 +5,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import Modal from "@refactor/components/Modal";
 import WalletConnect from "@refactor/components/WalletConnect";
-import AccountAddress from "@refactor/providers/AccountAddress";
+import WalletDetails from "@refactor/components/WalletDetails";
 import Identicon from "@polkadot/react-identicon";
 
 import styles from "./WalletButton.module.scss";
@@ -55,23 +55,15 @@ export default function WalletButton({
 							/>
 						</span>
 
-						<AccountAddress
-							className={bem("label")}
-							address={account.address}
-						/>
+						<label className={bem("label")}>Connecting...</label>
 					</>
 				)}
 
 				{!!account && !!balances && (
 					<>
-						<span title={account.address}>
-							<Identicon
-								value={account.address}
-								theme="beachball"
-								size={24}
-								className={bem("icon")}
-							/>
-						</span>
+						<div title={account.address} className={bem("icon")}>
+							<Identicon value={account.address} theme="beachball" size={24} />
+						</div>
 
 						<label
 							className={bem(
@@ -86,6 +78,7 @@ export default function WalletButton({
 				onRequestClose={onModalRequestClose}
 				className={bem("modal")}>
 				{!balances && <WalletConnect />}
+				{!!balances && <WalletDetails />}
 			</Modal>
 		</>
 	);

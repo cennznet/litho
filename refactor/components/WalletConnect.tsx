@@ -5,6 +5,7 @@ import { Hr } from "@refactor/components/Modal";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { ReactComponent as CENNZnetSVG } from "@refactor/assets/vectors/cennznet-logo.svg";
 import Spinner from "@refactor/components/Spinner";
+import Text from "@refactor/components/Text";
 
 import styles from "./WalletConnect.module.scss";
 const bem = createBEMHelper(styles);
@@ -25,7 +26,9 @@ export default function WalletConnect({}: DOMComponentProps<
 
 	return (
 		<div className={bem("root")}>
-			<div className={bem("title")}>Connect Wallet</div>
+			<Text className={bem("title")} variant="headline4">
+				Connect Wallet
+			</Text>
 			<p>
 				Connect with one of our available wallet providers or create a new one.
 			</p>

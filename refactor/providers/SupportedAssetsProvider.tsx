@@ -26,19 +26,17 @@ export default function SupportedAssetsProvider({
   children,
 }: PropsWithChildren<ProviderProps>) {
   const [supportedAssets, setSupportedAssets] = useState<AssetInfo[]>();
-  const cennzApi = useCENNZApi();
+  const api = useCENNZApi();
 
   useEffect(() => {
-    if (!cennzApi) return;
+    if (!api) return;
     async function fetchSupportedAssets() {
-      const assets = await (
-        cennzApi.rpc as any
-      ).genericAsset.registeredAssets();
+      const assets = await (api.rpc as any).genericAsset.registeredAssets();
       if (!assets?.length) return;
       const assetInfos = assetIds.map((assetId) => {
-        const [tokenId, { symbol, decimalPlaces }] = assets.find(
-          (asset) => asset[0].toString() === assetId
-        );
+        const [tokenId, { symbol, decimalPlaces }] = assets.find((asset) => {
+          return asset[0].toString() === assetId;
+        });
         return {
           id: Number(tokenId),
           symbol: u8aToString(symbol),
@@ -50,7 +48,7 @@ export default function SupportedAssetsProvider({
     }
 
     fetchSupportedAssets();
-  }, [cennzApi, setSupportedAssets]);
+  }, [api]);
 
   return (
     <SupportedAssetsContext.Provider value={supportedAssets}>

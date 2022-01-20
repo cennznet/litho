@@ -25,5 +25,9 @@ export default function AccountAddress({
 		);
 	}, [address, length]);
 
-	return <span className={bem("root", className)}>{displayAddress}</span>;
+	return (
+		<span className={bem("root", className)} title={address}>
+			{displayAddress}
+		</span>
+	);
 }

@@ -2,7 +2,6 @@
 
 @mixin headline($level: h1) {
 	line-height: 1.25;
-	margin-bottom: 1.25em;
 	@if ($level == h1) {
 		@include interpolate("font-size", 26px phone, 52px desktop);
 		font-weight: 400;
