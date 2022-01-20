@@ -51,7 +51,6 @@ export default function WalletDetails({
 					/>
 					{accounts.length > 1 && (
 						<div className={bem("accountSelect")}>
-							<label>Change account</label>
 							<select onChange={onAccountSelect} value={account.address}>
 								{accounts.map((acc, index) => (
 									<option value={acc.address} key={index}>
@@ -59,6 +58,7 @@ export default function WalletDetails({
 									</option>
 								))}
 							</select>
+							<label>Change account</label>
 						</div>
 					)}
 				</div>
