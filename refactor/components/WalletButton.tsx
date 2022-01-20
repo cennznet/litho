@@ -27,7 +27,7 @@ export default function WalletButton({
 
 	useEffect(() => {
 		setModalOpened(false);
-	}, [balances]);
+	}, [balances?.length]);
 
 	return (
 		<>

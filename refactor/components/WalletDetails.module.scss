@@ -3,7 +3,7 @@
 
 .account {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 }
 
 .accountIcon {
@@ -15,16 +15,40 @@
 	min-width: 0;
 }
 
-.title {
+.accountTitle {
 	color: figma-color("Litho Blue");
 	margin-bottom: 0.125em;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
-
-.address {
+.accountAddress {
+	display: block;
 	@include types.body(b1);
+}
+
+.accountSelect {
+	position: relative;
+	display: inline-block;
+
+	label {
+		@include types.subtitle(s2);
+
+		line-height: 1;
+		&:hover {
+			color: figma-color("Litho Blue");
+		}
+	}
+
+	select {
+		cursor: pointer;
+		position: absolute;
+		opacity: 0;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		right: 0;
+	}
 }
 
 .balanceList {

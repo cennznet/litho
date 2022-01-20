@@ -31,6 +31,7 @@ type WalletContext = {
 	wallet: InjectedExtension;
 	connectWallet: (callback?: () => void) => Promise<void>;
 	disconnectWallet: () => void;
+	selectAccount: (account: InjectedAccountWithMeta) => void;
 };
 
 const SupportedWalletContext = createContext<WalletContext>({
@@ -39,6 +40,7 @@ const SupportedWalletContext = createContext<WalletContext>({
 	wallet: null,
 	connectWallet: null,
 	disconnectWallet: null,
+	selectAccount: null,
 });
 
 type ProviderProps = {};
@@ -104,6 +106,11 @@ export default function SupportedWalletProvider({
 		setBalances(null);
 	}, []);
 
+	const selectAccount = useCallback((account) => {
+		setAccount(account);
+		store.set("CENNZNET-ACCOUNT", account);
+	}, []);
+
 	// 1. Restore the wallet from the store if it exists
 	useEffect(() => {
 		const storedWallet = store.get("CENNZNET-EXTENSION");
@@ -113,26 +120,20 @@ export default function SupportedWalletProvider({
 	// 2. pick the right account once a `wallet` as been set
 	useEffect(() => {
 		if (!wallet || !accounts) return;
-		function pickFirstAccount(accounts: Array<InjectedAccountWithMeta>) {
-			const firstAccount = accounts[0];
-			setAccount(firstAccount);
-			store.set("CENNZNET-ACCOUNT", firstAccount);
-		}
 
 		if (!accounts.length)
 			return alert("Please create an account in the CENNZnet extension.");
 
 		const storedAccount = store.get("CENNZNET-ACCOUNT");
-		if (!storedAccount) return pickFirstAccount(accounts);
+		if (!storedAccount) return selectAccount(accounts[0]);
 
 		const matchedAccount = accounts.find(
 			(account) => account.address === storedAccount.address
 		);
-		if (!matchedAccount) return pickFirstAccount(accounts);
+		if (!matchedAccount) return selectAccount(accounts[0]);
 
-		setAccount(matchedAccount);
-		store.set("CENNZNET-ACCOUNT", matchedAccount);
-	}, [wallet, web3Enable, accounts]);
+		selectAccount(matchedAccount);
+	}, [wallet, web3Enable, accounts, selectAccount]);
 
 	// 3. Fetch `account` balance
 	const assets = useAssets();
@@ -161,7 +162,14 @@ export default function SupportedWalletProvider({
 
 	return (
 		<SupportedWalletContext.Provider
-			value={{ balances, account, wallet, connectWallet, disconnectWallet }}>
+			value={{
+				balances,
+				account,
+				wallet,
+				connectWallet,
+				disconnectWallet,
+				selectAccount,
+			}}>
 			{children}
 		</SupportedWalletContext.Provider>
 	);
