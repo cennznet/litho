@@ -51,7 +51,7 @@ export default function SupportedWalletProvider({
 	const { browser } = useUserAgent();
 	const api = useCENNZApi();
 	const accounts = useWeb3Accounts();
-	const { web3Enable } = useDAppModule();
+	const { web3Enable, web3FromSource } = useDAppModule();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 
@@ -59,9 +59,8 @@ export default function SupportedWalletProvider({
 		async (callback) => {
 			if (!web3Enable || !api) return;
 
-			const extension = (await web3Enable("Litho")).find(
-				(extension) => extension.name === "cennznet-extension"
-			);
+			await web3Enable("Litho");
+			const extension = await web3FromSource("cennznet-extension");
 
 			if (!extension) {
 				const confirmed = confirm(
@@ -93,7 +92,7 @@ export default function SupportedWalletProvider({
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},
-		[web3Enable, browser, api]
+		[web3Enable, web3FromSource, browser, api]
 	);
 
 	const disconnectWallet = useCallback(() => {
@@ -113,9 +112,18 @@ export default function SupportedWalletProvider({
 
 	// 1. Restore the wallet from the store if it exists
 	useEffect(() => {
-		const storedWallet = store.get("CENNZNET-EXTENSION");
-		if (storedWallet) setWallet(storedWallet);
-	}, []);
+		if (!web3Enable && !web3FromSource) return;
+
+		async function restoreWallet() {
+			const storedWallet = store.get("CENNZNET-EXTENSION");
+			if (!storedWallet) return;
+			await web3Enable("Litho");
+			const extension = await web3FromSource(storedWallet.name);
+			setWallet(extension);
+		}
+
+		restoreWallet();
+	}, [web3Enable, web3FromSource]);
 
 	// 2. pick the right account once a `wallet` as been set
 	useEffect(() => {
