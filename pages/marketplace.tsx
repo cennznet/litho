@@ -154,6 +154,7 @@ const MarketPlace: React.FC<{}> = () => {
                 }
                 nft = { ...nft, metadata };
               }
+              console.log(nft);
               nfts.push(nft);
             }
           })

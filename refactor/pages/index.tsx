@@ -36,7 +36,7 @@ export function Home({
 				<HomeIntro />
 				<ListingGrid items={featuredListings.slice(0, 4)}>
 					<Text variant="headline3">
-						{process.env.NEXT_FEATURED_COLLECTION_TITLE ||
+						{process.env.NEXT_PUBLIC_FEATURED_COLLECTION_TITLE ||
 							"Featured Collection"}
 					</Text>
 				</ListingGrid>
