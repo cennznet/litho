@@ -59,7 +59,7 @@ export default function WalletDetails({
 									</option>
 								))}
 							</select>
-							<label>Change account</label>
+							<label>Switch account</label>
 						</div>
 					)}
 				</div>
