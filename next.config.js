@@ -1,5 +1,5 @@
 module.exports = {
   images: {
-    domains: ["", "ipfs.io"],
+    domains: ["", "ipfs.io", "litho.mypinata.cloud"],
   },
 };

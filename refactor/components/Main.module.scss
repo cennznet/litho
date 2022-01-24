@@ -2,7 +2,7 @@
 @import "~@refactor/styles/bootstrap";
 
 .main {
-	height: 100%;
+	min-height: 100%;
 	background: figma-color("Litho Cream")
 		url("~@refactor/assets/bitmaps/background-noise.png") repeat;
 	display: flex;
@@ -27,6 +27,12 @@
 
 .header {
 	flex-shrink: 0;
+	@include interpolate(
+		"margin-bottom",
+		16px phone,
+		48px landscape,
+		80px desktop
+	);
 }
 
 .content {
@@ -35,4 +41,5 @@
 
 .footer {
 	flex-shrink: 0;
+	@include interpolate("margin-top", 16px phone, 48px landscape, 80px desktop);
 }

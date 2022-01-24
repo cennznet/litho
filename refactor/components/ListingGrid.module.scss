@@ -1,0 +1,33 @@
+@import "~@refactor/styles/bootstrap";
+
+.root {
+}
+
+.header {
+	margin-bottom: 2rem;
+}
+
+.list {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-gap: 1rem;
+}
+
+.item {
+	grid-column-end: span 1;
+
+	&:nth-child(4n) {
+		grid-column-start: 0;
+	}
+	&:nth-child(4n + 1) {
+		grid-column-start: 1;
+	}
+
+	&:nth-child(4n + 2) {
+		grid-column-start: 2;
+	}
+
+	&:nth-child(4n + 3) {
+		grid-column-start: 3;
+	}
+}
