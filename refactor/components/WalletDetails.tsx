@@ -1,5 +1,5 @@
 import { DOMComponentProps } from "@refactor/types";
-import AccountAddress from "@refactor/providers/AccountAddress";
+import AccountAddress from "@refactor/components/AccountAddress";
 import Identicon from "@polkadot/react-identicon";
 import { Hr } from "@refactor/components/Modal";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
