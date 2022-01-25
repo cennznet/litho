@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { DOMComponentProps } from "@refactor/types";
-import { ReactComponent as WalletSVG } from "@refactor/assets/vectors/wallet.svg";
+import WalletSVG from "@refactor/assets/vectors/wallet.svg";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import Modal from "@refactor/components/Modal";

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ReactModal, { Props as ModalProps } from "react-modal";
-import { ReactComponent as XSVG } from "@refactor/assets/vectors/x.svg";
+import XSVG from "@refactor/assets/vectors/x.svg";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
 const bem = createBEMHelper(require("./Modal.module.scss"));

@@ -1,7 +1,7 @@
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Link from "@refactor/components/Link";
-import { ReactComponent as LithoSVG } from "@refactor/assets/vectors/litho-logo.svg";
+import LithoSVG from "@refactor/assets/vectors/litho-logo.svg";
 
 const bem = createBEMHelper(require("./Footer.module.scss"));
 

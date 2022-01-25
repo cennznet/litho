@@ -3,7 +3,7 @@ import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Hr } from "@refactor/components/Modal";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
-import { ReactComponent as CENNZnetSVG } from "@refactor/assets/vectors/cennznet-logo.svg";
+import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
 import Spinner from "@refactor/components/Spinner";
 import Text from "@refactor/components/Text";
 
