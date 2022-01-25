@@ -14,12 +14,10 @@ import store from "store";
 import { useDAppModule } from "@refactor/providers/DAppModuleProvider";
 import { useUserAgent } from "@refactor/providers/UserAgentProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import {
-	useAssets,
-	AssetInfo,
-} from "@refactor/providers/SupportedAssetsProvider";
+import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
-import { useWeb3Accounts } from "./Web3AccountsProvider";
+import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
+import { AssetInfo } from "@refactor/types";
 
 export type BalanceInfo = AssetInfo & {
 	value: number;
