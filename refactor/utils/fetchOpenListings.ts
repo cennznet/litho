@@ -5,8 +5,12 @@ import {
 	NFTMetadata,
 	NFTIdTuple,
 } from "@refactor/types";
-import { AuctionListing, FixedPriceListing, Listing } from "@cennznet/types";
-import isVideoType from "@refactor/utils/isVideoType";
+import {
+	AuctionListing,
+	FixedPriceListing,
+	Listing,
+	Balance,
+} from "@cennznet/types";
 
 /**
  * Fetches all NFTs from a `collectionId`
@@ -52,11 +56,18 @@ export async function fetchListingItem(
 		? response.asFixedPrice
 		: response.asAuction;
 
+	const price: Balance = response.isFixedPrice
+		? (listing as FixedPriceListing).fixedPrice
+		: (listing as AuctionListing).reservePrice;
+
 	const tokenId = listing.tokens[0].toJSON() as NFTIdTuple;
 	const { attributes, metadata } = await fetchNFT(api, tokenId);
 
 	return {
 		listingId,
+		type: response.isFixedPrice ? "Fixed Price" : "Auction",
+		price: price.toJSON(),
+		paymentAssetId: listing.paymentAsset.toJSON(),
 		token: {
 			tokenId,
 			attributes,

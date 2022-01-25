@@ -144,7 +144,7 @@ export default function SupportedWalletProvider({
 	}, [wallet, web3Enable, accounts, selectAccount]);
 
 	// 3. Fetch `account` balance
-	const assets = useAssets();
+	const { assets } = useAssets();
 	const [balances, setBalances] = useState<Array<BalanceInfo>>();
 	useEffect(() => {
 		if (!assets || !account || !api) return;
@@ -152,7 +152,7 @@ export default function SupportedWalletProvider({
 		async function fetchAssetBalances() {
 			const balances = (
 				await api.query.genericAsset.freeBalance.multi(
-					assets.map(({ id }) => [id, account.address])
+					assets.map(({ assetId }) => [assetId, account.address])
 				)
 			).map((balance, index) => {
 				const asset = assets[index];

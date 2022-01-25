@@ -7,19 +7,23 @@ import SupportedWalletProvider from "@refactor/providers/SupportedWalletProvider
 import DAppModuleProvider from "@refactor/providers/DAppModuleProvider";
 import UserAgentProvider from "@refactor/providers/UserAgentProvider";
 import Web3AccountsProvider from "@refactor/providers/Web3AccountsProvider";
+import { AppProps } from "@refactor/utils/fetchAppProps";
 
 Modal.setAppElement("#__next");
 
-type ComponentProps = {};
+type ComponentProps = {} & AppProps;
 
-export default function App({ children }: PropsWithChildren<ComponentProps>) {
+export default function App({
+	children,
+	supportedAssets,
+}: PropsWithChildren<ComponentProps>) {
 	return (
 		<UserAgentProvider>
 			<DAppModuleProvider>
 				<Web3AccountsProvider>
 					<CENNZApiProvider
 						endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
-						<SupportedAssetsProvider>
+						<SupportedAssetsProvider assets={supportedAssets}>
 							<SupportedWalletProvider>
 								<Head>
 									<title>Litho</title>

@@ -1,6 +1,7 @@
 import { DOMComponentProps, NFTListing } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingCard from "@refactor/components/ListingCard";
+import Link from "@refactor/components/Link";
 
 const bem = createBEMHelper(require("./ListingGrid.module.scss"));
 
@@ -19,11 +20,21 @@ export default function ListingGrid({
 			{!!children && <div className={bem("header")}>{children}</div>}
 
 			<ul className={bem("list")}>
-				{items.map((item, index) => (
-					<li key={index} className={bem("item")}>
-						<ListingCard {...item} />
-					</li>
-				))}
+				{items.map((item, index) => {
+					const {
+						token: {
+							tokenId,
+							metadata: { name },
+						},
+					} = item;
+					return (
+						<li key={index} className={bem("item")}>
+							<Link href={`/nft/${tokenId.join("/")}`}>
+								<ListingCard value={item} />
+							</Link>
+						</li>
+					);
+				})}
 			</ul>
 		</div>
 	);

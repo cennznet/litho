@@ -4,8 +4,17 @@ import { TokenId } from "@cennznet/types";
 export type DOMComponentProps<T, E> = PropsWithChildren<T> &
 	ComponentPropsWithRef<E>;
 
+export type AssetInfo = {
+	assetId: number;
+	symbol: string;
+	decimals: number;
+};
+
 export type NFTListing = {
 	listingId: string;
+	type: "Auction" | "Fixed Price";
+	price: number;
+	paymentAssetId: number;
 	token: NFT;
 };
 

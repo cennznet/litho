@@ -1,21 +1,70 @@
 import { DOMComponentProps, NFTListing } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
+import Text from "@refactor/components/Text";
+import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
+import { ReactComponent as HourglassSVG } from "@refactor/assets/vectors/hourglass.svg";
+import { ReactComponent as MoneySVG } from "@refactor/assets/vectors/money.svg";
+import { useMemo } from "react";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
-type ComponentProps = {} & NFTListing;
+type ComponentProps = {
+	value: NFTListing;
+};
 
 export default function ListingCard({
 	className,
-	listingId,
-	token,
+	value,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
+	const { token, price, paymentAssetId, type } = value;
+	const { displayAsset } = useAssets();
+	const [listingPrice, symbol] = useMemo(() => {
+		if (!displayAsset) return [];
+		return displayAsset(paymentAssetId, price);
+	}, [displayAsset, price, paymentAssetId]);
+
 	return (
 		<div className={bem("root", className)} {...props}>
 			<div className={bem("renderer")}>
-				<NFTRenderer token={token} />
+				<NFTRenderer value={token} />
+			</div>
+			<div className={bem("details")}>
+				<Text
+					variant="headline5"
+					className={bem("name")}
+					title={token.metadata.name}>
+					{token.metadata.name}
+				</Text>
+
+				{listingPrice && (
+					<div className={bem("price")}>
+						<span className={bem("priceValue")}>{listingPrice}</span>
+						<span className={bem("priceSymbol")}>{symbol}</span>
+					</div>
+				)}
+			</div>
+			<div className={bem("state")}>
+				<div className={bem("listingType")}>
+					{type === "Auction" && (
+						<>
+							<span className={bem("typeIcon")}>
+								<HourglassSVG />
+							</span>
+							<span>Auction</span>
+						</>
+					)}
+
+					{type === "Fixed Price" && (
+						<>
+							<span className={bem("typeIcon")}>
+								<MoneySVG />
+							</span>
+							<span>Fixed Price</span>
+						</>
+					)}
+				</div>
 			</div>
 		</div>
 	);

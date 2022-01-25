@@ -1,9 +1,66 @@
+@use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
 
 .root {
 	border: 2px solid figma-color("Litho Black");
+	height: 100%;
+	background-color: figma-color("Litho Cream");
+	transition: border-color 0.2s;
+
+	@include on-hover {
+		border-color: figma-color("Litho Blue");
+	}
 }
 
 .renderer {
 	padding: 1.25rem;
+}
+
+.details {
+	padding: 0 1.25rem 1.25rem;
+	display: flex;
+	align-items: flex-start;
+}
+
+.name {
+	text-transform: none;
+	min-width: 0;
+	flex: 1;
+	margin-right: 0.5rem;
+	padding-bottom: 0.125em; // fix "g" is being cut-off
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.price {
+	flex-shrink: 0;
+	@include types.subtitle(s2);
+}
+
+.priceValue {
+	display: block;
+	font-weight: 700;
+}
+
+.priceSymbol {
+	font-weight: normal;
+}
+
+.state {
+	padding: 1rem 1.25rem;
+}
+
+.listingType {
+	display: inline-flex;
+	@include types.subtitle(s1);
+	align-items: center;
+}
+
+.typeIcon {
+	display: block;
+	width: 24px;
+	margin-right: 0.25rem;
 }

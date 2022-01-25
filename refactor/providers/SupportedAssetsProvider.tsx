@@ -2,61 +2,45 @@ import {
 	createContext,
 	PropsWithChildren,
 	useContext,
-	useEffect,
-	useState,
+	useCallback,
 } from "react";
-import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { u8aToString } from "@polkadot/util";
+import { AssetInfo } from "@refactor/types";
 
-const assetIds =
-	process.env.NEXT_PUBLIC_SUPPORTED_ASSETS &&
-	process.env.NEXT_PUBLIC_SUPPORTED_ASSETS.split(",");
-
-export type AssetInfo = {
-	id: number;
-	symbol: string;
-	decimals: number;
+type ContextProps = {
+	assets: Array<AssetInfo>;
+	displayAsset: (assetId: number, value: number) => [number, string];
 };
 
-const SupportedAssetsContext = createContext<AssetInfo[]>([]);
+const SupportedAssetsContext = createContext<ContextProps>({} as ContextProps);
 
-type ProviderProps = {};
+type ProviderProps = {
+	assets: Array<AssetInfo>;
+};
 
 export default function SupportedAssetsProvider({
 	children,
+	assets,
 }: PropsWithChildren<ProviderProps>) {
-	const [supportedAssets, setSupportedAssets] = useState<AssetInfo[]>();
-	const api = useCENNZApi();
+	const displayAsset = useCallback(
+		(assetId: number, value: number) => {
+			const asset = assets.find((asset) => asset.assetId === assetId);
+			if (!asset) throw new Error(`Asset "${assetId}" is not found`);
 
-	useEffect(() => {
-		if (!api) return;
-		async function fetchSupportedAssets() {
-			const assets = await (api.rpc as any).genericAsset.registeredAssets();
-			if (!assets?.length) return;
-			const assetInfos = assetIds.map((assetId) => {
-				const [tokenId, { symbol, decimalPlaces }] = assets.find((asset) => {
-					return asset[0].toString() === assetId;
-				});
-				return {
-					id: Number(tokenId),
-					symbol: u8aToString(symbol),
-					decimals: decimalPlaces.toNumber(),
-				};
-			});
-
-			setSupportedAssets(assetInfos);
-		}
-
-		fetchSupportedAssets();
-	}, [api]);
+			return [value / Math.pow(10, asset.decimals), asset.symbol] as [
+				number,
+				string
+			];
+		},
+		[assets]
+	);
 
 	return (
-		<SupportedAssetsContext.Provider value={supportedAssets}>
+		<SupportedAssetsContext.Provider value={{ assets, displayAsset }}>
 			{children}
 		</SupportedAssetsContext.Provider>
 	);
 }
 
-export function useAssets(): Array<AssetInfo> {
+export function useAssets(): ContextProps {
 	return useContext(SupportedAssetsContext);
 }
