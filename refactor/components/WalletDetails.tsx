@@ -11,6 +11,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
 import { useCallback } from "react";
 import Button from "@refactor/components/Button";
+import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
 
 const bem = createBEMHelper(require("./WalletDetails.module.scss"));
 
@@ -51,15 +52,23 @@ export default function WalletDetails({
 						length={8}
 					/>
 					{accounts.length > 1 && (
-						<div className={bem("accountSelect")}>
-							<select onChange={onAccountSelect} value={account.address}>
+						<div className={bem("accountSwitch")}>
+							<select
+								onChange={onAccountSelect}
+								value={account.address}
+								className={bem("accountSelect")}>
 								{accounts.map((acc, index) => (
 									<option value={acc.address} key={index}>
 										{acc.meta.name}
 									</option>
 								))}
 							</select>
-							<label>Switch account</label>
+							<label className={bem("accountSwitchLabel")}>
+								Switch account{" "}
+								<span className={bem("chevron")}>
+									<ChevronDownSVG />
+								</span>
+							</label>
 						</div>
 					)}
 				</div>
