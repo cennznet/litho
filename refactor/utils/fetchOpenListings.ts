@@ -4,6 +4,7 @@ import {
 	NFTListing,
 	NFTMetadata,
 	NFTIdTuple,
+	SortOrder,
 } from "@refactor/types";
 import {
 	AuctionListing,
@@ -16,37 +17,56 @@ import {
  * Fetches all NFTs from a `collectionId`
  *
  * @param {Api} api
- * @param {string} collectionId
- * @return {Promise<Array<NFTListing>>} The nft items.
+ * @param {number} collectionId
+ * @param {SortOrder} sortOrder
+ * @return {Promise<Array<NFTListing>>}
  */
 export default async function fetchOpenListings(
 	api: Api,
-	collectionId: string
+	collectionId: number,
+	sortOrder: SortOrder = "DESC"
 ): Promise<Array<NFTListing>> {
-	const listings = await api.query.nft.openCollectionListings.entries(
-		collectionId
-	);
+	const listingIds = await fetchOpenListingIds(api, collectionId, sortOrder);
 
 	return (
 		await Promise.all(
-			listings.map(async ([key]) => {
-				const [, listingId] = key.args.map((key) => key.toHuman());
-				return fetchListingItem(api, listingId as string);
+			listingIds.map(async (listingId) => {
+				return fetchListingItem(api, listingId);
 			})
 		)
 	).filter(Boolean);
 }
 
 /**
+ * Fetches open listing identifiers.
+ *
+ * @param {Api} api
+ * @param {(number)} collectionId
+ * @param {("ASC"|"DESC"|string)} sortOrder
+ * @return {Promise<Array<number>>}
+ */
+export async function fetchOpenListingIds(
+	api: Api,
+	collectionId: string | number,
+	sortOrder: SortOrder = "DESC"
+): Promise<Array<number>> {
+	return Array.from(
+		await api.query.nft.openCollectionListings.keys(collectionId)
+	)
+		.map((key) => parseInt(key.toHuman()[1], 10))
+		.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a));
+}
+
+/**
  * Fetch an NFT from a `listingId`
  *
  * @param {Api} api
- * @param {string} listingId
+ * @param {number} listingId
  * @return {Promise<NFTListing>}
  */
 export async function fetchListingItem(
 	api: Api,
-	listingId: string
+	listingId: number
 ): Promise<NFTListing> {
 	const response: Listing = (
 		(await api.query.nft.listings(listingId)) as any
@@ -63,17 +83,19 @@ export async function fetchListingItem(
 	const tokenId = listing.tokens[0].toJSON() as NFTIdTuple;
 	const { attributes, metadata } = await fetchNFT(api, tokenId);
 
-	return {
-		listingId,
-		type: response.isFixedPrice ? "Fixed Price" : "Auction",
-		price: price.toJSON(),
-		paymentAssetId: listing.paymentAsset.toJSON(),
-		token: {
-			tokenId,
-			attributes,
-			metadata,
-		},
-	};
+	return attributes && metadata
+		? {
+				listingId,
+				type: response.isFixedPrice ? "Fixed Price" : "Auction",
+				price: price.toJSON(),
+				paymentAssetId: listing.paymentAsset.toJSON(),
+				token: {
+					tokenId,
+					attributes,
+					metadata,
+				},
+		  }
+		: null;
 }
 
 /**
@@ -122,10 +144,10 @@ export async function fetchNFT(
 }
 
 export function getPinataUrl(text: string): string {
-	const [, hash] = text.match(/ipfs:\/\/(.*)/i);
-	if (!hash) return null;
+	const matches = text.match(/ipfs:\/\/(.*)/i);
+	if (!matches?.[1]) return null;
 
-	return `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${hash}`;
+	return `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${matches[1]}`;
 }
 
 // export function getImageKitUrl(text: string): string {

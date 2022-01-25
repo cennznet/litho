@@ -1,11 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
 import { DOMComponentProps, NFTListing } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
 import Text from "@refactor/components/Text";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { ReactComponent as HourglassSVG } from "@refactor/assets/vectors/hourglass.svg";
-import { ReactComponent as MoneySVG } from "@refactor/assets/vectors/money.svg";
 import { useMemo } from "react";
+import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
+import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -49,19 +50,23 @@ export default function ListingCard({
 				<div className={bem("listingType")}>
 					{type === "Auction" && (
 						<>
-							<span className={bem("typeIcon")}>
-								<HourglassSVG />
-							</span>
-							<span>Auction</span>
+							<img
+								src={HourglassSVG.src}
+								className={bem("typeIcon")}
+								alt="Auction"
+							/>
+							<span className={bem("typeLabel")}>Auction</span>
 						</>
 					)}
 
 					{type === "Fixed Price" && (
 						<>
-							<span className={bem("typeIcon")}>
-								<MoneySVG />
-							</span>
-							<span>Fixed Price</span>
+							<img
+								src={MoneySVG.src}
+								className={bem("typeIcon")}
+								alt="Fixed Price"
+							/>
+							<span className={bem("typeLabel")}>Fixed Price</span>
 						</>
 					)}
 				</div>

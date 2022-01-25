@@ -8,7 +8,9 @@
               }
           }
       ],
-      "inline-react-svg"
+      ["inline-react-svg", {
+        "ignorePattern": "/\?inline/"
+      }]
   ],
   "presets": [
       "next/babel"

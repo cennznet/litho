@@ -4,6 +4,8 @@ import { TokenId } from "@cennznet/types";
 export type DOMComponentProps<T, E> = PropsWithChildren<T> &
 	ComponentPropsWithRef<E>;
 
+export type SortOrder = "ASC" | "DESC";
+
 export type AssetInfo = {
 	assetId: number;
 	symbol: string;
@@ -11,7 +13,7 @@ export type AssetInfo = {
 };
 
 export type NFTListing = {
-	listingId: string;
+	listingId: number;
 	type: "Auction" | "Fixed Price";
 	price: number;
 	paymentAssetId: number;

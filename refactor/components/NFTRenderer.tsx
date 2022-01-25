@@ -28,16 +28,18 @@ export default function NFTRenderer({
 						controlsList="nodownload"></video>
 				)}
 
-				{!isVideo && (
-					<Image
-						src={value.metadata.image}
-						layout="fill"
-						alt={value?.metadata?.name}
-						objectFit="contain"
-						objectPosition="center"
-						sizes="25vw"
-					/>
-				)}
+				<div className={bem("wrapper")}>
+					{!isVideo && (
+						<Image
+							src={value.metadata.image}
+							layout="fill"
+							alt={value?.metadata?.name}
+							objectFit="contain"
+							objectPosition="center"
+							sizes="25vw"
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

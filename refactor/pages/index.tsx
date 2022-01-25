@@ -12,10 +12,13 @@ export async function getStaticProps() {
 	const api = await Api.create({
 		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
 	});
-	const featuredCollectionId = process.env.NEXT_FEATURED_COLLECTION_ID;
+	const featuredCollectionId = parseInt(
+		process.env.NEXT_FEATURED_COLLECTION_ID,
+		10
+	);
 
 	const featuredListings = featuredCollectionId
-		? await fetchOpenListings(api, process.env.NEXT_FEATURED_COLLECTION_ID)
+		? await fetchOpenListings(api, featuredCollectionId)
 		: null;
 
 	const appProps = await fetchAppProps(api);
