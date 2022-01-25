@@ -70,7 +70,7 @@ export default function WalletDetails({
 			<Text variant="subtitle1">Balances</Text>
 
 			<ul className={bem("balanceList")}>
-				{balances.map(({ id, value, symbol }, key) => (
+				{balances.map(({ value, symbol }, key) => (
 					<li key={key} className={bem("balanceItem")}>
 						<div className={bem("balanceIcon")}>
 							{symbol === "CENNZ" && (
