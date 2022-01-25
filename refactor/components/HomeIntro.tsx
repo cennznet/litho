@@ -3,7 +3,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Text from "@refactor/components/Text";
 import Button from "@refactor/components/Button";
 import Link from "@refactor/components/Link";
-import Image from "next/image";
+import Image from "@refactor/components/Image";
 import MarketplacePNG from "@refactor/assets/bitmaps/marketplace.png";
 import MintingPNG from "@refactor/assets/bitmaps/minting.png";
 

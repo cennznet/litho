@@ -1,20 +1,20 @@
 import { DOMComponentProps, NFT } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import isVideoType from "@refactor/utils/isVideoType";
-import Image from "next/image";
+import Image from "@refactor/components/Image";
 
 const bem = createBEMHelper(require("./NFTRenderer.module.scss"));
 
 type ComponentProps = {
-	token: NFT;
+	value: NFT;
 };
 
 export default function NFTRenderer({
 	className,
-	token,
+	value,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const isVideo = isVideoType(token?.metadata?.properties?.extension);
+	const isVideo = isVideoType(value?.metadata?.properties?.extension);
 
 	return (
 		<div className={bem("root", className)} {...props}>
@@ -22,7 +22,7 @@ export default function NFTRenderer({
 				{isVideo && (
 					<video
 						className={bem("video")}
-						src={token.metadata.image}
+						src={value.metadata.image}
 						autoPlay
 						loop
 						controlsList="nodownload"></video>
@@ -30,9 +30,9 @@ export default function NFTRenderer({
 
 				{!isVideo && (
 					<Image
-						src={token.metadata.image}
+						src={value.metadata.image}
 						layout="fill"
-						alt={token?.metadata?.name}
+						alt={value?.metadata?.name}
 						objectFit="contain"
 						objectPosition="center"
 						sizes="25vw"
