@@ -19,6 +19,7 @@ export default function MarketplaceGrid({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
 	const [listingIds, setListingIds] = useState<Array<number>>([]);
+	const [sortedListingIds, setSortedListingIds] = useState<Array<number>>([]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
 
 	useEffect(() => {
@@ -50,7 +51,14 @@ export default function MarketplaceGrid({
 		fetchAllOpenListings();
 	}, [api]);
 
-	const listingItems = useListingItems(listingIds, 12, sortOrder);
+	useEffect(() => {
+		if (!listingIds?.length || !sortOrder) return;
+		setSortedListingIds(
+			listingIds.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a))
+		);
+	}, [listingIds, sortOrder]);
+
+	const listingItems = useListingItems(sortedListingIds, 8);
 
 	return (
 		<div className={bem("root", className)} {...props}>
