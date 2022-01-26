@@ -11,6 +11,8 @@ import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchOpenListingIds, {
 	fetchAllOpenListingIds,
 } from "@refactor/utils/fetchOpenListingIds";
+import Breadcrumb from "@refactor/components/Breadcrumb";
+import Link from "@refactor/components/Link";
 
 export async function getStaticProps({ params }) {
 	const api = await Api.create({
@@ -57,6 +59,10 @@ export function Collection({
 	return (
 		<App {...appProps}>
 			<Main>
+				<Breadcrumb>
+					<Link href="/marketplace">Marketplace</Link>
+					<span>{`Collection #${collectionId}`}</span>
+				</Breadcrumb>
 				<CollectionGrid
 					headline={`Collection #${collectionId}`}
 					collectionId={collectionId}
