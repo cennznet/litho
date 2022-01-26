@@ -27,6 +27,7 @@
     "postcss-preset-env": "^6.7.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-inview": "^4.4.0",
     "react-intersection-observer": "^8.32.1",
     "react-modal": "^3.14.4",
     "scroll-lock": "^2.1.5",

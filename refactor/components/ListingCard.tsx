@@ -14,6 +14,7 @@ import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import Link from "@refactor/components/Link";
+import { useInView } from "react-hook-inview";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -32,8 +33,12 @@ export default function ListingCard({
 
 	const collectionId = Array.isArray(listingId) ? listingId[0] : null;
 
+	const [ref, inView] = useInView({
+		threshold: 1,
+	});
+
 	useEffect(() => {
-		if (!api || !listingId) return;
+		if (!api || !listingId || !inView) return;
 		fetchListingItem(
 			api,
 			Array.isArray(listingId) ? listingId[1] : listingId
@@ -41,7 +46,7 @@ export default function ListingCard({
 			setItem(item);
 			setLoading(false);
 		});
-	}, [api, listingId]);
+	}, [api, listingId, inView]);
 
 	const { token, price, paymentAssetId, type } = (item || {}) as NFTListing;
 	const { displayAsset } = useAssets();
@@ -64,7 +69,7 @@ export default function ListingCard({
 					: null
 			}
 			title={token?.metadata?.name}>
-			<div className={bem("inner")}>
+			<div className={bem("inner")} ref={ref}>
 				<div className={bem("media")}>
 					{!!token && (
 						<NFTRenderer
