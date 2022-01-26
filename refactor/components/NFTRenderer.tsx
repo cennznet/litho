@@ -1,7 +1,7 @@
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import isVideoType from "@refactor/utils/isVideoType";
-import Image from "@refactor/components/Image";
+import { ImageKit } from "@refactor/components/Image";
 import Video from "@refactor/components/Video";
 import { useCallback, useState } from "react";
 
@@ -42,7 +42,7 @@ export default function NFTRenderer({
 				)}
 
 				{!isVideo && (
-					<Image
+					<ImageKit
 						onLoadingComplete={onLoadingComplete}
 						src={url}
 						layout="fill"

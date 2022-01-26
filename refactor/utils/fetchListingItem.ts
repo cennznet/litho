@@ -79,7 +79,7 @@ export async function fetchNFT(
 
 	if (!metadataIPFS) return { attributes, metadata };
 
-	const metadataUrl = getPinataUrl(metadataIPFS);
+	const metadataUrl = getImageKitUrl(metadataIPFS);
 	if (!metadataUrl) return { attributes, metadata };
 
 	metadata = await fetch(metadataUrl).then((response) => response?.json());
@@ -92,10 +92,17 @@ export async function fetchNFT(
 
 	// transform image IPFS link also
 	if (metadata?.image) {
-		metadata.image = getPinataUrl(metadata.image);
+		metadata.image = getImageKitUrl(metadata.image);
 	}
 
 	return { attributes, metadata };
+}
+
+export function getImageKitUrl(text: string): string {
+	const matches = text.match(/ipfs:\/\/(.*)/i);
+	if (!matches?.[1]) return null;
+
+	return `${process.env.NEXT_PUBLIC_IMAGE_CDN}/ipfs/${matches[1]}`;
 }
 
 export function getPinataUrl(text: string): string {

@@ -31,3 +31,18 @@ export default function Image({
 		/>
 	);
 }
+
+function imageKitLoader({ src, width, quality }) {
+	if (src[0] === "/") src = src.slice(1);
+	const params = [`w-${width}`];
+	if (quality) {
+		params.push(`q-${quality}`);
+	}
+	const paramsString = params.join(",");
+	return `${src}?tr=${paramsString}`;
+}
+
+export function ImageKit(props: DOMComponentProps<ComponentProps, "div">) {
+	// eslint-disable-next-line jsx-a11y/alt-text
+	return <Image {...props} loader={imageKitLoader} />;
+}
