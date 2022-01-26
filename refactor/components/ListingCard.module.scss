@@ -3,14 +3,54 @@
 
 .root {
 	display: block;
+	position: relative;
 	border: 2px solid figma-color("Litho Black");
 	height: 100%;
-	background-color: figma-color("Litho Cream");
+
 	transition: border-color 0.2s;
 
 	@include on-hover {
 		border-color: figma-color("Litho Blue");
+
+		&:before,
+		&::after {
+			border-color: figma-color("Litho Blue");
+		}
 	}
+
+	&--asStack {
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 90%;
+			left: 5%;
+			bottom: -0.5rem;
+			z-index: 2;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 80%;
+			left: 10%;
+			bottom: calc((1rem - 2px) * -1);
+			z-index: 1;
+		}
+	}
+}
+
+.inner {
+	position: relative;
+	z-index: 3;
+	background-color: figma-color("Litho Cream");
 }
 
 .media {

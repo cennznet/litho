@@ -54,7 +54,7 @@ export default function ListingCard({
 
 	return (
 		<Link
-			className={bem("root", className)}
+			className={bem("root", { asStack: !!collectionId }, className)}
 			{...props}
 			href={
 				!!collectionId
@@ -64,59 +64,61 @@ export default function ListingCard({
 					: null
 			}
 			title={token?.metadata?.name}>
-			<div className={bem("media")}>
-				{!!token && (
-					<NFTRenderer
-						className={bem("renderer")}
-						url={token.metadata.image}
-						extension={token.metadata.properties.extension}
-						name={token.metadata.image}
-					/>
-				)}
-			</div>
-			<div className={bem("details", { loading })}>
-				{!!token && (
-					<Text
-						variant="headline5"
-						className={bem("name")}
-						title={token.metadata.name}>
-						{token.metadata.name}
-					</Text>
-				)}
+			<div className={bem("inner")}>
+				<div className={bem("media")}>
+					{!!token && (
+						<NFTRenderer
+							className={bem("renderer")}
+							url={token.metadata.image}
+							extension={token.metadata.properties.extension}
+							name={token.metadata.image}
+						/>
+					)}
+				</div>
+				<div className={bem("details", { loading })}>
+					{!!token && (
+						<Text
+							variant="headline5"
+							className={bem("name")}
+							title={token.metadata.name}>
+							{token.metadata.name}
+						</Text>
+					)}
 
-				{!!listingPrice && (
-					<div className={bem("price")}>
-						<span className={bem("priceValue")}>{listingPrice}</span>
-						<span className={bem("priceSymbol")}>{symbol}</span>
-					</div>
-				)}
-			</div>
-			<div className={bem("state", { loading })}>
-				{!!type && (
-					<div className={bem("listingType")}>
-						{type === "Auction" && (
-							<>
-								<img
-									src={HourglassSVG.src}
-									className={bem("typeIcon")}
-									alt="Auction"
-								/>
-								<span className={bem("typeLabel")}>Auction</span>
-							</>
-						)}
+					{!!listingPrice && (
+						<div className={bem("price")}>
+							<span className={bem("priceValue")}>{listingPrice}</span>
+							<span className={bem("priceSymbol")}>{symbol}</span>
+						</div>
+					)}
+				</div>
+				<div className={bem("state", { loading })}>
+					{!!type && (
+						<div className={bem("listingType")}>
+							{type === "Auction" && (
+								<>
+									<img
+										src={HourglassSVG.src}
+										className={bem("typeIcon")}
+										alt="Auction"
+									/>
+									<span className={bem("typeLabel")}>Auction</span>
+								</>
+							)}
 
-						{type === "Fixed Price" && (
-							<>
-								<img
-									src={MoneySVG.src}
-									className={bem("typeIcon")}
-									alt="Fixed Price"
-								/>
-								<span className={bem("typeLabel")}>Fixed Price</span>
-							</>
-						)}
-					</div>
-				)}
+							{type === "Fixed Price" && (
+								<>
+									<img
+										src={MoneySVG.src}
+										className={bem("typeIcon")}
+										alt="Fixed Price"
+									/>
+									<span className={bem("typeLabel")}>Fixed Price</span>
+								</>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
 		</Link>
 	);
