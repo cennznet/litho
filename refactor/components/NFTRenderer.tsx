@@ -36,6 +36,7 @@ export default function NFTRenderer({
 						src={url}
 						autoPlay
 						loop
+						muted
 						controlsList="nodownload"
 					/>
 				)}
