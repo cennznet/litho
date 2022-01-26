@@ -2,6 +2,7 @@
 @import "~@refactor/styles/bootstrap";
 
 .root {
+	display: block;
 	border: 2px solid figma-color("Litho Black");
 	height: 100%;
 	background-color: figma-color("Litho Cream");
@@ -12,14 +13,43 @@
 	}
 }
 
+.media {
+	margin: 1.25rem;
+	position: relative;
+	&:before {
+		display: block;
+		position: relative;
+		width: 100%;
+		padding-top: 100%;
+		content: "";
+		background-color: #e0e0e0;
+	}
+}
+
 .renderer {
-	padding: 1.25rem;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: figma-color("Litho Cream");
 }
 
 .details {
 	padding: 0 1.25rem 1.25rem;
 	display: flex;
 	align-items: flex-start;
+	position: relative;
+
+	&--loading {
+		&:before {
+			content: "";
+			display: block;
+			width: 100%;
+			height: 1rem;
+			background-color: #e0e0e0;
+		}
+	}
 }
 
 .name {
@@ -54,6 +84,15 @@
 
 .state {
 	padding: 0 1.25rem 1rem 1.25rem;
+	&--loading {
+		&:before {
+			content: "";
+			display: block;
+			width: 25%;
+			height: 1rem;
+			background-color: #e0e0e0;
+		}
+	}
 }
 
 .listingType {

@@ -1,11 +1,11 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { DOMComponentProps, SortOrder } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import { useEffect, useState } from "react";
-import { fetchOpenListingIds } from "@refactor/utils/fetchOpenListings";
-import useListingItems from "@refactor/hooks/useListingItems";
+import { useCallback, useEffect, useState } from "react";
+import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import Text from "@refactor/components/Text";
 import ListingGrid from "@refactor/components/ListingGrid";
+import Dropdown from "@refactor/components/Dropdown";
 
 const bem = createBEMHelper(require("./MarketplaceGrid.module.scss"));
 
@@ -18,7 +18,9 @@ export default function MarketplaceGrid({
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
-	const [listingIds, setListingIds] = useState<Array<number>>([]);
+	const [listingIds, setListingIds] = useState<Array<number>>(
+		new Array(12).fill(0)
+	);
 	const [sortedListingIds, setSortedListingIds] = useState<Array<number>>([]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
 
@@ -53,17 +55,30 @@ export default function MarketplaceGrid({
 
 	useEffect(() => {
 		if (!listingIds?.length || !sortOrder) return;
-		setSortedListingIds(
-			listingIds.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a))
-		);
+		setSortedListingIds([
+			...listingIds.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a)),
+		]);
 	}, [listingIds, sortOrder]);
 
-	const listingItems = useListingItems(sortedListingIds, 8);
+	const onDropdownChange = useCallback((event) => {
+		setSortOrder(event.target.value);
+	}, []);
 
 	return (
 		<div className={bem("root", className)} {...props}>
-			<ListingGrid items={listingItems} showSpinner={!listingItems?.length}>
-				<Text variant="headline3">Marketplace Collections</Text>
+			<ListingGrid listingIds={sortedListingIds}>
+				<div className={bem("header")}>
+					<Text variant="headline3">Marketplace Collections</Text>
+					<Dropdown
+						className={bem("sortDropdown")}
+						defaultLabel="Newest First"
+						defaultValue={sortOrder}
+						value={sortOrder}
+						onChange={onDropdownChange}>
+						<option value="DESC">Newest First</option>
+						<option value="ASC">Oldest First</option>
+					</Dropdown>
+				</div>
 			</ListingGrid>
 		</div>
 	);

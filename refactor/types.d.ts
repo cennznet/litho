@@ -33,6 +33,7 @@ export type NFTIdTuple = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
 
 export type NFTAttributes = Array<{
 	Text: string;
+	[key: string]: string;
 }>;
 
 export type NFTMetadata = {

@@ -1,45 +1,56 @@
-import { DOMComponentProps, NFT } from "@refactor/types";
+import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import isVideoType from "@refactor/utils/isVideoType";
 import Image from "@refactor/components/Image";
+import Video from "@refactor/components/Video";
+import { useCallback, useState } from "react";
 
 const bem = createBEMHelper(require("./NFTRenderer.module.scss"));
 
 type ComponentProps = {
-	value: NFT;
+	name: string;
+	url: string;
+	extension: string;
 };
 
 export default function NFTRenderer({
 	className,
-	value,
+	name,
+	url,
+	extension,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const isVideo = isVideoType(value?.metadata?.properties?.extension);
+	const isVideo = isVideoType(extension);
+	const [loading, setLoading] = useState<boolean>(true);
+	const onLoadingComplete = useCallback(() => {
+		setLoading(false);
+	}, []);
 
 	return (
 		<div className={bem("root", className)} {...props}>
-			<div className={bem("inner")}>
+			<div className={bem("inner", { loading })}>
 				{isVideo && (
-					<video
+					<Video
+						onCanPlay={onLoadingComplete}
 						className={bem("video")}
-						src={value.metadata.image}
+						src={url}
 						autoPlay
 						loop
-						controlsList="nodownload"></video>
+						controlsList="nodownload"
+					/>
 				)}
 
-				<div className={bem("wrapper")}>
-					{!isVideo && (
-						<Image
-							src={value.metadata.image}
-							layout="fill"
-							alt={value?.metadata?.name}
-							objectFit="contain"
-							objectPosition="center"
-							sizes="25vw"
-						/>
-					)}
-				</div>
+				{!isVideo && (
+					<Image
+						onLoadingComplete={onLoadingComplete}
+						src={url}
+						layout="fill"
+						alt={name}
+						objectFit="contain"
+						objectPosition="center"
+						sizes="25vw"
+					/>
+				)}
 			</div>
 		</div>
 	);

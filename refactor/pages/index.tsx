@@ -1,53 +1,48 @@
 import { Api } from "@cennznet/api";
-import { DOMComponentProps, NFTListing } from "@refactor/types";
+import { DOMComponentProps } from "@refactor/types";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
-import fetchOpenListings from "@refactor/utils/fetchOpenListings";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import HomeIntro from "@refactor/components/HomeIntro";
-import ListingGrid from "@refactor/components/ListingGrid";
-import Text from "@refactor/components/Text";
+import FeaturedGrid from "@refactor/components/FeaturedGrid";
+import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 
 export async function getStaticProps() {
 	const api = await Api.create({
 		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
 	});
-	const featuredCollectionId = parseInt(
-		process.env.NEXT_FEATURED_COLLECTION_ID,
-		10
-	);
-
-	const featuredListings = featuredCollectionId
-		? await fetchOpenListings(api, featuredCollectionId)
-		: null;
 
 	const appProps = await fetchAppProps(api);
 
+	const featuredCollectionId = parseInt(
+		process.env.NEXT_PUBLIC_FEATURED_COLLECTION_ID,
+		10
+	);
+	const featuredListingIds = await fetchOpenListingIds(
+		api,
+		featuredCollectionId
+	);
+
 	return {
-		props: { refactored: true, featuredListings, appProps },
-		revalidate: 3600,
+		props: { refactored: true, appProps, featuredListingIds },
+		revalidate: 60,
 	};
 }
 
 type PageProps = {
-	featuredListings: Array<NFTListing>;
+	featuredListingIds: Array<number>;
 	appProps: AppProps;
 };
 
 export function Home({
-	featuredListings,
 	appProps,
+	featuredListingIds,
 }: DOMComponentProps<PageProps, "div">) {
 	return (
 		<App {...appProps}>
 			<Main>
 				<HomeIntro />
-				<ListingGrid items={featuredListings.slice(0, 4)}>
-					<Text variant="headline3">
-						{process.env.NEXT_PUBLIC_FEATURED_COLLECTION_TITLE ||
-							"Featured Collection"}
-					</Text>
-				</ListingGrid>
+				<FeaturedGrid listingIds={featuredListingIds} />
 			</Main>
 		</App>
 	);

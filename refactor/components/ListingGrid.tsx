@@ -1,50 +1,31 @@
-import { DOMComponentProps, NFTListing } from "@refactor/types";
+import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingCard from "@refactor/components/ListingCard";
-import Link from "@refactor/components/Link";
-import Spinner from "@refactor/components/Spinner";
 
 const bem = createBEMHelper(require("./ListingGrid.module.scss"));
 
 type ComponentProps = {
-	items: Array<NFTListing>;
+	listingIds: Array<number>;
 	showSpinner?: boolean;
 };
 
 export default function ListingGrid({
 	className,
 	children,
-	items,
-	showSpinner,
+	listingIds,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	return (
 		<div className={bem("root", className)} {...props}>
 			{!!children && <div className={bem("header")}>{children}</div>}
 
-			<ul className={bem("list")}>
-				{items.map((item, index) => {
-					const {
-						token: {
-							tokenId,
-							metadata: { name },
-						},
-					} = item;
+			<div className={bem("list")}>
+				{listingIds.map((id, index) => {
 					return (
-						<li key={index} className={bem("item")}>
-							<Link href={`/nft/${tokenId.join("/")}`} title={name}>
-								<ListingCard value={item} />
-							</Link>
-						</li>
+						<ListingCard listingId={id} key={index} className={bem("item")} />
 					);
 				})}
-			</ul>
-
-			{showSpinner && (
-				<div className={bem("loading")}>
-					<Spinner className={bem("spinner")} />
-				</div>
-			)}
+			</div>
 		</div>
 	);
 }

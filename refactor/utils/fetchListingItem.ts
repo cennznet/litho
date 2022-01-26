@@ -4,7 +4,6 @@ import {
 	NFTListing,
 	NFTMetadata,
 	NFTIdTuple,
-	SortOrder,
 } from "@refactor/types";
 import {
 	AuctionListing,
@@ -14,57 +13,13 @@ import {
 } from "@cennznet/types";
 
 /**
- * Fetches all NFTs from a `collectionId`
- *
- * @param {Api} api
- * @param {number} collectionId
- * @param {SortOrder} sortOrder
- * @return {Promise<Array<NFTListing>>}
- */
-export default async function fetchOpenListings(
-	api: Api,
-	collectionId: number,
-	sortOrder: SortOrder = "DESC"
-): Promise<Array<NFTListing>> {
-	const listingIds = await fetchOpenListingIds(api, collectionId, sortOrder);
-
-	return (
-		await Promise.all(
-			listingIds.map(async (listingId) => {
-				return fetchListingItem(api, listingId);
-			})
-		)
-	).filter(Boolean);
-}
-
-/**
- * Fetches open listing identifiers.
- *
- * @param {Api} api
- * @param {(number)} collectionId
- * @param {("ASC"|"DESC"|string)} sortOrder
- * @return {Promise<Array<number>>}
- */
-export async function fetchOpenListingIds(
-	api: Api,
-	collectionId: string | number,
-	sortOrder: SortOrder = "DESC"
-): Promise<Array<number>> {
-	return Array.from(
-		await api.query.nft.openCollectionListings.keys(collectionId)
-	)
-		.map((key) => parseInt(key.toHuman()[1], 10))
-		.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a));
-}
-
-/**
  * Fetch an NFT from a `listingId`
  *
  * @param {Api} api
  * @param {number} listingId
  * @return {Promise<NFTListing>}
  */
-export async function fetchListingItem(
+export default async function fetchListingItem(
 	api: Api,
 	listingId: number
 ): Promise<NFTListing> {

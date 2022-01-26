@@ -9,19 +9,24 @@ type ComponentProps = {} & NextImageProps;
 
 export default function Image({
 	className,
+	onLoadingComplete,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const [show, setShow] = useState<boolean>(false);
-	const onLoadingComplete = useCallback(() => {
-		setTimeout(() => {
-			setShow(true);
-		}, 100);
-	}, []);
+	const onImageLoadingComplete = useCallback(
+		(event) => {
+			setTimeout(() => {
+				setShow(true);
+				if (onLoadingComplete) onLoadingComplete(event);
+			}, 100);
+		},
+		[onLoadingComplete]
+	);
 
 	return (
 		<NextImage
 			{...props}
-			onLoadingComplete={onLoadingComplete}
+			onLoadingComplete={onImageLoadingComplete}
 			className={bem("root", { show }, className)}
 		/>
 	);
