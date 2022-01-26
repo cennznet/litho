@@ -48,6 +48,9 @@
 }
 
 .inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 	position: relative;
 	z-index: 3;
 	background-color: figma-color("Litho Cream");
@@ -82,6 +85,7 @@
 	display: flex;
 	align-items: flex-start;
 	position: relative;
+	flex: 1;
 
 	&--loading {
 		&:before {
@@ -125,7 +129,10 @@
 }
 
 .state {
+	@include types.subtitle(s1);
 	padding: 0 1.25rem 1rem 1.25rem;
+	display: flex;
+	align-items: center;
 	&--loading {
 		&:before {
 			content: "";
@@ -138,9 +145,9 @@
 }
 
 .listingType {
-	display: inline-flex;
-	@include types.subtitle(s1);
+	display: flex;
 	align-items: center;
+	margin-right: 0.5rem;
 }
 
 .typeIcon {
@@ -155,4 +162,9 @@
 
 .typeLabel {
 	display: block;
+}
+
+.listingQuantity {
+	display: inline-block;
+	color: figma-color("Litho Black 60%");
 }

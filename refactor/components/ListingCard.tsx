@@ -123,6 +123,14 @@ export default function ListingCard({
 							)}
 						</div>
 					)}
+
+					{!collectionId && !!token?.metadata?.properties?.quantity && (
+						<div className={bem("listingQuantity")}>
+							{`${token.tokenId[2] + 1} of ${
+								token.metadata.properties.quantity
+							}`}
+						</div>
+					)}
 				</div>
 			</div>
 		</Link>

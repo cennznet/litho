@@ -26,12 +26,7 @@
 
 .header {
 	flex-shrink: 0;
-	@include interpolate(
-		"margin-bottom",
-		16px phone,
-		48px landscape,
-		80px desktop
-	);
+	@include interpolate("margin-bottom", 16px phone, 48px desktop);
 }
 
 .content {
@@ -40,5 +35,5 @@
 
 .footer {
 	flex-shrink: 0;
-	@include interpolate("margin-top", 24px phone, 72px landscape, 120px desktop);
+	@include interpolate("margin-top", 24px phone, 72px landscape, 96px desktop);
 }
