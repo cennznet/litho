@@ -1,11 +1,17 @@
 import { Api } from "@cennznet/api";
-import { DOMComponentProps } from "@refactor/types";
+import { CollectionTupple, DOMComponentProps } from "@refactor/types";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import HomeIntro from "@refactor/components/HomeIntro";
 import FeaturedGrid from "@refactor/components/FeaturedGrid";
-import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
+import fetchOpenListingIds, {
+	fetchAllOpenListingIds,
+} from "@refactor/utils/fetchOpenListingIds";
+import LatestGrid from "@refactor/components/LatestGrid";
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+
+const bem = createBEMHelper(require("./index.module.scss"));
 
 export async function getStaticProps() {
 	const api = await Api.create({
@@ -13,6 +19,7 @@ export async function getStaticProps() {
 	});
 
 	const appProps = await fetchAppProps(api);
+	const latestListingIds = await fetchAllOpenListingIds(api);
 
 	const featuredCollectionId = parseInt(
 		process.env.NEXT_PUBLIC_FEATURED_COLLECTION_ID,
@@ -24,25 +31,39 @@ export async function getStaticProps() {
 	);
 
 	return {
-		props: { refactored: true, appProps, featuredListingIds },
+		props: {
+			refactored: true,
+			appProps,
+			featuredListingIds,
+			latestListingIds,
+		},
 		revalidate: 60,
 	};
 }
 
 type PageProps = {
 	featuredListingIds: Array<number>;
+	latestListingIds: Array<CollectionTupple>;
 	appProps: AppProps;
 };
 
 export function Home({
 	appProps,
 	featuredListingIds,
+	latestListingIds,
 }: DOMComponentProps<PageProps, "div">) {
 	return (
 		<App {...appProps}>
 			<Main>
-				<HomeIntro />
-				<FeaturedGrid listingIds={featuredListingIds} />
+				<HomeIntro className={bem("homeIntro")} />
+				<FeaturedGrid
+					listingIds={featuredListingIds}
+					className={bem("featuredGrid")}
+				/>
+				<LatestGrid
+					defaultListingIds={latestListingIds}
+					className={bem("lastestGrid")}
+				/>
 			</Main>
 		</App>
 	);

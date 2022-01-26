@@ -11,12 +11,11 @@ const bem = createBEMHelper(require("./HomeIntro.module.scss"));
 
 type ComponentProps = {};
 
-export default function HomeIntro({}: DOMComponentProps<
-	ComponentProps,
-	"div"
->) {
+export default function HomeIntro({
+	className,
+}: DOMComponentProps<ComponentProps, "div">) {
 	return (
-		<div className={bem("root")}>
+		<div className={bem("root", className)}>
 			<div className={bem("intro")}>
 				<Text variant="headline2" className={bem("introText")}>
 					Launch into the <strong>Lithoverse</strong>. Your place to{" "}
