@@ -4,6 +4,7 @@ import {
 	NFTListing,
 	NFTMetadata,
 	NFTIdTuple,
+	NFTAttribute,
 } from "@refactor/types";
 import {
 	AuctionListing,
@@ -70,11 +71,12 @@ export async function fetchNFT(
 
 	attributes = (tokenInfo.attributes as any)
 		.toJSON()
-		.filter((attribute) => !!attribute.Text);
+		.filter((attribute: NFTAttribute) => !!attribute.Text);
 	const { Url: metadataIPFS } = (tokenInfo.attributes as any)
 		.toJSON()
 		.find(
-			(attribute) => attribute.Url && attribute.Url.search(/metadata/gi) >= 0
+			(attribute: NFTAttribute) =>
+				attribute.Url && attribute.Url.search(/metadata/gi) >= 0
 		);
 
 	if (!metadataIPFS) return { attributes, metadata };

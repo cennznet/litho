@@ -32,10 +32,13 @@ export type NFTSerialNumber = number;
 export type NFTListingId = number;
 export type NFTIdTuple = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
 
-export type NFTAttributes = Array<{
+export type NFTAttribute = {
 	Text: string;
+	URL: string;
 	[key: string]: string;
-}>;
+};
+
+export type NFTAttributes = Array<NFTAttribute>;
 
 export type NFTMetadata = {
 	name: string;
