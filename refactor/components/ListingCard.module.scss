@@ -5,8 +5,8 @@
 	display: block;
 	position: relative;
 	border: 2px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
 	height: 100%;
-
 	transition: border-color 0.2s;
 
 	@include on-hover {
@@ -62,7 +62,6 @@
 		width: 100%;
 		padding-top: 100%;
 		content: "";
-		background-color: #e0e0e0;
 		background: #e0e0e0 url("~@refactor/assets/bitmaps/background-loading.jpg")
 			no-repeat center center;
 		background-size: contain;

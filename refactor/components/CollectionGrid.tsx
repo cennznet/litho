@@ -10,21 +10,26 @@ import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import Text from "@refactor/components/Text";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Dropdown from "@refactor/components/Dropdown";
+import { fetchAllOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
 
-const bem = createBEMHelper(require("./MarketplaceGrid.module.scss"));
+const bem = createBEMHelper(require("./CollectionGrid.module.scss"));
 
 type ComponentProps = {
-	chunkSize?: number;
+	headline: string;
+	collectionId?: number;
+	defaultListingIds?: Array<number | CollectionTupple>;
 };
 
-export default function MarketplaceGrid({
+export default function CollectionGrid({
 	className,
+	headline,
+	collectionId,
+	defaultListingIds = [],
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
-	const [listingIds, setListingIds] = useState<
-		Array<number | CollectionTupple>
-	>(new Array(12).fill(0));
+	const [listingIds, setListingIds] =
+		useState<Array<number | CollectionTupple>>(defaultListingIds);
 	const [sortedListingIds, setSortedListingIds] = useState<
 		Array<CollectionTupple>
 	>([]);
@@ -34,36 +39,32 @@ export default function MarketplaceGrid({
 		if (!api) return;
 
 		async function fetchAllOpenListings() {
-			const nextCollectionId = (
-				await api.query.nft.nextCollectionId()
-			).toJSON();
-			const allPossibleCollectionIds = Array.from(
-				new Array(nextCollectionId).keys()
-			);
-
-			// extract most recent listing from each collection
-			// as the representative of that collection
-			const listingIds = (
-				await Promise.all(
-					allPossibleCollectionIds.map(async (collectionId) => {
-						const listingIds = await fetchOpenListingIds(api, collectionId);
-						if (!listingIds?.length) return false;
-						return [collectionId, listingIds[0]];
-					})
-				)
-			).filter(Boolean) as Array<CollectionTupple>;
-
+			const listingIds = await fetchAllOpenListingIds(api);
 			setListingIds(listingIds);
 		}
 
-		fetchAllOpenListings();
-	}, [api]);
+		async function fetchOpenListings() {
+			const listingIds = await fetchOpenListingIds(api, collectionId);
+			setListingIds(listingIds);
+		}
+
+		if (!collectionId) {
+			fetchAllOpenListings();
+			return;
+		}
+
+		fetchOpenListings();
+	}, [api, collectionId]);
 
 	useEffect(() => {
 		if (!listingIds?.length || !sortOrder) return;
 		const sortedListingIds = [
-			...listingIds.sort((a: CollectionTupple, b: CollectionTupple) =>
-				sortOrder === "ASC" ? a[1] - b[1] : b[1] - a[1]
+			...listingIds.sort(
+				(a: number | CollectionTupple, b: number | CollectionTupple) => {
+					const left: number = Array.isArray(a) ? a[1] : a;
+					const right: number = Array.isArray(b) ? b[1] : b;
+					return sortOrder === "ASC" ? left - right : right - left;
+				}
 			),
 		];
 
@@ -78,7 +79,7 @@ export default function MarketplaceGrid({
 		<div className={bem("root", className)} {...props}>
 			<ListingGrid listingIds={sortedListingIds}>
 				<div className={bem("header")}>
-					<Text variant="headline3">Marketplace Collections</Text>
+					<Text variant="headline3">{headline}</Text>
 					<Dropdown
 						className={bem("sortDropdown")}
 						defaultLabel="Newest First"

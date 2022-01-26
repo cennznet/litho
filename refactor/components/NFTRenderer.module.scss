@@ -6,8 +6,11 @@
 .inner {
 	position: relative;
 	padding-top: 100%;
+
 	&--loading {
-		background-color: #e0e0e0;
+		background: #e0e0e0 url("~@refactor/assets/bitmaps/background-loading.jpg")
+			no-repeat center center;
+		background-size: contain;
 	}
 }
 
