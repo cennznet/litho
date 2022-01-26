@@ -63,7 +63,7 @@ export default function ListingCard({
 			{...props}
 			href={
 				!!collectionId
-					? `/marketplace/collection/${collectionId}`
+					? `/collection/${collectionId}`
 					: !!token?.tokenId
 					? `/nft/${token.tokenId.join("/")}`
 					: null
