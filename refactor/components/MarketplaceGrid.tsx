@@ -1,5 +1,9 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { DOMComponentProps, SortOrder } from "@refactor/types";
+import {
+	DOMComponentProps,
+	SortOrder,
+	CollectionTupple,
+} from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useCallback, useEffect, useState } from "react";
 import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
@@ -18,10 +22,12 @@ export default function MarketplaceGrid({
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
-	const [listingIds, setListingIds] = useState<Array<number>>(
-		new Array(12).fill(0)
-	);
-	const [sortedListingIds, setSortedListingIds] = useState<Array<number>>([]);
+	const [listingIds, setListingIds] = useState<
+		Array<number | CollectionTupple>
+	>(new Array(12).fill(0));
+	const [sortedListingIds, setSortedListingIds] = useState<
+		Array<CollectionTupple>
+	>([]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
 
 	useEffect(() => {
@@ -42,10 +48,10 @@ export default function MarketplaceGrid({
 					allPossibleCollectionIds.map(async (collectionId) => {
 						const listingIds = await fetchOpenListingIds(api, collectionId);
 						if (!listingIds?.length) return false;
-						return listingIds[0];
+						return [collectionId, listingIds[0]];
 					})
 				)
-			).filter(Boolean) as Array<number>;
+			).filter(Boolean) as Array<CollectionTupple>;
 
 			setListingIds(listingIds);
 		}
@@ -55,9 +61,13 @@ export default function MarketplaceGrid({
 
 	useEffect(() => {
 		if (!listingIds?.length || !sortOrder) return;
-		setSortedListingIds([
-			...listingIds.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a)),
-		]);
+		const sortedListingIds = [
+			...listingIds.sort((a: CollectionTupple, b: CollectionTupple) =>
+				sortOrder === "ASC" ? a[1] - b[1] : b[1] - a[1]
+			),
+		];
+
+		setSortedListingIds(sortedListingIds as Array<CollectionTupple>);
 	}, [listingIds, sortOrder]);
 
 	const onDropdownChange = useCallback((event) => {

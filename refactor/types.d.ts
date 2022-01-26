@@ -29,6 +29,7 @@ export type NFT = {
 export type NFTCollectionId = number;
 export type NFTSeriesId = number;
 export type NFTSerialNumber = number;
+export type NFTListingId = number;
 export type NFTIdTuple = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
 
 export type NFTAttributes = Array<{
@@ -47,3 +48,5 @@ export type NFTMetadata = {
 		owner?: string;
 	};
 };
+
+export type CollectionTupple = [NFTCollectionId, NFTListingId];

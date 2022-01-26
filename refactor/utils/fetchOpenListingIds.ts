@@ -14,8 +14,6 @@ export default async function fetchOpenListingIds(
 	collectionId: number,
 	sortOrder: SortOrder = "DESC"
 ): Promise<Array<number>> {
-	console.log(collectionId);
-
 	return Array.from(
 		await api.query.nft.openCollectionListings.keys(collectionId)
 	)

@@ -1,5 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { DOMComponentProps, NFTListing } from "@refactor/types";
+import {
+	DOMComponentProps,
+	NFTListing,
+	CollectionTupple,
+} from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
 import Text from "@refactor/components/Text";
@@ -14,7 +18,7 @@ import Link from "@refactor/components/Link";
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
 type ComponentProps = {
-	listingId: number;
+	listingId: number | CollectionTupple;
 };
 
 export default function ListingCard({
@@ -26,9 +30,14 @@ export default function ListingCard({
 	const [loading, setLoading] = useState<boolean>(true);
 	const api = useCENNZApi();
 
+	const collectionId = Array.isArray(listingId) ? listingId[0] : null;
+
 	useEffect(() => {
 		if (!api || !listingId) return;
-		fetchListingItem(api, listingId).then((item) => {
+		fetchListingItem(
+			api,
+			Array.isArray(listingId) ? listingId[1] : listingId
+		).then((item) => {
 			setItem(item);
 			setLoading(false);
 		});
@@ -47,7 +56,13 @@ export default function ListingCard({
 		<Link
 			className={bem("root", className)}
 			{...props}
-			href={!!token?.tokenId ? `/nft/${token.tokenId.join("/")}` : null}
+			href={
+				!!collectionId
+					? `/marketplace/collection/${collectionId}`
+					: !!token?.tokenId
+					? `/nft/${token.tokenId.join("/")}`
+					: null
+			}
 			title={token?.metadata?.name}>
 			<div className={bem("media")}>
 				{!!token && (

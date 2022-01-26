@@ -1,12 +1,11 @@
-import { DOMComponentProps } from "@refactor/types";
+import { DOMComponentProps, CollectionTupple } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingCard from "@refactor/components/ListingCard";
 
 const bem = createBEMHelper(require("./ListingGrid.module.scss"));
 
 type ComponentProps = {
-	listingIds: Array<number>;
-	showSpinner?: boolean;
+	listingIds: Array<number | CollectionTupple>;
 };
 
 export default function ListingGrid({
