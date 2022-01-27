@@ -9,10 +9,26 @@ import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchOpenListingIds, {
-	fetchAllOpenListingIds,
+	fetchLatestOpenListingIds,
 } from "@refactor/utils/fetchOpenListingIds";
 import Breadcrumb from "@refactor/components/Breadcrumb";
 import Link from "@refactor/components/Link";
+
+export async function getStaticPaths() {
+	const api = await Api.create({
+		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
+	});
+
+	const paths = (await fetchLatestOpenListingIds(api)).map(
+		(listingId: CollectionTupple) => ({
+			params: {
+				collectionId: listingId[0].toString(),
+			},
+		})
+	);
+
+	return { paths, fallback: "blocking" };
+}
 
 export async function getStaticProps({ params }) {
 	const api = await Api.create({
@@ -25,24 +41,8 @@ export async function getStaticProps({ params }) {
 
 	return {
 		props: { refactored: true, appProps, collectionId, defaultListingIds },
-		revalidate: false,
+		revalidate: 600,
 	};
-}
-
-export async function getStaticPaths() {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
-
-	const paths = (await fetchAllOpenListingIds(api)).map(
-		(listingId: CollectionTupple) => ({
-			params: {
-				collectionId: listingId[0].toString(),
-			},
-		})
-	);
-
-	return { paths, fallback: "blocking" };
 }
 
 type PageProps = {

@@ -19,6 +19,8 @@
     "@polkadot/react-identicon": "0.70.1",
     "@types/store": "^2.0.2",
     "@types/ua-parser-js": "^0.7.36",
+    "cache-manager": "^3.6.0",
+    "cache-manager-fs-hash": "^1.0.0",
     "clsx": "^1.1.1",
     "dayjs": "^1.10.7",
     "next": "^11.0.0",

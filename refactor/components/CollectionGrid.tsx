@@ -10,7 +10,7 @@ import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import Text from "@refactor/components/Text";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Dropdown from "@refactor/components/Dropdown";
-import { fetchAllOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
 
 const bem = createBEMHelper(require("./CollectionGrid.module.scss"));
 
@@ -39,7 +39,7 @@ export default function CollectionGrid({
 		if (!api) return;
 
 		async function fetchAllOpenListings() {
-			const listingIds = await fetchAllOpenListingIds(api);
+			const listingIds = await fetchLatestOpenListingIds(api);
 			setListingIds(listingIds);
 		}
 

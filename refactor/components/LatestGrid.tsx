@@ -3,7 +3,7 @@ import { CollectionTupple, DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Text from "@refactor/components/Text";
-import { fetchAllOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import Link from "@refactor/components/Link";
 
@@ -26,7 +26,7 @@ export default function LatestGrid({
 		if (!api) return;
 
 		async function fetchAllOpenListings() {
-			const listingIds = await fetchAllOpenListingIds(api);
+			const listingIds = await fetchLatestOpenListingIds(api);
 			setListingIds(listingIds);
 		}
 

@@ -6,7 +6,7 @@ import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import HomeIntro from "@refactor/components/HomeIntro";
 import FeaturedGrid from "@refactor/components/FeaturedGrid";
 import fetchOpenListingIds, {
-	fetchAllOpenListingIds,
+	fetchLatestOpenListingIds,
 } from "@refactor/utils/fetchOpenListingIds";
 import LatestGrid from "@refactor/components/LatestGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
@@ -19,7 +19,7 @@ export async function getStaticProps() {
 	});
 
 	const appProps = await fetchAppProps(api);
-	const latestListingIds = await fetchAllOpenListingIds(api);
+	const latestListingIds = await fetchLatestOpenListingIds(api);
 
 	const featuredCollectionId = parseInt(
 		process.env.NEXT_PUBLIC_FEATURED_COLLECTION_ID,

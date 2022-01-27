@@ -14,16 +14,16 @@ export type AssetInfo = {
 
 export type NFTListing = {
 	listingId: number;
+	tokenId: NFTIdTuple;
 	type: "Auction" | "Fixed Price";
 	price: number;
 	paymentAssetId: number;
-	token: NFT;
 };
 
-export type NFT = {
-	tokenId: NFTIdTuple;
+export type NFTData = {
 	attributes: NFTAttributes;
 	metadata: NFTMetadata;
+	owner?: string;
 };
 
 export type NFTCollectionId = number;

@@ -4,14 +4,14 @@ import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import CollectionGrid from "@refactor/components/CollectionGrid";
-import { fetchAllOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
 
 export async function getStaticProps() {
 	const api = await Api.create({
 		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
 	});
 	const appProps = await fetchAppProps(api);
-	const defaultListingIds = await fetchAllOpenListingIds(api);
+	const defaultListingIds = await fetchLatestOpenListingIds(api);
 
 	return {
 		props: { refactored: true, appProps, defaultListingIds },

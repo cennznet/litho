@@ -3,6 +3,7 @@ import {
 	DOMComponentProps,
 	NFTListing,
 	CollectionTupple,
+	NFTData,
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
@@ -12,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
+import fetchNFTData from "@refactor/utils/fetchNFTData";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import Link from "@refactor/components/Link";
 import { useInView } from "react-hook-inview";
@@ -27,7 +29,7 @@ export default function ListingCard({
 	listingId,
 	...props
 }: DOMComponentProps<ComponentProps, "a">) {
-	const [item, setItem] = useState<NFTListing>(null);
+	const [item, setItem] = useState<NFTListing & NFTData>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 	const api = useCENNZApi();
 
@@ -39,16 +41,24 @@ export default function ListingCard({
 
 	useEffect(() => {
 		if (!api || !listingId || !inView) return;
-		fetchListingItem(
-			api,
-			Array.isArray(listingId) ? listingId[1] : listingId
-		).then((item) => {
-			setItem(item);
+
+		async function fetchListing() {
+			const listing = await fetchListingItem(
+				api,
+				Array.isArray(listingId) ? listingId[1] : listingId
+			);
+
+			const data = await fetchNFTData(api, listing.tokenId);
+
+			setItem(data?.metadata ? { ...listing, ...data } : null);
 			setLoading(false);
-		});
+		}
+
+		fetchListing();
 	}, [api, listingId, inView]);
 
-	const { token, price, paymentAssetId, type } = (item || {}) as NFTListing;
+	const { tokenId, metadata, price, paymentAssetId, type } = (item ||
+		{}) as NFTListing & NFTData;
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
 		if (!displayAsset || !price || !paymentAssetId) return [];
@@ -64,29 +74,29 @@ export default function ListingCard({
 			href={
 				!!collectionId
 					? `/collection/${collectionId}`
-					: !!token?.tokenId
-					? `/nft/${token.tokenId.join("/")}`
+					: !!tokenId
+					? `/nft/${tokenId.join("/")}`
 					: null
 			}
-			title={token?.metadata?.name}>
+			title={metadata?.name}>
 			<div className={bem("inner")} ref={ref}>
 				<div className={bem("media")}>
-					{!!token && (
+					{!!tokenId && (
 						<NFTRenderer
 							className={bem("renderer")}
-							url={token.metadata.image}
-							extension={token.metadata.properties.extension}
-							name={token.metadata.image}
+							url={metadata.image}
+							extension={metadata.properties.extension}
+							name={metadata.image}
 						/>
 					)}
 				</div>
 				<div className={bem("details", { loading })}>
-					{!!token && (
+					{!!tokenId && (
 						<Text
 							variant="headline5"
 							className={bem("name")}
-							title={token.metadata.name}>
-							{token.metadata.name}
+							title={metadata.name}>
+							{metadata.name}
 						</Text>
 					)}
 
@@ -124,11 +134,9 @@ export default function ListingCard({
 						</div>
 					)}
 
-					{!collectionId && !!token?.metadata?.properties?.quantity && (
+					{!collectionId && !!metadata?.properties?.quantity && (
 						<div className={bem("listingQuantity")}>
-							{`${token.tokenId[2] + 1} of ${
-								token.metadata.properties.quantity
-							}`}
+							{`${tokenId[2] + 1} of ${metadata.properties.quantity}`}
 						</div>
 					)}
 				</div>
