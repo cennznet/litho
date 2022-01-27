@@ -14,7 +14,7 @@ export type AssetInfo = {
 
 export type NFTListing = {
 	listingId: number;
-	tokenId: NFTIdTuple;
+	tokenId: NFTId;
 	type: "Auction" | "Fixed Price";
 	price: number;
 	paymentAssetId: number;
@@ -30,7 +30,7 @@ export type NFTCollectionId = number;
 export type NFTSeriesId = number;
 export type NFTSerialNumber = number;
 export type NFTListingId = number;
-export type NFTIdTuple = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
+export type NFTId = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
 
 export type NFTAttribute = {
 	Text: string;
@@ -52,4 +52,6 @@ export type NFTMetadata = {
 	};
 };
 
+export type NFTCollectionTuple = [NFTCollectionId, Array<NFTListingId>];
 export type NFTListingTuple = [NFTCollectionId, NFTListingId];
+export type NFTIndex = Array<[NFTListingId, NFTId]>;

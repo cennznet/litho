@@ -1,5 +1,5 @@
 import { Api } from "@cennznet/api";
-import { NFTListing, NFTIdTuple } from "@refactor/types";
+import { NFTListing, NFTId } from "@refactor/types";
 import {
 	AuctionListing,
 	FixedPriceListing,
@@ -30,7 +30,7 @@ export default async function fetchListingItem(
 		? (listing as FixedPriceListing).fixedPrice
 		: (listing as AuctionListing).reservePrice;
 
-	const tokenId = listing.tokens?.[0].toJSON() as NFTIdTuple;
+	const tokenId = listing.tokens?.[0].toJSON() as NFTId;
 
 	return {
 		listingId,

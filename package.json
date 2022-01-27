@@ -17,6 +17,7 @@
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
     "@polkadot/react-identicon": "0.70.1",
+    "@types/cache-manager": "^3.4.2",
     "@types/store": "^2.0.2",
     "@types/ua-parser-js": "^0.7.36",
     "cache-manager": "^3.6.0",

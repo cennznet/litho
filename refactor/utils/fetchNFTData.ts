@@ -2,7 +2,7 @@ import { Api } from "@cennznet/api";
 import {
 	NFTAttributes,
 	NFTMetadata,
-	NFTIdTuple,
+	NFTId,
 	NFTAttribute,
 	NFTData,
 } from "@refactor/types";
@@ -16,7 +16,7 @@ import {
  */
 export default async function fetchNFTData(
 	api: Api,
-	tokenId: NFTIdTuple
+	tokenId: NFTId
 ): Promise<NFTData> {
 	let attributes: NFTAttributes = null,
 		metadata: NFTMetadata = null;
