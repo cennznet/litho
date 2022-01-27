@@ -1,5 +1,5 @@
 import { Api } from "@cennznet/api";
-import { CollectionTupple, DOMComponentProps } from "@refactor/types";
+import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
@@ -43,7 +43,7 @@ export async function getStaticProps() {
 
 type PageProps = {
 	featuredListingIds: Array<number>;
-	latestListingIds: Array<CollectionTupple>;
+	latestListingIds: Array<NFTListingTuple>;
 	appProps: AppProps;
 };
 

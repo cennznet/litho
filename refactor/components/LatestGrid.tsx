@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CollectionTupple, DOMComponentProps } from "@refactor/types";
+import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Text from "@refactor/components/Text";
@@ -10,7 +10,7 @@ import Link from "@refactor/components/Link";
 const bem = createBEMHelper(require("./LatestGrid.module.scss"));
 
 type ComponentProps = {
-	defaultListingIds: Array<CollectionTupple>;
+	defaultListingIds: Array<NFTListingTuple>;
 };
 
 export default function LatestGrid({
@@ -20,7 +20,7 @@ export default function LatestGrid({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
 	const [listingIds, setListingIds] =
-		useState<Array<number | CollectionTupple>>(defaultListingIds);
+		useState<Array<number | NFTListingTuple>>(defaultListingIds);
 
 	useEffect(() => {
 		if (!api) return;

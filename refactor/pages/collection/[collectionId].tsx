@@ -1,6 +1,6 @@
 import { Api } from "@cennznet/api";
 import {
-	CollectionTupple,
+	NFTListingTuple,
 	DOMComponentProps,
 	NFTCollectionId,
 } from "@refactor/types";
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 	});
 
 	const paths = (await fetchLatestOpenListingIds(api)).map(
-		(listingId: CollectionTupple) => ({
+		(listingId: NFTListingTuple) => ({
 			params: {
 				collectionId: listingId[0].toString(),
 			},
@@ -48,7 +48,7 @@ export async function getStaticProps({ params }) {
 type PageProps = {
 	appProps: AppProps;
 	collectionId: NFTCollectionId;
-	defaultListingIds: Array<CollectionTupple>;
+	defaultListingIds: Array<NFTListingTuple>;
 };
 
 export function Collection({

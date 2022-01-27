@@ -2,7 +2,7 @@
 import {
 	DOMComponentProps,
 	NFTListing,
-	CollectionTupple,
+	NFTListingTuple,
 	NFTData,
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
@@ -21,7 +21,7 @@ import { useInView } from "react-hook-inview";
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
 type ComponentProps = {
-	listingId: number | CollectionTupple;
+	listingId: number | NFTListingTuple;
 };
 
 export default function ListingCard({

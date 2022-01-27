@@ -52,4 +52,4 @@ export type NFTMetadata = {
 	};
 };
 
-export type CollectionTupple = [NFTCollectionId, NFTListingId];
+export type NFTListingTuple = [NFTCollectionId, NFTListingId];

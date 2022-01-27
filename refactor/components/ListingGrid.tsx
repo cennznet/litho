@@ -1,11 +1,11 @@
-import { DOMComponentProps, CollectionTupple } from "@refactor/types";
+import { DOMComponentProps, NFTListingTuple } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingCard from "@refactor/components/ListingCard";
 
 const bem = createBEMHelper(require("./ListingGrid.module.scss"));
 
 type ComponentProps = {
-	listingIds: Array<number | CollectionTupple>;
+	listingIds: Array<number | NFTListingTuple>;
 };
 
 export default function ListingGrid({

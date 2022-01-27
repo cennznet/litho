@@ -1,9 +1,5 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import {
-	DOMComponentProps,
-	SortOrder,
-	CollectionTupple,
-} from "@refactor/types";
+import { DOMComponentProps, SortOrder, NFTListingTuple } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useCallback, useEffect, useState } from "react";
 import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
@@ -17,7 +13,7 @@ const bem = createBEMHelper(require("./CollectionGrid.module.scss"));
 type ComponentProps = {
 	headline: string;
 	collectionId?: number;
-	defaultListingIds?: Array<number | CollectionTupple>;
+	defaultListingIds?: Array<number | NFTListingTuple>;
 };
 
 export default function CollectionGrid({
@@ -29,9 +25,9 @@ export default function CollectionGrid({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
 	const [listingIds, setListingIds] =
-		useState<Array<number | CollectionTupple>>(defaultListingIds);
+		useState<Array<number | NFTListingTuple>>(defaultListingIds);
 	const [sortedListingIds, setSortedListingIds] = useState<
-		Array<CollectionTupple>
+		Array<NFTListingTuple>
 	>([]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
 
@@ -60,7 +56,7 @@ export default function CollectionGrid({
 		if (!listingIds?.length || !sortOrder) return;
 		const sortedListingIds = [
 			...listingIds.sort(
-				(a: number | CollectionTupple, b: number | CollectionTupple) => {
+				(a: number | NFTListingTuple, b: number | NFTListingTuple) => {
 					const left: number = Array.isArray(a) ? a[1] : a;
 					const right: number = Array.isArray(b) ? b[1] : b;
 					return sortOrder === "ASC" ? left - right : right - left;
@@ -68,7 +64,7 @@ export default function CollectionGrid({
 			),
 		];
 
-		setSortedListingIds(sortedListingIds as Array<CollectionTupple>);
+		setSortedListingIds(sortedListingIds as Array<NFTListingTuple>);
 	}, [listingIds, sortOrder]);
 
 	const onDropdownChange = useCallback((event) => {

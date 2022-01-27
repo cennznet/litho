@@ -1,5 +1,5 @@
 import { Api } from "@cennznet/api";
-import { CollectionTupple, DOMComponentProps } from "@refactor/types";
+import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
@@ -21,7 +21,7 @@ export async function getStaticProps() {
 
 type PageProps = {
 	appProps: AppProps;
-	defaultListingIds: Array<CollectionTupple>;
+	defaultListingIds: Array<NFTListingTuple>;
 };
 
 export function Marketplace({
