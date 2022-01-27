@@ -6,7 +6,7 @@ import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import Text from "@refactor/components/Text";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Dropdown from "@refactor/components/Dropdown";
-import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 
 const bem = createBEMHelper(require("./CollectionGrid.module.scss"));
 

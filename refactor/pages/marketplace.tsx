@@ -4,7 +4,7 @@ import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import CollectionGrid from "@refactor/components/CollectionGrid";
-import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 
 export async function getStaticProps() {
 	const api = await Api.create({

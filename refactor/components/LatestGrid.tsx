@@ -3,7 +3,7 @@ import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Text from "@refactor/components/Text";
-import { fetchLatestOpenListingIds } from "@refactor/utils/fetchOpenListingIds";
+import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import Link from "@refactor/components/Link";
 

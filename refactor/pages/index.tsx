@@ -5,9 +5,8 @@ import Main from "@refactor/components/Main";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import HomeIntro from "@refactor/components/HomeIntro";
 import FeaturedGrid from "@refactor/components/FeaturedGrid";
-import fetchOpenListingIds, {
-	fetchLatestOpenListingIds,
-} from "@refactor/utils/fetchOpenListingIds";
+import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
+import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import LatestGrid from "@refactor/components/LatestGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 

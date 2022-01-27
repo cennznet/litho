@@ -8,9 +8,8 @@ import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import CollectionGrid from "@refactor/components/CollectionGrid";
-import fetchOpenListingIds, {
-	fetchLatestOpenListingIds,
-} from "@refactor/utils/fetchOpenListingIds";
+import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
+import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import Breadcrumb from "@refactor/components/Breadcrumb";
 import Link from "@refactor/components/Link";
 
