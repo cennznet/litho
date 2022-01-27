@@ -1,3 +1,4 @@
+import { Api } from "@cennznet/api";
 import { NFTListing, NFTIdTuple } from "@refactor/types";
 import {
 	AuctionListing,
