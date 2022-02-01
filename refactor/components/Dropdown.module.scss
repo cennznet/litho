@@ -4,7 +4,7 @@
 .root {
 	display: inline-block;
 	position: relative;
-	min-width: 150px;
+	min-width: 200px;
 	cursor: pointer;
 
 	@include on-hover {
@@ -22,8 +22,8 @@
 
 .trigger {
 	width: 100%;
-	padding: 0.5rem 0.875rem 0.65rem;
-	border: 2px solid figma-color("Litho Black");
+	padding: 0.65rem 0.875rem 0.75rem;
+	border: 1px solid figma-color("Litho Black");
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;

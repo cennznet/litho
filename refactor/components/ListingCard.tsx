@@ -117,7 +117,7 @@ export default function ListingCard({
 										className={bem("typeIcon")}
 										alt="Auction"
 									/>
-									<span className={bem("typeLabel")}>Auction</span>
+									<span className={bem("typeLabel")}>{type}</span>
 								</>
 							)}
 
@@ -128,7 +128,7 @@ export default function ListingCard({
 										className={bem("typeIcon")}
 										alt="Fixed Price"
 									/>
-									<span className={bem("typeLabel")}>Fixed Price</span>
+									<span className={bem("typeLabel")}>{type}</span>
 								</>
 							)}
 						</div>
@@ -136,7 +136,7 @@ export default function ListingCard({
 
 					{!collectionId && !!metadata?.properties?.quantity && (
 						<div className={bem("listingQuantity")}>
-							{`${tokenId[2] + 1} of ${metadata.properties.quantity}`}
+							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
 						</div>
 					)}
 				</div>

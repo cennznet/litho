@@ -133,6 +133,7 @@
 	padding: 0 1.25rem 1rem 1.25rem;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	&--loading {
 		&:before {
 			content: "";
@@ -158,10 +159,12 @@
 	object-position: center;
 	margin-right: 0.25rem;
 	margin-top: 0.125rem;
+	opacity: 0.6;
 }
 
 .typeLabel {
 	display: block;
+	color: figma-color("Litho Black 60%");
 }
 
 .listingQuantity {

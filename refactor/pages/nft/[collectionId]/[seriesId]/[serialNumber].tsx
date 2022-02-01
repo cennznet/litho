@@ -6,9 +6,11 @@ import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import fetchNFTData from "@refactor/utils/fetchNFTData";
-import indexAllOpenListingItems, {
-	findListingIdByTokenId,
-} from "@refactor/utils/indexAllOpenListingItems";
+import findListingIdByTokenId from "@refactor/utils/findListingIdByTokenId";
+import Breadcrumb from "@refactor/components/Breadcrumb";
+import Link from "@refactor/components/Link";
+import NFTDetail from "@refactor/components/NFTDetail";
+import { indexAllOpenListingItems } from "@refactor/utils/findListingIdByTokenId";
 
 export async function getStaticPaths() {
 	const api = await Api.create({
@@ -52,6 +54,9 @@ export async function getStaticProps({ params }) {
 	if (!listingId)
 		return {
 			notFound: true,
+			props: {
+				refactored: true,
+			},
 		};
 
 	const listing = await fetchListingItem(api, listingId);
@@ -63,7 +68,7 @@ export async function getStaticProps({ params }) {
 			appProps: await fetchAppProps(api),
 			listingItem: { ...listing, ...data },
 		},
-		revalidate: 600,
+		revalidate: 60,
 	};
 }
 
@@ -76,10 +81,19 @@ export function NFTSingle({
 	appProps,
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
-	console.log({ listingItem });
 	return (
 		<App {...appProps}>
-			<Main></Main>
+			<Main>
+				<Breadcrumb>
+					<Link href="/marketplace">Marketplace</Link>
+					<Link href={`/collection/${listingItem.tokenId[0]}`}>
+						Collection #{listingItem.tokenId[0]}
+					</Link>
+					<span>{listingItem.metadata.name}</span>
+				</Breadcrumb>
+
+				<NFTDetail listingItem={listingItem} />
+			</Main>
 		</App>
 	);
 }

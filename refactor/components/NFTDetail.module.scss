@@ -1,0 +1,101 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	border: 1px solid figma-color("Litho Black");
+	display: grid;
+	grid-template-columns: 6fr 4fr;
+	grid-template-areas: "display sidebar";
+	height: 100%;
+}
+
+.display {
+	grid-area: display;
+	border-right: 1px solid figma-color("Litho Black");
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+}
+
+.listingQuantity {
+	@include types.headline(h6);
+	color: figma-color("Litho Black 60%");
+	margin-left: 1em;
+	vertical-align: baseline;
+}
+
+.header {
+	margin-bottom: 1.5rem;
+}
+
+.body {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.renderer {
+	width: 72%;
+}
+
+.sidebar {
+	grid-area: sidebar;
+	overflow: hidden;
+}
+
+.action {
+	border-bottom: 1px solid figma-color("Litho Black");
+	padding: 1.5rem;
+}
+
+.state {
+	margin-bottom: 1rem;
+}
+
+.listingType {
+	display: flex;
+	align-items: center;
+	margin-right: 0.5rem;
+	@include types.headline(h6);
+	color: figma-color("Litho Black 60%");
+}
+
+.typeIcon {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	object-fit: contain;
+	object-position: center;
+	margin-right: 0.25rem;
+	margin-top: 0.125rem;
+	opacity: 0.6;
+}
+
+.typeLabel {
+	display: block;
+}
+
+.price {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+}
+
+.priceValue {
+	@include types.headline(h3);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.priceConversion {
+	@include types.headline(h6);
+	flex-shrink: 0;
+	color: figma-color("Litho Black 60%");
+}
+
+.submitButton {
+	width: 100%;
+}
