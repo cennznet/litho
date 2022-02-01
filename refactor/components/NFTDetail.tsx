@@ -9,6 +9,9 @@ import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useMemo } from "react";
 import Button from "@refactor/components/Button";
 import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
+import useEndTime, {
+	getFriendlyEndTimeString,
+} from "@refactor/hooks/useEndTime";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -21,7 +24,8 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { metadata, tokenId, type, price, paymentAssetId } = listingItem;
+	const { metadata, tokenId, type, price, paymentAssetId, closeBlock } =
+		listingItem;
 
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
@@ -39,6 +43,8 @@ export default function NFTDetail({
 
 		return numberFormat.format(listingPrice * usdRate);
 	}, [usdRate, listingPrice]);
+
+	const endTime = useEndTime(closeBlock);
 
 	return (
 		<div className={bem("root", className)} {...props}>
@@ -65,27 +71,35 @@ export default function NFTDetail({
 			<div className={bem("sidebar")}>
 				<div className={bem("action")}>
 					<ul className={bem("state")}>
-						<li className={bem("listingType")}>
+						<li>
 							{type === "Auction" && (
 								<>
-									<img
-										src={HourglassSVG.src}
-										className={bem("typeIcon")}
-										alt="Auction"
-									/>
-									<span className={bem("typeLabel")}>{type}</span>
+									<div className={bem("listingType")}>
+										<img
+											src={HourglassSVG.src}
+											className={bem("typeIcon")}
+											alt="Auction"
+										/>
+										<span className={bem("typeLabel")}>{type}</span>
+									</div>
+
+									{endTime && (
+										<div className={bem("endTime")}>
+											{getFriendlyEndTimeString(endTime)}
+										</div>
+									)}
 								</>
 							)}
 
 							{type === "Fixed Price" && (
-								<>
+								<div className={bem("listingType")}>
 									<img
 										src={MoneySVG.src}
 										className={bem("typeIcon")}
 										alt="Fixed Price"
 									/>
 									<span className={bem("typeLabel")}>{type}</span>
-								</>
+								</div>
 							)}
 						</li>
 					</ul>
@@ -101,7 +115,8 @@ export default function NFTDetail({
 					</div>
 
 					<Button className={bem("submitButton")}>
-						{type === "Fixed Price" && <span>Buy now</span>}
+						{type === "Fixed Price" && <span>Buy Now</span>}
+						{type === "Auction" && <span>Place A Bid</span>}
 					</Button>
 				</div>
 

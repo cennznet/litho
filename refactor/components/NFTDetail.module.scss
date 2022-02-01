@@ -50,15 +50,24 @@
 }
 
 .state {
-	margin-bottom: 1rem;
+	margin-bottom: 1.5rem;
+
+	> li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 }
 
 .listingType {
 	display: flex;
 	align-items: center;
-	margin-right: 0.5rem;
 	@include types.headline(h6);
 	color: figma-color("Litho Black 60%");
+}
+
+.endTime {
+	@include types.headline(h6);
 }
 
 .typeIcon {

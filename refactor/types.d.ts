@@ -15,6 +15,7 @@ export type AssetInfo = {
 export type NFTListing = {
 	listingId: number;
 	tokenId: NFTId;
+	closeBlock?: number;
 	type: "Auction" | "Fixed Price";
 	price: number;
 	paymentAssetId: number;

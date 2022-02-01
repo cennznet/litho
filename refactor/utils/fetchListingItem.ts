@@ -35,6 +35,7 @@ export default async function fetchListingItem(
 	return {
 		listingId,
 		tokenId,
+		closeBlock: listing?.close?.toJSON(),
 		type: response.isFixedPrice ? "Fixed Price" : "Auction",
 		price: price.toJSON(),
 		paymentAssetId: listing.paymentAsset.toJSON(),
