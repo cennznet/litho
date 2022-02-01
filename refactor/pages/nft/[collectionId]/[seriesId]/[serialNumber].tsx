@@ -62,6 +62,14 @@ export async function getStaticProps({ params }) {
 	const listing = await fetchListingItem(api, listingId);
 	const data = await fetchNFTData(api, tokenId);
 
+	if (!data?.metadata)
+		return {
+			notFound: true,
+			props: {
+				refactored: true,
+			},
+		};
+
 	return {
 		props: {
 			refactored: true,
