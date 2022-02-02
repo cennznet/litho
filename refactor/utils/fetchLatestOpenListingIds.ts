@@ -37,7 +37,7 @@ export default async function fetchLatestOpenListingIds(
 }
 
 /**
- * Fetches all open `listingId` from all available collections
+ * Fetches all open `listingIds` from all available collections
  *
  * @param {Api} api
  * @return {Promise<Array<NFTCollectionTuple>>} All open listing identifiers.

@@ -19,6 +19,7 @@ export type NFTListing = {
 	type: "Auction" | "Fixed Price";
 	price: number;
 	paymentAssetId: number;
+	royalty?: string;
 };
 
 export type NFTData = {

@@ -32,6 +32,8 @@ export default async function fetchListingItem(
 
 	const tokenId = listing.tokens?.[0]?.toJSON() as NFTId;
 
+	const royalty = listing?.royaltiesSchedule?.entitlements?.toHuman()?.[0]?.[1];
+
 	return {
 		listingId,
 		tokenId,
@@ -39,5 +41,6 @@ export default async function fetchListingItem(
 		type: response.isFixedPrice ? "Fixed Price" : "Auction",
 		price: price.toJSON(),
 		paymentAssetId: listing.paymentAsset.toJSON(),
+		royalty,
 	};
 }
