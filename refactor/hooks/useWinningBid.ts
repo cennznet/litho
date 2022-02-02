@@ -11,12 +11,11 @@ export default function useWinningBid(listingId: number): BidTuple {
 
 	useEffect(() => {
 		if (!api || !listingId) return;
-		async function fetchWinningBid(listingId) {
+		async function fetchWinningBid(listingId: number) {
 			const bid = ((await api.query.nft.listingWinningBid(listingId)) as any)
 				.unwrapOrDefault()
 				.toJSON() as BidTuple;
 
-			console.log(bid);
 			setWinningBid(bid);
 		}
 

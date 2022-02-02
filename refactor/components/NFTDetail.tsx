@@ -54,6 +54,7 @@ export default function NFTDetail({
 
 	const endTime = useEndTime(closeBlock);
 	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
+	const reserveMet = !!winningBid?.[1] && winningBid?.[1] >= price;
 
 	console.log(winningBid);
 
@@ -81,39 +82,47 @@ export default function NFTDetail({
 
 			<div className={bem("sidebar")}>
 				<div className={bem("action")}>
-					<ul className={bem("state")}>
-						<li>
-							{type === "Auction" && (
-								<>
-									<div className={bem("listingType")}>
-										<img
-											src={HourglassSVG.src}
-											className={bem("typeIcon")}
-											alt="Auction"
-										/>
-										<span className={bem("typeLabel")}>{type}</span>
+					{type === "Auction" && (
+						<ul className={bem("state")}>
+							<li>
+								<div className={bem("stateType")}>
+									<img
+										src={HourglassSVG.src}
+										className={bem("typeIcon")}
+										alt="Auction"
+									/>
+									<span className={bem("typeLabel")}>{type}</span>
+								</div>
+
+								{endTime && (
+									<div className={bem("stateLabel")}>
+										{getFriendlyEndTimeString(endTime)}
 									</div>
-
-									{endTime && (
-										<div className={bem("endTime")}>
-											{getFriendlyEndTimeString(endTime)}
-										</div>
-									)}
-								</>
+								)}
+							</li>
+							{!!reserveMet && (
+								<li>
+									<div className={bem("stateType")}>Current Bid</div>
+									<div className={bem("stateLabel")}>Reserve Met</div>
+								</li>
 							)}
+						</ul>
+					)}
 
-							{type === "Fixed Price" && (
-								<div className={bem("listingType")}>
+					{type === "Fixed Price" && (
+						<ul className={bem("state")}>
+							<li>
+								<div className={bem("stateType")}>
 									<img
 										src={MoneySVG.src}
 										className={bem("typeIcon")}
 										alt="Fixed Price"
 									/>
-									<span className={bem("typeLabel")}>{type}</span>
+									<span className={bem("stateLabel")}>{type}</span>
 								</div>
-							)}
-						</li>
-					</ul>
+							</li>
+						</ul>
+					)}
 
 					<div className={bem("price")}>
 						<div className={bem("priceValue")}>

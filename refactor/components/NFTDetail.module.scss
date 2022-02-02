@@ -56,17 +56,18 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		margin-bottom: 0.5em;
 	}
 }
 
-.listingType {
+.stateType {
 	display: flex;
 	align-items: center;
 	@include types.headline(h6);
 	color: figma-color("Litho Black 60%");
 }
 
-.endTime {
+.stateLabel {
 	@include types.headline(h6);
 }
 
