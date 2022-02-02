@@ -36,7 +36,7 @@ export default function ListingCard({
 	const collectionId = Array.isArray(listingId) ? listingId[0] : null;
 
 	const [ref, inView] = useInView({
-		threshold: 0.5,
+		threshold: 0,
 	});
 
 	useEffect(() => {
