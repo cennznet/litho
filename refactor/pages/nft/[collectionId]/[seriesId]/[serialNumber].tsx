@@ -60,6 +60,15 @@ export async function getStaticProps({ params }) {
 		};
 
 	const listing = await fetchListingItem(api, listingId);
+
+	if (!listing?.tokenId)
+		return {
+			notFound: true,
+			props: {
+				refactored: true,
+			},
+		};
+
 	const data = await fetchNFTData(api, tokenId);
 
 	if (!data?.metadata)

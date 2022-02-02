@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import { bnToBn, extractTime } from "@polkadot/util";
 import { Time } from "@polkadot/util/types";
 
-export default function useEndTime(endBlock: number) {
+/**
+ * A hook to parse the remaining time from a block number
+ *
+ * @param {number} endBlock
+ * @return {Time}
+ */
+export default function useEndTime(endBlock: number): Time {
 	const api = useCENNZApi();
 	const [currentBlock, setCurrentBlock] = useState<number>();
 	const [endTime, setEndTime] = useState<Time>();

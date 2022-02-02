@@ -30,7 +30,7 @@ export default async function fetchListingItem(
 		? (listing as FixedPriceListing).fixedPrice
 		: (listing as AuctionListing).reservePrice;
 
-	const tokenId = listing.tokens?.[0].toJSON() as NFTId;
+	const tokenId = listing.tokens?.[0]?.toJSON() as NFTId;
 
 	return {
 		listingId,

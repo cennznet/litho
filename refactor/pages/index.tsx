@@ -55,10 +55,12 @@ export function Home({
 		<App {...appProps}>
 			<Main>
 				<HomeIntro className={bem("homeIntro")} />
-				<FeaturedGrid
-					listingIds={featuredListingIds}
-					className={bem("featuredGrid")}
-				/>
+				{!!featuredListingIds.length && (
+					<FeaturedGrid
+						listingIds={featuredListingIds}
+						className={bem("featuredGrid")}
+					/>
+				)}
 				<LatestGrid
 					defaultListingIds={latestListingIds}
 					className={bem("lastestGrid")}

@@ -25,12 +25,14 @@ export default async function fetchNFTData(
 	attributes = (tokenInfo.attributes as any)
 		.toJSON()
 		.filter((attribute: NFTAttribute) => !!attribute.Text);
-	const { Url: metadataIPFS } = (tokenInfo.attributes as any)
-		.toJSON()
-		.find(
-			(attribute: NFTAttribute) =>
-				attribute.Url && attribute.Url.search(/metadata/gi) >= 0
-		);
+
+	const { Url: metadataIPFS } =
+		(tokenInfo.attributes as any)
+			.toJSON()
+			.find(
+				(attribute: NFTAttribute) =>
+					attribute.Url && attribute.Url.search(/metadata/gi) >= 0
+			) || {};
 
 	const data = {
 		owner: tokenInfo.owner,

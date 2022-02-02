@@ -12,6 +12,7 @@ import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
 import useEndTime, {
 	getFriendlyEndTimeString,
 } from "@refactor/hooks/useEndTime";
+import useWinningBid from "@refactor/hooks/useWinningBid";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -24,8 +25,15 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { metadata, tokenId, type, price, paymentAssetId, closeBlock } =
-		listingItem;
+	const {
+		metadata,
+		tokenId,
+		type,
+		price,
+		paymentAssetId,
+		closeBlock,
+		listingId,
+	} = listingItem;
 
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
@@ -45,6 +53,9 @@ export default function NFTDetail({
 	}, [usdRate, listingPrice]);
 
 	const endTime = useEndTime(closeBlock);
+	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
+
+	console.log(winningBid);
 
 	return (
 		<div className={bem("root", className)} {...props}>
