@@ -48,26 +48,13 @@ export async function getStaticProps({ params }) {
 	});
 
 	const { collectionId, seriesId, serialNumber } = params;
-	const tokenId: NFTId = [collectionId, seriesId, serialNumber];
+	const tokenId: NFTId = [
+		parseInt(collectionId, 10),
+		parseInt(seriesId, 10),
+		parseInt(serialNumber, 10),
+	];
 	const listingId = await findListingIdByTokenId(api, tokenId);
-
-	if (!listingId)
-		return {
-			notFound: true,
-			props: {
-				refactored: true,
-			},
-		};
-
-	const listing = await fetchListingItem(api, listingId);
-
-	if (!listing?.tokenId)
-		return {
-			notFound: true,
-			props: {
-				refactored: true,
-			},
-		};
+	const listing = listingId ? await fetchListingItem(api, listingId) : null;
 
 	const data = await fetchNFTData(api, tokenId);
 
@@ -83,7 +70,7 @@ export async function getStaticProps({ params }) {
 		props: {
 			refactored: true,
 			appProps: await fetchAppProps(api),
-			listingItem: { ...listing, ...data },
+			listingItem: { ...listing, ...data, tokenId },
 		},
 		revalidate: 60,
 	};
@@ -91,7 +78,7 @@ export async function getStaticProps({ params }) {
 
 type PageProps = {
 	appProps: AppProps;
-	listingItem: NFTListing & NFTData;
+	listingItem: NFTData & Partial<NFTListing>;
 };
 
 export function NFTSingle({
