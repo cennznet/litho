@@ -88,19 +88,28 @@ export function NFTSingle({
 	appProps,
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
+	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
+
 	return (
 		<App {...appProps}>
 			<Main>
 				<div className={bem("content")}>
 					<Breadcrumb>
 						<Link href="/marketplace">Marketplace</Link>
-						<Link href={`/collection/${listingItem.tokenId[0]}`}>
-							Collection #{listingItem.tokenId[0]}
+						<Link href={`/collection/${tokenId[0]}`}>
+							Collection #{tokenId[0]}
 						</Link>
-						<span>{listingItem.metadata.name}</span>
+						<span>{metadata.name}</span>
 					</Breadcrumb>
 
 					<NFTDetail listingItem={listingItem} className={bem("detail")} />
+
+					<nav className={bem("externalLinks")}>
+						{!!imageIPFSUrl && <Link href={imageIPFSUrl}>View on IPFS</Link>}
+						{!!metadataIPFSUrl && (
+							<Link href={metadataIPFSUrl}>Metadata IPFS</Link>
+						)}
+					</nav>
 				</div>
 			</Main>
 		</App>

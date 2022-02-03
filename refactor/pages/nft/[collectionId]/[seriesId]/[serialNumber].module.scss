@@ -1,3 +1,6 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
 .content {
 	height: 100%;
 	display: flex;
@@ -6,4 +9,20 @@
 
 .detail {
 	flex: 1;
+	min-height: 0;
+}
+
+.externalLinks {
+	padding: 1em 0;
+	@include types.subtitle(s1);
+
+	a {
+		display: inline-block;
+		margin-right: 1em;
+		color: figma-color("Litho Blue");
+		transition: color 0.2s;
+		@include on-hover {
+			color: figma-color("Litho Black");
+		}
+	}
 }

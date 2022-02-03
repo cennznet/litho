@@ -25,6 +25,8 @@ export type NFTListing = {
 export type NFTData = {
 	attributes: NFTAttributes;
 	metadata: NFTMetadata;
+	metadataIPFSUrl?: string;
+	imageIPFSUrl?: string;
 	owner?: string;
 };
 

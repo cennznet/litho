@@ -38,17 +38,14 @@ export default async function fetchNFTData(
 		owner: tokenInfo.owner,
 	};
 
-	if (!metadataIPFS)
-		return {
-			...data,
-			attributes,
-			metadata,
-		};
+	if (!metadataIPFS) return null;
 
-	const metadataUrl = getPinataUrl(metadataIPFS);
-	if (!metadataUrl) return { ...data, attributes, metadata };
+	const metadataIPFSUrl = getPinataUrl(metadataIPFS);
+	if (!metadataIPFSUrl) return { ...data, attributes, metadata };
 
-	metadata = await fetch(metadataUrl).then((response) => response?.json());
+	metadata = await fetch(metadataIPFSUrl).then((response) => response?.json());
+
+	if (!metadata?.image) return null;
 
 	// older NFTs created with Litho incorrectly set this field as "owner"
 	if (metadata?.properties?.owner) {
@@ -56,12 +53,11 @@ export default async function fetchNFTData(
 		delete metadata.properties.owner;
 	}
 
-	// transform image IPFS link also
-	if (metadata?.image) {
-		metadata.image = getImageKitUrl(metadata.image);
-	}
+	let imageIPFSUrl: string;
 
-	return { ...data, attributes, metadata };
+	imageIPFSUrl = metadata.image = getImageKitUrl(metadata.image);
+
+	return { ...data, attributes, metadata, metadataIPFSUrl, imageIPFSUrl };
 }
 
 export function getImageKitUrl(text: string): string {
