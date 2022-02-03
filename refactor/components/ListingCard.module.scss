@@ -130,7 +130,7 @@
 
 .state {
 	@include types.subtitle(s1);
-	padding: 0 1.25rem 1rem 1.25rem;
+	padding: 0 1.25em 1em 1.25em;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -148,7 +148,7 @@
 .listingType {
 	display: flex;
 	align-items: center;
-	margin-right: 0.5rem;
+	margin-right: 0.5em;
 }
 
 .typeIcon {
@@ -157,8 +157,8 @@
 	height: 1rem;
 	object-fit: contain;
 	object-position: center;
-	margin-right: 0.25rem;
-	margin-top: 0.125rem;
+	margin-right: 0.25em;
+	margin-top: 0.125em;
 	opacity: 0.6;
 }
 

@@ -4,8 +4,8 @@
 .root {
 	@include types.button();
 	display: inline-block;
-	padding: 0.625rem 1rem;
-	line-height: 1em;
+	padding: 0.625em 1em;
+	line-height: 1;
 	transition: color 0.2s, background-color 0.2s;
 
 	&--blue {

@@ -54,17 +54,19 @@ export function Home({
 	return (
 		<App {...appProps}>
 			<Main>
-				<HomeIntro className={bem("homeIntro")} />
-				{!!featuredListingIds.length && (
-					<FeaturedGrid
-						listingIds={featuredListingIds}
-						className={bem("featuredGrid")}
+				<div className={bem("content")}>
+					<HomeIntro className={bem("homeIntro")} />
+					{!!featuredListingIds.length && (
+						<FeaturedGrid
+							listingIds={featuredListingIds}
+							className={bem("featuredGrid")}
+						/>
+					)}
+					<LatestGrid
+						defaultListingIds={latestListingIds}
+						className={bem("lastestGrid")}
 					/>
-				)}
-				<LatestGrid
-					defaultListingIds={latestListingIds}
-					className={bem("lastestGrid")}
-				/>
+				</div>
 			</Main>
 		</App>
 	);

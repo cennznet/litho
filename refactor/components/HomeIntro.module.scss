@@ -9,7 +9,7 @@
 
 .intro {
 	border: 2px solid figma-color("Litho Black");
-	padding: 2.5rem;
+	padding: 2.5em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -38,7 +38,7 @@
 .mint {
 	border: 2px solid figma-color("Litho Black");
 	background: url("~@refactor/assets/bitmaps/background-home-2.png");
-	padding: 2.5rem 2.5rem 2.5rem;
+	padding: 2.5em 2.5em 2.5em;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -53,13 +53,13 @@
 
 .marketplace {
 	border: 2px solid figma-color("Litho Black");
-	padding: 0 2.5rem 2.5rem;
+	padding: 0 2.5em 2.5em;
 }
 
 .marketplaceImage {
 	width: 100%;
 	max-width: 375px;
-	margin: 0 auto 1rem auto;
+	margin: 0 auto 1em auto;
 	display: block;
 }
 
@@ -73,7 +73,4 @@
 	background-color: figma-color("Litho Cream");
 	margin-bottom: 0.5em;
 	background: url("~@refactor/assets/bitmaps/background-noise.png");
-}
-
-.button {
 }

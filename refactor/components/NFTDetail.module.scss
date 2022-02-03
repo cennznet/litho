@@ -11,7 +11,7 @@
 .display {
 	grid-area: display;
 	border-right: 1px solid figma-color("Litho Black");
-	padding: 1.5rem;
+	padding: 1.5em;
 	display: flex;
 	flex-direction: column;
 }
@@ -24,7 +24,7 @@
 }
 
 .header {
-	margin-bottom: 1.5rem;
+	margin-bottom: 1.5em;
 }
 
 .body {
@@ -63,7 +63,7 @@
 
 	> div {
 		border-bottom: 1px solid figma-color("Litho Black");
-		padding: 1.5rem;
+		padding: 1.5em;
 
 		&:last-child {
 			border-bottom: none;
@@ -72,7 +72,7 @@
 }
 
 .state {
-	margin-bottom: 1.5rem;
+	margin-bottom: 1.5em;
 
 	> li {
 		display: flex;
@@ -113,7 +113,7 @@
 	align-items: flex-end;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	margin-bottom: 1.5rem;
+	margin-bottom: 1.5em;
 }
 
 .priceValue {

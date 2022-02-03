@@ -4,7 +4,7 @@
 }
 
 .header {
-	margin-bottom: 2.5rem;
+	margin-bottom: 2.5em;
 }
 
 .list {
@@ -30,14 +30,4 @@
 	&:nth-child(4n + 3) {
 		grid-column-start: 3;
 	}
-}
-
-.loading {
-	padding: 3rem;
-	text-align: center;
-}
-
-.spinner {
-	width: 20px;
-	height: 20px;
 }

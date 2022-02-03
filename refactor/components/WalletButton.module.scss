@@ -4,7 +4,7 @@
 .root {
 	position: relative;
 	text-transform: uppercase;
-	padding: 0.5rem 0.875rem;
+	padding: 0.5em 0.875em;
 	color: figma-color("Litho Blue");
 	border: 2px solid figma-color("Litho Blue");
 	display: flex;
@@ -41,7 +41,7 @@
 	max-width: 400px;
 	height: auto;
 	position: absolute;
-	top: 5rem;
+	top: 5em;
 	right: 0;
 	// @include interpolate("right", 16px phone, 48px landscape, 80px desktop);
 }

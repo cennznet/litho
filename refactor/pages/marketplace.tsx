@@ -6,6 +6,10 @@ import Main from "@refactor/components/Main";
 import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+
+const bem = createBEMHelper(require("./marketplace.module.scss"));
+
 export async function getStaticProps() {
 	const api = await Api.create({
 		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
@@ -31,10 +35,12 @@ export function Marketplace({
 	return (
 		<App {...appProps}>
 			<Main>
-				<CollectionGrid
-					headline="Marketplace Collections"
-					defaultListingIds={defaultListingIds}
-				/>
+				<div className={bem("content")}>
+					<CollectionGrid
+						headline="Marketplace Collections"
+						defaultListingIds={defaultListingIds}
+					/>
+				</div>
 			</Main>
 		</App>
 	);

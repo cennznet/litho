@@ -1,7 +1,8 @@
+@use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
 
 .header {
-	padding: 2rem 0 0;
+	padding: 2em 0 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -49,10 +50,9 @@
 
 .navLink {
 	display: block;
-	margin-right: 2.25rem;
-	font-size: 1.125rem;
+	margin-right: 2.25em;
+	@include types.headline(h6);
 	line-height: 1;
-	font-weight: 600;
 	transition: color 0.2s;
 
 	&--active {
