@@ -32,7 +32,7 @@ export default async function fetchListingItem(
 
 	const tokenId = listing.tokens?.[0]?.toJSON() as NFTId;
 
-	const royalty = listing?.royaltiesSchedule?.entitlements?.toHuman()?.[0]?.[1];
+	const royalty = listing?.royaltiesSchedule?.entitlements?.toJSON()?.[0]?.[1];
 
 	return {
 		listingId,

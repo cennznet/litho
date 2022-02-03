@@ -13,6 +13,7 @@ import useEndTime, {
 	getFriendlyEndTimeString,
 } from "@refactor/hooks/useEndTime";
 import useWinningBid from "@refactor/hooks/useWinningBid";
+import AccountAddress from "./AccountAddress";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -25,21 +26,13 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { metadata, tokenId, listingId } = listingItem;
-
-	console.log(tokenId);
+	const { metadata, tokenId, listingId, attributes } = listingItem;
 
 	return (
 		<div className={bem("root", className)} {...props}>
 			<div className={bem("display")}>
 				<div className={bem("header")}>
-					<Text variant="headline2">
-						{metadata.name}
-
-						<span className={bem("listingQuantity")}>
-							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
-						</span>
-					</Text>
+					<Text variant="headline2">{metadata.name}</Text>
 				</div>
 				<div className={bem("body")}>
 					<NFTRenderer
@@ -48,14 +41,23 @@ export default function NFTDetail({
 						url={metadata.image}
 						extension={metadata.properties.extension}
 					/>
+					<span className={bem("listingQuantity")}>
+						({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
+					</span>
 				</div>
 			</div>
 
 			<div className={bem("sidebar")}>
-				{!!listingId && <BuySection listingItem={listingItem} />}
-				<SellSection listingItem={listingItem} />
-				<DescriptionSection listingItem={listingItem} />
-				<DetailsSection listingItem={listingItem} />
+				<div className={bem("sidebarContent")}>
+					<div className={bem("scrollContent")}>
+						{!!listingId && <BuySection listingItem={listingItem} />}
+						<SellSection listingItem={listingItem} />
+						<DescriptionSection listingItem={listingItem} />
+						{!!attributes?.length && (
+							<DetailsSection listingItem={listingItem} />
+						)}
+					</div>
+				</div>
 			</div>
 		</div>
 	);
@@ -150,17 +152,72 @@ function BuySection({ listingItem }: DOMComponentProps<ComponentProps, "div">) {
 function SellSection({
 	listingItem,
 }: DOMComponentProps<ComponentProps, "div">) {
-	return <div className={bem("sellSection")}></div>;
+	const {
+		owner,
+		metadata: {
+			properties: { creator },
+		},
+		royalty,
+	} = listingItem;
+
+	return (
+		<div className={bem("sellSection")}>
+			<dl className={bem("address")}>
+				<dt>Owner</dt>
+				<dd>
+					<AccountAddress address={owner} length={8} />
+				</dd>
+			</dl>
+
+			<dl className={bem("address")}>
+				<dt>Creator</dt>
+				<dd>
+					<AccountAddress address={creator} length={8} />
+					{!!royalty && <em>({royalty / 10000}% royalties)</em>}
+				</dd>
+			</dl>
+		</div>
+	);
 }
 
 function DescriptionSection({
 	listingItem,
 }: DOMComponentProps<ComponentProps, "div">) {
-	return <div className={bem("descriptionSection")}></div>;
+	const {
+		metadata: { description },
+	} = listingItem;
+
+	return (
+		<div className={bem("descriptionSection")}>
+			<dl className={bem("description")}>
+				<dt>Description</dt>
+				<dd>{description}</dd>
+			</dl>
+		</div>
+	);
 }
 
 function DetailsSection({
 	listingItem,
 }: DOMComponentProps<ComponentProps, "div">) {
-	return <div className={bem("detailsSection")}></div>;
+	const { attributes } = listingItem;
+
+	return (
+		<div className={bem("detailsSection")}>
+			<Text variant="headline6" className={bem("detailsHeadline")}>
+				Attributes
+			</Text>
+			{attributes.map((attribute, index) => {
+				const key = Object.keys(attribute)?.[0];
+				const value = Object.values(attribute)?.[0];
+
+				return (
+					<dl className={bem("attribute")} key={index}>
+						<dt>{key === "Text" ? "#" : key}</dt>
+						<dd>{value}</dd>
+					</dl>
+				);
+			})}
+		</div>
+	);
 }

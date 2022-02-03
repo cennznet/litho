@@ -11,6 +11,9 @@ import Breadcrumb from "@refactor/components/Breadcrumb";
 import Link from "@refactor/components/Link";
 import NFTDetail from "@refactor/components/NFTDetail";
 import { indexAllOpenListingItems } from "@refactor/utils/findListingIdByTokenId";
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+
+const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
 export async function getStaticPaths() {
 	const api = await Api.create({
@@ -88,15 +91,17 @@ export function NFTSingle({
 	return (
 		<App {...appProps}>
 			<Main>
-				<Breadcrumb>
-					<Link href="/marketplace">Marketplace</Link>
-					<Link href={`/collection/${listingItem.tokenId[0]}`}>
-						Collection #{listingItem.tokenId[0]}
-					</Link>
-					<span>{listingItem.metadata.name}</span>
-				</Breadcrumb>
+				<div className={bem("content")}>
+					<Breadcrumb>
+						<Link href="/marketplace">Marketplace</Link>
+						<Link href={`/collection/${listingItem.tokenId[0]}`}>
+							Collection #{listingItem.tokenId[0]}
+						</Link>
+						<span>{listingItem.metadata.name}</span>
+					</Breadcrumb>
 
-				<NFTDetail listingItem={listingItem} />
+					<NFTDetail listingItem={listingItem} className={bem("detail")} />
+				</div>
 			</Main>
 		</App>
 	);

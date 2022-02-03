@@ -6,7 +6,6 @@
 	display: grid;
 	grid-template-columns: 6fr 4fr;
 	grid-template-areas: "display sidebar";
-	height: 100%;
 }
 
 .display {
@@ -33,20 +32,43 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
 }
 
 .renderer {
 	width: 72%;
 }
 
-.sidebar {
-	grid-area: sidebar;
-	overflow: hidden;
+.listingQuantity {
+	margin-top: 0.5em;
 }
 
-.buySection {
-	border-bottom: 1px solid figma-color("Litho Black");
-	padding: 1.5rem;
+.sidebar {
+	grid-area: sidebar;
+	position: relative;
+}
+
+.sidebarContent {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	overflow-y: scroll;
+}
+
+.scrollContent {
+	width: 100%;
+	height: 100%;
+
+	> div {
+		border-bottom: 1px solid figma-color("Litho Black");
+		padding: 1.5rem;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
 }
 
 .state {
@@ -91,7 +113,7 @@
 	align-items: flex-end;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	margin-bottom: 1rem;
+	margin-bottom: 1.5rem;
 }
 
 .priceValue {
@@ -108,4 +130,51 @@
 
 .submitButton {
 	width: 100%;
+}
+
+.address {
+	@include types.headline(h6);
+	dt {
+		display: inline-block;
+		margin-right: 0.5em;
+	}
+
+	dd {
+		display: inline-block;
+		color: figma-color("Litho Blue");
+	}
+
+	em {
+		display: inline-block;
+		font-style: normal;
+		margin-left: 0.5em;
+		color: figma-color("Litho Black 60%");
+	}
+}
+
+.description {
+	dt {
+		@include types.headline(h6);
+		margin-bottom: 0.5em;
+	}
+
+	dd {
+		@include types.body(b2);
+	}
+}
+
+.detailsHeadline {
+	margin-bottom: 0.5em;
+}
+
+.attribute {
+	margin-bottom: 0.5em;
+	dt {
+		@include types.headline(h6);
+		color: figma-color("Litho Black 60%");
+	}
+
+	dd {
+		@include types.body(b1);
+	}
 }

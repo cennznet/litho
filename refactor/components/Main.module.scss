@@ -35,5 +35,5 @@
 
 .footer {
 	flex-shrink: 0;
-	@include interpolate("margin-top", 24px phone, 72px landscape, 96px desktop);
+	@include interpolate("margin-top", 16px phone, 48px desktop);
 }
