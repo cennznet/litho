@@ -53,9 +53,9 @@ export default async function fetchNFTData(
 		delete metadata.properties.owner;
 	}
 
-	let imageIPFSUrl: string;
+	const imageIPFSUrl = getPinataUrl(metadata.image);
 
-	imageIPFSUrl = metadata.image = getImageKitUrl(metadata.image);
+	metadata.image = getImageKitUrl(metadata.image);
 
 	return { ...data, attributes, metadata, metadataIPFSUrl, imageIPFSUrl };
 }

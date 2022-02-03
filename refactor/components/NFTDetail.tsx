@@ -13,7 +13,8 @@ import useEndTime, {
 	getFriendlyEndTimeString,
 } from "@refactor/hooks/useEndTime";
 import useWinningBid from "@refactor/hooks/useWinningBid";
-import AccountAddress from "./AccountAddress";
+import AccountAddress from "@refactor/components/AccountAddress";
+import Link from "@refactor/components/Link";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -26,7 +27,8 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { metadata, tokenId, listingId, attributes } = listingItem;
+	const { metadata, tokenId, listingId, attributes, imageIPFSUrl } =
+		listingItem;
 
 	return (
 		<div className={bem("root", className)} {...props}>
@@ -35,12 +37,13 @@ export default function NFTDetail({
 					<Text variant="headline2">{metadata.name}</Text>
 				</div>
 				<div className={bem("body")}>
-					<NFTRenderer
-						className={bem("renderer")}
-						name={metadata.name}
-						url={metadata.image}
-						extension={metadata.properties.extension}
-					/>
+					<Link href={imageIPFSUrl} className={bem("renderer")}>
+						<NFTRenderer
+							name={metadata.name}
+							url={metadata.image}
+							extension={metadata.properties.extension}
+						/>
+					</Link>
 					<span className={bem("listingQuantity")}>
 						({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
 					</span>
