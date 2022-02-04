@@ -4,7 +4,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Hr } from "@refactor/components/Modal";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
-import Spinner from "@refactor/components/Spinner";
+import ThreeDots from "@refactor/components/ThreeDots";
 import Text from "@refactor/components/Text";
 
 const bem = createBEMHelper(require("./WalletConnect.module.scss"));
@@ -40,8 +40,10 @@ export default function WalletConnect({}: DOMComponentProps<
 					onClick={onWalletClick}
 					disabled={busy}>
 					<CENNZnetSVG className={bem("walletIcon")} />
-					<span className={bem("walletName")}>CENNZnet Wallet</span>
-					{busy && <Spinner className={bem("walletSpinner")} />}
+					<span className={bem("walletName")}>
+						{!busy ? "CENNZnet Wallet" : "Connecting"}
+					</span>
+					{busy && <ThreeDots />}
 				</button>
 			</div>
 		</div>

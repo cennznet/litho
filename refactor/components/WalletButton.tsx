@@ -7,6 +7,7 @@ import Modal from "@refactor/components/Modal";
 import WalletConnect from "@refactor/components/WalletConnect";
 import WalletDetails from "@refactor/components/WalletDetails";
 import Identicon from "@polkadot/react-identicon";
+import ThreeDots from "@refactor/components/ThreeDots";
 
 const bem = createBEMHelper(require("./WalletButton.module.scss"));
 
@@ -53,7 +54,10 @@ export default function WalletButton({
 							/>
 						</span>
 
-						<label className={bem("label")}>Connecting...</label>
+						<label className={bem("label")}>
+							Connecting
+							<ThreeDots />
+						</label>
 					</>
 				)}
 

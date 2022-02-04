@@ -19,4 +19,11 @@
 			color: figma-color("Litho Blue");
 		}
 	}
+
+	&:disabled {
+		background-color: figma-color("Litho Black 30%");
+		border-color: transparent;
+		color: white !important;
+	}
 }
+

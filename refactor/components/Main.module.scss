@@ -7,6 +7,7 @@
 	display: flex;
 	justify-content: center;
 	@include types.body(b1);
+	color: figma-color("Litho Black");
 }
 
 .inner {
