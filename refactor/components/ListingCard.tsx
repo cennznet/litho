@@ -9,7 +9,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
 import Text from "@refactor/components/Text";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import Link from "@refactor/components/Link";
@@ -31,10 +31,18 @@ export default function ListingCard({
 	const [ref, inView] = useInView({
 		threshold: 0,
 	});
-	const [item, loading] = useNFTListing(
+	const [loading, setLoading] = useState<boolean>(true);
+	const [item, fetchItem] = useNFTListing(
 		Array.isArray(listingId) ? listingId[1] : listingId,
-		inView
+		{} as any
 	);
+
+	const firstInView = inView && !item?.metadata;
+
+	useEffect(() => {
+		if (!firstInView) return;
+		fetchItem().then((item) => setLoading(!item));
+	}, [firstInView, fetchItem]);
 
 	const { tokenId, metadata, price, paymentAssetId, type } = (item ||
 		{}) as NFTListing & NFTData;

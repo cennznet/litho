@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { NFTData, NFTListing, NFTListingId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
@@ -8,26 +8,20 @@ type ListingItem = NFTData & Partial<NFTListing>;
 
 export default function useNFTListing(
 	listingId: NFTListingId,
-	shouldFetch: boolean = true,
 	defaultItem: ListingItem = null
-): [ListingItem, boolean] {
+): [ListingItem, () => Promise<ListingItem>] {
 	const api = useCENNZApi();
 	const [item, setItem] = useState<ListingItem>(defaultItem);
-	const [busy, setBusy] = useState<boolean>(!shouldFetch);
 
-	useEffect(() => {
-		if (!api || !listingId || !shouldFetch) return;
+	const fetchListing = useCallback(async () => {
+		if (!api || !listingId) return null;
+		const listing = await fetchListingItem(api, listingId);
+		const data = listing ? await fetchNFTData(api, listing.tokenId) : null;
 
-		async function fetchListing() {
-			const listing = await fetchListingItem(api, listingId);
-			const data = await fetchNFTData(api, listing.tokenId);
+		const item = data?.metadata ? { ...listing, ...data } : null;
+		setItem(item);
+		return item;
+	}, [api, listingId]);
 
-			setItem(data?.metadata ? { ...listing, ...data } : null);
-			setBusy(false);
-		}
-
-		fetchListing();
-	}, [api, listingId, shouldFetch]);
-
-	return [item, busy];
+	return [item, fetchListing];
 }
