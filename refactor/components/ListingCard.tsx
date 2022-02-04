@@ -9,14 +9,12 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
 import Text from "@refactor/components/Text";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
-import fetchListingItem from "@refactor/utils/fetchListingItem";
-import fetchNFTData from "@refactor/utils/fetchNFTData";
-import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import Link from "@refactor/components/Link";
 import { useInView } from "react-hook-inview";
+import useNFTListing from "@refactor/hooks/useNFTListing";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -29,33 +27,14 @@ export default function ListingCard({
 	listingId,
 	...props
 }: DOMComponentProps<ComponentProps, "a">) {
-	const [item, setItem] = useState<NFTListing & NFTData>(null);
-	const [loading, setLoading] = useState<boolean>(true);
-	const api = useCENNZApi();
-
 	const collectionId = Array.isArray(listingId) ? listingId[0] : null;
-
 	const [ref, inView] = useInView({
 		threshold: 0,
 	});
-
-	useEffect(() => {
-		if (!api || !listingId || !inView) return;
-
-		async function fetchListing() {
-			const listing = await fetchListingItem(
-				api,
-				Array.isArray(listingId) ? listingId[1] : listingId
-			);
-
-			const data = await fetchNFTData(api, listing.tokenId);
-
-			setItem(data?.metadata ? { ...listing, ...data } : null);
-			setLoading(false);
-		}
-
-		fetchListing();
-	}, [api, listingId, inView]);
+	const [item, loading] = useNFTListing(
+		Array.isArray(listingId) ? listingId[1] : listingId,
+		inView
+	);
 
 	const { tokenId, metadata, price, paymentAssetId, type } = (item ||
 		{}) as NFTListing & NFTData;
