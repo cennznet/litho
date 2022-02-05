@@ -6,6 +6,7 @@ import useNFTCancel from "@refactor/hooks/useNFTCancel";
 import useNFTBuy from "@refactor/hooks/useNFTBuy";
 import useNFTBid from "@refactor/hooks/useNFTBid";
 import Link from "@refactor/components/Link";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -90,6 +91,30 @@ export function SellAction({
 				href={`/sell?collectionId=${tokenId[0]}&seriesId=${tokenId[1]}&serialNumber=${tokenId[2]}`}>
 				<Button className={bem("actionButton")}>Start Listing</Button>
 			</Link>
+		</div>
+	);
+}
+
+type ConnectComponentProps = {};
+export function ConnectAction({}: DOMComponentProps<
+	ConnectComponentProps,
+	"div"
+>) {
+	const { connectWallet } = useWallet();
+	const [busy, setBusy] = useState<boolean>(false);
+	const onConnectClick = useCallback(() => {
+		setBusy(true);
+		connectWallet(() => setBusy(false));
+	}, [connectWallet]);
+
+	return (
+		<div className={bem("connectAction")}>
+			<Button
+				className={bem("actionButton")}
+				disabled={busy}
+				onClick={onConnectClick}>
+				Connect Wallet
+			</Button>
 		</div>
 	);
 }

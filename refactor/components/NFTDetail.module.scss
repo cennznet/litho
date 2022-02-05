@@ -135,6 +135,10 @@
 	grid-template-columns: 6em max-content;
 	grid-template-areas: "dt dd";
 	margin-bottom: 0.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+
 	dt {
 		grid-area: dt;
 	}

@@ -19,6 +19,7 @@ import {
 	BidAction,
 	CancelAction,
 	SellAction,
+	ConnectAction,
 } from "@refactor/components/ListingAction";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
@@ -138,7 +139,7 @@ function ListingSection({
 	const { account } = useWallet();
 	const isOwner = account?.address === owner;
 
-	if (!listingId && !isOwner) return null;
+	if (!!account && !listingId && !isOwner) return null;
 
 	return (
 		<div className={bem("listing")}>
@@ -183,6 +184,7 @@ function ListingSection({
 					</li>
 				</ul>
 			)}
+
 			{!!listingPrice && (
 				<div className={bem("price")}>
 					<div className={bem("priceValue")}>
@@ -194,6 +196,8 @@ function ListingSection({
 					)}
 				</div>
 			)}
+
+			{!account && <ConnectAction />}
 
 			{!!account && isOwner && !!listingId && (
 				<CancelAction

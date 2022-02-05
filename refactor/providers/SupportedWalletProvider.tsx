@@ -88,7 +88,7 @@ export default function SupportedWalletProvider({
 				store.set("EXTENSION_META_UPDATED", "true");
 			}
 
-			if (callback) callback();
+			callback?.();
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},

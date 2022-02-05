@@ -55,7 +55,7 @@ export default function WalletButton({
 						</span>
 
 						<label className={bem("label")}>
-							Connecting
+							Re-connecting
 							<ThreeDots />
 						</label>
 					</>
