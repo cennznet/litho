@@ -20,6 +20,7 @@ import {
 	CancelAction,
 	SellAction,
 	ConnectAction,
+	TopUpAction,
 } from "@refactor/components/ListingAction";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
@@ -114,12 +115,15 @@ function ListingSection({
 }: DOMComponentProps<ListingComponentProps, "div">) {
 	const { type, price, paymentAssetId, closeBlock, listingId, owner, tokenId } =
 		listingItem;
+
 	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
+	const requiredFund = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
 		if (!displayAsset || !price || !paymentAssetId) return [];
-		return displayAsset(paymentAssetId, winningBid?.[1] || price);
-	}, [displayAsset, price, paymentAssetId, winningBid]);
+		return displayAsset(paymentAssetId, requiredFund);
+	}, [displayAsset, price, paymentAssetId, requiredFund]);
+
 	const usdRate = useCoinGeckoRate("usd");
 	const usdPrice = useMemo(() => {
 		if (!usdRate) return;
@@ -134,8 +138,9 @@ function ListingSection({
 
 	const endTime = useEndTime(closeBlock);
 
-	const { account } = useWallet();
+	const { account, checkSufficientFund } = useWallet();
 	const isOwner = account?.address === owner;
+	const isSufficientFund = checkSufficientFund(requiredFund, paymentAssetId);
 
 	if (!!account && !listingId && !isOwner) return null;
 
@@ -189,21 +194,35 @@ function ListingSection({
 				</div>
 			)}
 
-			{!account && <ConnectAction />}
+			{(() => {
+				if (!account) return <ConnectAction />;
 
-			{!!account && isOwner && !!listingId && (
-				<CancelAction
-					listingId={listingId}
-					onActionComplete={onActionComplete}
-				/>
-			)}
+				if (!listingId) {
+					if (isOwner) return <SellAction tokenId={tokenId} />;
+				}
 
-			{!!account && isOwner && !listingId && <SellAction tokenId={tokenId} />}
+				if (!!listingId) {
+					if (isOwner)
+						return (
+							<CancelAction
+								listingId={listingId}
+								onActionComplete={onActionComplete}
+							/>
+						);
 
-			{!!account && !isOwner && type === "Fixed Price" && (
-				<BuyAction onActionComplete={onActionComplete} listingId={listingId} />
-			)}
-			{!!account && !isOwner && type === "Auction" && <BidAction />}
+					if (!isSufficientFund) return <TopUpAction type={type} />;
+
+					if (type === "Fixed Price")
+						return (
+							<BuyAction
+								onActionComplete={onActionComplete}
+								listingId={listingId}
+							/>
+						);
+
+					if (type === "Auction") return <BidAction />;
+				}
+			})()}
 		</div>
 	);
 }

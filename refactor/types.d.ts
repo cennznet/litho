@@ -12,11 +12,13 @@ export type AssetInfo = {
 	decimals: number;
 };
 
+export type NFTListingType = "Auction" | "Fixed Price";
+
 export type NFTListing = {
 	listingId: number;
 	tokenId: NFTId;
 	closeBlock?: number;
-	type: "Auction" | "Fixed Price";
+	type: NFTListingType;
 	price: number;
 	paymentAssetId: number;
 	royalty?: number;

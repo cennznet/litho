@@ -20,6 +20,7 @@ import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
 import { AssetInfo } from "@refactor/types";
 
 export type BalanceInfo = AssetInfo & {
+	rawValue: number;
 	value: number;
 };
 
@@ -31,6 +32,10 @@ type WalletContext = {
 	disconnectWallet: () => void;
 	selectAccount: (account: InjectedAccountWithMeta) => void;
 	fetchAssetBalances: () => Promise<void>;
+	checkSufficientFund: (
+		requiredFund: number,
+		paymentAssetId: number
+	) => boolean;
 };
 
 const SupportedWalletContext = createContext<WalletContext>({
@@ -41,6 +46,7 @@ const SupportedWalletContext = createContext<WalletContext>({
 	disconnectWallet: null,
 	selectAccount: null,
 	fetchAssetBalances: null,
+	checkSufficientFund: null,
 });
 
 type ProviderProps = {};
@@ -125,7 +131,7 @@ export default function SupportedWalletProvider({
 		restoreWallet();
 	}, [web3Enable, web3FromSource]);
 
-	// 2. pick the right account once a `wallet` as been set
+	// 2. Pick the right account once a `wallet` has been set
 	useEffect(() => {
 		if (!wallet || !accounts) return;
 
@@ -143,7 +149,7 @@ export default function SupportedWalletProvider({
 		selectAccount(matchedAccount);
 	}, [wallet, web3Enable, accounts, selectAccount]);
 
-	// 3. Fetch `account` balance
+	// 3. Fetch `account` balance plus provide a function to re-fetch balances as needed
 	const { assets } = useAssets();
 	const [balances, setBalances] = useState<Array<BalanceInfo>>();
 	const fetchAssetBalances = useCallback(async () => {
@@ -156,6 +162,7 @@ export default function SupportedWalletProvider({
 			const asset = assets[index];
 			return {
 				...asset,
+				rawValue: balance as any,
 				value: (balance as any) / Math.pow(10, asset.decimals),
 			};
 		});
@@ -167,6 +174,19 @@ export default function SupportedWalletProvider({
 		fetchAssetBalances();
 	}, [fetchAssetBalances]);
 
+	const checkSufficientFund = useCallback(
+		(requiredFund, paymentAssetId) => {
+			if (!balances?.length) return;
+			const balance = balances.find(
+				(balance) => balance.assetId === paymentAssetId
+			);
+			if (!balance) throw new Error(`Asset "${paymentAssetId}" is not found`);
+
+			return balance.rawValue >= requiredFund;
+		},
+		[balances]
+	);
+
 	return (
 		<SupportedWalletContext.Provider
 			value={{
@@ -177,6 +197,7 @@ export default function SupportedWalletProvider({
 				disconnectWallet,
 				selectAccount,
 				fetchAssetBalances,
+				checkSufficientFund,
 			}}>
 			{children}
 		</SupportedWalletContext.Provider>

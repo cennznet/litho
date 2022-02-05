@@ -1,4 +1,10 @@
-import { DOMComponentProps, NFTListingId, NFTId } from "@refactor/types";
+import {
+	DOMComponentProps,
+	NFTListingId,
+	NFTId,
+	NFTListingType,
+	NFTListing,
+} from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Button from "@refactor/components/Button";
 import { useCallback, useState } from "react";
@@ -68,7 +74,7 @@ export function CancelAction({
 	}, [cancelListing, listingId, onActionComplete]);
 
 	return (
-		<div className={bem("removeAction")}>
+		<div className={bem("cancelAction")}>
 			<Button
 				className={bem("actionButton")}
 				disabled={busy}
@@ -86,7 +92,7 @@ export function SellAction({
 	tokenId,
 }: DOMComponentProps<SellComponentProps, "div">) {
 	return (
-		<div className={bem("removeAction")}>
+		<div className={bem("sellAction")}>
 			<Link
 				href={`/sell?collectionId=${tokenId[0]}&seriesId=${tokenId[1]}&serialNumber=${tokenId[2]}`}>
 				<Button className={bem("actionButton")}>Start Listing</Button>
@@ -115,6 +121,24 @@ export function ConnectAction({}: DOMComponentProps<
 				onClick={onConnectClick}>
 				Connect Wallet
 			</Button>
+		</div>
+	);
+}
+
+type TopUpComponentProps = {
+	type: NFTListingType;
+};
+export function TopUpAction({
+	type,
+}: DOMComponentProps<TopUpComponentProps, "div">) {
+	return (
+		<div className={bem("removeAction")}>
+			<Link href="https://www.mexc.com">
+				<Button className={bem("actionButton")}>
+					{type === "Fixed Price" && "Top up to buy"}
+					{type === "Auction" && "Top up to bid"}
+				</Button>
+			</Link>
 		</div>
 	);
 }
