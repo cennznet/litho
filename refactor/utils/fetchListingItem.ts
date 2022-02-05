@@ -35,13 +35,15 @@ export default async function fetchListingItem(
 	const royalty =
 		listing?.royaltiesSchedule?.entitlements?.toJSON()?.[0]?.[1] || null;
 
-	return {
-		listingId,
-		tokenId,
-		closeBlock: listing?.close?.toJSON(),
-		type: response.isFixedPrice ? "Fixed Price" : "Auction",
-		price: price.toJSON(),
-		paymentAssetId: listing.paymentAsset.toJSON(),
-		royalty,
-	};
+	return tokenId
+		? {
+				listingId,
+				tokenId,
+				closeBlock: listing?.close?.toJSON(),
+				type: response.isFixedPrice ? "Fixed Price" : "Auction",
+				price: price.toJSON(),
+				paymentAssetId: listing.paymentAsset.toJSON(),
+				royalty,
+		  }
+		: null;
 }

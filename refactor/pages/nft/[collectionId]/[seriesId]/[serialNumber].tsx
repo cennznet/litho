@@ -24,23 +24,27 @@ export async function getStaticPaths() {
 
 	const allOpenListingIds = await fetchAllOpenListingIds(api);
 
-	const paths = await Promise.all([
-		...allOpenListingIds
-			.map(([, listingIds]) =>
-				listingIds.slice(0, 3).map((listingId) =>
-					fetchListingItem(api, listingId).then(({ tokenId }) => {
-						return {
-							params: {
-								collectionId: tokenId[0].toString(),
-								seriesId: tokenId[1].toString(),
-								serialNumber: tokenId[2].toString(),
-							},
-						};
-					})
+	const paths = (
+		await Promise.all([
+			...allOpenListingIds
+				.map(([, listingIds]) =>
+					listingIds.slice(0, 3).map((listingId) =>
+						fetchListingItem(api, listingId).then((listing) => {
+							if (!listing?.tokenId) return;
+							const tokenId = listing.tokenId;
+							return {
+								params: {
+									collectionId: tokenId[0].toString(),
+									seriesId: tokenId[1].toString(),
+									serialNumber: tokenId[2].toString(),
+								},
+							};
+						})
+					)
 				)
-			)
-			.flat(),
-	]);
+				.flat(),
+		])
+	).filter(Boolean);
 
 	return { paths, fallback: "blocking" };
 }

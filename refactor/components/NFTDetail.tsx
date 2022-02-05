@@ -6,8 +6,7 @@ import NFTRenderer from "@refactor/components/NFTRenderer";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useMemo } from "react";
-import Button from "@refactor/components/Button";
+import { useCallback, useMemo, useState } from "react";
 import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
 import useEndTime, {
 	getFriendlyEndTimeString,
@@ -15,11 +14,22 @@ import useEndTime, {
 import useWinningBid from "@refactor/hooks/useWinningBid";
 import AccountAddress from "@refactor/components/AccountAddress";
 import Link from "@refactor/components/Link";
+import {
+	BuyAction,
+	BidAction,
+	CancelAction,
+	SellAction,
+} from "@refactor/components/ListingAction";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
+import fetchListingItem from "@refactor/utils/fetchListingItem";
+import fetchNFTData from "@refactor/utils/fetchNFTData";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
+type NFTDetail = NFTData & Partial<NFTListing>;
 type ComponentProps = {
-	listingItem: NFTData & Partial<NFTListing>;
+	listingItem: NFTDetail;
 };
 
 export default function NFTDetail({
@@ -27,8 +37,22 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { metadata, tokenId, listingId, attributes, imageIPFSUrl } =
-		listingItem;
+	const api = useCENNZApi();
+	const [item, setItem] = useState<NFTDetail>(listingItem);
+
+	const onActionComplete = useCallback(
+		async (action) => {
+			switch (action) {
+				case "cancel":
+					const data = await fetchNFTData(api, item.tokenId);
+					setItem({ tokenId: item.tokenId, ...data });
+				default:
+			}
+		},
+		[api, item.tokenId]
+	);
+
+	const { metadata, tokenId, attributes, imageIPFSUrl } = item;
 
 	return (
 		<div className={bem("root", className)} {...props}>
@@ -53,12 +77,13 @@ export default function NFTDetail({
 			<div className={bem("sidebar")}>
 				<div className={bem("sidebarContent")}>
 					<div className={bem("scrollContent")}>
-						{!!listingId && <BuySection listingItem={listingItem} />}
-						<SellSection listingItem={listingItem} />
-						<DescriptionSection listingItem={listingItem} />
-						{!!attributes?.length && (
-							<DetailsSection listingItem={listingItem} />
-						)}
+						<ListingSection
+							listingItem={item}
+							onActionComplete={onActionComplete}
+						/>
+						<AssociationSection listingItem={item} />
+						<DescriptionSection listingItem={item} />
+						{!!attributes?.length && <DetailsSection listingItem={item} />}
 					</div>
 				</div>
 			</div>
@@ -66,8 +91,16 @@ export default function NFTDetail({
 	);
 }
 
-function BuySection({ listingItem }: DOMComponentProps<ComponentProps, "div">) {
-	const { type, price, paymentAssetId, closeBlock, listingId } = listingItem;
+type ListingComponentProps = ComponentProps & {
+	onActionComplete?: (action: string) => void;
+};
+
+function ListingSection({
+	listingItem,
+	onActionComplete,
+}: DOMComponentProps<ListingComponentProps, "div">) {
+	const { type, price, paymentAssetId, closeBlock, listingId, owner, tokenId } =
+		listingItem;
 
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
@@ -90,8 +123,13 @@ function BuySection({ listingItem }: DOMComponentProps<ComponentProps, "div">) {
 	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
 	const reserveMet = !!winningBid?.[1] && winningBid?.[1] >= price;
 
+	const { account } = useWallet();
+	const isOwner = account?.address === owner;
+
+	if (!listingId && !isOwner) return null;
+
 	return (
-		<div className={bem("buySection")}>
+		<div className={bem("listing")}>
 			{type === "Auction" && (
 				<ul className={bem("state")}>
 					<li>
@@ -133,26 +171,34 @@ function BuySection({ listingItem }: DOMComponentProps<ComponentProps, "div">) {
 					</li>
 				</ul>
 			)}
+			{!!listingPrice && (
+				<div className={bem("price")}>
+					<div className={bem("priceValue")}>
+						{listingPrice} {symbol}
+					</div>
 
-			<div className={bem("price")}>
-				<div className={bem("priceValue")}>
-					{listingPrice} {symbol}
+					{usdPrice && (
+						<div className={bem("priceConversion")}>({usdPrice} USD)</div>
+					)}
 				</div>
+			)}
 
-				{usdPrice && (
-					<div className={bem("priceConversion")}>({usdPrice} USD)</div>
-				)}
-			</div>
+			{!!account && isOwner && !!listingId && (
+				<CancelAction
+					listingId={listingId}
+					onActionComplete={onActionComplete}
+				/>
+			)}
 
-			<Button className={bem("submitButton")}>
-				{type === "Fixed Price" && <span>Buy Now</span>}
-				{type === "Auction" && <span>Place A Bid</span>}
-			</Button>
+			{!!account && isOwner && !listingId && <SellAction tokenId={tokenId} />}
+
+			{!!account && !isOwner && type === "Fixed Price" && <BuyAction />}
+			{!!account && !isOwner && type === "Auction" && <BidAction />}
 		</div>
 	);
 }
 
-function SellSection({
+function AssociationSection({
 	listingItem,
 }: DOMComponentProps<ComponentProps, "div">) {
 	const {
@@ -163,12 +209,16 @@ function SellSection({
 		royalty,
 	} = listingItem;
 
+	const { account } = useWallet();
+	const isOwner = account?.address === owner;
+
 	return (
-		<div className={bem("sellSection")}>
+		<div className={bem("association")}>
 			<dl className={bem("address")}>
 				<dt>Owner</dt>
 				<dd>
 					<AccountAddress address={owner} length={8} />
+					{!!account && isOwner && <em>(You)</em>}
 				</dd>
 			</dl>
 

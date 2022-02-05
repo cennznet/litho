@@ -126,10 +126,7 @@
 	@include types.headline(h6);
 	flex-shrink: 0;
 	color: figma-color("Litho Black 60%");
-}
-
-.submitButton {
-	width: 100%;
+	padding-bottom: 0.125em;
 }
 
 .address {
