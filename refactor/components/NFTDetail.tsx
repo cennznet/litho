@@ -225,6 +225,7 @@ function AssociationSection({
 
 	const { account } = useWallet();
 	const isOwner = account?.address === owner;
+	const isCreator = account?.address === creator;
 
 	return (
 		<div className={bem("association")}>
@@ -235,14 +236,20 @@ function AssociationSection({
 					{!!account && isOwner && <em>(You)</em>}
 				</dd>
 			</dl>
-
 			<dl className={bem("address")}>
 				<dt>Creator</dt>
 				<dd>
 					<AccountAddress address={creator} length={8} />
-					{!!royalty && <em>({royalty / 10000}% royalties)</em>}
+					{!!account && isCreator && <em>(You)</em>}
 				</dd>
 			</dl>
+
+			{!!royalty && (
+				<dl className={bem("address")}>
+					<dt>Royalties</dt>
+					<dd>{royalty / 10000}%</dd>
+				</dl>
+			)}
 		</div>
 	);
 }

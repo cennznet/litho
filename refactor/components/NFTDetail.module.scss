@@ -131,13 +131,16 @@
 
 .address {
 	@include types.headline(h6);
+	display: grid;
+	grid-template-columns: 6em max-content;
+	grid-template-areas: "dt dd";
+	margin-bottom: 0.5em;
 	dt {
-		display: inline-block;
-		margin-right: 0.5em;
+		grid-area: dt;
 	}
 
 	dd {
-		display: inline-block;
+		grid-area: dd;
 		color: figma-color("Litho Blue");
 	}
 
@@ -156,7 +159,7 @@
 	}
 
 	dd {
-		@include types.body(b2);
+		@include types.body(b1);
 	}
 }
 
