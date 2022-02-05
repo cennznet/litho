@@ -22,7 +22,6 @@ import {
 } from "@refactor/components/ListingAction";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import fetchListingItem from "@refactor/utils/fetchListingItem";
 import fetchNFTData from "@refactor/utils/fetchNFTData";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
@@ -46,10 +45,21 @@ export default function NFTDetail({
 				case "cancel":
 					const data = await fetchNFTData(api, item.tokenId);
 					setItem({ tokenId: item.tokenId, ...data });
+					break;
+				case "buy":
+					setTimeout(async () => {
+						const data = await fetchNFTData(api, item.tokenId);
+						setItem({ tokenId: item.tokenId, ...data });
+						alert(
+							`Congratulations! The NFT "${item?.metadata?.name}" is now yours.`
+						);
+					}, api.consts.babe.expectedBlockTime.toNumber());
+
 				default:
+					break;
 			}
 		},
-		[api, item.tokenId]
+		[api, item]
 	);
 
 	const { metadata, tokenId, attributes, imageIPFSUrl } = item;
@@ -192,7 +202,9 @@ function ListingSection({
 
 			{!!account && isOwner && !listingId && <SellAction tokenId={tokenId} />}
 
-			{!!account && !isOwner && type === "Fixed Price" && <BuyAction />}
+			{!!account && !isOwner && type === "Fixed Price" && (
+				<BuyAction onActionComplete={onActionComplete} listingId={listingId} />
+			)}
 			{!!account && !isOwner && type === "Auction" && <BidAction />}
 		</div>
 	);

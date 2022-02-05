@@ -25,8 +25,8 @@ export async function getStaticPaths() {
 	const allOpenListingIds = await fetchAllOpenListingIds(api);
 
 	const paths = (
-		await Promise.all([
-			...allOpenListingIds
+		await Promise.all(
+			allOpenListingIds
 				.map(([, listingIds]) =>
 					listingIds.slice(0, 3).map((listingId) =>
 						fetchListingItem(api, listingId).then((listing) => {
@@ -42,8 +42,8 @@ export async function getStaticPaths() {
 						})
 					)
 				)
-				.flat(),
-		])
+				.flat()
+		)
 	).filter(Boolean);
 
 	return { paths, fallback: "blocking" };

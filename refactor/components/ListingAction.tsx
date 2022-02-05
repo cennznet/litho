@@ -3,15 +3,38 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Button from "@refactor/components/Button";
 import { useCallback, useState } from "react";
 import useNFTCancel from "@refactor/hooks/useNFTCancel";
+import useNFTBuy from "@refactor/hooks/useNFTBuy";
+import useNFTBid from "@refactor/hooks/useNFTBid";
 import Link from "@refactor/components/Link";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
-type BuyComponentProps = {};
-export function BuyAction(props: DOMComponentProps<BuyComponentProps, "div">) {
+type BuyComponentProps = {
+	listingId: NFTListingId;
+	onActionComplete?: (action: string) => void;
+};
+export function BuyAction({
+	listingId,
+	onActionComplete,
+}: DOMComponentProps<BuyComponentProps, "div">) {
+	const [busy, setBusy] = useState<boolean>(false);
+	const buyListing = useNFTBuy();
+	const onBuyClick = useCallback(async () => {
+		const confirmed = confirm("Are you sure?");
+		if (!confirmed) return;
+		setBusy(true);
+		await buyListing(listingId);
+		onActionComplete?.("buy");
+	}, [buyListing, listingId, onActionComplete]);
+
 	return (
 		<div className={bem("buyAction")}>
-			<Button className={bem("actionButton")}>Buy Now</Button>
+			<Button
+				className={bem("actionButton")}
+				onClick={onBuyClick}
+				disabled={busy}>
+				{busy ? "Processing" : "Buy Now"}
+			</Button>
 		</div>
 	);
 }
@@ -40,7 +63,6 @@ export function CancelAction({
 		if (!confirmed) return;
 		setBusy(true);
 		await cancelListing(listingId);
-		setBusy(false);
 		onActionComplete?.("cancel");
 	}, [cancelListing, listingId, onActionComplete]);
 
