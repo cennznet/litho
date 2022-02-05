@@ -8,6 +8,7 @@ import WalletConnect from "@refactor/components/WalletConnect";
 import WalletDetails from "@refactor/components/WalletDetails";
 import Identicon from "@polkadot/react-identicon";
 import ThreeDots from "@refactor/components/ThreeDots";
+import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
 
 const bem = createBEMHelper(require("./WalletButton.module.scss"));
 
@@ -71,6 +72,10 @@ export default function WalletButton({
 							className={bem(
 								"label"
 							)}>{`${balances[0].value} ${balances[0].symbol}`}</label>
+
+						<span className={bem("chevron", { modalOpened })}>
+							<ChevronDownSVG />
+						</span>
 					</>
 				)}
 			</button>

@@ -18,7 +18,7 @@
 	@include on-hover {
 		color: white;
 		background-color: figma-color("Litho Blue");
-		> svg path {
+		svg path {
 			fill: white;
 		}
 	}
@@ -41,7 +41,28 @@
 	max-width: 400px;
 	height: auto;
 	position: absolute;
-	top: 5em;
+	top: 5.5em;
 	right: 0;
 	// @include interpolate("right", 16px phone, 48px landscape, 80px desktop);
+}
+
+.chevron {
+	display: block;
+	width: 12px;
+	margin-left: 0.5em;
+	margin-bottom: -2px;
+	transform: rotate(-180deg);
+	transition: transform 0.2s ease-in;
+
+	&--modalOpened {
+		transform: rotate(0);
+	}
+
+	> svg {
+		display: block;
+	}
+
+	path {
+		fill: figma-color("Litho Black");
+	}
 }
