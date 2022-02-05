@@ -114,12 +114,12 @@ function ListingSection({
 }: DOMComponentProps<ListingComponentProps, "div">) {
 	const { type, price, paymentAssetId, closeBlock, listingId, owner, tokenId } =
 		listingItem;
-
+	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
 	const { displayAsset } = useAssets();
 	const [listingPrice, symbol] = useMemo(() => {
 		if (!displayAsset || !price || !paymentAssetId) return [];
-		return displayAsset(paymentAssetId, price);
-	}, [displayAsset, price, paymentAssetId]);
+		return displayAsset(paymentAssetId, winningBid?.[1] || price);
+	}, [displayAsset, price, paymentAssetId, winningBid]);
 	const usdRate = useCoinGeckoRate("usd");
 	const usdPrice = useMemo(() => {
 		if (!usdRate) return;
@@ -133,8 +133,6 @@ function ListingSection({
 	}, [usdRate, listingPrice]);
 
 	const endTime = useEndTime(closeBlock);
-	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
-	const reserveMet = !!winningBid?.[1] && winningBid?.[1] >= price;
 
 	const { account } = useWallet();
 	const isOwner = account?.address === owner;
@@ -161,12 +159,6 @@ function ListingSection({
 							</div>
 						)}
 					</li>
-					{!!reserveMet && (
-						<li>
-							<div className={bem("stateType")}>Current Bid</div>
-							<div className={bem("stateLabel")}>Reserve Met</div>
-						</li>
-					)}
 				</ul>
 			)}
 
