@@ -38,6 +38,7 @@ export default function NFTDetail({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const api = useCENNZApi();
 	const [item, setItem] = useState<NFTDetail>(listingItem);
+	const { fetchAssetBalances } = useWallet();
 
 	const onActionComplete = useCallback(
 		async (action) => {
@@ -53,13 +54,14 @@ export default function NFTDetail({
 						alert(
 							`Congratulations! The NFT "${item?.metadata?.name}" is now yours.`
 						);
+						await fetchAssetBalances();
 					}, api.consts.babe.expectedBlockTime.toNumber());
 
 				default:
 					break;
 			}
 		},
-		[api, item]
+		[api, item, fetchAssetBalances]
 	);
 
 	const { metadata, tokenId, attributes, imageIPFSUrl } = item;

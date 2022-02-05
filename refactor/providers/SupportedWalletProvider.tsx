@@ -30,6 +30,7 @@ type WalletContext = {
 	connectWallet: (callback?: () => void) => Promise<void>;
 	disconnectWallet: () => void;
 	selectAccount: (account: InjectedAccountWithMeta) => void;
+	fetchAssetBalances: () => Promise<void>;
 };
 
 const SupportedWalletContext = createContext<WalletContext>({
@@ -39,6 +40,7 @@ const SupportedWalletContext = createContext<WalletContext>({
 	connectWallet: null,
 	disconnectWallet: null,
 	selectAccount: null,
+	fetchAssetBalances: null,
 });
 
 type ProviderProps = {};
@@ -144,27 +146,26 @@ export default function SupportedWalletProvider({
 	// 3. Fetch `account` balance
 	const { assets } = useAssets();
 	const [balances, setBalances] = useState<Array<BalanceInfo>>();
+	const fetchAssetBalances = useCallback(async () => {
+		if (!assets || !account?.address || !api) return;
+		const balances = (
+			await api.query.genericAsset.freeBalance.multi(
+				assets.map(({ assetId }) => [assetId, account.address])
+			)
+		).map((balance, index) => {
+			const asset = assets[index];
+			return {
+				...asset,
+				value: (balance as any) / Math.pow(10, asset.decimals),
+			};
+		});
+
+		setBalances(balances);
+	}, [assets, account?.address, api]);
+
 	useEffect(() => {
-		if (!assets || !account || !api) return;
-
-		async function fetchAssetBalances() {
-			const balances = (
-				await api.query.genericAsset.freeBalance.multi(
-					assets.map(({ assetId }) => [assetId, account.address])
-				)
-			).map((balance, index) => {
-				const asset = assets[index];
-				return {
-					...asset,
-					value: (balance as any) / Math.pow(10, asset.decimals),
-				};
-			});
-
-			setBalances(balances);
-		}
-
 		fetchAssetBalances();
-	}, [assets, account, api]);
+	}, [fetchAssetBalances]);
 
 	return (
 		<SupportedWalletContext.Provider
@@ -175,6 +176,7 @@ export default function SupportedWalletProvider({
 				connectWallet,
 				disconnectWallet,
 				selectAccount,
+				fetchAssetBalances,
 			}}>
 			{children}
 		</SupportedWalletContext.Provider>
