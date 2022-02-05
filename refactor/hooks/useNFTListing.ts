@@ -9,19 +9,22 @@ type ListingItem = NFTData & Partial<NFTListing>;
 export default function useNFTListing(
 	listingId: NFTListingId,
 	defaultItem: ListingItem = null
-): [ListingItem, () => Promise<ListingItem>] {
+): [ListingItem, (callback?: (item: ListingItem) => void) => Promise<void>] {
 	const api = useCENNZApi();
 	const [item, setItem] = useState<ListingItem>(defaultItem);
 
-	const fetchListing = useCallback(async () => {
-		if (!api || !listingId) return null;
-		const listing = await fetchListingItem(api, listingId);
-		const data = listing ? await fetchNFTData(api, listing.tokenId) : null;
+	const fetchListing = useCallback(
+		async (callback) => {
+			if (!api || !listingId) return;
+			const listing = await fetchListingItem(api, listingId);
+			const data = listing ? await fetchNFTData(api, listing.tokenId) : null;
 
-		const item = data?.metadata ? { ...listing, ...data } : null;
-		setItem(item);
-		return item;
-	}, [api, listingId]);
+			const item = data?.metadata ? { ...listing, ...data } : null;
+			callback?.(item);
+			setItem(item);
+		},
+		[api, listingId]
+	);
 
 	return [item, fetchListing];
 }
