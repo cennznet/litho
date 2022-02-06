@@ -7,12 +7,15 @@ import {
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Button from "@refactor/components/Button";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import useNFTCancel from "@refactor/hooks/useNFTCancel";
 import useNFTBuy from "@refactor/hooks/useNFTBuy";
 import useNFTBid from "@refactor/hooks/useNFTBid";
 import Link from "@refactor/components/Link";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import Text from "@refactor/components/Text";
+import AssetInput from "@refactor/components/AssetInput";
+import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -46,12 +49,68 @@ export function BuyAction({
 	);
 }
 
-type BidComponentProps = {};
-export function BidAction(props: DOMComponentProps<BidComponentProps, "div">) {
+type BidComponentProps = {
+	currentBid: number;
+	paymentAssetId: number;
+	onActionComplete?: (action: string) => void;
+};
+export function BidAction({
+	currentBid,
+	paymentAssetId,
+	onActionComplete,
+}: DOMComponentProps<BidComponentProps, "div">) {
+	const [showInput, setShowInput] = useState<boolean>(false);
+	const onPlaceBidClick = useCallback(() => {
+		setShowInput((showInput) => !showInput);
+	}, []);
+
+	const onCancelClick = useCallback(() => {
+		setShowInput(false);
+	}, []);
+	const { getMinimumStep } = useAssets();
+	const [step] = getMinimumStep?.(paymentAssetId) || [1];
+	const minimumBid = currentBid + step;
+
 	return (
-		<div className={bem("bidAction")}>
-			<Button className={bem("actionButton")}>Place A Bid</Button>
-		</div>
+		<>
+			{!showInput && (
+				<div className={bem("bidAction")}>
+					<Button className={bem("actionButton")} onClick={onPlaceBidClick}>
+						Place A Bid
+					</Button>
+				</div>
+			)}
+
+			{showInput && (
+				<form className={bem("form")}>
+					<Text variant="headline5" className={bem("formHeadline")}>
+						Enter a bid
+					</Text>
+
+					<AssetInput
+						assetId={paymentAssetId}
+						min={minimumBid}
+						placeholder={`Minimum bid of ${minimumBid}`}
+						className={bem("formInput")}
+						focusOnInit={true}
+					/>
+
+					<div className={bem("formActions")}>
+						<Button
+							className={bem("cancelButton")}
+							variant="hollow"
+							onClick={onCancelClick}
+							showProgress={false}>
+							Cancel
+						</Button>
+
+						<Button className={bem("bidButton")} type="submit">
+							Confirm Bid
+						</Button>
+					</div>
+				</form>
+			)}
+		</>
 	);
 }
 

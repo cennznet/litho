@@ -3237,6 +3237,11 @@ image-size@1.0.0:
   dependencies:
     queue "6.0.2"
 
+imask@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/imask/-/imask-6.4.0.tgz#76e48e6bbf5306f7de058f8a1b90fd2282d446bc"
+  integrity sha512-iXXgSQA6TJX/RSKivKoTYYoCc4ZmVseMcoDIxMrlW1JPpc8LU9FtCp3f80vg1eUQvmVfEQbh+vybFVDRt2o9TQ==
+
 immutable@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0.tgz#b86f78de6adef3608395efb269a91462797e2c23"
@@ -5238,6 +5243,14 @@ react-hook-inview@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/react-hook-inview/-/react-hook-inview-4.4.0.tgz#6650f117e10925188f28b58a3423aa530935f067"
   integrity sha512-ldgGb6dP8KbMT+UCr1ooJQMuDDUbtag8IvF+nlO78NUzsdlz047MrMDN7naS6WJ8s29H3e88gKpWMocXlbxNHQ==
+
+react-imask@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-imask/-/react-imask-6.4.0.tgz#7284aec3ff8b0b27b88ccd7725f2f213ea2567f8"
+  integrity sha512-7rFR0gkT5cgtizLyegNcdA3b9VWt0G6gDslGZocjQBmBSNi3iv4rPBllAdOkmApz2Kv0TDACqEir14BRFJTjQw==
+  dependencies:
+    imask "^6.4.0"
+    prop-types "^15.7.2"
 
 react-intersection-observer@^8.32.1:
   version "8.32.1"

@@ -38,16 +38,9 @@ type WalletContext = {
 	) => boolean;
 };
 
-const SupportedWalletContext = createContext<WalletContext>({
-	balances: null,
-	account: null,
-	wallet: null,
-	connectWallet: null,
-	disconnectWallet: null,
-	selectAccount: null,
-	fetchAssetBalances: null,
-	checkSufficientFund: null,
-});
+const SupportedWalletContext = createContext<WalletContext>(
+	{} as WalletContext
+);
 
 type ProviderProps = {};
 

@@ -5,7 +5,8 @@ import ThreeDots from "@refactor/components/ThreeDots";
 const bem = createBEMHelper(require("./Button.module.scss"));
 
 type ComponentProps = {
-	variant?: "blue";
+	variant?: "blue" | "hollow";
+	showProgress?: boolean;
 };
 
 export default function Button({
@@ -13,6 +14,7 @@ export default function Button({
 	variant = "blue",
 	children,
 	disabled,
+	showProgress = true,
 	...props
 }: DOMComponentProps<ComponentProps, "button">) {
 	return (
@@ -21,7 +23,7 @@ export default function Button({
 			disabled={disabled}
 			{...props}>
 			{children}
-			{disabled && <ThreeDots />}
+			{disabled && showProgress && <ThreeDots />}
 		</button>
 	);
 }

@@ -124,17 +124,8 @@ function ListingSection({
 		return displayAsset(paymentAssetId, requiredFund);
 	}, [displayAsset, price, paymentAssetId, requiredFund]);
 
-	const usdRate = useCoinGeckoRate("usd");
-	const usdPrice = useMemo(() => {
-		if (!usdRate) return;
-		const numberFormat = new Intl.NumberFormat("en-NZ", {
-			style: "currency",
-			currency: "USD",
-			currencyDisplay: "narrowSymbol",
-		});
-
-		return numberFormat.format(listingPrice * usdRate);
-	}, [usdRate, listingPrice]);
+	const [, displayInCurrency] = useCoinGeckoRate("usd");
+	const usdPrice = displayInCurrency(listingPrice);
 
 	const endTime = useEndTime(closeBlock);
 
@@ -220,7 +211,14 @@ function ListingSection({
 							/>
 						);
 
-					if (type === "Auction") return <BidAction />;
+					if (type === "Auction")
+						return (
+							<BidAction
+								currentBid={listingPrice}
+								paymentAssetId={paymentAssetId}
+								onActionComplete={onActionComplete}
+							/>
+						);
 				}
 			})()}
 		</div>

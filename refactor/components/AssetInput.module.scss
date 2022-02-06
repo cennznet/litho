@@ -1,0 +1,30 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+}
+
+.inner {
+	@include types.headline(h6);
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	margin-bottom: 0.5em;
+}
+
+.input {
+	width: 100%;
+	height: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+}
+
+.symbol {
+	padding: 0 0.875em;
+	color: figma-color("Litho Blue");
+}
+
+.usdValue {
+	color: figma-color("Litho Black 60%");
+}

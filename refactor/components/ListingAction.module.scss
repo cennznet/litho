@@ -6,3 +6,30 @@
 .actionButton {
 	width: 100%;
 }
+
+.form {
+	padding-top: 1.5em;
+	border-top: 1px solid figma-color("Litho Black 30%");
+}
+
+.formHeadline {
+	margin-bottom: 1em;
+}
+
+.formInput {
+	width: 100%;
+	margin-bottom: 1.5em;
+}
+
+.formActions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.cancelButton {
+	margin-right: 1em;
+}
+
+.bidButton {
+}

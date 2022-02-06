@@ -24,6 +24,7 @@
     "cache-manager-fs-hash": "^1.0.0",
     "clsx": "^1.1.1",
     "dayjs": "^1.10.7",
+    "lodash": "^4.17.21",
     "next": "^11.0.0",
     "node-cache": "^5.1.2",
     "postcss-import": "^13.0.0",
@@ -31,6 +32,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-inview": "^4.4.0",
+    "react-imask": "^6.4.0",
     "react-intersection-observer": "^8.32.1",
     "react-modal": "^3.14.4",
     "scroll-lock": "^2.1.5",
@@ -55,5 +57,8 @@
     "sass": "^1.48.0",
     "tailwindcss": "^2.1.1",
     "typescript": "^4.3.2"
+  },
+  "resolutions": {
+    "lodash": "^4.17.21"
   }
 }

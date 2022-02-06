@@ -4,7 +4,7 @@
 .root {
 	@include types.button();
 	display: inline-block;
-	padding: 0.625em 1em;
+	padding: 0.875em 1em;
 	line-height: 1;
 	transition: color 0.2s, background-color 0.2s;
 
@@ -18,12 +18,26 @@
 			background-color: figma-color("Litho Cream");
 			color: figma-color("Litho Blue");
 		}
+
+		&:disabled {
+			background-color: figma-color("Litho Black 30%");
+			border-color: transparent;
+			color: white !important;
+		}
 	}
 
-	&:disabled {
-		background-color: figma-color("Litho Black 30%");
-		border-color: transparent;
-		color: white !important;
+	&--hollow {
+		background-color: transparent;
+		color: figma-color("Litho Blue");
+		text-transform: uppercase;
+
+		@include on-hover {
+			color: figma-color("Litho Black");
+		}
+
+		&:disabled {
+			color: figma-color("Litho Black 30%") !important;
+			background-color: transparent;
+		}
 	}
 }
-
