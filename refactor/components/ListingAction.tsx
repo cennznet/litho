@@ -7,7 +7,7 @@ import {
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Button from "@refactor/components/Button";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import useNFTCancel from "@refactor/hooks/useNFTCancel";
 import useNFTBuy from "@refactor/hooks/useNFTBuy";
 import useNFTBid from "@refactor/hooks/useNFTBid";
@@ -89,11 +89,14 @@ export function BidAction({
 				(data.get("bid") as any) * Math.pow(10, assetInfo.decimals)
 			);
 			if (status === "cancelled") return setBusy(false);
-			setShowInput(false);
 			onActionComplete?.("bid");
 		},
 		[bidListing, listingId, assetInfo, onActionComplete]
 	);
+
+	useEffect(() => {
+		setShowInput(false);
+	}, [currentBid]);
 
 	return (
 		<>

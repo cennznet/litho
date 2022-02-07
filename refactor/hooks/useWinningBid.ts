@@ -1,27 +1,24 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 type BidOwner = string;
 type BidValue = number;
 type BidTuple = [BidOwner, BidValue];
 
-export default function useWinningBid(listingId: number): BidTuple {
+export default function useWinningBid(
+	listingId: number
+): [BidTuple, () => Promise<void>] {
 	const api = useCENNZApi();
 	const [winningBid, setWinningBid] = useState<BidTuple>();
 
-	useEffect(() => {
+	const fetchWinningBid = useCallback(async () => {
 		if (!api || !listingId) return;
-		async function fetchWinningBid(listingId: number) {
-			console.log("fetchWinningBid", listingId);
-			const bid = ((await api.query.nft.listingWinningBid(listingId)) as any)
-				.unwrapOrDefault()
-				.toJSON() as BidTuple;
+		const bid = ((await api.query.nft.listingWinningBid(listingId)) as any)
+			.unwrapOrDefault()
+			.toJSON() as BidTuple;
 
-			setWinningBid(bid);
-		}
-
-		fetchWinningBid(listingId);
+		setWinningBid(bid);
 	}, [api, listingId]);
 
-	return winningBid;
+	return [winningBid, fetchWinningBid];
 }

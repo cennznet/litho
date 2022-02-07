@@ -6,7 +6,7 @@ import NFTRenderer from "@refactor/components/NFTRenderer";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
 import useEndTime, {
 	getFriendlyEndTimeString,
@@ -122,24 +122,25 @@ function ListingSection({
 	const { type, price, paymentAssetId, closeBlock, listingId, owner, tokenId } =
 		listingItem;
 
-	const winningBid = useWinningBid(type === "Auction" ? listingId : null);
+	const [winningBid, fetchWiningBid] = useWinningBid(
+		type === "Auction" ? listingId : null
+	);
 	const requiredFund = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
 	const { displayAsset } = useAssets();
-	const [listingPrice, symbol] = useMemo(() => {
-		if (!displayAsset || !price || !paymentAssetId) return [];
-		return displayAsset(paymentAssetId, requiredFund);
-	}, [displayAsset, price, paymentAssetId, requiredFund]);
+	const [listingPrice, symbol] = displayAsset(paymentAssetId, requiredFund);
 
 	const [, displayInCurrency] = useCoinGeckoRate("usd");
 	const usdPrice = displayInCurrency(listingPrice);
 
 	const endTime = useEndTime(closeBlock);
 
-	const { account, checkSufficientFund } = useWallet();
+	const { account, balances, checkSufficientFund } = useWallet();
 	const isOwner = account?.address === owner;
 	const isSufficientFund = checkSufficientFund(requiredFund, paymentAssetId);
 
-	console.log({ listingPrice });
+	useEffect(() => {
+		fetchWiningBid();
+	}, [listingItem, fetchWiningBid]);
 
 	if (!!account && !listingId && !isOwner) return null;
 
@@ -181,17 +182,15 @@ function ListingSection({
 				</ul>
 			)}
 
-			{!!listingPrice && (
-				<div className={bem("price")}>
-					<div className={bem("priceValue")}>
-						{listingPrice} {symbol}
-					</div>
-
-					{usdPrice && (
-						<div className={bem("priceConversion")}>({usdPrice} USD)</div>
-					)}
+			<div className={bem("price")}>
+				<div className={bem("priceValue")}>
+					{listingPrice} {symbol}
 				</div>
-			)}
+
+				{usdPrice && (
+					<div className={bem("priceConversion")}>({usdPrice} USD)</div>
+				)}
+			</div>
 
 			{(() => {
 				if (!account) return <ConnectAction />;
@@ -209,7 +208,8 @@ function ListingSection({
 							/>
 						);
 
-					if (!isSufficientFund) return <TopUpAction type={type} />;
+					if (!isSufficientFund && !!balances)
+						return <TopUpAction type={type} />;
 
 					if (type === "Fixed Price")
 						return (
