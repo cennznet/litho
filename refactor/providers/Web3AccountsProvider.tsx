@@ -27,6 +27,9 @@ export default function Web3AccountsProvider({
 		async function fetchAndSubscribeAccounts() {
 			await web3Enable("Litho");
 			const accounts = await web3Accounts();
+			if (!accounts.length)
+				return alert("Please create an account in the CENNZnet extension.");
+
 			setAccounts(accounts);
 
 			unsubscibre = await web3AccountsSubscribe(setAccounts);

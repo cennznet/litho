@@ -47,37 +47,17 @@ type ProviderProps = {};
 export default function SupportedWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
-	const { browser } = useUserAgent();
 	const api = useCENNZApi();
 	const accounts = useWeb3Accounts();
-	const { web3Enable, web3FromSource } = useDAppModule();
+	const { ensureCENNZExtension } = useDAppModule();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 
 	const connectWallet = useCallback(
 		async (callback) => {
-			if (!web3Enable || !api) return;
+			if (!ensureCENNZExtension || !api) return;
 
-			await web3Enable("Litho");
-			const extension = await web3FromSource("cennznet-extension");
-
-			if (!extension) {
-				const confirmed = confirm(
-					"Please install the CENNZnet extension then refresh the page."
-				);
-
-				if (!confirmed) return;
-
-				window.open(
-					browser.name === "Firefox"
-						? "https://addons.mozilla.org/en-US/firefox/addon/cennznet-browser-extension/"
-						: "https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk",
-					"_blank"
-				);
-
-				return;
-			}
-
+			const extension = await ensureCENNZExtension();
 			const metaUpdated = store.get("EXTENSION_META_UPDATED");
 
 			if (!metaUpdated) {
@@ -91,7 +71,7 @@ export default function SupportedWalletProvider({
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},
-		[web3Enable, web3FromSource, browser, api]
+		[ensureCENNZExtension, api]
 	);
 
 	const disconnectWallet = useCallback(() => {
@@ -111,25 +91,21 @@ export default function SupportedWalletProvider({
 
 	// 1. Restore the wallet from the store if it exists
 	useEffect(() => {
-		if (!web3Enable && !web3FromSource) return;
+		if (!ensureCENNZExtension) return;
 
 		async function restoreWallet() {
 			const storedWallet = store.get("CENNZNET-EXTENSION");
 			if (!storedWallet) return;
-			await web3Enable("Litho");
-			const extension = await web3FromSource(storedWallet.name);
+			const extension = await ensureCENNZExtension();
 			setWallet(extension);
 		}
 
 		restoreWallet();
-	}, [web3Enable, web3FromSource]);
+	}, [ensureCENNZExtension]);
 
 	// 2. Pick the right account once a `wallet` has been set
 	useEffect(() => {
-		if (!wallet || !accounts) return;
-
-		if (!accounts.length)
-			return alert("Please create an account in the CENNZnet extension.");
+		if (!wallet || !accounts || !selectAccount) return;
 
 		const storedAccount = store.get("CENNZNET-ACCOUNT");
 		if (!storedAccount) return selectAccount(accounts[0]);
@@ -140,7 +116,7 @@ export default function SupportedWalletProvider({
 		if (!matchedAccount) return selectAccount(accounts[0]);
 
 		selectAccount(matchedAccount);
-	}, [wallet, web3Enable, accounts, selectAccount]);
+	}, [wallet, accounts, selectAccount]);
 
 	// 3. Fetch `account` balance plus provide a function to re-fetch balances as needed
 	const { assets } = useAssets();
