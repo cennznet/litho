@@ -45,6 +45,7 @@ export default function Modal({
 	return (
 		<ReactModal
 			isOpen={isOpen}
+			closeTimeoutMS={200}
 			portalClassName={bem("container")}
 			overlayClassName={bem("overlay")}
 			className={bem("inner")}

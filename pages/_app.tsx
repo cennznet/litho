@@ -12,6 +12,8 @@ import Modal from "../components/Modal";
 import DeviceContext from "../components/DeviceContext";
 import { SWRConfig } from "swr";
 
+import "@refactor/styles/global.scss";
+
 const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 const Device = dynamic(() => import("../components/DeviceContextProvider"), {
   ssr: false,
