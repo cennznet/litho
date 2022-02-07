@@ -20,6 +20,7 @@ export type NFTListing = {
 	closeBlock?: number;
 	type: NFTListingType;
 	price: number;
+	winningBid?: [string, number];
 	paymentAssetId: number;
 	royalty?: number;
 };

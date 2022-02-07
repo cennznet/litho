@@ -6,10 +6,11 @@ type BidValue = number;
 type BidTuple = [BidOwner, BidValue];
 
 export default function useWinningBid(
-	listingId: number
+	listingId: number,
+	defaultValue = null
 ): [BidTuple, () => Promise<void>] {
 	const api = useCENNZApi();
-	const [winningBid, setWinningBid] = useState<BidTuple>();
+	const [winningBid, setWinningBid] = useState<BidTuple>(defaultValue);
 
 	const fetchWinningBid = useCallback(async () => {
 		if (!api || !listingId) return;

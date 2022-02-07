@@ -41,16 +41,17 @@ export default function ListingCard({
 
 	useEffect(() => {
 		if (!firstInView) return;
-		fetchItem((item) => setLoading(false));
+		fetchItem(() => setLoading(false));
 	}, [firstInView, fetchItem]);
 
-	const { tokenId, metadata, price, paymentAssetId, type } = (item ||
-		{}) as NFTListing & NFTData;
+	const { tokenId, metadata, price, paymentAssetId, type, winningBid } =
+		(item || {}) as NFTListing & NFTData;
 	const { displayAsset } = useAssets();
+	const latestPrice = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
 	const [listingPrice, symbol] = useMemo(() => {
-		if (!displayAsset || !price || !paymentAssetId) return [];
-		return displayAsset(paymentAssetId, price);
-	}, [displayAsset, price, paymentAssetId]);
+		if (!displayAsset || !latestPrice || !paymentAssetId) return [];
+		return displayAsset(paymentAssetId, latestPrice);
+	}, [displayAsset, latestPrice, paymentAssetId]);
 
 	if (!loading && !item) return null;
 

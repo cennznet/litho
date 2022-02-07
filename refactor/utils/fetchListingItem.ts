@@ -35,6 +35,12 @@ export default async function fetchListingItem(
 	const royalty =
 		listing?.royaltiesSchedule?.entitlements?.toJSON()?.[0]?.[1] || null;
 
+	const winningBid = !response.isFixedPrice
+		? ((await api.query.nft.listingWinningBid(listingId)) as any)
+				.unwrapOrDefault()
+				.toJSON()
+		: null;
+
 	return tokenId
 		? {
 				listingId,
@@ -44,6 +50,7 @@ export default async function fetchListingItem(
 				price: price.toJSON(),
 				paymentAssetId: listing.paymentAsset.toJSON(),
 				royalty,
+				winningBid,
 		  }
 		: null;
 }

@@ -119,15 +119,25 @@ function ListingSection({
 	listingItem,
 	onActionComplete,
 }: DOMComponentProps<ListingComponentProps, "div">) {
-	const { type, price, paymentAssetId, closeBlock, listingId, owner, tokenId } =
-		listingItem;
+	const {
+		type,
+		price,
+		paymentAssetId,
+		closeBlock,
+		listingId,
+		owner,
+		tokenId,
+		winningBid,
+	} = listingItem;
 
-	const [winningBid, fetchWiningBid] = useWinningBid(
-		type === "Auction" ? listingId : null
+	const [latestWinningBid, fetchWiningBid] = useWinningBid(
+		type === "Auction" ? listingId : null,
+		winningBid
 	);
-	const requiredFund = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
+	const latestPrice =
+		(latestWinningBid?.[1] || 0) > price ? latestWinningBid?.[1] : price;
 	const { displayAsset } = useAssets();
-	const [listingPrice, symbol] = displayAsset(paymentAssetId, requiredFund);
+	const [listingPrice, symbol] = displayAsset(paymentAssetId, latestPrice);
 
 	const [, displayInCurrency] = useCoinGeckoRate("usd");
 	const usdPrice = displayInCurrency(listingPrice);
@@ -136,7 +146,7 @@ function ListingSection({
 
 	const { account, balances, checkSufficientFund } = useWallet();
 	const isOwner = account?.address === owner;
-	const isSufficientFund = checkSufficientFund(requiredFund, paymentAssetId);
+	const isSufficientFund = checkSufficientFund(latestPrice, paymentAssetId);
 
 	useEffect(() => {
 		fetchWiningBid();
