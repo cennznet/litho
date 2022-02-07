@@ -33,7 +33,8 @@ export function BuyAction({
 		const confirmed = confirm("Are you sure?");
 		if (!confirmed) return;
 		setBusy(true);
-		await buyListing(listingId);
+		const status = await buyListing(listingId);
+		if (status === "cancelled") return setBusy(false);
 		onActionComplete?.("buy");
 	}, [buyListing, listingId, onActionComplete]);
 
@@ -50,11 +51,13 @@ export function BuyAction({
 }
 
 type BidComponentProps = {
+	listingId: NFTListingId;
 	currentBid: number;
 	paymentAssetId: number;
 	onActionComplete?: (action: string) => void;
 };
 export function BidAction({
+	listingId,
 	currentBid,
 	paymentAssetId,
 	onActionComplete,
@@ -67,9 +70,30 @@ export function BidAction({
 	const onCancelClick = useCallback(() => {
 		setShowInput(false);
 	}, []);
-	const { getMinimumStep } = useAssets();
+	const { getMinimumStep, findAsset } = useAssets();
 	const [step] = getMinimumStep?.(paymentAssetId) || [1];
 	const minimumBid = currentBid + step;
+
+	const assetInfo = findAsset(paymentAssetId);
+	const bidListing = useNFTBid();
+	const [busy, setBusy] = useState<boolean>(false);
+	const onFormSubmit = useCallback(
+		async (event) => {
+			event?.preventDefault?.();
+			const data = new FormData(event.target);
+			const confirmed = confirm("Are you sure?");
+			if (!confirmed) return;
+			setBusy(true);
+			const status = await bidListing(
+				listingId,
+				(data.get("bid") as any) * Math.pow(10, assetInfo.decimals)
+			);
+			if (status === "cancelled") return setBusy(false);
+			setShowInput(false);
+			onActionComplete?.("bid");
+		},
+		[bidListing, listingId, assetInfo, onActionComplete]
+	);
 
 	return (
 		<>
@@ -82,12 +106,14 @@ export function BidAction({
 			)}
 
 			{showInput && (
-				<form className={bem("form")}>
+				<form className={bem("form")} onSubmit={onFormSubmit}>
 					<Text variant="headline5" className={bem("formHeadline")}>
 						Enter a bid
 					</Text>
 
 					<AssetInput
+						name="bid"
+						required={true}
 						assetId={paymentAssetId}
 						min={minimumBid}
 						placeholder={`Minimum bid of ${minimumBid}`}
@@ -100,12 +126,13 @@ export function BidAction({
 							className={bem("cancelButton")}
 							variant="hollow"
 							onClick={onCancelClick}
-							showProgress={false}>
+							showProgress={false}
+							disabled={busy}>
 							Cancel
 						</Button>
 
-						<Button className={bem("bidButton")} type="submit">
-							Confirm Bid
+						<Button className={bem("bidButton")} type="submit" disabled={busy}>
+							{busy ? "Processing" : "Confirm Bid"}
 						</Button>
 					</div>
 				</form>
@@ -128,7 +155,8 @@ export function CancelAction({
 		const confirmed = confirm("Are you sure?");
 		if (!confirmed) return;
 		setBusy(true);
-		await cancelListing(listingId);
+		const status = await cancelListing(listingId);
+		if (status === "cancelled") return setBusy(false);
 		onActionComplete?.("cancel");
 	}, [cancelListing, listingId, onActionComplete]);
 

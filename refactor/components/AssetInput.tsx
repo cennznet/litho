@@ -36,7 +36,7 @@ export default function AssetInput({
 
 	const throttledInputAccept = useMemo(
 		() =>
-			throttle((value) => {
+			throttle((value: number) => {
 				setUSDValue(displayInCurrency(value));
 			}, 500),
 		[displayInCurrency]

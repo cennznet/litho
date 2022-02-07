@@ -3,16 +3,16 @@ import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCallback } from "react";
 
-type Callback = (listingId: NFTListingId) => Promise<string>;
+type Callback = (listingId: NFTListingId, amount: number) => Promise<string>;
 
-export default function useNFTCancel(): Callback {
+export default function useNFTBid(): Callback {
 	const api = useCENNZApi();
 	const { account, wallet } = useWallet();
 
 	return useCallback<Callback>(
-		async (listingId) => {
+		async (listingId, amount) => {
 			try {
-				const extrinsic = api.tx.nft.cancelSale(listingId);
+				const extrinsic = api.tx.nft.bid(listingId, amount);
 				return await extrinsic
 					.signAndSend(account.address, {
 						signer: wallet.signer,

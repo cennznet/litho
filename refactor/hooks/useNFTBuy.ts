@@ -19,7 +19,7 @@ export default function useNFTBuy(): Callback {
 					})
 					.then((status) => status.toJSON());
 			} catch (error) {
-				if (error?.message === "Cancelled") return;
+				if (error?.message === "Cancelled") return "cancelled";
 				console.log(error?.message);
 				console.log(`Transaction Error: ${error}`);
 				alert(error?.message);

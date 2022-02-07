@@ -59,6 +59,12 @@ export default function NFTDetail({
 						await fetchAssetBalances();
 					}, api.consts.babe.expectedBlockTime.toNumber());
 
+				case "bid":
+					setTimeout(() => {
+						setItem({ ...item });
+					}, api.consts.babe.expectedBlockTime.toNumber());
+					break;
+
 				default:
 					break;
 			}
@@ -132,6 +138,8 @@ function ListingSection({
 	const { account, checkSufficientFund } = useWallet();
 	const isOwner = account?.address === owner;
 	const isSufficientFund = checkSufficientFund(requiredFund, paymentAssetId);
+
+	console.log({ listingPrice });
 
 	if (!!account && !listingId && !isOwner) return null;
 
@@ -214,6 +222,7 @@ function ListingSection({
 					if (type === "Auction")
 						return (
 							<BidAction
+								listingId={listingId}
 								currentBid={listingPrice}
 								paymentAssetId={paymentAssetId}
 								onActionComplete={onActionComplete}
