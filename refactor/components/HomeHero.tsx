@@ -7,11 +7,11 @@ import Image from "@refactor/components/Image";
 import MarketplacePNG from "@refactor/assets/bitmaps/marketplace.png";
 import MintingPNG from "@refactor/assets/bitmaps/minting.png";
 
-const bem = createBEMHelper(require("./HomeIntro.module.scss"));
+const bem = createBEMHelper(require("./HomeHero.module.scss"));
 
 type ComponentProps = {};
 
-export default function HomeIntro({
+export default function HomeHero({
 	className,
 }: DOMComponentProps<ComponentProps, "div">) {
 	return (

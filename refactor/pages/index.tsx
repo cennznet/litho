@@ -3,7 +3,7 @@ import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import App from "@refactor/components/App";
 import Main from "@refactor/components/Main";
 import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
-import HomeIntro from "@refactor/components/HomeIntro";
+import HomeHero from "@refactor/components/HomeHero";
 import FeaturedGrid from "@refactor/components/FeaturedGrid";
 import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
@@ -55,7 +55,7 @@ export function Home({
 		<App {...appProps}>
 			<Main>
 				<div className={bem("content")}>
-					<HomeIntro className={bem("homeIntro")} />
+					<HomeHero className={bem("homeIntro")} />
 					{!!featuredListingIds.length && (
 						<FeaturedGrid
 							listingIds={featuredListingIds}
