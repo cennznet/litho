@@ -41,7 +41,7 @@ export default function ListingCard({
 
 	useEffect(() => {
 		if (!firstInView) return;
-		fetchItem((item) => setLoading(!item));
+		fetchItem((item) => setLoading(false));
 	}, [firstInView, fetchItem]);
 
 	const { tokenId, metadata, price, paymentAssetId, type } = (item ||
