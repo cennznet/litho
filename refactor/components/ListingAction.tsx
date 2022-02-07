@@ -96,6 +96,7 @@ export function BidAction({
 
 	useEffect(() => {
 		setShowInput(false);
+		setBusy(false);
 	}, [currentBid]);
 
 	return (
@@ -122,6 +123,7 @@ export function BidAction({
 						placeholder={`Minimum bid of ${minimumBid}`}
 						className={bem("formInput")}
 						focusOnInit={true}
+						disabled={busy}
 					/>
 
 					<div className={bem("formActions")}>

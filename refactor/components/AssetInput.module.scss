@@ -28,3 +28,10 @@
 .usdValue {
 	color: figma-color("Litho Black 60%");
 }
+
+.input {
+	@include types.headline(h6);
+	&:disabled {
+		cursor: not-allowed;
+	}
+}
