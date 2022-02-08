@@ -1,6 +1,6 @@
-import { DOMComponentProps, NFTListingTuple } from "@refactor/types";
+import { DOMComponentProps, NFTListingTuple, NFTId } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import ListingCard from "@refactor/components/ListingCard";
+import ListingCard, { NFTCard } from "@refactor/components/ListingCard";
 
 const bem = createBEMHelper(require("./ListingGrid.module.scss"));
 
@@ -24,6 +24,33 @@ export default function ListingGrid({
 						<ListingCard
 							listingId={id}
 							key={Array.isArray(id) ? id[1] : id || index}
+							className={bem("item")}
+						/>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
+
+type NFTGridProps = {
+	tokenIds: Array<NFTId>;
+};
+export function NFTGrid({
+	className,
+	children,
+	tokenIds,
+	...props
+}: DOMComponentProps<NFTGridProps, "div">) {
+	return (
+		<div className={bem("root", className)} {...props}>
+			{!!children && <div className={bem("header")}>{children}</div>}
+			<div className={bem("list")}>
+				{tokenIds.map((id, index) => {
+					return (
+						<NFTCard
+							tokenId={id}
+							key={id ? id.join("/") : index}
 							className={bem("item")}
 						/>
 					);

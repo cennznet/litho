@@ -1,0 +1,102 @@
+import { EnhancedTokenId } from "@cennznet/types/interfaces/nft/enhanced-token-id";
+import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { DOMComponentProps, NFTId, SortOrder } from "@refactor/types";
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+import { useEffect, useState, useCallback } from "react";
+import { NFTGrid } from "@refactor/components/ListingGrid";
+import Text from "@refactor/components/Text";
+import Dropdown from "@refactor/components/Dropdown";
+
+const bem = createBEMHelper(require("./OwnerGrid.module.scss"));
+
+type ComponentProps = {};
+
+const DEFAULT_STATE = new Array(4).fill(null);
+
+export default function OwnerGrid({
+	className,
+	...props
+}: DOMComponentProps<ComponentProps, "div">) {
+	const { account } = useWallet();
+	const api = useCENNZApi();
+	const [tokenIds, setTokenIds] = useState<Array<NFTId>>([...DEFAULT_STATE]);
+	const [sortedTokenIds, setSortedTokenIds] = useState<Array<NFTId>>([
+		...DEFAULT_STATE,
+	]);
+	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
+
+	useEffect(() => {
+		setTokenIds([...DEFAULT_STATE]);
+	}, [account?.address]);
+
+	useEffect(() => {
+		if (!api || !account?.address) return;
+
+		const address = account.address;
+
+		const fetchAllTokens = async function () {
+			const tokenIds = await api.derive.nft
+				.tokensOf(address)
+				.then((tokenIds) => {
+					if (!tokenIds && tokenIds instanceof Error) return null;
+					return (tokenIds as EnhancedTokenId[])
+						?.map?.((token) => {
+							const json = token?.toJSON?.();
+							if (!json) return;
+
+							return [
+								json.collectionId,
+								json.seriesId,
+								json.serialNumber,
+							] as NFTId;
+						})
+						.filter?.(Boolean);
+				});
+			setTokenIds(tokenIds);
+		};
+
+		fetchAllTokens();
+	}, [api, account?.address]);
+
+	useEffect(() => {
+		if (!tokenIds?.length || !sortOrder) return;
+		if (tokenIds[0] === null) return setSortedTokenIds([...tokenIds]);
+
+		const sortedListingIds = [
+			...tokenIds.sort((a: NFTId, b: NFTId) => {
+				const left: number = a[0] + a[1] + a[2];
+				const right: number = b[0] + b[1] + b[2];
+				return sortOrder === "ASC" ? left - right : right - left;
+			}),
+		];
+
+		setSortedTokenIds(sortedListingIds as Array<NFTId>);
+	}, [tokenIds, sortOrder]);
+
+	const onDropdownChange = useCallback((event) => {
+		setSortOrder(event.target.value);
+	}, []);
+
+	return (
+		<div className={bem("root", className)} {...props}>
+			<NFTGrid tokenIds={sortedTokenIds}>
+				<div className={bem("header")}>
+					<Text variant="headline3">My NFTs</Text>
+
+					{!!tokenIds?.length && tokenIds[0] !== null && (
+						<Dropdown
+							className={bem("sortDropdown")}
+							defaultLabel="Newest First"
+							defaultValue={sortOrder}
+							value={sortOrder}
+							onChange={onDropdownChange}>
+							<option value="DESC">Newest First</option>
+							<option value="ASC">Oldest First</option>
+						</Dropdown>
+					)}
+				</div>
+			</NFTGrid>
+		</div>
+	);
+}

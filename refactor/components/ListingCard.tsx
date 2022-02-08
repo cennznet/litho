@@ -4,6 +4,7 @@ import {
 	NFTListing,
 	NFTListingTuple,
 	NFTData,
+	NFTId,
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import NFTRenderer from "@refactor/components/NFTRenderer";
@@ -14,7 +15,7 @@ import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import Link from "@refactor/components/Link";
 import { useInView } from "react-hook-inview";
-import useNFTListing from "@refactor/hooks/useNFTListing";
+import useNFTListing, { useNFTData } from "@refactor/hooks/useNFTListing";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -123,6 +124,69 @@ export default function ListingCard({
 					)}
 
 					{!collectionId && !!metadata?.properties?.quantity && (
+						<div className={bem("listingQuantity")}>
+							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
+						</div>
+					)}
+				</div>
+			</div>
+		</Link>
+	);
+}
+
+type NFTCardProps = {
+	tokenId: NFTId;
+};
+export function NFTCard({
+	className,
+	tokenId,
+	...props
+}: DOMComponentProps<NFTCardProps, "a">) {
+	const [ref, inView] = useInView({
+		threshold: 0,
+	});
+	const [loading, setLoading] = useState<boolean>(true);
+	const [item, fetchItem] = useNFTData(tokenId);
+
+	const firstInView = inView && !item?.metadata;
+
+	useEffect(() => {
+		if (!firstInView) return;
+		fetchItem(() => setLoading(false));
+	}, [firstInView, fetchItem]);
+
+	const { metadata } = (item || {}) as NFTListing & NFTData;
+
+	return (
+		<Link
+			className={bem("root", className)}
+			{...props}
+			href={tokenId ? `/nft/${tokenId.join("/")}` : null}
+			title={metadata?.name}>
+			<div className={bem("inner")} ref={ref}>
+				<div className={bem("media")}>
+					{!!metadata && (
+						<NFTRenderer
+							className={bem("renderer")}
+							url={metadata.image}
+							extension={metadata.properties.extension}
+							name={metadata.image}
+						/>
+					)}
+				</div>
+				<div className={bem("details", { loading })}>
+					{!!metadata && (
+						<Text
+							variant="headline5"
+							className={bem("name")}
+							title={metadata.name}>
+							{metadata.name}
+						</Text>
+					)}
+				</div>
+				<div className={bem("state", { loading })}>
+					<div className={bem("listingType")}></div>
+					{!!tokenId && !!metadata?.properties?.quantity && (
 						<div className={bem("listingQuantity")}>
 							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
 						</div>

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { NFTData, NFTListing, NFTListingId } from "@refactor/types";
+import { NFTData, NFTListing, NFTListingId, NFTId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import fetchNFTData from "@refactor/utils/fetchNFTData";
@@ -27,4 +27,25 @@ export default function useNFTListing(
 	);
 
 	return [item, fetchListing];
+}
+
+export function useNFTData(
+	tokenId: NFTId,
+	defaultItem: NFTData = null
+): [NFTData, (callback?: (item: NFTData) => void) => Promise<void>] {
+	const api = useCENNZApi();
+	const [item, setItem] = useState<ListingItem>(defaultItem);
+
+	const fetchData = useCallback(
+		async (callback) => {
+			if (!api || !tokenId) return;
+			const data = await fetchNFTData(api, tokenId);
+
+			callback?.(data);
+			setItem(data);
+		},
+		[api, tokenId]
+	);
+
+	return [item, fetchData];
 }
