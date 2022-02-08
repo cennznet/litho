@@ -3,7 +3,7 @@ import { DOMComponentProps } from "@refactor/types";
 import NextLink, { LinkProps as NextLinkProps } from "next/link";
 import { useRouter } from "next/router";
 
-type ComponentProps = {
+type ComponentProps = NextLinkProps & {
 	activeClassName?: string;
 };
 /* eslint-disable react/jsx-no-target-blank */
@@ -13,7 +13,7 @@ export default function Link({
 	href,
 	children,
 	...props
-}: DOMComponentProps<ComponentProps & NextLinkProps, "a">) {
+}: DOMComponentProps<ComponentProps, "a">) {
 	if (!href) href = "#";
 	const internal = /^\/(?!\/)/.test(href) || (href && href.indexOf("#") === 0);
 	const { asPath = "/" } = useRouter() || {};

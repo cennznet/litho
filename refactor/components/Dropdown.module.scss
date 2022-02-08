@@ -28,7 +28,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	background-color: figma-color("Litho Cream");
+	background-color: white;
 	transition: color 0.2s, background-color 0.2s, border-color 0.2s;
 	@include types.button();
 	line-height: 1;

@@ -1,0 +1,103 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.overlay {
+	display: flex;
+	padding-top: 4em;
+	padding-bottom: 4em;
+}
+
+.content {
+	width: 80%;
+	margin: auto;
+}
+
+.inner {
+	background-color: figma-color("Litho Cream");
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+	border: 1px solid figma-color("Litho Black");
+}
+
+.header {
+	border-bottom: 1px solid figma-color("Litho Black");
+	padding: 1.25rem;
+}
+
+.body {
+	padding: 2.5rem;
+	position: relative;
+
+	&:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url("~@refactor/assets/bitmaps/background-home-2.png") top left;
+		opacity: 0.2;
+		content: "";
+	}
+}
+
+.form {
+	max-width: 630px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.row {
+	display: flex;
+	margin-bottom: 1.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.listingType {
+	display: block;
+	flex: 1;
+	position: relative;
+	text-align: center;
+
+	input[type="radio"] {
+		position: absolute;
+		opacity: 0;
+
+		&:checked + label {
+			background-color: figma-color("Litho Blue");
+			color: white;
+			path {
+				fill: white;
+			}
+		}
+	}
+
+	label {
+		@include types.button();
+		text-transform: uppercase;
+		cursor: pointer;
+		padding: 2em 0;
+		display: block;
+		border: 1px solid figma-color("Litho Blue");
+		background-color: figma-color("Litho Cream");
+		transition: color 0.2s, fill 0.2s;
+
+		@include on-hover {
+			color: figma-color("Litho Blue");
+			path {
+				fill: figma-color("Litho Blue");
+			}
+		}
+	}
+
+	i {
+		display: block;
+		width: 36px;
+		height: 36px;
+		margin: 0 auto 0.5em;
+	}
+}
+
+.spacer {
+	width: 1em;
+}

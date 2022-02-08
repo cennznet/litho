@@ -16,6 +16,7 @@ import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import Text from "@refactor/components/Text";
 import AssetInput from "@refactor/components/AssetInput";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
+import { useSellFlow } from "@refactor/providers/SellFlowProvider";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -183,12 +184,17 @@ type SellComponentProps = {
 export function SellAction({
 	tokenId,
 }: DOMComponentProps<SellComponentProps, "div">) {
+	const { startListing } = useSellFlow();
+
+	const onStartClick = useCallback(async () => {
+		await startListing(tokenId);
+	}, [startListing, tokenId]);
+
 	return (
 		<div className={bem("sellAction")}>
-			<Link
-				href={`/sell?collectionId=${tokenId[0]}&seriesId=${tokenId[1]}&serialNumber=${tokenId[2]}`}>
-				<Button className={bem("actionButton")}>Start Listing</Button>
-			</Link>
+			<Button className={bem("actionButton")} onClick={onStartClick}>
+				Start Listing
+			</Button>
 		</div>
 	);
 }
