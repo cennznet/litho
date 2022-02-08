@@ -7,18 +7,28 @@ import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
 const bem = createBEMHelper(require("./Modal.module.scss"));
 
-type ComponentProps = {};
+type ComponentProps = {
+	innerClassName?: string;
+} & Pick<
+	ModalProps,
+	| "onRequestClose"
+	| "isOpen"
+	| "shouldCloseOnOverlayClick"
+	| "shouldCloseOnEsc"
+	| "overlayClassName"
+>;
 
 export default function Modal({
 	className,
+	innerClassName,
+	overlayClassName,
 	children,
 	onRequestClose,
 	isOpen,
+	shouldCloseOnOverlayClick = true,
+	shouldCloseOnEsc = true,
 	...props
-}: DOMComponentProps<
-	ComponentProps & Pick<ModalProps, "onRequestClose" | "isOpen">,
-	"div"
->) {
+}: DOMComponentProps<ComponentProps, "div">) {
 	const onCloseClick = useCallback(
 		(event) => onRequestClose && onRequestClose(event),
 		[onRequestClose]
@@ -32,7 +42,7 @@ export default function Modal({
 	const [contentRef, setContentRef] = useState<HTMLDivElement>();
 	// add a workaround to close modal when click on empty space around `content`
 	useEffect(() => {
-		if (!contentRef) return;
+		if (!contentRef || !shouldCloseOnOverlayClick) return;
 
 		const onContentClick = (event: Event) => {
 			if (event.composedPath()[0] !== contentRef) return;
@@ -40,20 +50,20 @@ export default function Modal({
 		};
 		contentRef.addEventListener("click", onContentClick);
 		return () => contentRef.removeEventListener("click", onContentClick);
-	}, [contentRef, onCloseClick]);
+	}, [contentRef, onCloseClick, shouldCloseOnOverlayClick]);
 
 	return (
 		<ReactModal
 			isOpen={isOpen}
 			closeTimeoutMS={200}
 			portalClassName={bem("container")}
-			overlayClassName={bem("overlay")}
-			className={bem("inner")}
+			overlayClassName={bem("overlay", overlayClassName)}
+			className={bem("content", className)}
 			onRequestClose={onRequestClose}
-			shouldCloseOnEsc={true}
-			shouldCloseOnOverlayClick={true}
+			shouldCloseOnEsc={shouldCloseOnEsc}
+			shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
 			contentRef={setContentRef}>
-			<div className={bem("content", className)} {...props}>
+			<div className={bem("inner", innerClassName)}>
 				<XSVG className={bem("close")} onClick={onCloseClick} />
 				{children}
 			</div>
