@@ -137,16 +137,20 @@ function ListingSection({
 	const latestPrice =
 		(latestWinningBid?.[1] || 0) > price ? latestWinningBid?.[1] : price;
 	const { displayAsset } = useAssets();
-	const [listingPrice, symbol] = displayAsset(paymentAssetId, latestPrice);
+	const [listingPrice, symbol] = paymentAssetId
+		? displayAsset(paymentAssetId, latestPrice)
+		: [];
 
 	const [, displayInCurrency] = useCoinGeckoRate("usd");
-	const usdPrice = displayInCurrency(listingPrice);
+	const usdPrice = listingPrice ? displayInCurrency(listingPrice) : null;
 
 	const endTime = useEndTime(closeBlock);
 
 	const { account, balances, checkSufficientFund } = useWallet();
 	const isOwner = account?.address === owner;
-	const isSufficientFund = checkSufficientFund(latestPrice, paymentAssetId);
+	const isSufficientFund = paymentAssetId
+		? checkSufficientFund(latestPrice, paymentAssetId)
+		: false;
 
 	useEffect(() => {
 		fetchWiningBid();
@@ -192,15 +196,17 @@ function ListingSection({
 				</ul>
 			)}
 
-			<div className={bem("price")}>
-				<div className={bem("priceValue")}>
-					{listingPrice} {symbol}
-				</div>
+			{!!listingPrice && (
+				<div className={bem("price")}>
+					<div className={bem("priceValue")}>
+						{listingPrice} {symbol}
+					</div>
 
-				{usdPrice && (
-					<div className={bem("priceConversion")}>({usdPrice} USD)</div>
-				)}
-			</div>
+					{usdPrice && (
+						<div className={bem("priceConversion")}>({usdPrice} USD)</div>
+					)}
+				</div>
+			)}
 
 			{(() => {
 				if (!account) return <ConnectAction />;
