@@ -4,14 +4,13 @@ import {
 	DOMComponentProps,
 	NFTCollectionId,
 } from "@refactor/types";
-import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
-import App from "@refactor/components/App";
-import Main from "@refactor/components/Main";
+import fetchAppProps from "@refactor/utils/fetchAppProps";
 import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import Breadcrumb from "@refactor/components/Breadcrumb";
 import Link from "@refactor/components/Link";
+import Main from "@refactor/components/Main";
 
 export async function getStaticPaths() {
 	const api = await Api.create({
@@ -45,29 +44,25 @@ export async function getStaticProps({ params }) {
 }
 
 type PageProps = {
-	appProps: AppProps;
 	collectionId: NFTCollectionId;
 	defaultListingIds: Array<NFTListingTuple>;
 };
 
 export function Collection({
-	appProps,
 	collectionId,
 	defaultListingIds,
 }: DOMComponentProps<PageProps, "div">) {
 	return (
-		<App {...appProps}>
-			<Main>
-				<Breadcrumb>
-					<Link href="/marketplace">Marketplace</Link>
-					<span>{`Collection #${collectionId}`}</span>
-				</Breadcrumb>
-				<CollectionGrid
-					headline={`Collection #${collectionId}`}
-					collectionId={collectionId}
-					defaultListingIds={defaultListingIds}
-				/>
-			</Main>
-		</App>
+		<Main>
+			<Breadcrumb>
+				<Link href="/marketplace">Marketplace</Link>
+				<span>{`Collection #${collectionId}`}</span>
+			</Breadcrumb>
+			<CollectionGrid
+				headline={`Collection #${collectionId}`}
+				collectionId={collectionId}
+				defaultListingIds={defaultListingIds}
+			/>
+		</Main>
 	);
 }

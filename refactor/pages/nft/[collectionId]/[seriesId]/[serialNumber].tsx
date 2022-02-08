@@ -1,9 +1,7 @@
 import { Api } from "@cennznet/api";
 import { DOMComponentProps, NFTData, NFTId, NFTListing } from "@refactor/types";
 import { fetchAllOpenListingIds } from "@refactor/utils/fetchLatestOpenListingIds";
-import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
-import App from "@refactor/components/App";
-import Main from "@refactor/components/Main";
+import fetchAppProps from "@refactor/utils/fetchAppProps";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import fetchNFTData from "@refactor/utils/fetchNFTData";
 import findListingIdByTokenId from "@refactor/utils/findListingIdByTokenId";
@@ -12,6 +10,7 @@ import Link from "@refactor/components/Link";
 import NFTDetail from "@refactor/components/NFTDetail";
 import { indexAllOpenListingItems } from "@refactor/utils/findListingIdByTokenId";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
+import Main from "@refactor/components/Main";
 
 const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
@@ -84,38 +83,34 @@ export async function getStaticProps({ params }) {
 }
 
 type PageProps = {
-	appProps: AppProps;
 	listingItem: NFTData & Partial<NFTListing>;
 };
 
 export function NFTSingle({
-	appProps,
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
 	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
 
 	return (
-		<App {...appProps}>
-			<Main>
-				<div className={bem("content")}>
-					<Breadcrumb>
-						<Link href="/marketplace">Marketplace</Link>
-						<Link href={`/collection/${tokenId[0]}`}>
-							Collection #{tokenId[0]}
-						</Link>
-						<span>{metadata.name}</span>
-					</Breadcrumb>
+		<Main>
+			<div className={bem("content")}>
+				<Breadcrumb>
+					<Link href="/marketplace">Marketplace</Link>
+					<Link href={`/collection/${tokenId[0]}`}>
+						Collection #{tokenId[0]}
+					</Link>
+					<span>{metadata.name}</span>
+				</Breadcrumb>
 
-					<NFTDetail listingItem={listingItem} className={bem("detail")} />
+				<NFTDetail listingItem={listingItem} className={bem("detail")} />
 
-					<nav className={bem("externalLinks")}>
-						{!!imageIPFSUrl && <Link href={imageIPFSUrl}>View on IPFS</Link>}
-						{!!metadataIPFSUrl && (
-							<Link href={metadataIPFSUrl}>Metadata IPFS</Link>
-						)}
-					</nav>
-				</div>
-			</Main>
-		</App>
+				<nav className={bem("externalLinks")}>
+					{!!imageIPFSUrl && <Link href={imageIPFSUrl}>View on IPFS</Link>}
+					{!!metadataIPFSUrl && (
+						<Link href={metadataIPFSUrl}>Metadata IPFS</Link>
+					)}
+				</nav>
+			</div>
+		</Main>
 	);
 }

@@ -1,11 +1,10 @@
 import { Api } from "@cennznet/api";
 import { DOMComponentProps } from "@refactor/types";
-import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
-import App from "@refactor/components/App";
-import Main from "@refactor/components/Main";
+import fetchAppProps from "@refactor/utils/fetchAppProps";
 import ProfileHero from "@refactor/components/ProfileHero";
 import OwnerGrid from "@refactor/components/OwnerGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
+import Main from "@refactor/components/Main";
 
 const bem = createBEMHelper(require("./me.module.scss"));
 
@@ -21,16 +20,13 @@ export async function getStaticProps() {
 	};
 }
 
-type PageProps = {
-	appProps: AppProps;
-};
-export function MyProfile({ appProps }: DOMComponentProps<PageProps, "div">) {
+type PageProps = {};
+
+export function MyProfile({}: DOMComponentProps<PageProps, "div">) {
 	return (
-		<App {...appProps}>
-			<Main>
-				<ProfileHero className={bem("hero")} />
-				<OwnerGrid className={bem("grid")} />
-			</Main>
-		</App>
+		<Main>
+			<ProfileHero className={bem("hero")} />
+			<OwnerGrid className={bem("grid")} />
+		</Main>
 	);
 }

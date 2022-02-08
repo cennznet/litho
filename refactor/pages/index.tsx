@@ -1,14 +1,13 @@
 import { Api } from "@cennznet/api";
 import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
-import App from "@refactor/components/App";
-import Main from "@refactor/components/Main";
-import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
+import fetchAppProps from "@refactor/utils/fetchAppProps";
 import HomeHero from "@refactor/components/HomeHero";
 import FeaturedGrid from "@refactor/components/FeaturedGrid";
 import fetchOpenListingIds from "@refactor/utils/fetchOpenListingIds";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import LatestGrid from "@refactor/components/LatestGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
+import Main from "@refactor/components/Main";
 
 const bem = createBEMHelper(require("./index.module.scss"));
 
@@ -43,31 +42,27 @@ export async function getStaticProps() {
 type PageProps = {
 	featuredListingIds: Array<number>;
 	latestListingIds: Array<NFTListingTuple>;
-	appProps: AppProps;
 };
 
 export function Home({
-	appProps,
 	featuredListingIds,
 	latestListingIds,
 }: DOMComponentProps<PageProps, "div">) {
 	return (
-		<App {...appProps}>
-			<Main>
-				<div className={bem("content")}>
-					<HomeHero className={bem("homeIntro")} />
-					{!!featuredListingIds.length && (
-						<FeaturedGrid
-							listingIds={featuredListingIds}
-							className={bem("featuredGrid")}
-						/>
-					)}
-					<LatestGrid
-						defaultListingIds={latestListingIds}
-						className={bem("lastestGrid")}
+		<Main>
+			<div className={bem("content")}>
+				<HomeHero className={bem("homeIntro")} />
+				{!!featuredListingIds.length && (
+					<FeaturedGrid
+						listingIds={featuredListingIds}
+						className={bem("featuredGrid")}
 					/>
-				</div>
-			</Main>
-		</App>
+				)}
+				<LatestGrid
+					defaultListingIds={latestListingIds}
+					className={bem("lastestGrid")}
+				/>
+			</div>
+		</Main>
 	);
 }

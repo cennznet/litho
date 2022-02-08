@@ -13,6 +13,7 @@ import DeviceContext from "../components/DeviceContext";
 import { SWRConfig } from "swr";
 
 import "@refactor/styles/global.scss";
+import App from "@refactor/components/App";
 
 const Web3 = dynamic(() => import("../components/Web3"), { ssr: false });
 const Device = dynamic(() => import("../components/DeviceContextProvider"), {
@@ -105,7 +106,10 @@ const CreateButton: React.FC<{ setShowViewOnDesktop: (val: boolean) => void }> =
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const [showViewOnDesktop, setShowViewOnDesktop] = React.useState(false);
   // short-circute to use the new system
-  if(pageProps.refactored) return <Component {...pageProps}/>
+  if(pageProps.refactored) {
+    const {appProps, ...props} = pageProps;
+    return <App {...appProps}><Component {...props}/></App>;
+  }
   return (
     <SWRConfig
       value={{

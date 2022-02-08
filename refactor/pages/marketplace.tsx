@@ -1,10 +1,9 @@
 import { Api } from "@cennznet/api";
 import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
-import fetchAppProps, { AppProps } from "@refactor/utils/fetchAppProps";
-import App from "@refactor/components/App";
-import Main from "@refactor/components/Main";
+import fetchAppProps from "@refactor/utils/fetchAppProps";
 import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
+import Main from "@refactor/components/Main";
 
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 
@@ -24,24 +23,20 @@ export async function getStaticProps() {
 }
 
 type PageProps = {
-	appProps: AppProps;
 	defaultListingIds: Array<NFTListingTuple>;
 };
 
 export function Marketplace({
-	appProps,
 	defaultListingIds,
 }: DOMComponentProps<PageProps, "div">) {
 	return (
-		<App {...appProps}>
-			<Main>
-				<div className={bem("content")}>
-					<CollectionGrid
-						headline="Marketplace Collections"
-						defaultListingIds={defaultListingIds}
-					/>
-				</div>
-			</Main>
-		</App>
+		<Main>
+			<div className={bem("content")}>
+				<CollectionGrid
+					headline="Marketplace Collections"
+					defaultListingIds={defaultListingIds}
+				/>
+			</div>
+		</Main>
 	);
 }
