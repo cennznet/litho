@@ -211,7 +211,7 @@ export function ConnectAction({}: DOMComponentProps<
 				className={bem("actionButton")}
 				disabled={busy}
 				onClick={onConnectClick}>
-				Connect Wallet
+				{busy ? "Connecting" : "Connect Wallet"}
 			</Button>
 		</div>
 	);

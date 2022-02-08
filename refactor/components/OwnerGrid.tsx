@@ -7,6 +7,8 @@ import { useEffect, useState, useCallback } from "react";
 import { NFTGrid } from "@refactor/components/ListingGrid";
 import Text from "@refactor/components/Text";
 import Dropdown from "@refactor/components/Dropdown";
+import Button from "@refactor/components/Button";
+import Link from "@refactor/components/Link";
 
 const bem = createBEMHelper(require("./OwnerGrid.module.scss"));
 
@@ -18,7 +20,7 @@ export default function OwnerGrid({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { account } = useWallet();
+	const { account, connectWallet } = useWallet();
 	const api = useCENNZApi();
 	const [tokenIds, setTokenIds] = useState<Array<NFTId>>([...DEFAULT_STATE]);
 	const [sortedTokenIds, setSortedTokenIds] = useState<Array<NFTId>>([
@@ -60,7 +62,7 @@ export default function OwnerGrid({
 	}, [api, account?.address]);
 
 	useEffect(() => {
-		if (!tokenIds?.length || !sortOrder) return;
+		if (!tokenIds?.length) return setSortedTokenIds([]);
 		if (tokenIds[0] === null) return setSortedTokenIds([...tokenIds]);
 
 		const sortedListingIds = [
@@ -78,25 +80,55 @@ export default function OwnerGrid({
 		setSortOrder(event.target.value);
 	}, []);
 
+	const [busy, setBusy] = useState<boolean>(false);
+	const onConnectClick = useCallback(() => {
+		setBusy(true);
+		connectWallet(() => setBusy(false));
+	}, [connectWallet]);
+
 	return (
 		<div className={bem("root", className)} {...props}>
-			<NFTGrid tokenIds={sortedTokenIds}>
-				<div className={bem("header")}>
-					<Text variant="headline3">My NFTs</Text>
+			{!!account && (
+				<NFTGrid tokenIds={sortedTokenIds}>
+					<div className={bem("header")}>
+						<Text variant="headline3">My NFTs</Text>
 
-					{!!tokenIds?.length && tokenIds[0] !== null && (
-						<Dropdown
-							className={bem("sortDropdown")}
-							defaultLabel="Newest First"
-							defaultValue={sortOrder}
-							value={sortOrder}
-							onChange={onDropdownChange}>
-							<option value="DESC">Newest First</option>
-							<option value="ASC">Oldest First</option>
-						</Dropdown>
+						{!!tokenIds?.length && tokenIds[0] !== null && (
+							<Dropdown
+								className={bem("sortDropdown")}
+								defaultLabel="Newest First"
+								defaultValue={sortOrder}
+								value={sortOrder}
+								onChange={onDropdownChange}>
+								<option value="DESC">Newest First</option>
+								<option value="ASC">Oldest First</option>
+							</Dropdown>
+						)}
+					</div>
+
+					{!tokenIds?.length && (
+						<div className={bem("message")}>
+							<Text variant="headline6" className={bem("headline")}>
+								You don't have any NFTs yet.
+							</Text>
+							<Link href="/create">
+								<Button className={bem("button")}>Start Minting</Button>
+							</Link>
+						</div>
 					)}
+				</NFTGrid>
+			)}
+
+			{!account && (
+				<div className={bem("message")}>
+					<Button
+						className={bem("button")}
+						disabled={busy}
+						onClick={onConnectClick}>
+						{busy ? "Connecting" : "Connect Wallet"}
+					</Button>
 				</div>
-			</NFTGrid>
+			)}
 		</div>
 	);
 }
