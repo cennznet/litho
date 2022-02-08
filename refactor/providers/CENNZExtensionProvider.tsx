@@ -2,7 +2,6 @@ import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
 	createContext,
 	PropsWithChildren,
-	useCallback,
 	useContext,
 	useEffect,
 	useState,
@@ -10,18 +9,20 @@ import {
 import type * as Extension from "@polkadot/extension-dapp";
 import { useUserAgent } from "@refactor/providers/UserAgentProvider";
 
-type ModuleContext = typeof Extension & {
-	ensureCENNZExtension?: () => Promise<InjectedExtension>;
+type ExtensionContext = typeof Extension & {
+	getExtension?: () => Promise<InjectedExtension>;
 };
-const DAppModuleContext = createContext<ModuleContext>({} as ModuleContext);
+const CENNZExtensionContext = createContext<ExtensionContext>(
+	{} as ExtensionContext
+);
 
 type ProviderProps = {};
 
-export default function DAppModuleProvider({
+export default function CENNZExtensionProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
-	const [extension, setExtension] = useState<ModuleContext>(
-		{} as ModuleContext
+	const [extension, setExtension] = useState<ExtensionContext>(
+		{} as ExtensionContext
 	);
 
 	const { browser } = useUserAgent();
@@ -30,15 +31,15 @@ export default function DAppModuleProvider({
 		import("@polkadot/extension-dapp").then((module) => {
 			const { web3Enable, web3FromSource } = module;
 
-			const ensureCENNZExtension = async function () {
+			const getExtension = async function () {
 				await web3Enable("Litho");
 				const extension = await web3FromSource("cennznet-extension").catch(
-					(error) => null
+					() => null
 				);
 
 				if (!extension) {
 					const confirmed = confirm(
-						"Please install the CENNZnet extension then refresh the page."
+						"Please install the CENNZnet extension and create at least one account."
 					);
 
 					if (!confirmed) return;
@@ -56,17 +57,17 @@ export default function DAppModuleProvider({
 				return extension;
 			};
 
-			setExtension({ ...module, ensureCENNZExtension });
+			setExtension({ ...module, getExtension });
 		});
 	}, [browser]);
 
 	return (
-		<DAppModuleContext.Provider value={extension}>
+		<CENNZExtensionContext.Provider value={extension}>
 			{children}
-		</DAppModuleContext.Provider>
+		</CENNZExtensionContext.Provider>
 	);
 }
 
-export function useDAppModule(): ModuleContext {
-	return useContext(DAppModuleContext);
+export function useCENNZExtension(): ExtensionContext {
+	return useContext(CENNZExtensionContext);
 }

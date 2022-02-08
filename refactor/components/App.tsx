@@ -4,7 +4,7 @@ import Head from "next/head";
 import CENNZApiProvider from "@refactor/providers/CENNZApiProvider";
 import SupportedAssetsProvider from "@refactor/providers/SupportedAssetsProvider";
 import SupportedWalletProvider from "@refactor/providers/SupportedWalletProvider";
-import DAppModuleProvider from "@refactor/providers/DAppModuleProvider";
+import CENNZExtensionProvider from "@refactor/providers/CENNZExtensionProvider";
 import UserAgentProvider from "@refactor/providers/UserAgentProvider";
 import Web3AccountsProvider from "@refactor/providers/Web3AccountsProvider";
 import { AppProps } from "@refactor/utils/fetchAppProps";
@@ -19,7 +19,7 @@ export default function App({
 }: PropsWithChildren<ComponentProps>) {
 	return (
 		<UserAgentProvider>
-			<DAppModuleProvider>
+			<CENNZExtensionProvider>
 				<Web3AccountsProvider>
 					<CENNZApiProvider
 						endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
@@ -38,7 +38,7 @@ export default function App({
 						</SupportedAssetsProvider>
 					</CENNZApiProvider>
 				</Web3AccountsProvider>
-			</DAppModuleProvider>
+			</CENNZExtensionProvider>
 		</UserAgentProvider>
 	);
 }

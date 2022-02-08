@@ -11,8 +11,7 @@ import {
 	useState,
 } from "react";
 import store from "store";
-import { useDAppModule } from "@refactor/providers/DAppModuleProvider";
-import { useUserAgent } from "@refactor/providers/UserAgentProvider";
+import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
@@ -49,15 +48,15 @@ export default function SupportedWalletProvider({
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
 	const accounts = useWeb3Accounts();
-	const { ensureCENNZExtension } = useDAppModule();
+	const { getExtension } = useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 
 	const connectWallet = useCallback(
 		async (callback) => {
-			if (!ensureCENNZExtension || !api) return;
+			if (!getExtension || !api) return;
 
-			const extension = await ensureCENNZExtension();
+			const extension = await getExtension();
 			const metaUpdated = store.get("EXTENSION_META_UPDATED");
 
 			if (!metaUpdated) {
@@ -71,7 +70,7 @@ export default function SupportedWalletProvider({
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},
-		[ensureCENNZExtension, api]
+		[getExtension, api]
 	);
 
 	const disconnectWallet = useCallback(() => {
@@ -91,17 +90,17 @@ export default function SupportedWalletProvider({
 
 	// 1. Restore the wallet from the store if it exists
 	useEffect(() => {
-		if (!ensureCENNZExtension) return;
+		if (!getExtension) return;
 
 		async function restoreWallet() {
 			const storedWallet = store.get("CENNZNET-EXTENSION");
 			if (!storedWallet) return;
-			const extension = await ensureCENNZExtension();
+			const extension = await getExtension();
 			setWallet(extension);
 		}
 
 		restoreWallet();
-	}, [ensureCENNZExtension]);
+	}, [getExtension]);
 
 	// 2. Pick the right account once a `wallet` has been set
 	useEffect(() => {

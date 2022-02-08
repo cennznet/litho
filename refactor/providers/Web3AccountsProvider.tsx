@@ -6,7 +6,7 @@ import {
 	useState,
 } from "react";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { useDAppModule } from "@refactor/providers/DAppModuleProvider";
+import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 
 const Web3AccountsContext = createContext<Array<InjectedAccountWithMeta>>(null);
 
@@ -15,7 +15,8 @@ type ProviderProps = {};
 export default function Web3AccountsProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
-	const { web3Enable, web3Accounts, web3AccountsSubscribe } = useDAppModule();
+	const { web3Enable, web3Accounts, web3AccountsSubscribe } =
+		useCENNZExtension();
 	const [accounts, setAccounts] =
 		useState<Array<InjectedAccountWithMeta>>(null);
 
