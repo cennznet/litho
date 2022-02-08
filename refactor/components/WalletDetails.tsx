@@ -8,7 +8,7 @@ import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
 import CPAYSVG from "@refactor/assets/vectors/cpay-logo.svg";
 import Link from "@refactor/components/Link";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
+import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCallback } from "react";
 import Button from "@refactor/components/Button";
 import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
@@ -21,7 +21,7 @@ export default function WalletDetails({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const accounts = useWeb3Accounts();
+	const { accounts } = useCENNZExtension();
 	const { account, balances, disconnectWallet, selectAccount } = useWallet();
 
 	const onAccountSelect = useCallback(

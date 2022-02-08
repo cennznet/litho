@@ -15,7 +15,6 @@ import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
-import { useWeb3Accounts } from "@refactor/providers/Web3AccountsProvider";
 import { AssetInfo } from "@refactor/types";
 
 export type BalanceInfo = AssetInfo & {
@@ -47,8 +46,7 @@ export default function SupportedWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
-	const accounts = useWeb3Accounts();
-	const { getExtension } = useCENNZExtension();
+	const { getExtension, accounts } = useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 

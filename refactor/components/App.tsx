@@ -6,7 +6,6 @@ import SupportedAssetsProvider from "@refactor/providers/SupportedAssetsProvider
 import SupportedWalletProvider from "@refactor/providers/SupportedWalletProvider";
 import CENNZExtensionProvider from "@refactor/providers/CENNZExtensionProvider";
 import UserAgentProvider from "@refactor/providers/UserAgentProvider";
-import Web3AccountsProvider from "@refactor/providers/Web3AccountsProvider";
 import { AppProps } from "@refactor/utils/fetchAppProps";
 
 Modal.setAppElement("#__next");
@@ -20,24 +19,21 @@ export default function App({
 	return (
 		<UserAgentProvider>
 			<CENNZExtensionProvider>
-				<Web3AccountsProvider>
-					<CENNZApiProvider
-						endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
-						<SupportedAssetsProvider assets={supportedAssets}>
-							<SupportedWalletProvider>
-								<Head>
-									<title>Litho</title>
-									<link rel="shortcut icon" href="/favicon.ico" />
-									<link
-										rel="stylesheet"
-										href="https://use.typekit.net/txj7ase.css"
-									/>
-								</Head>
-								{children}
-							</SupportedWalletProvider>
-						</SupportedAssetsProvider>
-					</CENNZApiProvider>
-				</Web3AccountsProvider>
+				<CENNZApiProvider endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
+					<SupportedAssetsProvider assets={supportedAssets}>
+						<SupportedWalletProvider>
+							<Head>
+								<title>Litho</title>
+								<link rel="shortcut icon" href="/favicon.ico" />
+								<link
+									rel="stylesheet"
+									href="https://use.typekit.net/txj7ase.css"
+								/>
+							</Head>
+							{children}
+						</SupportedWalletProvider>
+					</SupportedAssetsProvider>
+				</CENNZApiProvider>
 			</CENNZExtensionProvider>
 		</UserAgentProvider>
 	);
