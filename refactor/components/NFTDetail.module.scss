@@ -131,34 +131,25 @@
 
 .address {
 	@include types.headline(h6);
-	display: grid;
-	grid-template-columns: 6em max-content;
-	grid-template-areas: "dt dd";
+	display: flex;
 	margin-bottom: 0.5em;
 	&:last-child {
 		margin-bottom: 0;
 	}
 
 	dt {
-		grid-area: dt;
+		flex: 1;
+		color: figma-color("Litho Black 60%");
 	}
 
 	dd {
-		grid-area: dd;
-		color: figma-color("Litho Blue");
-	}
-
-	em {
-		display: inline-block;
-		font-style: normal;
-		margin-left: 0.5em;
-		color: figma-color("Litho Black 60%");
+		color: figma-color("Litho Black");
 	}
 }
 
 .description {
 	dt {
-		@include types.headline(h6);
+		@include types.headline(h5);
 		margin-bottom: 0.5em;
 	}
 
@@ -174,7 +165,7 @@
 .attribute {
 	margin-bottom: 0.5em;
 	dt {
-		@include types.headline(h6);
+		@include types.headline(h5);
 		color: figma-color("Litho Black 60%");
 	}
 

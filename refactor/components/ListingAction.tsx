@@ -149,18 +149,19 @@ export function BidAction({
 type CancelComponentProps = {
 	listingId: NFTListingId;
 	onActionComplete?: (action: string) => void;
+	disabled?: boolean;
 };
-export function CancelAction({
+export function RemoveAction({
 	listingId,
 	onActionComplete,
+	disabled = false,
 }: DOMComponentProps<CancelComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
 	const cancelListing = useNFTCancel();
 	const onCancelClick = useCallback(async () => {
-		const confirmed = confirm("Are you sure?");
-		if (!confirmed) return;
 		setBusy(true);
 		const status = await cancelListing(listingId);
+		console.log({ status });
 		if (status === "cancelled") return setBusy(false);
 		onActionComplete?.("cancel");
 	}, [cancelListing, listingId, onActionComplete]);
@@ -169,10 +170,15 @@ export function CancelAction({
 		<div className={bem("cancelAction")}>
 			<Button
 				className={bem("actionButton")}
-				disabled={busy}
-				onClick={onCancelClick}>
-				{busy ? "Processing" : "Cancel Listing"}
+				disabled={busy || disabled}
+				onClick={onCancelClick}
+				showProgress={busy}>
+				{busy ? "Processing" : "Remove Listing"}
 			</Button>
+
+			<div className={bem("note")}>
+				Auction is in progress, remove listing is disabled
+			</div>
 		</div>
 	);
 }

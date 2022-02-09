@@ -1,7 +1,5 @@
+@use "~@refactor/styles/types";
 @import "~@refactor/styles/bootstrap";
-
-.root {
-}
 
 .actionButton {
 	width: 100%;
@@ -32,4 +30,11 @@
 }
 
 .bidButton {
+}
+
+.note {
+	@include types.subtitle(s2);
+	color: figma-color("Litho Black 60%");
+	font-weight: normal;
+	margin-top: 0.5em;
 }

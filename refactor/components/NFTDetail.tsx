@@ -17,7 +17,7 @@ import Link from "@refactor/components/Link";
 import {
 	BuyAction,
 	BidAction,
-	CancelAction,
+	RemoveAction,
 	SellAction,
 	ConnectAction,
 	TopUpAction,
@@ -191,6 +191,17 @@ function ListingSection({
 							</div>
 						)}
 					</li>
+
+					{!!latestWinningBid?.[1] && (
+						<li>
+							<div className={bem("stateType")}>
+								<span className={bem("stateLabel")}>Highest Bidder</span>
+							</div>
+							<div className={bem("stateLabel")}>
+								<AccountAddress address={latestWinningBid[0]} length={6} />
+							</div>
+						</li>
+					)}
 				</ul>
 			)}
 
@@ -237,9 +248,10 @@ function ListingSection({
 				if (!!listingId) {
 					if (isOwner)
 						return (
-							<CancelAction
+							<RemoveAction
 								listingId={listingId}
 								onActionComplete={onActionComplete}
+								disabled={!!latestWinningBid?.[1]}
 							/>
 						);
 
@@ -289,15 +301,13 @@ function AssociationSection({
 			<dl className={bem("address")}>
 				<dt>Owner</dt>
 				<dd>
-					<AccountAddress address={owner} length={8} />
-					{!!account && isOwner && <em>(You)</em>}
+					<AccountAddress address={owner} length={6} />
 				</dd>
 			</dl>
 			<dl className={bem("address")}>
 				<dt>Creator</dt>
 				<dd>
-					<AccountAddress address={creator} length={8} />
-					{!!account && isCreator && <em>(You)</em>}
+					<AccountAddress address={creator} length={6} />
 				</dd>
 			</dl>
 
