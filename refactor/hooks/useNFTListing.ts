@@ -3,18 +3,26 @@ import { NFTData, NFTListing, NFTListingId, NFTId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import fetchNFTData from "@refactor/utils/fetchNFTData";
+import findListingIdByTokenId from "@refactor/utils/findListingIdByTokenId";
 
 type ListingItem = NFTData & Partial<NFTListing>;
 
-export default function useNFTListing(
-	listingId: NFTListingId,
-	defaultItem: ListingItem = null
-): [ListingItem, (callback?: (item: ListingItem) => void) => Promise<void>] {
+export default function useNFTListing(defaultItem: ListingItem = null): {
+	item: ListingItem;
+	fetchByListingId: (
+		listingId: NFTListingId,
+		callback?: (item: ListingItem) => void
+	) => Promise<void>;
+	fetchByTokenId: (
+		tokenId: NFTId,
+		callback?: (item: ListingItem) => void
+	) => Promise<void>;
+} {
 	const api = useCENNZApi();
 	const [item, setItem] = useState<ListingItem>(defaultItem);
 
-	const fetchListing = useCallback(
-		async (callback) => {
+	const fetchByListingId = useCallback(
+		async (listingId: NFTListingId, callback?: (item: ListingItem) => void) => {
 			if (!api || !listingId) return;
 			const listing = await fetchListingItem(api, listingId);
 			const data = listing ? await fetchNFTData(api, listing.tokenId) : null;
@@ -23,29 +31,22 @@ export default function useNFTListing(
 			callback?.(item);
 			setItem(item);
 		},
-		[api, listingId]
+		[api]
 	);
 
-	return [item, fetchListing];
-}
-
-export function useNFTData(
-	tokenId: NFTId,
-	defaultItem: NFTData = null
-): [NFTData, (callback?: (item: NFTData) => void) => Promise<void>] {
-	const api = useCENNZApi();
-	const [item, setItem] = useState<ListingItem>(defaultItem);
-
-	const fetchData = useCallback(
-		async (callback) => {
+	const fetchByTokenId = useCallback(
+		async (tokenId: NFTId, callback?: (item: ListingItem) => void) => {
 			if (!api || !tokenId) return;
 			const data = await fetchNFTData(api, tokenId);
+			const listingId = await findListingIdByTokenId(api, tokenId);
+			const listing = listingId ? await fetchListingItem(api, listingId) : null;
 
-			callback?.(data);
-			setItem(data);
+			const item = data?.metadata ? { ...listing, ...data } : null;
+			callback?.(item);
+			setItem(item);
 		},
-		[api, tokenId]
+		[api]
 	);
 
-	return [item, fetchData];
+	return { item, fetchByListingId, fetchByTokenId };
 }

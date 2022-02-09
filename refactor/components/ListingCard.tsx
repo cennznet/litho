@@ -15,10 +15,8 @@ import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import Link from "@refactor/components/Link";
 import { useInView } from "react-hook-inview";
-import useNFTListing, { useNFTData } from "@refactor/hooks/useNFTListing";
-import findListingIdByTokenId from "@refactor/utils/findListingIdByTokenId";
+import useNFTListing from "@refactor/hooks/useNFTListing";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import fetchListingItem from "@refactor/utils/fetchListingItem";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -36,17 +34,16 @@ export default function ListingCard({
 		threshold: 0,
 	});
 	const [loading, setLoading] = useState<boolean>(true);
-	const [item, fetchItem] = useNFTListing(
-		Array.isArray(listingId) ? listingId[1] : listingId,
-		{} as any
-	);
+	const { item, fetchByListingId } = useNFTListing({} as any);
 
 	const firstInView = inView && !item?.metadata;
 
 	useEffect(() => {
 		if (!firstInView) return;
-		fetchItem(() => setLoading(false));
-	}, [firstInView, fetchItem]);
+		fetchByListingId(Array.isArray(listingId) ? listingId[1] : listingId, () =>
+			setLoading(false)
+		);
+	}, [firstInView, fetchByListingId, listingId]);
 
 	const { tokenId, metadata, price, paymentAssetId, type, winningBid } =
 		(item || {}) as NFTData & Partial<NFTListing>;
@@ -148,28 +145,22 @@ export function NFTCard({
 		threshold: 0,
 	});
 	const [loading, setLoading] = useState<boolean>(true);
-	const [item, fetchNFTData] = useNFTData(tokenId);
-	const [listing, setListing] = useState<NFTListing>({} as NFTListing);
+	const { item, fetchByTokenId } = useNFTListing({} as any);
 
 	const firstInView = inView && !item?.metadata;
 
 	useEffect(() => {
 		if (!firstInView || !tokenId) return;
 		const fetchItem = async function () {
-			const listingId = await findListingIdByTokenId(api, tokenId);
-			const listing = listingId ? await fetchListingItem(api, listingId) : {};
-
-			setListing(listing as NFTListing);
-			await fetchNFTData(() => setLoading(false));
+			await fetchByTokenId(tokenId, () => setLoading(false));
 		};
 
 		fetchItem();
-	}, [firstInView, fetchNFTData, api, tokenId]);
+	}, [firstInView, fetchByTokenId, api, tokenId]);
 
-	const { metadata } = (item || {}) as NFTData;
+	const { metadata, price, paymentAssetId, type, winningBid } = (item ||
+		{}) as NFTData & Partial<NFTListing>;
 
-	const { price, paymentAssetId, type, winningBid } = (listing ||
-		{}) as NFTListing;
 	const { displayAsset } = useAssets();
 	const latestPrice = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
 	const [listingPrice, symbol] = useMemo(() => {
