@@ -43,12 +43,19 @@ export default function SellFlowModal({
 
 	const [busy, setBusy] = useState<boolean>(false);
 
-	const [minDate, maxDate] = useMemo(() => {
+	const [minDate, defaultDate, maxDate] = useMemo(() => {
 		const minDate = new Date();
-		minDate.setDate(new Date().getDate() + 3);
+		minDate.setDate(minDate.getDate() + 1);
+
+		const defaultDate = new Date();
+		defaultDate.setDate(defaultDate.getDate() + 3);
+
 		const maxDate = new Date(minDate.valueOf());
 		maxDate.setFullYear(minDate.getFullYear() + 1);
-		return [minDate, maxDate].map((date) => date.toISOString().split("T")[0]);
+
+		return [minDate, defaultDate, maxDate].map(
+			(date) => date.toISOString().split("T")[0]
+		);
 	}, []);
 
 	const onFormSubmit = useCallback(
@@ -203,7 +210,7 @@ export default function SellFlowModal({
 								className={bem("textInput")}
 								name="closingDate"
 								id="DateInput"
-								defaultValue={minDate}
+								defaultValue={defaultDate}
 								min={minDate}
 								max={maxDate}
 								required
