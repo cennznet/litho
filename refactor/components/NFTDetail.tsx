@@ -6,7 +6,7 @@ import NFTRenderer from "@refactor/components/NFTRenderer";
 import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
 import useEndTime, {
 	getFriendlyEndTimeString,
@@ -23,10 +23,7 @@ import {
 	TopUpAction,
 } from "@refactor/components/ListingAction";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
-import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import fetchNFTData from "@refactor/utils/fetchNFTData";
-import findListingIdByTokenId from "@refactor/utils/findListingIdByTokenId";
-import fetchListingItem from "@refactor/utils/fetchListingItem";
+import useNFTListing from "@refactor/hooks/useNFTListing";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -40,52 +37,33 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const api = useCENNZApi();
-	const [item, setItem] = useState<NFTDetail>(listingItem);
 	const { fetchAssetBalances } = useWallet();
+	const { item, fetchByListingId, fetchByTokenId } = useNFTListing(listingItem);
 
 	const onActionComplete = useCallback(
 		async (action) => {
 			switch (action) {
 				case "cancel":
-					const data = await fetchNFTData(api, item.tokenId);
-					setItem({ tokenId: item.tokenId, ...data });
-					break;
 				case "buy":
-					setTimeout(async () => {
-						const data = await fetchNFTData(api, item.tokenId);
-						setItem({ tokenId: item.tokenId, ...data });
-						alert(
-							`Congratulations! The NFT "${item?.metadata?.name}" is now yours.`
-						);
-						await fetchAssetBalances();
-					}, 0);
+					await fetchByTokenId(item.tokenId);
+					await fetchAssetBalances();
+					break;
 
 				case "bid":
-					setTimeout(() => {
-						setItem({ ...item });
-					}, 0);
+					await fetchByListingId(item.listingId);
 					break;
 
 				case "sell":
-					(async () => {
-						const listingId = await findListingIdByTokenId(api, item.tokenId);
-						const listing = await fetchListingItem(api, listingId);
-						const data = listing
-							? await fetchNFTData(api, listing.tokenId)
-							: null;
-
-						setItem(data?.metadata ? { ...listing, ...data } : null);
-					})();
+					await fetchByTokenId(item.tokenId);
 					break;
 				default:
 					break;
 			}
 		},
-		[api, item, fetchAssetBalances]
+		[item, fetchByTokenId, fetchByListingId, fetchAssetBalances]
 	);
 
-	const { metadata, tokenId, attributes, imageIPFSUrl } = item;
+	const { metadata, tokenId, attributes, imageIPFSUrl } = item || {};
 
 	return (
 		<div className={bem("root", className)} {...props}>

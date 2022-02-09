@@ -26,6 +26,7 @@ export type NFTListing = {
 };
 
 export type NFTData = {
+	tokenId: NFTId;
 	attributes: NFTAttributes;
 	metadata: NFTMetadata;
 	metadataIPFSUrl?: string;

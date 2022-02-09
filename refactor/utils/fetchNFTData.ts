@@ -18,6 +18,8 @@ export default async function fetchNFTData(
 	api: Api,
 	tokenId: NFTId
 ): Promise<NFTData> {
+	if (!tokenId) return;
+
 	let attributes: NFTAttributes = null,
 		metadata: NFTMetadata = null;
 	const tokenInfo = await api.derive.nft.tokenInfo(tokenId as any);
@@ -41,7 +43,7 @@ export default async function fetchNFTData(
 	if (!metadataIPFS) return null;
 
 	const metadataIPFSUrl = getPinataUrl(metadataIPFS);
-	if (!metadataIPFSUrl) return { ...data, attributes, metadata };
+	if (!metadataIPFSUrl) return { ...data, attributes, metadata, tokenId };
 
 	metadata = await fetch(metadataIPFSUrl).then((response) => response?.json());
 
@@ -57,7 +59,14 @@ export default async function fetchNFTData(
 
 	metadata.image = getImageKitUrl(metadata.image);
 
-	return { ...data, attributes, metadata, metadataIPFSUrl, imageIPFSUrl };
+	return {
+		...data,
+		attributes,
+		metadata,
+		metadataIPFSUrl,
+		imageIPFSUrl,
+		tokenId,
+	};
 }
 
 export function getImageKitUrl(text: string): string {

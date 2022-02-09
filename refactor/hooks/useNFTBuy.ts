@@ -13,12 +13,7 @@ export default function useNFTBuy(): Callback {
 	return useCallback<Callback>(
 		async (listingId) => {
 			const extrinsic = api.tx.nft.buy(listingId);
-			return await signAndSendTx(
-				extrinsic,
-				account.address,
-				wallet.signer,
-				api.consts.babe.expectedBlockTime.toNumber()
-			);
+			return await signAndSendTx(extrinsic, account.address, wallet.signer);
 		},
 		[api, account?.address, wallet?.signer]
 	);

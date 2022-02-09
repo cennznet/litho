@@ -40,14 +40,15 @@ export default function useNFTSell(): Callback {
 			const extrinsic =
 				type === "Auction"
 					? api.tx.nft.auction(tokenId, paymentAssetId, price, duration)
-					: api.tx.nft.sell(tokenId, buyer, paymentAssetId, price, duration);
+					: api.tx.nft.sell(
+							tokenId,
+							buyer || null,
+							paymentAssetId,
+							price,
+							duration
+					  );
 
-			return await signAndSendTx(
-				extrinsic,
-				account.address,
-				wallet.signer,
-				api.consts.babe.expectedBlockTime.toNumber()
-			);
+			return await signAndSendTx(extrinsic, account.address, wallet.signer);
 		},
 		[api, account?.address, wallet?.signer]
 	);
