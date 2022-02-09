@@ -20,16 +20,21 @@ export default function SellFlowProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const [tokenId, setTokenId] = useState<NFTId>();
-	const [modalOpened, setModalOpened] = useState<boolean>(false);
+	const [modalOpened, setModalOpened] = useState<{ resolve: () => void }>();
 	const onModalRequestClose = useCallback(() => {
-		setModalOpened(false);
+		setModalOpened((previous) => {
+			previous?.resolve?.();
+			return null;
+		});
 	}, []);
 
 	const startListing = useCallback(async (tokenId: NFTId) => {
 		if (!tokenId) return;
 
 		setTokenId(tokenId);
-		setModalOpened(true);
+		return new Promise<void>((resolve) => {
+			setModalOpened({ resolve });
+		});
 	}, []);
 
 	return (
@@ -39,7 +44,7 @@ export default function SellFlowProvider({
 			</SellFlowContext.Provider>
 			<SellFlowModal
 				tokenId={tokenId}
-				isOpen={modalOpened}
+				isOpen={!!modalOpened}
 				onRequestClose={onModalRequestClose}
 			/>
 		</>

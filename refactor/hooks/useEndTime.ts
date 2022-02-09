@@ -49,8 +49,10 @@ export function getRemainingTime(
 export function getFriendlyEndTimeString(endTime: Time): string {
 	const { days, hours, minutes } = endTime;
 
-	if (days >= 1) return `Ending in ${days} day${days === 1 ? "" : "s"}`;
-	if (hours >= 1) return `Ending in ${hours} hour${hours === 1 ? "" : "s"}`;
-	if (minutes >= 1)
-		return `Ending in ${minutes} hour${minutes === 1 ? "" : "s"}`;
+	if (days >= 1) {
+		const remaining = days + Math.round(hours / 24);
+		return `Ending in ${remaining} ${remaining > 1 ? "days" : "day"}`;
+	}
+
+	return `Ending in ${hours}:${minutes}`;
 }

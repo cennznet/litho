@@ -11,20 +11,23 @@ const bem = createBEMHelper(require("./AssetInput.module.scss"));
 
 type ComponentProps = {
 	assetId: number;
-	focusOnInit: boolean;
+	focusOnInit?: boolean;
+	disabled?: boolean;
 };
 
 export default function AssetInput({
 	className,
 	assetId,
 	focusOnInit,
+	min,
+	disabled,
 	...props
 }: DOMComponentProps<ComponentProps, "input">) {
 	const { getMinimumStep, displayAsset } = useAssets();
 	const [step, scale] = getMinimumStep?.(assetId) || [1, 0];
 	const [, symbol] = displayAsset(assetId, 0);
 	const [, displayInCurrency] = useCoinGeckoRate("usd");
-	const [usdValue, setUSDValue] = useState<string>();
+	const [usdValue, setUSDValue] = useState<string>("$0.00");
 
 	const onInputReady = useCallback(
 		(el) => {
@@ -44,26 +47,26 @@ export default function AssetInput({
 
 	return (
 		<div className={bem("root", className)}>
-			<div className={bem("inner")}>
+			<div className={bem("inner", { disabled })}>
 				<IMaskInput
 					className={bem("input")}
 					mask={Number}
 					type="number"
 					radix="."
+					min={min || step}
 					step={step}
 					scale={scale}
 					{...props}
 					inputRef={onInputReady}
 					onAccept={throttledInputAccept}
+					disabled={disabled}
 				/>
 				<span className={bem("symbol")}>{symbol}</span>
 			</div>
 
-			{!!usdValue && (
-				<Text variant="headline6" className={bem("usdValue")}>
-					({usdValue} USD)
-				</Text>
-			)}
+			<Text variant="headline6" className={bem("usdValue")}>
+				({usdValue} USD)
+			</Text>
 		</div>
 	);
 }

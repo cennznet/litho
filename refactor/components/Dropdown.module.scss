@@ -9,12 +9,11 @@
 
 	@include on-hover {
 		> div {
-			color: white;
-			background-color: figma-color("Litho Blue");
+			color: figma-color("Litho Blue");
 			border-color: figma-color("Litho Blue");
 
 			path {
-				fill: white;
+				fill: figma-color("Litho Blue");
 			}
 		}
 	}
@@ -30,8 +29,9 @@
 	align-items: center;
 	background-color: white;
 	transition: color 0.2s, background-color 0.2s, border-color 0.2s;
-	@include types.button();
-	line-height: 1;
+	@include types.headline(h6);
+	position: relative;
+	z-index: 1;
 }
 
 .chevron {
@@ -47,4 +47,14 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
+	z-index: 2;
+
+	&:disabled {
+		cursor: not-allowed;
+	}
+
+	&:disabled + div {
+		border-color: #b4b4b4;
+		cursor: not-allowed;
+	}
 }

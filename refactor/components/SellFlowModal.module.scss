@@ -40,12 +40,12 @@
 }
 
 .form {
-	max-width: 630px;
+	max-width: 600px;
 	margin: 0 auto;
 	position: relative;
 }
 
-.row {
+.field {
 	display: flex;
 	margin-bottom: 1.5em;
 	&:last-child {
@@ -70,6 +70,10 @@
 				fill: white;
 			}
 		}
+
+		&:disabled + label {
+			cursor: not-allowed;
+		}
 	}
 
 	label {
@@ -78,12 +82,13 @@
 		cursor: pointer;
 		padding: 2em 0;
 		display: block;
-		border: 1px solid figma-color("Litho Blue");
+		border: 2px solid figma-color("Litho Black");
 		background-color: figma-color("Litho Cream");
-		transition: color 0.2s, fill 0.2s;
+		transition: color 0.2s, fill 0.2s, border-color 0.2s;
 
 		@include on-hover {
 			color: figma-color("Litho Blue");
+			border-color: figma-color("Litho Blue");
 			path {
 				fill: figma-color("Litho Blue");
 			}
@@ -100,4 +105,56 @@
 
 .spacer {
 	width: 1em;
+}
+
+.input {
+	width: 100%;
+
+	label[for] {
+		@include types.headline(h6);
+		display: block;
+		margin-bottom: 0.5em;
+	}
+}
+
+.inputNote {
+	@include types.subtitle(s2);
+	color: figma-color("Litho Black 60%");
+	margin-top: 0.5em;
+}
+
+.tokenDropdown {
+	width: 100%;
+	max-width: none;
+}
+
+.textInput {
+	@include types.headline(h6);
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	display: block;
+	width: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+
+	&::-webkit-datetime-edit-month-field,
+	&::-webkit-datetime-edit-day-field,
+	&::-webkit-datetime-edit-year-field {
+		text-transform: uppercase;
+	}
+
+	&:disabled {
+		border-color: #b4b4b4;
+		cursor: not-allowed;
+	}
+}
+
+.submitInput {
+	display: block;
+	width: 50%;
+	margin: 0 auto;
+	min-width: 200px;
+	margin-top: 1em;
 }

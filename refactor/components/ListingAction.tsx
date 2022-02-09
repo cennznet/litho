@@ -3,11 +3,10 @@ import {
 	NFTListingId,
 	NFTId,
 	NFTListingType,
-	NFTListing,
 } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Button from "@refactor/components/Button";
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import useNFTCancel from "@refactor/hooks/useNFTCancel";
 import useNFTBuy from "@refactor/hooks/useNFTBuy";
 import useNFTBid from "@refactor/hooks/useNFTBid";
@@ -180,15 +179,18 @@ export function CancelAction({
 
 type SellComponentProps = {
 	tokenId: NFTId;
+	onActionComplete?: (action: string) => void;
 };
 export function SellAction({
 	tokenId,
+	onActionComplete,
 }: DOMComponentProps<SellComponentProps, "div">) {
 	const { startListing } = useSellFlow();
 
 	const onStartClick = useCallback(async () => {
 		await startListing(tokenId);
-	}, [startListing, tokenId]);
+		onActionComplete?.("sell");
+	}, [startListing, tokenId, onActionComplete]);
 
 	return (
 		<div className={bem("sellAction")}>

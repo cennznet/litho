@@ -20,7 +20,7 @@
 		}
 
 		&:disabled {
-			background-color: figma-color("Litho Black 30%");
+			background-color: #b4b4b4 !important;
 			border-color: transparent;
 			color: white !important;
 		}
@@ -36,7 +36,7 @@
 		}
 
 		&:disabled {
-			color: figma-color("Litho Black 30%") !important;
+			color: #b4b4b4 !important;
 			background-color: transparent;
 		}
 	}

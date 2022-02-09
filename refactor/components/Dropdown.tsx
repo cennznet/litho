@@ -35,13 +35,6 @@ export default function Dropdown({
 
 	return (
 		<div className={bem("root", className)}>
-			<div className={bem("trigger")}>
-				<span>{selectedLabel}</span>
-
-				<span className={bem("chevron")}>
-					<ChevronDownSVG />
-				</span>
-			</div>
 			<select
 				{...props}
 				className={bem("select")}
@@ -50,6 +43,13 @@ export default function Dropdown({
 				ref={ref}>
 				{children}
 			</select>
+			<div className={bem("trigger")}>
+				<span>{selectedLabel}</span>
+
+				<span className={bem("chevron")}>
+					<ChevronDownSVG />
+				</span>
+			</div>
 		</div>
 	);
 }

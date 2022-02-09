@@ -27,7 +27,6 @@ export default function Modal({
 	isOpen,
 	shouldCloseOnOverlayClick = true,
 	shouldCloseOnEsc = true,
-	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const onCloseClick = useCallback(
 		(event) => onRequestClose && onRequestClose(event),
@@ -57,14 +56,16 @@ export default function Modal({
 			isOpen={isOpen}
 			closeTimeoutMS={200}
 			portalClassName={bem("container")}
-			overlayClassName={bem("overlay", overlayClassName)}
+			overlayClassName={bem("overlay", overlayClassName as string)}
 			className={bem("content", className)}
 			onRequestClose={onRequestClose}
 			shouldCloseOnEsc={shouldCloseOnEsc}
 			shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
 			contentRef={setContentRef}>
 			<div className={bem("inner", innerClassName)}>
-				<XSVG className={bem("close")} onClick={onCloseClick} />
+				{shouldCloseOnOverlayClick && (
+					<XSVG className={bem("close")} onClick={onCloseClick} />
+				)}
 				{children}
 			</div>
 		</ReactModal>
