@@ -176,9 +176,11 @@ export function RemoveAction({
 				{busy ? "Processing" : "Remove Listing"}
 			</Button>
 
-			<div className={bem("note")}>
-				Auction is in progress, remove listing is disabled
-			</div>
+			{disabled && (
+				<div className={bem("note")}>
+					Auction is in progress, remove listing is disabled
+				</div>
+			)}
 		</div>
 	);
 }
