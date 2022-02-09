@@ -2,6 +2,7 @@ import { NFTListingId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCallback } from "react";
+import signAndSendTx from "@refactor/utils/signAndSendTx";
 
 type Callback = (listingId: NFTListingId) => Promise<string>;
 
@@ -11,19 +12,13 @@ export default function useNFTCancel(): Callback {
 
 	return useCallback<Callback>(
 		async (listingId) => {
-			try {
-				const extrinsic = api.tx.nft.cancelSale(listingId);
-				return await extrinsic
-					.signAndSend(account.address, {
-						signer: wallet.signer,
-					})
-					.then((status) => status.toJSON());
-			} catch (error) {
-				if (error?.message === "Cancelled") return "cancelled";
-				console.log(error?.message);
-				console.log(`Transaction Error: ${error}`);
-				alert(error?.message);
-			}
+			const extrinsic = api.tx.nft.cancelSale(listingId);
+			return await signAndSendTx(
+				extrinsic,
+				account.address,
+				wallet.signer,
+				api.consts.babe.expectedBlockTime.toNumber()
+			);
 		},
 		[api, account?.address, wallet?.signer]
 	);

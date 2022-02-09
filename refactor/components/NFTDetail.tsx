@@ -59,12 +59,12 @@ export default function NFTDetail({
 							`Congratulations! The NFT "${item?.metadata?.name}" is now yours.`
 						);
 						await fetchAssetBalances();
-					}, api.consts.babe.expectedBlockTime.toNumber());
+					}, 0);
 
 				case "bid":
 					setTimeout(() => {
 						setItem({ ...item });
-					}, api.consts.babe.expectedBlockTime.toNumber());
+					}, 0);
 					break;
 
 				case "sell":

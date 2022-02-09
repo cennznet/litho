@@ -30,11 +30,9 @@ export function BuyAction({
 	const [busy, setBusy] = useState<boolean>(false);
 	const buyListing = useNFTBuy();
 	const onBuyClick = useCallback(async () => {
-		const confirmed = confirm("Are you sure?");
-		if (!confirmed) return;
 		setBusy(true);
 		const status = await buyListing(listingId);
-		if (status === "cancelled") return setBusy(false);
+		if (status === "cancelled" || status === "error") return setBusy(false);
 		onActionComplete?.("buy");
 	}, [buyListing, listingId, onActionComplete]);
 
@@ -81,8 +79,6 @@ export function BidAction({
 		async (event) => {
 			event?.preventDefault?.();
 			const data = new FormData(event.target);
-			const confirmed = confirm("Are you sure?");
-			if (!confirmed) return;
 			setBusy(true);
 			const status = await bidListing(
 				listingId,
@@ -161,8 +157,7 @@ export function RemoveAction({
 	const onCancelClick = useCallback(async () => {
 		setBusy(true);
 		const status = await cancelListing(listingId);
-		console.log({ status });
-		if (status === "cancelled") return setBusy(false);
+		if (status === "cancelled" || status === "error") return setBusy(false);
 		onActionComplete?.("cancel");
 	}, [cancelListing, listingId, onActionComplete]);
 

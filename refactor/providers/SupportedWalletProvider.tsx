@@ -72,7 +72,6 @@ export default function SupportedWalletProvider({
 	);
 
 	const disconnectWallet = useCallback(() => {
-		if (!confirm("Are you sure?")) return;
 		store.remove("CENNZNET-EXTENSION");
 		store.remove("CENNZNET-ACCOUNT");
 		store.remove("EXTENSION_META_UPDATED");

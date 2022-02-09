@@ -99,7 +99,7 @@ export default function SellFlowModal({
 				tokenId,
 				paymentAssetId: asset.assetId,
 			});
-			if (status === "cancelled") return setBusy(false);
+			if (status === "cancelled" || status === "error") return setBusy(false);
 			setBusy(false);
 			onRequestClose?.(null);
 		},
