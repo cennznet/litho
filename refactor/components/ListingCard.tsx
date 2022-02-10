@@ -47,7 +47,7 @@ export default function ListingCard({
 
 	const { tokenId, metadata } = item || {};
 
-	if (!loading && !item) return null;
+	if (!loading && !metadata) return null;
 
 	return (
 		<Link
@@ -100,7 +100,7 @@ export function NFTCard({
 
 	const { metadata } = item || {};
 
-	if (!loading && !item) return null;
+	if (!loading && !metadata) return null;
 
 	return (
 		<Link
