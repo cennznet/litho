@@ -5,6 +5,7 @@ import {
 import {
 	createContext,
 	PropsWithChildren,
+	useMemo,
 	useContext,
 	useEffect,
 	useState,
@@ -14,8 +15,10 @@ import { useUserAgent } from "@refactor/providers/UserAgentProvider";
 
 type ExtensionContext = typeof Extension & {
 	accounts: Array<InjectedAccountWithMeta>;
-	getExtension: () => Promise<InjectedExtension>;
+	extension: InjectedExtension;
+	promptInstallExtension: () => void;
 };
+
 const CENNZExtensionContext = createContext<ExtensionContext>(
 	{} as ExtensionContext
 );
@@ -25,66 +28,78 @@ type ProviderProps = {};
 export default function CENNZExtensionProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
-	const [extension, setExtension] = useState<ExtensionContext>(
-		{} as ExtensionContext
-	);
-
 	const { browser } = useUserAgent();
+	const [module, setModule] = useState<typeof Extension>();
+	const [extension, setExtension] = useState<InjectedExtension>();
+	const [accounts, setAccounts] = useState<Array<InjectedAccountWithMeta>>();
+
+	const promptInstallExtension = useMemo(() => {
+		return async () => {
+			if (
+				!confirm(
+					"Please install the CENNZnet extension and create at least one account."
+				)
+			)
+				return;
+
+			window.open(
+				browser.name === "Firefox"
+					? "https://addons.mozilla.org/en-US/firefox/addon/cennznet-browser-extension/"
+					: "https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk",
+				"_blank"
+			);
+		};
+	}, [browser]);
 
 	useEffect(() => {
+		import("@polkadot/extension-dapp").then(setModule);
+	}, []);
+
+	useEffect(() => {
+		if (!module) return;
+
+		const getExtension = async () => {
+			const { web3Enable, web3FromSource } = module;
+			await web3Enable("Litho");
+			const extension = await web3FromSource("cennznet-extension").catch(
+				() => null
+			);
+
+			setExtension(extension);
+		};
+
+		getExtension();
+	}, [module]);
+
+	useEffect(() => {
+		if (!module || !extension) return;
 		let unsubscibre: () => void;
 
-		import("@polkadot/extension-dapp").then(async (module) => {
-			const {
-				web3Enable,
-				web3FromSource,
-				web3Accounts,
-				web3AccountsSubscribe,
-			} = module;
-
-			const getExtension = async function () {
-				await web3Enable("Litho");
-				const extension = await web3FromSource("cennznet-extension").catch(
-					() => null
-				);
-
-				if (!extension) {
-					const confirmed = confirm(
-						"Please install the CENNZnet extension and create at least one account."
-					);
-
-					if (!confirmed) return;
-
-					window.open(
-						browser.name === "Firefox"
-							? "https://addons.mozilla.org/en-US/firefox/addon/cennznet-browser-extension/"
-							: "https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk",
-						"_blank"
-					);
-
-					return;
-				}
-
-				return extension;
-			};
+		const fetchAccounts = async () => {
+			const { web3Enable, web3Accounts, web3AccountsSubscribe } = module;
 
 			await web3Enable("Litho");
 			const accounts = (await web3Accounts()) || [];
 			if (!accounts.length)
-				return alert("Please create an account in the CENNZnet extension.");
+				return alert(
+					"Please create at least one account in the CENNZnet extension."
+				);
+
+			setAccounts(accounts);
 
 			unsubscibre = await web3AccountsSubscribe((accounts) => {
-				setExtension({ ...module, getExtension, accounts });
+				setAccounts([...accounts]);
 			});
+		};
 
-			setExtension({ ...module, getExtension, accounts });
-		});
+		fetchAccounts();
 
 		return unsubscibre;
-	}, [browser]);
+	}, [module, extension]);
 
 	return (
-		<CENNZExtensionContext.Provider value={extension}>
+		<CENNZExtensionContext.Provider
+			value={{ ...module, accounts, extension, promptInstallExtension }}>
 			{children}
 		</CENNZExtensionContext.Provider>
 	);
