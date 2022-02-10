@@ -23,6 +23,7 @@ export type NFTListing = {
 	winningBid?: [string, number];
 	paymentAssetId: number;
 	royalty?: number;
+	buyer?: string;
 };
 
 export type NFTData = {

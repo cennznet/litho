@@ -113,7 +113,6 @@
 	align-items: flex-end;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	margin-bottom: 1.5em;
 }
 
 .priceValue {
@@ -127,6 +126,10 @@
 	flex-shrink: 0;
 	color: figma-color("Litho Black 60%");
 	padding-bottom: 0.125em;
+}
+
+.action {
+	margin-top: 1.5em;
 }
 
 .address {

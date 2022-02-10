@@ -119,6 +119,7 @@ function ListingSection({
 		owner,
 		tokenId,
 		winningBid,
+		buyer,
 	} = listingItem;
 
 	const [latestWinningBid, fetchWiningBid] = useWinningBid(
@@ -190,9 +191,11 @@ function ListingSection({
 							<img
 								src={MoneySVG.src}
 								className={bem("typeIcon")}
-								alt="Fixed Price"
+								alt={!!buyer ? "Private Sale" : "Fixed Price"}
 							/>
-							<span className={bem("stateLabel")}>{type}</span>
+							<span className={bem("stateLabel")}>
+								{!!buyer ? "Private Sale" : type}
+							</span>
 						</div>
 					</li>
 				</ul>
@@ -211,12 +214,13 @@ function ListingSection({
 			)}
 
 			{(() => {
-				if (!account) return <ConnectAction />;
+				if (!account) return <ConnectAction className={bem("action")} />;
 
 				if (!listingId) {
 					if (isOwner)
 						return (
 							<SellAction
+								className={bem("action")}
 								tokenId={tokenId}
 								onActionComplete={onActionComplete}
 							/>
@@ -227,6 +231,7 @@ function ListingSection({
 					if (isOwner)
 						return (
 							<RemoveAction
+								className={bem("action")}
 								listingId={listingId}
 								onActionComplete={onActionComplete}
 								disabled={!!latestWinningBid?.[1]}
@@ -234,19 +239,28 @@ function ListingSection({
 						);
 
 					if (!isSufficientFund && !!balances)
-						return <TopUpAction type={type} />;
+						return (
+							<TopUpAction
+								type={type}
+								buyerAddress={buyer}
+								className={bem("action")}
+							/>
+						);
 
 					if (type === "Fixed Price")
 						return (
 							<BuyAction
+								className={bem("action")}
 								onActionComplete={onActionComplete}
 								listingId={listingId}
+								buyerAddress={buyer}
 							/>
 						);
 
 					if (type === "Auction")
 						return (
 							<BidAction
+								className={bem("action")}
 								listingId={listingId}
 								currentBid={listingPrice}
 								paymentAssetId={paymentAssetId}

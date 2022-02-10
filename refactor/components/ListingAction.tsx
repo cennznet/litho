@@ -22,12 +22,16 @@ const bem = createBEMHelper(require("./ListingAction.module.scss"));
 type BuyComponentProps = {
 	listingId: NFTListingId;
 	onActionComplete?: (action: string) => void;
+	buyerAddress?: string;
 };
 export function BuyAction({
+	className,
 	listingId,
 	onActionComplete,
+	buyerAddress,
 }: DOMComponentProps<BuyComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
+	const { account } = useWallet();
 	const buyListing = useNFTBuy();
 	const onBuyClick = useCallback(async () => {
 		setBusy(true);
@@ -36,8 +40,10 @@ export function BuyAction({
 		onActionComplete?.("buy");
 	}, [buyListing, listingId, onActionComplete]);
 
+	if (!!buyerAddress && buyerAddress !== account.address) return null;
+
 	return (
-		<div className={bem("buyAction")}>
+		<div className={bem("buyAction", className)}>
 			<Button
 				className={bem("actionButton")}
 				onClick={onBuyClick}
@@ -55,6 +61,7 @@ type BidComponentProps = {
 	onActionComplete?: (action: string) => void;
 };
 export function BidAction({
+	className,
 	listingId,
 	currentBid,
 	paymentAssetId,
@@ -98,7 +105,7 @@ export function BidAction({
 	return (
 		<>
 			{!showInput && (
-				<div className={bem("bidAction")}>
+				<div className={bem("bidAction", className)}>
 					<Button className={bem("actionButton")} onClick={onPlaceBidClick}>
 						Place A Bid
 					</Button>
@@ -148,6 +155,7 @@ type CancelComponentProps = {
 	disabled?: boolean;
 };
 export function RemoveAction({
+	className,
 	listingId,
 	onActionComplete,
 	disabled = false,
@@ -162,7 +170,7 @@ export function RemoveAction({
 	}, [cancelListing, listingId, onActionComplete]);
 
 	return (
-		<div className={bem("cancelAction")}>
+		<div className={bem("cancelAction", className)}>
 			<Button
 				className={bem("actionButton")}
 				disabled={busy || disabled}
@@ -185,6 +193,7 @@ type SellComponentProps = {
 	onActionComplete?: (action: string) => void;
 };
 export function SellAction({
+	className,
 	tokenId,
 	onActionComplete,
 }: DOMComponentProps<SellComponentProps, "div">) {
@@ -196,7 +205,7 @@ export function SellAction({
 	}, [startListing, tokenId, onActionComplete]);
 
 	return (
-		<div className={bem("sellAction")}>
+		<div className={bem("sellAction", className)}>
 			<Button className={bem("actionButton")} onClick={onStartClick}>
 				Start Listing
 			</Button>
@@ -205,10 +214,9 @@ export function SellAction({
 }
 
 type ConnectComponentProps = {};
-export function ConnectAction({}: DOMComponentProps<
-	ConnectComponentProps,
-	"div"
->) {
+export function ConnectAction({
+	className,
+}: DOMComponentProps<ConnectComponentProps, "div">) {
 	const { connectWallet } = useWallet();
 	const [busy, setBusy] = useState<boolean>(false);
 	const onConnectClick = useCallback(() => {
@@ -217,7 +225,7 @@ export function ConnectAction({}: DOMComponentProps<
 	}, [connectWallet]);
 
 	return (
-		<div className={bem("connectAction")}>
+		<div className={bem("connectAction", className)}>
 			<Button
 				className={bem("actionButton")}
 				disabled={busy}
@@ -230,12 +238,18 @@ export function ConnectAction({}: DOMComponentProps<
 
 type TopUpComponentProps = {
 	type: NFTListingType;
+	buyerAddress?: string;
 };
 export function TopUpAction({
+	className,
 	type,
+	buyerAddress,
 }: DOMComponentProps<TopUpComponentProps, "div">) {
+	const { account } = useWallet();
+
+	if (!!buyerAddress && buyerAddress !== account.address) return null;
 	return (
-		<div className={bem("removeAction")}>
+		<div className={bem("removeAction", className)}>
 			<Link href="https://www.mexc.com">
 				<Button className={bem("actionButton")}>
 					{type === "Fixed Price" && "Top up to buy"}

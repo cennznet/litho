@@ -53,6 +53,7 @@ export default async function fetchListingItem(
 				paymentAssetId: listing.paymentAsset.toJSON(),
 				royalty,
 				winningBid,
+				buyer: (listing as any)?.buyer?.toJSON?.(),
 		  }
 		: null;
 }
