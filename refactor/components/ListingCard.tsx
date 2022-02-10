@@ -45,14 +45,7 @@ export default function ListingCard({
 		);
 	}, [firstInView, fetchByListingId, listingId]);
 
-	const { tokenId, metadata, price, paymentAssetId, type, winningBid } =
-		(item || {}) as NFTData & Partial<NFTListing>;
-	const { displayAsset } = useAssets();
-	const latestPrice = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
-	const [listingPrice, symbol] = useMemo(() => {
-		if (!displayAsset || !latestPrice || !paymentAssetId) return [];
-		return displayAsset(paymentAssetId, latestPrice);
-	}, [displayAsset, latestPrice, paymentAssetId]);
+	const { tokenId, metadata } = item || {};
 
 	if (!loading && !item) return null;
 
@@ -69,64 +62,11 @@ export default function ListingCard({
 			}
 			title={metadata?.name}>
 			<div className={bem("inner")} ref={ref}>
-				<div className={bem("media")}>
-					{!!tokenId && (
-						<NFTRenderer
-							className={bem("renderer")}
-							url={metadata.image}
-							extension={metadata.properties.extension}
-							name={metadata.image}
-						/>
-					)}
-				</div>
-				<div className={bem("details", { loading })}>
-					{!!tokenId && (
-						<Text
-							variant="headline5"
-							className={bem("name")}
-							title={metadata.name}>
-							{metadata.name}
-						</Text>
-					)}
-
-					{!!listingPrice && (
-						<div className={bem("price")}>
-							<span className={bem("priceValue")}>{listingPrice}</span>
-							<span className={bem("priceSymbol")}>{symbol}</span>
-						</div>
-					)}
-				</div>
-				<div className={bem("state", { loading })}>
-					<div className={bem("listingType")}>
-						{type === "Auction" && (
-							<>
-								<img
-									src={HourglassSVG.src}
-									className={bem("typeIcon")}
-									alt="Auction"
-								/>
-								<span className={bem("typeLabel")}>{type}</span>
-							</>
-						)}
-
-						{type === "Fixed Price" && (
-							<>
-								<img
-									src={MoneySVG.src}
-									className={bem("typeIcon")}
-									alt="Fixed Price"
-								/>
-								<span className={bem("typeLabel")}>{type}</span>
-							</>
-						)}
-					</div>
-
-					{!collectionId && !!metadata?.properties?.quantity && (
-						<div className={bem("listingQuantity")}>
-							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
-						</div>
-					)}
-				</div>
+				<CardContent
+					item={item}
+					loading={loading}
+					collectionId={collectionId}
+				/>
 			</div>
 		</Link>
 	);
@@ -158,8 +98,31 @@ export function NFTCard({
 		fetchItem();
 	}, [firstInView, fetchByTokenId, api, tokenId]);
 
-	const { metadata, price, paymentAssetId, type, winningBid } = (item ||
-		{}) as NFTData & Partial<NFTListing>;
+	const { metadata } = item || {};
+
+	if (!loading && !item) return null;
+
+	return (
+		<Link
+			className={bem("root", className)}
+			{...props}
+			href={tokenId ? `/nft/${tokenId.join("/")}` : null}
+			title={metadata?.name}>
+			<div className={bem("inner")} ref={ref}>
+				<CardContent item={item} loading={loading} />
+			</div>
+		</Link>
+	);
+}
+
+type CardContentProps = {
+	collectionId?: number;
+	item: NFTData & Partial<NFTListing>;
+	loading: boolean;
+};
+export function CardContent({ item, loading, collectionId }: CardContentProps) {
+	const { tokenId, metadata, price, paymentAssetId, type, winningBid, buyer } =
+		item || {};
 
 	const { displayAsset } = useAssets();
 	const latestPrice = (winningBid?.[1] || 0) > price ? winningBid?.[1] : price;
@@ -169,70 +132,67 @@ export function NFTCard({
 	}, [displayAsset, latestPrice, paymentAssetId]);
 
 	return (
-		<Link
-			className={bem("root", className)}
-			{...props}
-			href={tokenId ? `/nft/${tokenId.join("/")}` : null}
-			title={metadata?.name}>
-			<div className={bem("inner")} ref={ref}>
-				<div className={bem("media")}>
-					{!!metadata && (
-						<NFTRenderer
-							className={bem("renderer")}
-							url={metadata.image}
-							extension={metadata.properties.extension}
-							name={metadata.image}
-						/>
-					)}
-				</div>
-				<div className={bem("details", { loading })}>
-					{!!metadata && (
-						<Text
-							variant="headline5"
-							className={bem("name")}
-							title={metadata.name}>
-							{metadata.name}
-						</Text>
-					)}
-
-					{!!listingPrice && (
-						<div className={bem("price")}>
-							<span className={bem("priceValue")}>{listingPrice}</span>
-							<span className={bem("priceSymbol")}>{symbol}</span>
-						</div>
-					)}
-				</div>
-				<div className={bem("state", { loading })}>
-					<div className={bem("listingType")}>
-						{type === "Auction" && (
-							<>
-								<img
-									src={HourglassSVG.src}
-									className={bem("typeIcon")}
-									alt="Auction"
-								/>
-								<span className={bem("typeLabel")}>{type}</span>
-							</>
-						)}
-
-						{type === "Fixed Price" && (
-							<>
-								<img
-									src={MoneySVG.src}
-									className={bem("typeIcon")}
-									alt="Fixed Price"
-								/>
-								<span className={bem("typeLabel")}>{type}</span>
-							</>
-						)}
-					</div>
-					{!!tokenId && !!metadata?.properties?.quantity && (
-						<div className={bem("listingQuantity")}>
-							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
-						</div>
-					)}
-				</div>
+		<>
+			<div className={bem("media")}>
+				{!!tokenId && (
+					<NFTRenderer
+						className={bem("renderer")}
+						url={metadata.image}
+						extension={metadata.properties.extension}
+						name={metadata.image}
+					/>
+				)}
 			</div>
-		</Link>
+			<div className={bem("details", { loading })}>
+				{!!tokenId && (
+					<Text
+						variant="headline5"
+						className={bem("name")}
+						title={metadata.name}>
+						{metadata.name}
+					</Text>
+				)}
+
+				{!!listingPrice && (
+					<div className={bem("price")}>
+						<span className={bem("priceValue")}>{listingPrice}</span>
+						<span className={bem("priceSymbol")}>{symbol}</span>
+					</div>
+				)}
+			</div>
+			<div className={bem("state", { loading })}>
+				<div className={bem("listingType")}>
+					{type === "Auction" && !collectionId && (
+						<>
+							<img
+								src={HourglassSVG.src}
+								className={bem("typeIcon")}
+								alt="Auction"
+							/>
+							<span className={bem("typeLabel")}>{type}</span>
+						</>
+					)}
+
+					{type === "Fixed Price" && !collectionId && (
+						<>
+							<img
+								src={MoneySVG.src}
+								className={bem("typeIcon")}
+								alt={!!buyer ? "Private Sale" : "Fixed Price"}
+							/>
+							<span className={bem("typeLabel")}>
+								{!!buyer ? "Private Sale" : type}
+							</span>
+						</>
+					)}
+				</div>
+
+				{!collectionId && !!metadata?.properties?.quantity && (
+					<div className={bem("listingQuantity")}>
+						({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
+					</div>
+				)}
+			</div>
+		</>
 	);
 }
