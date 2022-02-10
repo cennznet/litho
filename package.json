@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "EXEC_ENV=build next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rdf .next",
