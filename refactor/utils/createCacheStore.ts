@@ -8,7 +8,7 @@ export default function createCacheStore(ttl: number = 60): Cache {
 				: "memory",
 		ttl,
 		options: {
-			path: "./.next/cache/json",
+			path: "./.cache",
 
 			subdirs: true,
 		},
