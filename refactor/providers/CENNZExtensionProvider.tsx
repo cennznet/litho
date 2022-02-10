@@ -5,13 +5,16 @@ import {
 import {
 	createContext,
 	PropsWithChildren,
-	useMemo,
 	useContext,
 	useEffect,
 	useState,
+	useCallback,
 } from "react";
 import type * as Extension from "@polkadot/extension-dapp";
 import { useUserAgent } from "@refactor/providers/UserAgentProvider";
+import { useDialog } from "@refactor/providers/DialogProvider";
+import Link from "@refactor/components/Link";
+import Button from "@refactor/components/Button";
 
 type ExtensionContext = typeof Extension & {
 	accounts: Array<InjectedAccountWithMeta>;
@@ -32,24 +35,32 @@ export default function CENNZExtensionProvider({
 	const [module, setModule] = useState<typeof Extension>();
 	const [extension, setExtension] = useState<InjectedExtension>();
 	const [accounts, setAccounts] = useState<Array<InjectedAccountWithMeta>>();
+	const { show, close } = useDialog();
 
-	const promptInstallExtension = useMemo(() => {
-		return async () => {
-			if (
-				!confirm(
-					"Please install the CENNZnet extension and create at least one account."
-				)
-			)
-				return;
+	const promptInstallExtension = useCallback(async () => {
+		const url =
+			browser.name === "Firefox"
+				? "https://addons.mozilla.org/en-US/firefox/addon/cennznet-browser-extension/"
+				: "https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk";
 
-			window.open(
-				browser.name === "Firefox"
-					? "https://addons.mozilla.org/en-US/firefox/addon/cennznet-browser-extension/"
-					: "https://chrome.google.com/webstore/detail/cennznet-extension/feckpephlmdcjnpoclagmaogngeffafk",
-				"_blank"
-			);
-		};
-	}, [browser]);
+		const action = (
+			<>
+				<Button variant="hollow" onClick={close}>
+					Dismiss
+				</Button>
+				<Link href={url} onClick={close}>
+					<Button>{`Install Extension for ${browser.name}`}</Button>
+				</Link>
+			</>
+		);
+
+		await show({
+			title: "Missing CENNZnet Extension",
+			message:
+				"Please install a compatible CENNZnet Extension for your browser and create at least one account to continue.",
+			action,
+		});
+	}, [browser, show, close]);
 
 	useEffect(() => {
 		import("@polkadot/extension-dapp").then(setModule);
@@ -72,7 +83,7 @@ export default function CENNZExtensionProvider({
 	}, [module]);
 
 	useEffect(() => {
-		if (!module || !extension) return;
+		if (!module || !extension || !show) return;
 		let unsubscibre: () => void;
 
 		const fetchAccounts = async () => {
@@ -81,9 +92,11 @@ export default function CENNZExtensionProvider({
 			await web3Enable("Litho");
 			const accounts = (await web3Accounts()) || [];
 			if (!accounts.length)
-				return alert(
-					"Please create at least one account in the CENNZnet extension."
-				);
+				return show({
+					title: "Missing CENNZnet Account",
+					message:
+						"Please create at least one account in the CENNZnet extension to continue.",
+				});
 
 			setAccounts(accounts);
 
@@ -95,7 +108,7 @@ export default function CENNZExtensionProvider({
 		fetchAccounts();
 
 		return unsubscibre;
-	}, [module, extension]);
+	}, [module, extension, show]);
 
 	return (
 		<CENNZExtensionContext.Provider

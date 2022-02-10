@@ -8,6 +8,7 @@ import CENNZExtensionProvider from "@refactor/providers/CENNZExtensionProvider";
 import UserAgentProvider from "@refactor/providers/UserAgentProvider";
 import { AppProps } from "@refactor/utils/fetchAppProps";
 import SellFlowProvider from "@refactor/providers/SellFlowProvider";
+import DialogProvider from "@refactor/providers/DialogProvider";
 
 Modal.setAppElement("#__next");
 
@@ -19,25 +20,28 @@ export default function App({
 }: PropsWithChildren<ComponentProps>) {
 	return (
 		<UserAgentProvider>
-			<CENNZExtensionProvider>
-				<CENNZApiProvider endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
-					<SupportedAssetsProvider assets={supportedAssets}>
-						<SupportedWalletProvider>
-							<SellFlowProvider>
-								<Head>
-									<title>Litho</title>
-									<link rel="shortcut icon" href="/favicon.ico" />
-									<link
-										rel="stylesheet"
-										href="https://use.typekit.net/txj7ase.css"
-									/>
-								</Head>
-								{children}
-							</SellFlowProvider>
-						</SupportedWalletProvider>
-					</SupportedAssetsProvider>
-				</CENNZApiProvider>
-			</CENNZExtensionProvider>
+			<DialogProvider>
+				<CENNZExtensionProvider>
+					<CENNZApiProvider
+						endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
+						<SupportedAssetsProvider assets={supportedAssets}>
+							<SupportedWalletProvider>
+								<SellFlowProvider>
+									<Head>
+										<title>Litho</title>
+										<link rel="shortcut icon" href="/favicon.ico" />
+										<link
+											rel="stylesheet"
+											href="https://use.typekit.net/txj7ase.css"
+										/>
+									</Head>
+									{children}
+								</SellFlowProvider>
+							</SupportedWalletProvider>
+						</SupportedAssetsProvider>
+					</CENNZApiProvider>
+				</CENNZExtensionProvider>
+			</DialogProvider>
 		</UserAgentProvider>
 	);
 }
