@@ -60,7 +60,7 @@ export default function DialogProvider({
 				message={content.message}
 				action={content.action}
 				isOpen={!!modalOpened}
-				shouldCloseOnEsc={false}
+				shouldCloseOnEsc={true}
 				shouldCloseOnOverlayClick={false}
 				onRequestClose={onModalRequestClose}
 			/>
