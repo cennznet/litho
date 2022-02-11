@@ -31,7 +31,7 @@ export default function HomeHero({
 				</div>
 				<div className={bem("action")}>
 					<Text variant="headline4" className={bem("headline")}>
-						Create an NFT
+						Create NFTs
 					</Text>
 					<br />
 					<Button className={bem("button")} onClick={startMinting}>

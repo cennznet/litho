@@ -17,7 +17,7 @@ export default async function extractExtensionMetadata(api: Api): Promise<any> {
 			? Object.values(additionalTypes)[0]
 			: typesForCurrentChain;
 
-	let specTypes, userExtensions;
+	let specTypes: any, userExtensions: any;
 
 	if (typesForCurrentChain) {
 		specTypes = typesForCurrentChain.types;
