@@ -52,16 +52,6 @@ export function Home({
 		<Main>
 			<div className={bem("content")}>
 				<HomeHero className={bem("homeIntro")} />
-				{!!featuredListingIds.length && (
-					<FeaturedGrid
-						listingIds={featuredListingIds}
-						className={bem("featuredGrid")}
-					/>
-				)}
-				<LatestGrid
-					defaultListingIds={latestListingIds}
-					className={bem("lastestGrid")}
-				/>
 			</div>
 		</Main>
 	);

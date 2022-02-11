@@ -6,6 +6,7 @@ import Link from "@refactor/components/Link";
 import Image from "@refactor/components/Image";
 import MarketplacePNG from "@refactor/assets/bitmaps/marketplace.png";
 import MintingPNG from "@refactor/assets/bitmaps/minting.png";
+import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 
 const bem = createBEMHelper(require("./HomeHero.module.scss"));
 
@@ -14,6 +15,8 @@ type ComponentProps = {};
 export default function HomeHero({
 	className,
 }: DOMComponentProps<ComponentProps, "div">) {
+	const { startMinting } = useMintFlow();
+
 	return (
 		<div className={bem("root", className)}>
 			<div className={bem("intro")}>
@@ -31,9 +34,9 @@ export default function HomeHero({
 						Create an NFT
 					</Text>
 					<br />
-					<Link href="/create">
-						<Button className={bem("button")}>Start Minting</Button>
-					</Link>
+					<Button className={bem("button")} onClick={startMinting}>
+						Start Minting
+					</Button>
 				</div>
 			</div>
 			<div className={bem("marketplace")}>

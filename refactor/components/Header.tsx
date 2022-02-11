@@ -3,6 +3,8 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import LithoSVG from "@refactor/assets/vectors/litho-logo.svg";
 import WalletButton from "@refactor/components/WalletButton";
 import Link from "@refactor/components/Link";
+import { useMintFlow } from "@refactor/providers/MintFlowProvider";
+import { useCallback } from "react";
 
 const bem = createBEMHelper(require("./Header.module.scss"));
 
@@ -12,6 +14,15 @@ export default function Header({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "header">) {
+	const { startMinting } = useMintFlow();
+	const onCreateClick = useCallback(
+		(event) => {
+			event.preventDefault();
+			startMinting();
+		},
+		[startMinting]
+	);
+
 	return (
 		<header {...props} className={bem("header", className)}>
 			<Link href="/" className={bem("logo")}>
@@ -28,7 +39,8 @@ export default function Header({
 					Marketplace
 				</Link>
 				<Link
-					href="/create"
+					href="#"
+					onClick={onCreateClick}
 					className={bem("navLink")}
 					activeClassName={bem("navLink", { active: true })}>
 					Create
