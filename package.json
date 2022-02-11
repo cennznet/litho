@@ -11,12 +11,12 @@
     "new:component": "hygen component new"
   },
   "dependencies": {
-    "@cennznet/api": "^1.5.0-alpha.4",
-    "@cennznet/types": "^1.5.0-alpha.4",
+    "@cennznet/api": "^2.1.0-alpha.0",
+    "@cennznet/types": "^2.1.0-alpha.0",
     "@jahed/bem": "^1.2.12",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
-    "@polkadot/react-identicon": "0.70.1",
+    "@polkadot/react-identicon": "^1.0.1",
     "@types/cache-manager": "^3.4.2",
     "@types/store": "^2.0.2",
     "@types/ua-parser-js": "^0.7.36",
@@ -59,6 +59,9 @@
     "typescript": "^4.3.2"
   },
   "resolutions": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "@polkadot/wasm-crypto": "^4.5.1",
+    "@polkadot/util-crypto": "^8.3.3",
+    "@polkadot/util": "^8.3.3"
   }
 }
