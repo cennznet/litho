@@ -5,6 +5,7 @@ import { Props as ModalProps } from "react-modal";
 import Modal from "@refactor/components/Modal";
 import Text from "@refactor/components/Text";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { IMaskInput } from "react-imask";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -74,8 +75,68 @@ export default function MintFlowModal({
 }
 
 type NFTAboutProps = {};
-function NFTAbout({}: DOMComponentProps<NFTAboutProps, "fieldset">) {
-	return null;
+function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
+	return (
+		<fieldset {...props}>
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="TitleInput">Title</label>
+					<input
+						type="text"
+						className={bem("textInput")}
+						id="TitleInput"
+						name="title"
+						placeholder="Enter a name for your NFT"
+						required
+					/>
+				</div>
+			</div>
+
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="DescriptionInput">Description</label>
+					<textarea
+						className={bem("textInput")}
+						id="DescriptionInput"
+						rows={4}
+						name="description"
+						placeholder="Enter a short description of your NFT to accompany your marketplace listing"
+						required
+					/>
+				</div>
+			</div>
+
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="CopiesInput">Number of copies</label>
+					<input
+						type="number"
+						step={1}
+						className={bem("textInput")}
+						id="CopiesInput"
+						defaultValue={1}
+						required={true}
+						min={1}
+					/>
+				</div>
+				<div className={bem("spacer")} />
+				<div className={bem("input")}>
+					<label htmlFor="RoyaltyInput">Royalty</label>
+					<div className={bem("textInput", { prefix: true })}>
+						<input
+							type="number"
+							step={1}
+							id="RoyaltyInput"
+							defaultValue={10}
+							required={true}
+							min={1}
+						/>
+						<span>%</span>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	);
 }
 
 type NFTUploadProps = {};

@@ -95,3 +95,58 @@
 		display: block;
 	}
 }
+
+.field {
+	display: flex;
+	margin-bottom: 1.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.input {
+	width: 100%;
+
+	label[for] {
+		@include types.headline(h6);
+		display: block;
+		margin-bottom: 0.5em;
+	}
+}
+
+.spacer {
+	width: 1em;
+	flex-shrink: 0;
+}
+
+.textInput {
+	@include types.headline(h6);
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	display: block;
+	width: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+
+	&:disabled {
+		border-color: #bdbdbd;
+		cursor: not-allowed;
+	}
+
+	&--prefix {
+		display: flex;
+
+		> input {
+			width: 100%;
+			outline: none;
+		}
+
+		> span {
+			display: block;
+			padding: 0 0 0 0.875em;
+			color: figma-color("Litho Black 60%");
+		}
+	}
+}
