@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { DOMComponentProps, NFTCollectionId } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Props as ModalProps } from "react-modal";
@@ -25,13 +25,10 @@ export default function MintFlowModal({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
-	const onFormSubmit = useCallback(
-		(event) => {
-			event.preventDefault();
-			if (currentStep < 2) return setCurrentStep((current) => current + 1);
-		},
-		[currentStep]
-	);
+	const onFormSubmit = useCallback((step, event) => {
+		event.preventDefault();
+		if (step < 2) return setCurrentStep((current) => current + 1);
+	}, []);
 
 	return (
 		<Modal
@@ -55,7 +52,7 @@ export default function MintFlowModal({
 					selectedIndex={currentStep}
 					onSelect={setCurrentStep}>
 					<TabList className={bem("tabList")}>
-						{["About your NFT", "Upload assets", "Preview"].map(
+						{["About your NFT", "Upload asset", "Preview"].map(
 							(label, index) => (
 								<Tab
 									key={index}
@@ -66,23 +63,22 @@ export default function MintFlowModal({
 							)
 						)}
 					</TabList>
-					<form className={bem("form")} onSubmit={onFormSubmit}>
-						<TabPanel className={bem("tabPanel")}>
-							<NFTAbout />
-						</TabPanel>
-						<TabPanel className={bem("tabPanel")}>
-							<NFTUpload />
-						</TabPanel>
-						<TabPanel className={bem("tabPanel")}>
-							<NFTPreview />
-						</TabPanel>
 
-						<div className={bem("formAction")}>
-							{currentStep === 0 && (
-								<Button type="submit">Next: Upload Assets</Button>
-							)}
-						</div>
-					</form>
+					<TabPanel className={bem("tabPanel")}>
+						<NFTAbout
+							onSubmit={onFormSubmit.bind(null, 0)}
+							className={bem("form")}
+						/>
+					</TabPanel>
+					<TabPanel className={bem("tabPanel")}>
+						<NFTUpload
+							onSubmit={onFormSubmit.bind(null, 0)}
+							className={bem("form")}
+						/>
+					</TabPanel>
+					<TabPanel className={bem("tabPanel")}>
+						<NFTPreview />
+					</TabPanel>
 				</Tabs>
 			</div>
 		</Modal>
@@ -90,9 +86,9 @@ export default function MintFlowModal({
 }
 
 type NFTAboutProps = {};
-function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
+function NFTAbout(props: DOMComponentProps<NFTAboutProps, "form">) {
 	return (
-		<fieldset {...props}>
+		<form {...props}>
 			<div className={bem("field")}>
 				<div className={bem("input")}>
 					<label htmlFor="TitleInput">Title</label>
@@ -100,7 +96,7 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
 						type="text"
 						className={bem("textInput")}
 						id="TitleInput"
-						name="title"
+						name="name"
 						placeholder="Enter a name for your NFT"
 						required
 					/>
@@ -129,6 +125,7 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
 						step={1}
 						className={bem("textInput")}
 						id="CopiesInput"
+						name="quantity"
 						defaultValue={1}
 						required={true}
 						min={1}
@@ -141,6 +138,7 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
 						<input
 							type="number"
 							step={1}
+							name="royalty"
 							id="RoyaltyInput"
 							defaultValue={10}
 							required={true}
@@ -161,13 +159,76 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
 					<AttributesList max={16} />
 				</div>
 			</div>
-		</fieldset>
+
+			<div className={bem("formAction")}>
+				<Button type="submit">Next: Upload Asset</Button>
+			</div>
+		</form>
 	);
 }
 
 type NFTUploadProps = {};
-function NFTUpload({}: DOMComponentProps<NFTUploadProps, "fieldset">) {
-	return null;
+function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
+	const [fileType, setFileType] = useState<string>();
+
+	const onFileChange = useCallback((event) => {
+		const target = event.target;
+		const file = target?.files?.[0];
+
+		setFileType(file?.type);
+		// check for size;
+		const max = 10 * 1024 * 1024;
+		if (file.size > max)
+			return target.setCustomValidity(
+				"Please select a file that is less than 10MB"
+			);
+
+		if (file.type.indexOf("image/") < 0 || file.type.indexOf("video/"))
+			return target.setCustomValidity(
+				"Please select file that is either an image or a video"
+			);
+
+		target.setCustomValidity("");
+	}, []);
+
+	return (
+		<form {...props}>
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="UploadInput">Upload Asset</label>
+					<input
+						type="file"
+						name="image"
+						className={bem("textInput")}
+						id="UploadInput"
+						required={true}
+						onChange={onFileChange}
+					/>
+					<input type="hidden" name="encoding_format" defaultValue={fileType} />
+					<p className={bem("inputNote")}>
+						We support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, mov,
+						webm up to 10MB
+					</p>
+				</div>
+			</div>
+
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="ContentInput">Content Storage</label>
+					<input
+						type="text"
+						className={bem("textInput")}
+						disabled
+						value="IPFS"
+						id="ContentInput"
+					/>
+				</div>
+			</div>
+			<div className={bem("formAction")}>
+				<Button type="submit">Next: Preview</Button>
+			</div>
+		</form>
+	);
 }
 
 type NFTPreviewProps = {};
