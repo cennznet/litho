@@ -138,6 +138,7 @@
 
 .textInput {
 	@include types.headline(h6);
+	font-weight: normal;
 	display: flex;
 	background: white;
 	align-items: center;
