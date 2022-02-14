@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DOMComponentProps, NFTCollectionId } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Props as ModalProps } from "react-modal";
@@ -25,10 +25,20 @@ export default function MintFlowModal({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
+	const [formData, setFormData] = useState<Array<FormData>>([]);
 	const onFormSubmit = useCallback((step, event) => {
 		event.preventDefault();
+		const formData = new FormData(event.target);
+		setFormData((current) => {
+			const next = [...current];
+			next[step] = formData;
+			return next;
+		});
+
 		if (step < 2) return setCurrentStep((current) => current + 1);
 	}, []);
+
+	console.log(formData);
 
 	return (
 		<Modal
@@ -36,7 +46,7 @@ export default function MintFlowModal({
 			className={bem("content")}
 			innerClassName={bem("inner")}
 			overlayClassName={bem("overlay")}
-			shouldCloseOnEsc={!busy}
+			shouldCloseOnEsc={false}
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
 			<div className={bem("header")}>
@@ -63,22 +73,17 @@ export default function MintFlowModal({
 							)
 						)}
 					</TabList>
-
-					<TabPanel className={bem("tabPanel")}>
-						<NFTAbout
-							onSubmit={onFormSubmit.bind(null, 0)}
-							className={bem("form")}
-						/>
-					</TabPanel>
-					<TabPanel className={bem("tabPanel")}>
-						<NFTUpload
-							onSubmit={onFormSubmit.bind(null, 0)}
-							className={bem("form")}
-						/>
-					</TabPanel>
-					<TabPanel className={bem("tabPanel")}>
-						<NFTPreview />
-					</TabPanel>
+					<div className={bem("form")}>
+						<TabPanel className={bem("tabPanel")}>
+							<NFTAbout onSubmit={onFormSubmit.bind(null, 0)} />
+						</TabPanel>
+						<TabPanel className={bem("tabPanel")}>
+							<NFTUpload onSubmit={onFormSubmit.bind(null, 1)} />
+						</TabPanel>
+						<TabPanel className={bem("tabPanel")}>
+							<NFTPreview formData={formData} />
+						</TabPanel>
+					</div>
 				</Tabs>
 			</div>
 		</Modal>
@@ -176,6 +181,7 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 		const file = target?.files?.[0];
 
 		setFileType(file?.type);
+
 		// check for size;
 		const max = 10 * 1024 * 1024;
 		if (file.size > max)
@@ -183,7 +189,7 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 				"Please select a file that is less than 10MB"
 			);
 
-		if (file.type.indexOf("image/") < 0 || file.type.indexOf("video/"))
+		if (file.type.indexOf("image/") < 0 && file.type.indexOf("video/") < 0)
 			return target.setCustomValidity(
 				"Please select file that is either an image or a video"
 			);
@@ -206,8 +212,8 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 					/>
 					<input type="hidden" name="encoding_format" defaultValue={fileType} />
 					<p className={bem("inputNote")}>
-						We support: bmp, gif, jpeg, png, svg, tiff, webp, mp4, ogv, mov,
-						webm up to 10MB
+						We support: gif, jpeg, png, svg, tiff, webp, mp4, ogv, mov, webm up
+						to 10MB
 					</p>
 				</div>
 			</div>
@@ -231,7 +237,88 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 	);
 }
 
-type NFTPreviewProps = {};
-function NFTPreview({}: DOMComponentProps<NFTPreviewProps, "fieldset">) {
-	return null;
+type NFTPreviewProps = {
+	formData: Array<FormData>;
+};
+type NFTRenderer = {
+	name: string;
+	url: string;
+	contentType: string;
+	quantity: number;
+};
+
+function NFTPreview({
+	formData,
+	...props
+}: DOMComponentProps<NFTPreviewProps, "form">) {
+	const [aboutForm, uploadForm] = formData;
+	const [nftRenderer, setNFTRenderer] = useState<NFTRenderer>(
+		{} as NFTRenderer
+	);
+
+	useEffect(() => {
+		if (!uploadForm) return;
+
+		const reader = new FileReader();
+		const onReaderLoad = (event) => {
+			const url = event.target.result;
+			setNFTRenderer({
+				name: aboutForm.get("name") as string,
+				url,
+				contentType: uploadForm.get("encoding_format") as string,
+				quantity: parseInt(aboutForm.get("quantity") as string, 10),
+			});
+		};
+		reader.addEventListener("load", onReaderLoad);
+		reader.readAsDataURL(uploadForm.get("image") as Blob);
+
+		return () => reader.removeEventListener("load", onReaderLoad);
+	}, [uploadForm, aboutForm]);
+
+	const { name, url, contentType, quantity } = nftRenderer;
+
+	if (!url) return null;
+
+	return (
+		<form {...props}>
+			<div className={bem("card", { asStack: quantity > 1 })}>
+				<div className={bem("renderer")}>
+					{contentType.indexOf("video/") === 0 && (
+						<video
+							src={url}
+							title={name}
+							className={bem("rendererItem")}
+							autoPlay
+							loop
+							muted
+							controlsList="nodownload"
+						/>
+					)}
+
+					{contentType.indexOf("image/") === 0 && (
+						// eslint-disable-next-line @next/next/no-img-element
+						<img
+							className={bem("rendererItem")}
+							src={url}
+							title={name}
+							alt={name}
+						/>
+					)}
+				</div>
+
+				<div className={bem("details")}>
+					<Text variant="headline5" className={bem("name")}>
+						{name}
+					</Text>
+					<Text variant="subtitle2" className={bem("quantity")}>
+						x{quantity}
+					</Text>
+				</div>
+			</div>
+
+			<div className={bem("formAction")}>
+				<Button type="submit">Mint</Button>
+			</div>
+		</form>
+	);
 }

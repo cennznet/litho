@@ -175,6 +175,82 @@
 	font-weight: normal;
 }
 
+.card {
+	display: block;
+	position: relative;
+	border: 2px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
+	padding: 1.25rem;
+	width: 300px;
+	margin: 0 auto;
+
+	&--asStack {
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 90%;
+			left: 5%;
+			bottom: -0.5rem;
+			z-index: 2;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 80%;
+			left: 10%;
+			bottom: calc((1rem - 2px) * -1);
+			z-index: 1;
+		}
+	}
+}
+
+.renderer {
+	position: relative;
+	padding-top: 100%;
+}
+
+.rendererItem {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	object-position: center;
+	object-fit: contain;
+}
+
+.details {
+	margin-top: 1.25rem;
+	display: flex;
+	align-items: flex-start;
+}
+
+.name {
+	text-transform: none;
+	min-width: 0;
+	flex: 1;
+	margin-right: 0.5rem;
+	padding-bottom: 0.125em; // fix "g" is being cut-off
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.quantity {
+	flex-shrink: 0;
+}
+
 // .trigger {
 // 	display: flex;
 // 	align-items: center;

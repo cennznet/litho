@@ -10,7 +10,8 @@ const bem = createBEMHelper(require("./NFTRenderer.module.scss"));
 type ComponentProps = {
 	name: string;
 	url: string;
-	extension: string;
+	extension?: string;
+	contentType?: string;
 };
 
 export default function NFTRenderer({
@@ -18,9 +19,14 @@ export default function NFTRenderer({
 	name,
 	url,
 	extension,
+	contentType,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const isVideo = isVideoType(extension);
+	const isVideo = extension
+		? isVideoType(extension)
+		: contentType
+		? contentType.indexOf("video/") === 0
+		: false;
 	const [loading, setLoading] = useState<boolean>(true);
 	const onLoadingComplete = useCallback(() => {
 		setLoading(false);
@@ -34,6 +40,7 @@ export default function NFTRenderer({
 						onCanPlay={onLoadingComplete}
 						className={bem("video")}
 						src={url}
+						title={name}
 						autoPlay
 						loop
 						muted
@@ -46,6 +53,7 @@ export default function NFTRenderer({
 						onLoadingComplete={onLoadingComplete}
 						src={url}
 						layout="fill"
+						title={name}
 						alt={name}
 						objectFit="contain"
 						objectPosition="center"

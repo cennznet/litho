@@ -3,7 +3,7 @@ export default function isVideoType(extension: string): boolean {
 		case "mov":
 		case "webm":
 		case "mp4":
-		case "ogg":
+		case "ogv":
 			return true;
 		default:
 			return false;
