@@ -50,6 +50,15 @@
 	}
 }
 
+.formAction {
+	margin-top: 2em;
+	text-align: center;
+
+	> button {
+		width: 50%;
+	}
+}
+
 .tabs {
 	position: relative;
 	z-index: 1;
@@ -111,6 +120,9 @@
 		@include types.headline(h6);
 		display: block;
 		margin-bottom: 0.5em;
+		& + p {
+			margin-top: -0.5em;
+		}
 	}
 }
 
@@ -129,6 +141,10 @@
 	width: 100%;
 	padding: 0.65em 0.875em 0.75em;
 	outline: none;
+
+	&::placeholder {
+		font-weight: normal;
+	}
 
 	&:disabled {
 		border-color: #bdbdbd;
@@ -150,3 +166,41 @@
 		}
 	}
 }
+
+.inputNote {
+	@include types.subtitle(s1);
+	margin-top: 0.5em;
+	color: figma-color("Litho Black 60%");
+	font-weight: normal;
+}
+
+// .trigger {
+// 	display: flex;
+// 	align-items: center;
+// 	@include types.headline(h6);
+// 	cursor: pointer;
+// 	margin-bottom: 1em;
+
+// 	label {
+// 		cursor: inherit;
+// 	}
+
+// 	i {
+// 		display: block;
+// 		width: 10px;
+// 		margin-left: 0.5em;
+// 		margin-bottom: -2px;
+// 		transform: rotate(-90deg);
+// 		transition: transform 0.2s ease-in;
+// 	}
+
+// 	&--opened {
+// 		i {
+// 			transform: rotate(0deg);
+// 		}
+// 	}
+// }
+
+// .collapsible {
+// 	flex: 1;
+// }

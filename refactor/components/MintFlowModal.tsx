@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { DOMComponentProps, NFTCollectionId } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Props as ModalProps } from "react-modal";
 import Modal from "@refactor/components/Modal";
 import Text from "@refactor/components/Text";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { IMaskInput } from "react-imask";
+import AttributesList from "@refactor/components/AttributesList";
+import Button from "@refactor/components/Button";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -24,6 +25,13 @@ export default function MintFlowModal({
 }: DOMComponentProps<ComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
+	const onFormSubmit = useCallback(
+		(event) => {
+			event.preventDefault();
+			if (currentStep < 2) return setCurrentStep((current) => current + 1);
+		},
+		[currentStep]
+	);
 
 	return (
 		<Modal
@@ -44,7 +52,8 @@ export default function MintFlowModal({
 					selectedTabClassName={bem("tab", { selected: true })}
 					disabledTabClassName={bem("tab", { disabled: true })}
 					selectedTabPanelClassName={bem("tabPanel", { selected: true })}
-					defaultIndex={0}>
+					selectedIndex={currentStep}
+					onSelect={setCurrentStep}>
 					<TabList className={bem("tabList")}>
 						{["About your NFT", "Upload assets", "Preview"].map(
 							(label, index) => (
@@ -57,7 +66,7 @@ export default function MintFlowModal({
 							)
 						)}
 					</TabList>
-					<form className={bem("form")}>
+					<form className={bem("form")} onSubmit={onFormSubmit}>
 						<TabPanel className={bem("tabPanel")}>
 							<NFTAbout />
 						</TabPanel>
@@ -67,6 +76,12 @@ export default function MintFlowModal({
 						<TabPanel className={bem("tabPanel")}>
 							<NFTPreview />
 						</TabPanel>
+
+						<div className={bem("formAction")}>
+							{currentStep === 0 && (
+								<Button type="submit">Next: Upload Assets</Button>
+							)}
+						</div>
 					</form>
 				</Tabs>
 			</div>
@@ -133,6 +148,17 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "fieldset">) {
 						/>
 						<span>%</span>
 					</div>
+				</div>
+			</div>
+
+			<div className={bem("field")}>
+				<div className={bem("input")}>
+					<label htmlFor="attributesList">Attributes (optional)</label>
+					<p className={bem("inputNote")}>
+						Describe and organise your NFT using attributes, e.g Background: Sky
+						Blue. You can add up 16 attributes.
+					</p>
+					<AttributesList max={16} />
 				</div>
 			</div>
 		</fieldset>
