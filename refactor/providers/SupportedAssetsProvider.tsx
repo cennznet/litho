@@ -11,6 +11,7 @@ type ContextProps = {
 	displayAsset: (assetId: number, value: number) => [number, string];
 	getMinimumStep: (assetId: number) => [number, number];
 	findAsset: (assetId: number) => AssetInfo;
+	findAssetBySymbol: (symbol: string) => AssetInfo;
 };
 
 const SupportedAssetsContext = createContext<ContextProps>({} as ContextProps);
@@ -26,6 +27,13 @@ export default function SupportedAssetsProvider({
 	const findAsset = useCallback(
 		(assetId: number) => {
 			return assets.find((asset) => asset.assetId === assetId);
+		},
+		[assets]
+	);
+
+	const findAssetBySymbol = useCallback(
+		(assetSymbol) => {
+			return assets.find((asset) => asset.symbol === assetSymbol);
 		},
 		[assets]
 	);
@@ -49,7 +57,7 @@ export default function SupportedAssetsProvider({
 			let step = 1 / Math.pow(10, asset.decimals),
 				scale = 4;
 
-			// In "CENNZ" case, it would be `0.0001` but that would be too small
+			// In "CENNZ" case, it would be `0.0001` but 2that would be too small
 			switch (asset.symbol) {
 				case "CENNZ":
 				case "CPAY":
@@ -65,7 +73,13 @@ export default function SupportedAssetsProvider({
 
 	return (
 		<SupportedAssetsContext.Provider
-			value={{ assets, displayAsset, getMinimumStep, findAsset }}>
+			value={{
+				assets,
+				displayAsset,
+				getMinimumStep,
+				findAsset,
+				findAssetBySymbol,
+			}}>
 			{children}
 		</SupportedAssetsContext.Provider>
 	);

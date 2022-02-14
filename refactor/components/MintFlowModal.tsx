@@ -7,6 +7,7 @@ import Text from "@refactor/components/Text";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import AttributesList from "@refactor/components/AttributesList";
 import Button from "@refactor/components/Button";
+import useGasEstimate from "@refactor/hooks/useGasEstimate";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -277,6 +278,14 @@ function NFTPreview({
 
 	const { name, url, contentType, quantity } = nftRenderer;
 
+	const { estimateMintFee } = useGasEstimate();
+	const [gasFee, setGasFee] = useState<number>();
+	useEffect(() => {
+		if (!estimateMintFee) return;
+
+		estimateMintFee().then(setGasFee);
+	}, [estimateMintFee]);
+
 	if (!url) return null;
 
 	return (
@@ -318,6 +327,12 @@ function NFTPreview({
 
 			<div className={bem("formAction")}>
 				<Button type="submit">Mint</Button>
+
+				{gasFee && (
+					<p className={bem("inputNote")}>
+						Estimated transaction fee: {gasFee} CPAY
+					</p>
+				)}
 			</div>
 		</form>
 	);
