@@ -64,3 +64,13 @@ export type NFTMetadata = {
 export type NFTCollectionTuple = [NFTCollectionId, Array<NFTListingId>];
 export type NFTListingTuple = [NFTCollectionId, NFTListingId];
 export type NFTIndex = Array<[NFTListingId, NFTId]>;
+
+export type NFTAttribute271 = { trait_type: string; value: string };
+export type NFTMetadata271 = {
+	name: string;
+	description: string;
+	image: string;
+	encoding_format: string;
+	attributes: Array<NFTAttribute271>;
+	[key: string]: any;
+};

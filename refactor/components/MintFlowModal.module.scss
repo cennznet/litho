@@ -184,6 +184,7 @@
 	background-color: figma-color("Litho Cream");
 	padding: 1.25rem;
 	width: 300px;
+	min-height: calc(300px + 1.25rem * 2);
 	margin: 0 auto;
 
 	&--asStack {

@@ -36,7 +36,7 @@ export default function AttributesList({
 								className={bem("textInput")}
 								placeholder="Attribute Type"
 								required
-								name={`attributes[${index}}][trait_type]`}
+								name="attribute_types"
 							/>
 
 							<input
@@ -44,7 +44,7 @@ export default function AttributesList({
 								className={bem("textInput")}
 								placeholder="Attribute Value"
 								required
-								name={`attributes[${index}}][value]`}
+								name="attribute_values"
 							/>
 
 							<span

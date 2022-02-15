@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { NFTMetadata271 } from "@refactor/types";
 
 type PinataResponse = {
 	IpfsHash: string;
@@ -10,7 +11,7 @@ type PinataResponse = {
 export default function usePinataIPFS(): {
 	pinFile: (file: Blob) => Promise<PinataResponse>;
 	pinMetadata: (
-		metadata: { [key: string]: any },
+		metadata: NFTMetadata271,
 		repeats?: number
 	) => Promise<PinataResponse>;
 } {

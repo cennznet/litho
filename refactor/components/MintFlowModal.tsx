@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { DOMComponentProps, NFTCollectionId } from "@refactor/types";
+import {
+	DOMComponentProps,
+	NFTAttribute271,
+	NFTCollectionId,
+	NFTMetadata271,
+} from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Props as ModalProps } from "react-modal";
 import Modal from "@refactor/components/Modal";
@@ -8,6 +13,8 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import AttributesList from "@refactor/components/AttributesList";
 import Button from "@refactor/components/Button";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
+import usePinataIPFS from "@refactor/hooks/usePinataIPFS";
+import useNFTMint from "@refactor/hooks/useNFTMint";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -27,19 +34,62 @@ export default function MintFlowModal({
 	const [busy, setBusy] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [formData, setFormData] = useState<Array<FormData>>([]);
-	const onFormSubmit = useCallback((step, event) => {
-		event.preventDefault();
-		const formData = new FormData(event.target);
+	const { pinFile, pinMetadata } = usePinataIPFS();
+	const mintNFT = useNFTMint();
+	const [aboutForm, uploadForm] = formData;
+	const onFormData = useCallback((step, formData) => {
 		setFormData((current) => {
 			const next = [...current];
 			next[step] = formData;
 			return next;
 		});
 
-		if (step < 2) return setCurrentStep((current) => current + 1);
+		return setCurrentStep((current) => current + 1);
 	}, []);
 
-	console.log(formData);
+	const onFormSubmit = useCallback(
+		async (event) => {
+			event.preventDefault();
+			setBusy(true);
+
+			// Pin the upload asset to Pinata IPFS
+			const { IpfsHash: imageHash } = await pinFile(
+				uploadForm.get("image") as Blob
+			);
+
+			const quantity = parseInt(aboutForm.get("quantity") as string, 10);
+
+			const metadata: NFTMetadata271 = {
+				name: aboutForm.get("name") as string,
+				description: aboutForm.get("description") as string,
+				image: `ipfs://${imageHash}`,
+				encoding_format: uploadForm.get("encoding_format") as string,
+				attributes: JSON.parse(
+					aboutForm.get("attributes") as string
+				) as Array<NFTAttribute271>,
+				quantity,
+			};
+
+			// Pint the metadata folder to Pinata IPFS
+			const { IpfsHash: metadataHash } = await pinMetadata(
+				metadata,
+				parseInt(aboutForm.get("quantity") as string, 10)
+			);
+
+			console.log(aboutForm.get("royalty"));
+
+			const status = await mintNFT(
+				collectionId,
+				`ipfs://${metadataHash}`,
+				quantity,
+				parseInt(aboutForm.get("royalty") as string, 10)
+			);
+
+			if (status === "cancelled") return setBusy(false);
+			setBusy(false);
+		},
+		[pinFile, pinMetadata, aboutForm, uploadForm, collectionId, mintNFT]
+	);
 
 	return (
 		<Modal
@@ -51,7 +101,7 @@ export default function MintFlowModal({
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
 			<div className={bem("header")}>
-				<Text variant="headline3">Create a single NFT</Text>
+				<Text variant="headline3">Create NFTs</Text>
 			</div>
 			<div className={bem("body")}>
 				<Tabs
@@ -68,7 +118,7 @@ export default function MintFlowModal({
 								<Tab
 									key={index}
 									className={bem("tab")}
-									disabled={index > currentStep}>
+									disabled={index > currentStep || (index <= 1 && busy)}>
 									{`${index + 1}. ${label}`}
 								</Tab>
 							)
@@ -76,13 +126,17 @@ export default function MintFlowModal({
 					</TabList>
 					<div className={bem("form")}>
 						<TabPanel className={bem("tabPanel")}>
-							<NFTAbout onSubmit={onFormSubmit.bind(null, 0)} />
+							<NFTAbout onFormData={onFormData.bind(null, 0)} />
 						</TabPanel>
 						<TabPanel className={bem("tabPanel")}>
-							<NFTUpload onSubmit={onFormSubmit.bind(null, 1)} />
+							<NFTUpload onFormData={onFormData.bind(null, 1)} />
 						</TabPanel>
 						<TabPanel className={bem("tabPanel")}>
-							<NFTPreview formData={formData} />
+							<NFTPreview
+								formData={formData}
+								busy={busy}
+								onSubmit={onFormSubmit}
+							/>
 						</TabPanel>
 					</div>
 				</Tabs>
@@ -91,13 +145,43 @@ export default function MintFlowModal({
 	);
 }
 
-type NFTAboutProps = {};
-function NFTAbout(props: DOMComponentProps<NFTAboutProps, "form">) {
+type NFTAboutProps = {
+	onFormData?: (data: FormData) => void;
+};
+function NFTAbout({
+	onFormData,
+	...props
+}: DOMComponentProps<NFTAboutProps, "form">) {
+	const onFormSubmit = useCallback(
+		(event) => {
+			event.preventDefault();
+			const data = new FormData(event.target);
+			const attributeTypes = data.getAll("attribute_types");
+			const attribueValues = data.getAll("attribute_values");
+
+			data.append(
+				"attributes",
+				JSON.stringify(
+					attributeTypes.reduce((attributes, value, index) => {
+						attributes.push({
+							trait_type: value,
+							value: attribueValues[index],
+						});
+
+						return attributes;
+					}, [])
+				)
+			);
+			onFormData?.(data);
+		},
+		[onFormData]
+	);
+
 	return (
-		<form {...props}>
+		<form {...props} onSubmit={onFormSubmit}>
 			<div className={bem("field")}>
 				<div className={bem("input")}>
-					<label htmlFor="TitleInput">Title</label>
+					<label htmlFor="TitleInput">Name</label>
 					<input
 						type="text"
 						className={bem("textInput")}
@@ -173,8 +257,13 @@ function NFTAbout(props: DOMComponentProps<NFTAboutProps, "form">) {
 	);
 }
 
-type NFTUploadProps = {};
-function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
+type NFTUploadProps = {
+	onFormData?: (data: FormData) => void;
+};
+function NFTUpload({
+	onFormData,
+	...props
+}: DOMComponentProps<NFTUploadProps, "form">) {
 	const [fileType, setFileType] = useState<string>();
 
 	const onFileChange = useCallback((event) => {
@@ -198,8 +287,18 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 		target.setCustomValidity("");
 	}, []);
 
+	const onFormSubmit = useCallback(
+		(event) => {
+			event.preventDefault();
+			const data = new FormData(event.target);
+
+			onFormData?.(data);
+		},
+		[onFormData]
+	);
+
 	return (
-		<form {...props}>
+		<form {...props} onSubmit={onFormSubmit}>
 			<div className={bem("field")}>
 				<div className={bem("input")}>
 					<label htmlFor="UploadInput">Upload Asset</label>
@@ -240,6 +339,7 @@ function NFTUpload(props: DOMComponentProps<NFTUploadProps, "form">) {
 
 type NFTPreviewProps = {
 	formData: Array<FormData>;
+	busy: boolean;
 };
 type NFTRenderer = {
 	name: string;
@@ -250,6 +350,7 @@ type NFTRenderer = {
 
 function NFTPreview({
 	formData,
+	busy,
 	...props
 }: DOMComponentProps<NFTPreviewProps, "form">) {
 	const [aboutForm, uploadForm] = formData;
@@ -278,6 +379,7 @@ function NFTPreview({
 
 	const { name, url, contentType, quantity } = nftRenderer;
 
+	// Get gas estimate
 	const { estimateMintFee } = useGasEstimate();
 	const [gasFee, setGasFee] = useState<number>();
 	useEffect(() => {
@@ -326,7 +428,9 @@ function NFTPreview({
 			</div>
 
 			<div className={bem("formAction")}>
-				<Button type="submit">Mint</Button>
+				<Button type="submit" disabled={busy}>
+					{busy ? "Processing" : "Mint"}
+				</Button>
 
 				{gasFee && (
 					<p className={bem("inputNote")}>
