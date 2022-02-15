@@ -42,8 +42,8 @@ export type NFTListingId = number;
 export type NFTId = [NFTCollectionId, NFTSeriesId, NFTSerialNumber];
 
 export type NFTAttribute = {
-	Text: string;
-	URL: string;
+	text?: string;
+	url?: string;
 	[key: string]: string;
 };
 
@@ -72,5 +72,7 @@ export type NFTMetadata271 = {
 	image: string;
 	encoding_format: string;
 	attributes: Array<NFTAttribute271>;
+	quantity: number;
+	creator: string;
 	[key: string]: any;
 };

@@ -284,10 +284,6 @@ function AssociationSection({
 		royalty,
 	} = listingItem;
 
-	const { account } = useWallet();
-	const isOwner = account?.address === owner;
-	const isCreator = account?.address === creator;
-
 	return (
 		<div className={bem("association")}>
 			<dl className={bem("address")}>

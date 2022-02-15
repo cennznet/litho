@@ -17,6 +17,7 @@ import usePinataIPFS from "@refactor/hooks/usePinataIPFS";
 import useNFTMint from "@refactor/hooks/useNFTMint";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import Link from "@refactor/components/Link";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -37,6 +38,7 @@ export default function MintFlowModal({
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [formData, setFormData] = useState<Array<FormData>>([]);
 	const { pinFile, pinMetadata } = usePinataIPFS();
+	const { account } = useWallet();
 	const mintNFT = useNFTMint();
 	const { showDialog, closeDialog } = useDialog();
 	const showSuccessDialog = useCallback(async () => {
@@ -91,6 +93,7 @@ export default function MintFlowModal({
 					aboutForm.get("attributes") as string
 				) as Array<NFTAttribute271>,
 				quantity,
+				creator: account.address,
 			};
 
 			// Pint the metadata folder to Pinata IPFS
@@ -120,6 +123,7 @@ export default function MintFlowModal({
 			mintNFT,
 			onRequestClose,
 			showSuccessDialog,
+			account?.address,
 		]
 	);
 
@@ -420,13 +424,11 @@ function NFTPreview({
 		estimateMintFee().then(setGasFee);
 	}, [estimateMintFee]);
 
-	if (!url) return null;
-
 	return (
 		<form {...props}>
 			<div className={bem("card", { asStack: quantity > 1 })}>
 				<div className={bem("renderer")}>
-					{contentType.indexOf("video/") === 0 && (
+					{!!url && contentType.indexOf("video/") === 0 && (
 						<video
 							src={url}
 							title={name}
@@ -438,7 +440,7 @@ function NFTPreview({
 						/>
 					)}
 
-					{contentType.indexOf("image/") === 0 && (
+					{!!url && contentType.indexOf("image/") === 0 && (
 						// eslint-disable-next-line @next/next/no-img-element
 						<img
 							className={bem("rendererItem")}
