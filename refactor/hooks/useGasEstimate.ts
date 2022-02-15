@@ -1,7 +1,6 @@
 import { Api } from "@cennznet/api";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { AssetInfo } from "@refactor/types";
 import { useMemo } from "react";
 
@@ -9,26 +8,27 @@ export default function useGasEstimate(): {
 	estimateMintFee: () => Promise<number>;
 } {
 	const api = useCENNZApi();
-	const { account } = useWallet();
 	const { findAssetBySymbol } = useAssets();
 	const estimateMintFee = useMemo(() => {
 		if (!api) return;
 		return async () => {
 			const cpay = findAssetBySymbol("CPAY");
-			const createCollectionFee = await fetchEstimateFee(
-				api,
+			const batch = api.tx.utility.batchAll([
 				api.tx.nft.createCollection("Litho (default)", null, null),
-				cpay
-			);
-			const mintSeriesFee = await fetchEstimateFee(
-				api,
-				api.tx.nft.mintSeries(1, 1, account.address, null, null, null),
-				cpay
-			);
+				api.tx.nft.mintSeries(
+					1,
+					1,
+					"5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM",
+					null,
+					null,
+					null
+				),
+			]);
+			const fee = await fetchEstimateFee(api, batch, cpay);
 
-			return Math.ceil(createCollectionFee + mintSeriesFee);
+			return Math.ceil(fee);
 		};
-	}, [api, account, findAssetBySymbol]);
+	}, [api, findAssetBySymbol]);
 
 	return { estimateMintFee };
 }

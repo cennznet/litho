@@ -47,7 +47,7 @@ export default function useNFTMint(): Callback {
 			return await signAndSendTx(
 				extrinsics.length === 1
 					? extrinsics[0]
-					: api.tx.utility.batch(extrinsics),
+					: api.tx.utility.batchAll(extrinsics),
 				account.address,
 				wallet.signer
 			);
