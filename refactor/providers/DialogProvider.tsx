@@ -16,8 +16,8 @@ type DialogContent = {
 };
 
 type DialogContext = {
-	show: (content: DialogContent) => Promise<void>;
-	close: () => void;
+	showDialog: (content: DialogContent) => Promise<void>;
+	closeDialog: () => void;
 };
 
 const DialogContext = createContext<DialogContext>({} as DialogContext);
@@ -40,7 +40,7 @@ export default function DialogProvider({
 
 	const [content, setContent] = useState<DialogContent>({} as DialogContent);
 
-	const show = useCallback(
+	const showDialog = useCallback(
 		async (content) => {
 			setContent({ ...content, action: content.action || defaultAction });
 			return new Promise<void>((resolve) => {
@@ -52,7 +52,8 @@ export default function DialogProvider({
 
 	return (
 		<>
-			<DialogContext.Provider value={{ show, close: onModalRequestClose }}>
+			<DialogContext.Provider
+				value={{ showDialog, closeDialog: onModalRequestClose }}>
 				{children}
 			</DialogContext.Provider>
 			<DialogModal

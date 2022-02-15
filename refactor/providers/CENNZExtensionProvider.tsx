@@ -35,7 +35,7 @@ export default function CENNZExtensionProvider({
 	const [module, setModule] = useState<typeof Extension>();
 	const [extension, setExtension] = useState<InjectedExtension>();
 	const [accounts, setAccounts] = useState<Array<InjectedAccountWithMeta>>();
-	const { show, close } = useDialog();
+	const { showDialog, closeDialog } = useDialog();
 
 	const promptInstallExtension = useCallback(async () => {
 		const url =
@@ -45,22 +45,22 @@ export default function CENNZExtensionProvider({
 
 		const action = (
 			<>
-				<Button variant="hollow" onClick={close}>
+				<Button variant="hollow" onClick={closeDialog}>
 					Dismiss
 				</Button>
-				<Link href={url} onClick={close}>
+				<Link href={url} onClick={closeDialog}>
 					<Button>{`Install Extension for ${browser.name}`}</Button>
 				</Link>
 			</>
 		);
 
-		await show({
+		await showDialog({
 			title: "Missing CENNZnet Extension",
 			message:
 				"Please install a compatible CENNZnet Extension for your browser and create at least one account to continue.",
 			action,
 		});
-	}, [browser, show, close]);
+	}, [browser, showDialog, closeDialog]);
 
 	useEffect(() => {
 		import("@polkadot/extension-dapp").then(setModule);
@@ -83,7 +83,7 @@ export default function CENNZExtensionProvider({
 	}, [module]);
 
 	useEffect(() => {
-		if (!module || !extension || !show) return;
+		if (!module || !extension || !showDialog) return;
 		let unsubscibre: () => void;
 
 		const fetchAccounts = async () => {
@@ -92,7 +92,7 @@ export default function CENNZExtensionProvider({
 			await web3Enable("Litho");
 			const accounts = (await web3Accounts()) || [];
 			if (!accounts.length)
-				return show({
+				return showDialog({
 					title: "Missing CENNZnet Account",
 					message:
 						"Please create at least one account in the CENNZnet extension to continue.",
@@ -108,7 +108,7 @@ export default function CENNZExtensionProvider({
 		fetchAccounts();
 
 		return unsubscibre;
-	}, [module, extension, show]);
+	}, [module, extension, showDialog]);
 
 	return (
 		<CENNZExtensionContext.Provider

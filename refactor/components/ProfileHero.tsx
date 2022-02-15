@@ -22,7 +22,7 @@ export default function ProfileHero({
 			if (!entries?.length) return;
 			const clientRect = target.getBoundingClientRect();
 
-			setIconScale(((clientRect?.height || 256) / 256) * 1.5);
+			setIconScale(((clientRect?.height || 256) / 256) * 1.25);
 		},
 		[]
 	);

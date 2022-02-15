@@ -15,6 +15,8 @@ import Button from "@refactor/components/Button";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
 import usePinataIPFS from "@refactor/hooks/usePinataIPFS";
 import useNFTMint from "@refactor/hooks/useNFTMint";
+import { useDialog } from "@refactor/providers/DialogProvider";
+import Link from "@refactor/components/Link";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -36,6 +38,27 @@ export default function MintFlowModal({
 	const [formData, setFormData] = useState<Array<FormData>>([]);
 	const { pinFile, pinMetadata } = usePinataIPFS();
 	const mintNFT = useNFTMint();
+	const { showDialog, closeDialog } = useDialog();
+	const showSuccessDialog = useCallback(async () => {
+		const action = (
+			<>
+				<Button variant="hollow" onClick={closeDialog}>
+					Dismiss
+				</Button>
+				<Link href="/me" onClick={closeDialog}>
+					<Button>View my NFTs</Button>
+				</Link>
+			</>
+		);
+
+		return await showDialog({
+			title: "Congratulations!",
+			message:
+				"Your NFTs was successfully minted and should be displayed in your wallet shortly.",
+			action,
+		});
+	}, [closeDialog, showDialog]);
+
 	const [aboutForm, uploadForm] = formData;
 	const onFormData = useCallback((step, formData) => {
 		setFormData((current) => {
@@ -76,8 +99,6 @@ export default function MintFlowModal({
 				parseInt(aboutForm.get("quantity") as string, 10)
 			);
 
-			console.log(aboutForm.get("royalty"));
-
 			const status = await mintNFT(
 				collectionId,
 				`ipfs://${metadataHash}`,
@@ -87,8 +108,19 @@ export default function MintFlowModal({
 
 			if (status === "cancelled") return setBusy(false);
 			setBusy(false);
+			onRequestClose?.(null);
+			await showSuccessDialog();
 		},
-		[pinFile, pinMetadata, aboutForm, uploadForm, collectionId, mintNFT]
+		[
+			pinFile,
+			pinMetadata,
+			aboutForm,
+			uploadForm,
+			collectionId,
+			mintNFT,
+			onRequestClose,
+			showSuccessDialog,
+		]
 	);
 
 	return (
