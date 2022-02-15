@@ -11,8 +11,8 @@
     "new:component": "hygen component new"
   },
   "dependencies": {
-    "@cennznet/api": "^2.1.0-alpha.0",
-    "@cennznet/types": "^2.1.0-alpha.0",
+    "@cennznet/api": "^2.1.0-alpha.1",
+    "@cennznet/types": "^2.1.0-alpha.1",
     "@jahed/bem": "^1.2.12",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
