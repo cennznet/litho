@@ -132,8 +132,6 @@ export async function fetchNFTInfo(
 		[] as NFTAttributes
 	);
 
-	console.log(attributes);
-
 	imageIPFSUrl = getPinataUrl(rawMetadata.image);
 
 	return { metadata, attributes, metadataIPFSUrl, imageIPFSUrl };
