@@ -67,9 +67,17 @@ export default function OwnerGrid({
 
 		const sortedListingIds = [
 			...tokenIds.sort((a: NFTId, b: NFTId) => {
-				const left: number = a[0] + a[1] + a[2];
-				const right: number = b[0] + b[1] + b[2];
-				return sortOrder === "ASC" ? left - right : right - left;
+				const left: string = a.join("/");
+				const right: string = b.join("/");
+				if (sortOrder === "ASC") {
+					if (left > right) return 1;
+					if (left < right) return -1;
+				}
+
+				if (left > right) return -1;
+				if (left < right) return 1;
+
+				return 0;
 			}),
 		];
 
