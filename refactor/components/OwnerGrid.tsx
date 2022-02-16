@@ -9,6 +9,7 @@ import Text from "@refactor/components/Text";
 import Dropdown from "@refactor/components/Dropdown";
 import Button from "@refactor/components/Button";
 import Link from "@refactor/components/Link";
+import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 
 const bem = createBEMHelper(require("./OwnerGrid.module.scss"));
 
@@ -27,6 +28,7 @@ export default function OwnerGrid({
 		...DEFAULT_STATE,
 	]);
 	const [sortOrder, setSortOrder] = useState<SortOrder>("DESC");
+	const { startMinting } = useMintFlow();
 
 	useEffect(() => {
 		setTokenIds([...DEFAULT_STATE]);
@@ -119,9 +121,10 @@ export default function OwnerGrid({
 							<Text variant="headline6" className={bem("headline")}>
 								You don't have any NFTs yet.
 							</Text>
-							<Link href="/create">
-								<Button className={bem("button")}>Start Minting</Button>
-							</Link>
+
+							<Button className={bem("button")} onClick={startMinting}>
+								Start Minting
+							</Button>
 						</div>
 					)}
 				</NFTGrid>
