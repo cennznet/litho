@@ -149,8 +149,6 @@ export default function SupportedWalletProvider({
 			);
 			if (!balance) throw new Error(`Asset "${paymentAssetId}" is not found`);
 
-			console.log(balance.rawValue?.toJSON?.() as number, requiredFund);
-
 			return (balance.rawValue?.toJSON?.() as number) >= requiredFund;
 		},
 		[balances]

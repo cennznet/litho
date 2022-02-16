@@ -12,3 +12,11 @@
 .sortDropdown {
 	flex-shrink: 0;
 }
+
+.message {
+	display: flex;
+	padding: 4em;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}

@@ -71,6 +71,8 @@ export default function CollectionGrid({
 		setSortOrder(event.target.value);
 	}, []);
 
+	console.log({ sortedListingIds });
+
 	return (
 		<div className={bem("root", className)} {...props}>
 			<ListingGrid listingIds={sortedListingIds}>
@@ -86,6 +88,14 @@ export default function CollectionGrid({
 						<option value="ASC">Oldest First</option>
 					</Dropdown>
 				</div>
+
+				{!sortedListingIds?.length && (
+					<div className={bem("message")}>
+						<Text variant="headline6" className={bem("headline")}>
+							No listings available in this collection.
+						</Text>
+					</div>
+				)}
 			</ListingGrid>
 		</div>
 	);
