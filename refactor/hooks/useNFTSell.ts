@@ -32,7 +32,7 @@ export default function useNFTSell(): Callback {
 				date[method](0);
 				return date;
 			}, new Date());
-			const blockTime = api.consts.babe.expectedBlockTime.toNumber();
+			const blockTime = api.consts.babe.expectedBlockTime.toJSON() as number;
 			const duration = Math.floor(
 				((closingDate.getTime() - today.getTime()) / blockTime) as number
 			);
