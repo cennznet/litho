@@ -32,6 +32,6 @@
 	outline: none;
 	&:disabled {
 		cursor: not-allowed;
-		background-color: white;
+		background-color: figma-color("Litho Cream");
 	}
 }

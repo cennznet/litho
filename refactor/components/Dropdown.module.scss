@@ -56,5 +56,6 @@
 	&:disabled + div {
 		border-color: #bdbdbd;
 		cursor: not-allowed;
+		background-color: figma-color("Litho Cream");
 	}
 }

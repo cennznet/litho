@@ -114,7 +114,7 @@ export default function SellFlowModal({
 			className={bem("content")}
 			innerClassName={bem("inner")}
 			overlayClassName={bem("overlay")}
-			shouldCloseOnEsc={!busy}
+			shouldCloseOnEsc={false}
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
 			<div className={bem("header")}>
