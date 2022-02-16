@@ -24,8 +24,10 @@ export default async function signAndSend(
 		});
 	} catch (error) {
 		if (error?.message === "Cancelled") return "cancelled";
-		if (error?.message) console.info(error?.message);
-		console.error(`Transaction Error: ${JSON.stringify(error)}`);
-		return "error";
+		const err = new Error(
+			"An error occured while sending your transaction request."
+		);
+		(err as any).code = error?.message?.split?.(":")?.[0];
+		throw err;
 	}
 }

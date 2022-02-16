@@ -3,6 +3,7 @@ import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { NFTCollectionId } from "@refactor/types";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
+import { useDialog } from "@refactor/providers/DialogProvider";
 
 type Callback = (
 	collectionId: NFTCollectionId,
@@ -14,6 +15,7 @@ type Callback = (
 export default function useNFTMint(): Callback {
 	const api = useCENNZApi();
 	const { account, wallet } = useWallet();
+	const { showDialog } = useDialog();
 
 	return useCallback<Callback>(
 		async (
@@ -50,8 +52,16 @@ export default function useNFTMint(): Callback {
 					: api.tx.utility.batchAll(extrinsics),
 				account.address,
 				wallet.signer
-			);
+			).catch(async (error) => {
+				await showDialog({
+					title: "Oops, something went wrong",
+					message: `An error ${
+						error?.code ? `(#${error.code}) ` : ""
+					}occured while minting your NFTs. Please try again.`,
+				});
+				return "error";
+			});
 		},
-		[api, account?.address, wallet?.signer]
+		[api, account?.address, wallet?.signer, showDialog]
 	);
 }

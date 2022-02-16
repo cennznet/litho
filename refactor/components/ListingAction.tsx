@@ -91,7 +91,7 @@ export function BidAction({
 				listingId,
 				(data.get("bid") as any) * Math.pow(10, assetInfo.decimals)
 			);
-			if (status === "cancelled") return setBusy(false);
+			if (status === "cancelled" || status === "error") return setBusy(false);
 			onActionComplete?.("bid");
 		},
 		[bidListing, listingId, assetInfo, onActionComplete]

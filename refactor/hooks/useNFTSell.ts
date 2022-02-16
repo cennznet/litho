@@ -3,6 +3,7 @@ import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
+import { useDialog } from "@refactor/providers/DialogProvider";
 
 type Callback = (data: SellData) => Promise<string>;
 
@@ -18,6 +19,7 @@ type SellData = {
 export default function useNFTSell(): Callback {
 	const api = useCENNZApi();
 	const { account, wallet } = useWallet();
+	const { showDialog } = useDialog();
 
 	return useCallback<Callback>(
 		async (data: SellData) => {
@@ -48,8 +50,20 @@ export default function useNFTSell(): Callback {
 							duration
 					  );
 
-			return await signAndSendTx(extrinsic, account.address, wallet.signer);
+			return await signAndSendTx(
+				extrinsic,
+				account.address,
+				wallet.signer
+			).catch(async (error) => {
+				await showDialog({
+					title: "Oops, something went wrong",
+					message: `An error ${
+						error?.code ? `(#${error.code}) ` : ""
+					}occured while listing your NFT for sale. Please try again.`,
+				});
+				return "error";
+			});
 		},
-		[api, account?.address, wallet?.signer]
+		[api, account?.address, wallet?.signer, showDialog]
 	);
 }

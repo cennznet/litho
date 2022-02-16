@@ -56,7 +56,7 @@ export default function MintFlowModal({
 		return await showDialog({
 			title: "Congratulations!",
 			message:
-				"Your NFTs was successfully minted and should be displayed in your wallet shortly.",
+				"Your NFTs were successfully minted and should be displayed in your wallet shortly.",
 			action,
 		});
 	}, [closeDialog, showDialog]);
@@ -109,7 +109,7 @@ export default function MintFlowModal({
 				parseInt(aboutForm.get("royalty") as string, 10)
 			);
 
-			if (status === "cancelled") return setBusy(false);
+			if (status === "cancelled" || status === "error") return setBusy(false);
 			setBusy(false);
 			onRequestClose?.(null);
 			await showSuccessDialog();
