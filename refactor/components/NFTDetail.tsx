@@ -120,6 +120,7 @@ function ListingSection({
 		tokenId,
 		winningBid,
 		buyer,
+		metadata,
 	} = listingItem;
 
 	const [latestWinningBid, fetchWiningBid] = useWinningBid(
@@ -253,6 +254,7 @@ function ListingSection({
 								className={bem("action")}
 								onActionComplete={onActionComplete}
 								listingId={listingId}
+								nftName={metadata.name}
 								buyerAddress={buyer}
 							/>
 						);

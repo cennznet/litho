@@ -16,6 +16,7 @@ import Text from "@refactor/components/Text";
 import AssetInput from "@refactor/components/AssetInput";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useSellFlow } from "@refactor/providers/SellFlowProvider";
+import { useDialog } from "@refactor/providers/DialogProvider";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -23,22 +24,31 @@ type BuyComponentProps = {
 	listingId: NFTListingId;
 	onActionComplete?: (action: string) => void;
 	buyerAddress?: string;
+	nftName: string;
 };
 export function BuyAction({
 	className,
 	listingId,
 	onActionComplete,
 	buyerAddress,
+	nftName,
 }: DOMComponentProps<BuyComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
 	const { account } = useWallet();
 	const buyListing = useNFTBuy();
+	const { showDialog } = useDialog();
 	const onBuyClick = useCallback(async () => {
 		setBusy(true);
 		const status = await buyListing(listingId);
 		if (status === "cancelled" || status === "error") return setBusy(false);
+		await showDialog({
+			title: "Congratulations!",
+			message: `You successfully bought ${nftName}`,
+		});
+
+		setBusy(false);
 		onActionComplete?.("buy");
-	}, [buyListing, listingId, onActionComplete]);
+	}, [buyListing, listingId, onActionComplete, showDialog, nftName]);
 
 	if (!!buyerAddress && buyerAddress !== account.address) return null;
 
