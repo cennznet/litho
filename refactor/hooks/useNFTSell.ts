@@ -4,6 +4,7 @@ import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
+import useGasEstimate from "@refactor/hooks/useGasEstimate";
 
 type Callback = (data: SellData) => Promise<string>;
 
@@ -20,6 +21,7 @@ export default function useNFTSell(): Callback {
 	const api = useCENNZApi();
 	const { account, wallet } = useWallet();
 	const { showDialog } = useDialog();
+	const { confirmSufficientFund } = useGasEstimate();
 
 	return useCallback<Callback>(
 		async (data: SellData) => {
@@ -50,6 +52,9 @@ export default function useNFTSell(): Callback {
 							duration
 					  );
 
+			const result = await confirmSufficientFund(extrinsic);
+			if (!result) return "cancelled";
+
 			return await signAndSendTx(
 				extrinsic,
 				account.address,
@@ -64,6 +69,6 @@ export default function useNFTSell(): Callback {
 				return "error";
 			});
 		},
-		[api, account?.address, wallet?.signer, showDialog]
+		[api, account?.address, wallet?.signer, showDialog, confirmSufficientFund]
 	);
 }

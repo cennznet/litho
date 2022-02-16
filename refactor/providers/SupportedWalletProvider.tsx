@@ -18,7 +18,7 @@ import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
 import { AssetInfo } from "@refactor/types";
 
 export type BalanceInfo = AssetInfo & {
-	rawValue: number;
+	rawValue: any;
 	value: number;
 };
 
@@ -149,7 +149,9 @@ export default function SupportedWalletProvider({
 			);
 			if (!balance) throw new Error(`Asset "${paymentAssetId}" is not found`);
 
-			return balance.rawValue >= requiredFund;
+			console.log(balance.rawValue?.toJSON?.() as number, requiredFund);
+
+			return (balance.rawValue?.toJSON?.() as number) >= requiredFund;
 		},
 		[balances]
 	);

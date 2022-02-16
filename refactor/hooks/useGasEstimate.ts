@@ -3,12 +3,20 @@ import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { AssetInfo } from "@refactor/types";
 import { useMemo } from "react";
+import { SubmittableExtrinsic } from "@polkadot/api/types";
+import { useDialog } from "@refactor/providers/DialogProvider";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 
 export default function useGasEstimate(): {
 	estimateMintFee: () => Promise<number>;
+	confirmSufficientFund: (
+		extrinsic: SubmittableExtrinsic<"promise", any>
+	) => Promise<boolean>;
 } {
 	const api = useCENNZApi();
 	const { findAssetBySymbol } = useAssets();
+	const { checkSufficientFund } = useWallet();
+	const { showDialog } = useDialog();
 	const estimateMintFee = useMemo(() => {
 		if (!api) return;
 		return async () => {
@@ -30,7 +38,30 @@ export default function useGasEstimate(): {
 		};
 	}, [api, findAssetBySymbol]);
 
-	return { estimateMintFee };
+	const confirmSufficientFund = useMemo(() => {
+		if (!api) return;
+
+		return async (extrinsic: SubmittableExtrinsic<"promise", any>) => {
+			const cpay = findAssetBySymbol("CPAY");
+			const fee = await fetchEstimateFee(api, extrinsic, cpay);
+			const sufficient = checkSufficientFund(
+				fee * Math.pow(10, cpay.decimals),
+				cpay.assetId
+			);
+
+			if (sufficient) return true;
+			await showDialog({
+				title: "Insufficient funds",
+				message: `You need ${Math.ceil(
+					fee
+				)} CPAY or more to pay for the gas fee. Please top up your account and try again.`,
+			});
+
+			return false;
+		};
+	}, [api, findAssetBySymbol, checkSufficientFund, showDialog]);
+
+	return { estimateMintFee, confirmSufficientFund };
 }
 
 export async function fetchEstimateFee(

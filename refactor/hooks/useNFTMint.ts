@@ -4,6 +4,7 @@ import { NFTCollectionId } from "@refactor/types";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
+import useGasEstimate from "@refactor/hooks/useGasEstimate";
 
 type Callback = (
 	collectionId: NFTCollectionId,
@@ -16,6 +17,7 @@ export default function useNFTMint(): Callback {
 	const api = useCENNZApi();
 	const { account, wallet } = useWallet();
 	const { showDialog } = useDialog();
+	const { confirmSufficientFund } = useGasEstimate();
 
 	return useCallback<Callback>(
 		async (
@@ -46,10 +48,16 @@ export default function useNFTMint(): Callback {
 				),
 			].filter(Boolean);
 
-			return await signAndSendTx(
+			const extrinsic =
 				extrinsics.length === 1
 					? extrinsics[0]
-					: api.tx.utility.batchAll(extrinsics),
+					: api.tx.utility.batchAll(extrinsics);
+
+			const result = await confirmSufficientFund(extrinsic);
+			if (!result) return "cancelled";
+
+			return await signAndSendTx(
+				extrinsic,
 				account.address,
 				wallet.signer
 			).catch(async (error) => {
@@ -62,6 +70,6 @@ export default function useNFTMint(): Callback {
 				return "error";
 			});
 		},
-		[api, account?.address, wallet?.signer, showDialog]
+		[api, account?.address, wallet?.signer, showDialog, confirmSufficientFund]
 	);
 }
