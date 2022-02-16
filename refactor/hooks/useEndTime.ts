@@ -54,5 +54,7 @@ export function getFriendlyEndTimeString(endTime: Time): string {
 		return `Ending in ${remaining} ${remaining > 1 ? "days" : "day"}`;
 	}
 
-	return `Ending in ${hours}:${minutes}`;
+	return `Ending in ${hours >= 10 ? hours : `0${hours}`}:${
+		minutes >= 10 ? minutes : `0${minutes}`
+	}`;
 }

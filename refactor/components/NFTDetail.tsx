@@ -121,6 +121,7 @@ function ListingSection({
 		winningBid,
 		buyer,
 		metadata,
+		closingSoon,
 	} = listingItem;
 
 	const [latestWinningBid, fetchWiningBid] = useWinningBid(
@@ -165,10 +166,14 @@ function ListingSection({
 							<span className={bem("typeLabel")}>{type}</span>
 						</div>
 
-						{endTime && (
+						{endTime && !closingSoon && (
 							<div className={bem("stateLabel")}>
 								{getFriendlyEndTimeString(endTime)}
 							</div>
+						)}
+
+						{closingSoon && (
+							<div className={bem("stateLabel")}>Closing soon</div>
 						)}
 					</li>
 
@@ -251,6 +256,7 @@ function ListingSection({
 					if (type === "Fixed Price")
 						return (
 							<BuyAction
+								closingSoon={closingSoon}
 								className={bem("action")}
 								onActionComplete={onActionComplete}
 								listingId={listingId}
@@ -262,6 +268,7 @@ function ListingSection({
 					if (type === "Auction")
 						return (
 							<BidAction
+								closingSoon={closingSoon}
 								className={bem("action")}
 								listingId={listingId}
 								currentBid={listingPrice}

@@ -25,9 +25,11 @@ type BuyComponentProps = {
 	onActionComplete?: (action: string) => void;
 	buyerAddress?: string;
 	nftName: string;
+	closingSoon: boolean;
 };
 export function BuyAction({
 	className,
+	closingSoon,
 	listingId,
 	onActionComplete,
 	buyerAddress,
@@ -57,9 +59,16 @@ export function BuyAction({
 			<Button
 				className={bem("actionButton")}
 				onClick={onBuyClick}
-				disabled={busy}>
+				disabled={busy || closingSoon}
+				showProgress={busy}>
 				{busy ? "Processing" : "Buy Now"}
 			</Button>
+
+			{closingSoon && (
+				<div className={bem("note")}>
+					Listing is closing soon, buying is disabled
+				</div>
+			)}
 		</div>
 	);
 }
@@ -68,6 +77,7 @@ type BidComponentProps = {
 	listingId: NFTListingId;
 	currentBid: number;
 	paymentAssetId: number;
+	closingSoon: boolean;
 	onActionComplete?: (action: string) => void;
 };
 export function BidAction({
@@ -75,6 +85,7 @@ export function BidAction({
 	listingId,
 	currentBid,
 	paymentAssetId,
+	closingSoon,
 	onActionComplete,
 }: DOMComponentProps<BidComponentProps, "div">) {
 	const [showInput, setShowInput] = useState<boolean>(false);
@@ -116,9 +127,19 @@ export function BidAction({
 		<>
 			{!showInput && (
 				<div className={bem("bidAction", className)}>
-					<Button className={bem("actionButton")} onClick={onPlaceBidClick}>
+					<Button
+						className={bem("actionButton")}
+						onClick={onPlaceBidClick}
+						disabled={closingSoon}
+						showProgress={false}>
 						Place A Bid
 					</Button>
+
+					{closingSoon && (
+						<div className={bem("note")}>
+							Listing is closing soon, bidding is disabled
+						</div>
+					)}
 				</div>
 			)}
 

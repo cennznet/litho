@@ -43,11 +43,21 @@ export default async function fetchListingItem(
 				.toJSON()
 		: null;
 
+	const currentBlock = (
+		await api.rpc.chain.getBlock()
+	).block.header.number.toNumber();
+	const closingSoon = (
+		await api.query.nft.listingEndSchedule(currentBlock, listingId)
+	)?.toJSON?.() as boolean;
+
+	const closeBlock = listing?.close?.toJSON();
+
 	return tokenId
 		? {
 				listingId,
 				tokenId,
-				closeBlock: listing?.close?.toJSON(),
+				closeBlock,
+				closingSoon,
 				type: response.isFixedPrice ? "Fixed Price" : "Auction",
 				price: price.toJSON(),
 				paymentAssetId: listing.paymentAsset.toJSON(),
