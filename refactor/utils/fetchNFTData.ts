@@ -106,11 +106,19 @@ export async function fetchNFTInfo(
 		await api.query.nft.seriesMetadataURI(tokenId[0], tokenId[1])
 	).toHuman() as string;
 
-	metadataIPFSUrl = `${getPinataUrl(metadataUri)}/${tokenId[2]}.json`;
+	let rawMetadata: NFTMetadata271;
 
-	const rawMetadata = (await fetch(metadataIPFSUrl).then((response) =>
-		response?.json()
-	)) as NFTMetadata271;
+	try {
+		metadataIPFSUrl = `${getPinataUrl(metadataUri)}/${tokenId[2]}.json`;
+		rawMetadata = (await fetch(metadataIPFSUrl).then((response) =>
+			response?.json()
+		)) as NFTMetadata271;
+	} catch (e) {
+		console.warn(e);
+		return { metadata, attributes };
+	}
+
+	if (!rawMetadata) return { metadata, attributes };
 
 	metadata = {
 		name: rawMetadata.name,
@@ -120,11 +128,11 @@ export async function fetchNFTInfo(
 			quantity: rawMetadata.quantity,
 			creator: rawMetadata.creator,
 			extension:
-				rawMetadata.encoding_format.indexOf("video/") === 0 ? "mp4" : "jpg",
+				rawMetadata?.encoding_format?.indexOf?.("video/") === 0 ? "mp4" : "jpg",
 		},
 	};
 
-	attributes = rawMetadata.attributes.reduce(
+	attributes = rawMetadata?.attributes?.reduce(
 		(attributes, { trait_type, value }) => {
 			attributes.push({ [trait_type]: value });
 			return attributes;
