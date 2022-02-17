@@ -18,6 +18,7 @@ import useNFTMint from "@refactor/hooks/useNFTMint";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import Link from "@refactor/components/Link";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { NextSeo } from "next-seo";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
 
@@ -138,6 +139,7 @@ export default function MintFlowModal({
 			shouldCloseOnEsc={!busy}
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
+			<NextSeo title="Create NFTs" />
 			<div className={bem("header")}>
 				<Text variant="headline3">Create NFTs</Text>
 			</div>

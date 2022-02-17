@@ -12,6 +12,7 @@ import AssetInput from "./AssetInput";
 import Button from "./Button";
 import useAddressValidation from "@refactor/hooks/useAddressValidation";
 import useNFTSell from "@refactor/hooks/useNFTSell";
+import { NextSeo } from "next-seo";
 
 const bem = createBEMHelper(require("./SellFlowModal.module.scss"));
 
@@ -117,6 +118,7 @@ export default function SellFlowModal({
 			shouldCloseOnEsc={!busy}
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
+			<NextSeo title="Sell on Marketplace" />
 			<div className={bem("header")}>
 				<Text variant="headline3">Sell on Marketplace</Text>
 			</div>

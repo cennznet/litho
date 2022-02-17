@@ -255,7 +255,7 @@ function ListingSection({
 								className={bem("action")}
 								onActionComplete={onActionComplete}
 								listingId={listingId}
-								nftName={metadata.name}
+								nftName={`${metadata.name} #${tokenId[2]}`}
 								buyerAddress={buyer}
 							/>
 						);

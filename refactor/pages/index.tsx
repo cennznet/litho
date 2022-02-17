@@ -8,6 +8,7 @@ import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds
 import LatestGrid from "@refactor/components/LatestGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Main from "@refactor/components/Main";
+import { NextSeo } from "next-seo";
 
 const bem = createBEMHelper(require("./index.module.scss"));
 
@@ -50,6 +51,7 @@ export function Home({
 }: DOMComponentProps<PageProps, "div">) {
 	return (
 		<Main>
+			<NextSeo title="Home" />
 			<div className={bem("content")}>
 				<HomeHero className={bem("homeIntro")} />
 				{!!featuredListingIds.length && (

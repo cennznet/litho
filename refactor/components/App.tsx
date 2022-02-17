@@ -12,6 +12,7 @@ import MintFlowProvider from "@refactor/providers/MintFlowProvider";
 import DialogProvider from "@refactor/providers/DialogProvider";
 import { useRouter } from "next/router";
 import trackPageview from "@refactor/utils/trackPageview";
+import { DefaultSeo } from "next-seo";
 
 Modal.setAppElement("#__next");
 
@@ -21,7 +22,7 @@ export default function App({
 	children,
 	supportedAssets,
 }: PropsWithChildren<ComponentProps>) {
-	const { events, pathname } = useRouter();
+	const { events } = useRouter();
 
 	useEffect(() => {
 		if (!events) return;
@@ -42,6 +43,25 @@ export default function App({
 							<SupportedWalletProvider>
 								<MintFlowProvider>
 									<SellFlowProvider>
+										<DefaultSeo
+											titleTemplate="Litho | %s"
+											title="Litho"
+											description="Launch into the Lithoverse. Your place to create and exchange NFTs."
+											twitter={{
+												handle: "@CENNZnet",
+												site: "@Lithoverse",
+												cardType: "summary_large_image",
+											}}
+											openGraph={{
+												images: [
+													{
+														url: "/assets/litho-share.png",
+														width: 800,
+														height: 421,
+													},
+												],
+											}}
+										/>
 										<Head>
 											<title>Litho</title>
 											<link rel="shortcut icon" href="/favicon.ico" />

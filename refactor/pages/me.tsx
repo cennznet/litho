@@ -5,6 +5,7 @@ import ProfileHero from "@refactor/components/ProfileHero";
 import OwnerGrid from "@refactor/components/OwnerGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Main from "@refactor/components/Main";
+import { NextSeo } from "next-seo";
 
 const bem = createBEMHelper(require("./me.module.scss"));
 
@@ -25,6 +26,7 @@ type PageProps = {};
 export function MyProfile({}: DOMComponentProps<PageProps, "div">) {
 	return (
 		<Main>
+			<NextSeo title="My Profile" />
 			<ProfileHero className={bem("hero")} />
 			<OwnerGrid className={bem("grid")} />
 		</Main>

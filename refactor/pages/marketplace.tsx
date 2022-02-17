@@ -4,6 +4,7 @@ import fetchAppProps from "@refactor/utils/fetchAppProps";
 import CollectionGrid from "@refactor/components/CollectionGrid";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
 import Main from "@refactor/components/Main";
+import { NextSeo } from "next-seo";
 
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 
@@ -31,6 +32,7 @@ export function Marketplace({
 }: DOMComponentProps<PageProps, "div">) {
 	return (
 		<Main>
+			<NextSeo title="Marketplace" />
 			<div className={bem("content")}>
 				<CollectionGrid
 					headline="Marketplace Collections"
