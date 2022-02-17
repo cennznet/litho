@@ -13,6 +13,7 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Main from "@refactor/components/Main";
 import isFinite from "lodash/isFinite";
 import { NextSeo } from "next-seo";
+import isVideoType from "@refactor/utils/isVideoType";
 
 const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
@@ -94,10 +95,18 @@ export function NFTSingle({
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
 	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
+	const isVideo = isVideoType(metadata.properties.extension);
 
 	return (
 		<Main>
-			<NextSeo title={`${metadata.name} #${tokenId[2]}`} />
+			<NextSeo
+				title={`${metadata.name} #${tokenId[2]}`}
+				openGraph={{
+					images: [!isVideo && { url: listingItem.imageIPFSUrl }].filter(
+						Boolean
+					),
+				}}
+			/>
 			<div className={bem("content")}>
 				<Breadcrumb>
 					<Link href="/marketplace">Marketplace</Link>
