@@ -56,7 +56,8 @@ export default function App({
 												images: [
 													{
 														url: `${
-															process.env.VERCEL_URL || "https://lithoverse.xyz"
+															process.env.NEXT_PUBLIC_VERCEL_URL ||
+															"https://lithoverse.xyz"
 														}/assets/litho-share.png`,
 														width: 800,
 														height: 421,
