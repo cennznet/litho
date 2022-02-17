@@ -9,9 +9,12 @@ export default async function signAndSend(
 		return new Promise((resolve, reject) => {
 			extrinsic
 				.signAndSend(address, { signer }, (progress) => {
-					const { dispatchError, status } = progress?.toHuman?.() || {};
-					if (dispatchError?.Module) return reject(dispatchError.Module);
-					if (status?.InBlock) return resolve(status.InBlock);
+					const { dispatchError, status } = progress;
+					if (dispatchError && dispatchError?.isModule) {
+						const { index, error } = dispatchError.asModule.toJSON();
+						return reject(new Error(`${index}${error}: Module error`));
+					}
+					if (status.isFinalized) return resolve(status.asFinalized.toString());
 				})
 				.catch((error) => reject(error));
 		});
@@ -27,7 +30,7 @@ export default async function signAndSend(
 		const err = new Error(
 			"An error occured while sending your transaction request."
 		);
-		(err as any).code = error?.message?.split?.(":")?.[0];
+		(err as any).code = error?.message?.split?.(":")?.[0].trim();
 		throw err;
 	}
 }

@@ -101,15 +101,17 @@ export async function fetchNFTInfo(
 		return { metadata, attributes, metadataIPFSUrl, imageIPFSUrl };
 	}
 
-	// Retrieve and return data using the new format
-	const metadataUri = (
-		await api.query.nft.seriesMetadataURI(tokenId[0], tokenId[1])
-	).toHuman() as string;
-
 	let rawMetadata: NFTMetadata271;
 
 	try {
-		metadataIPFSUrl = `${getPinataUrl(metadataUri)}/${tokenId[2]}.json`;
+		const scheme = (
+			(await api.query.nft.seriesMetadataScheme(tokenId[0], tokenId[1])) as any
+		).unwrapOrDefault();
+		const metadataDir = scheme.asIpfsDir.toHuman();
+
+		metadataIPFSUrl = `${getPinataUrl(`ipfs://${metadataDir}`)}/${
+			tokenId[2]
+		}.json`;
 		rawMetadata = (await fetch(metadataIPFSUrl).then((response) =>
 			response?.json()
 		)) as NFTMetadata271;

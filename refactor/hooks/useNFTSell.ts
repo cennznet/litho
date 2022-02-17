@@ -43,13 +43,14 @@ export default function useNFTSell(): Callback {
 
 			const extrinsic =
 				type === "Auction"
-					? api.tx.nft.auction(tokenId, paymentAssetId, price, duration)
+					? api.tx.nft.auction(tokenId, paymentAssetId, price, duration, null)
 					: api.tx.nft.sell(
 							tokenId,
 							buyer || null,
 							paymentAssetId,
 							price,
-							duration
+							duration,
+							null
 					  );
 
 			const result = await confirmSufficientFund(extrinsic);

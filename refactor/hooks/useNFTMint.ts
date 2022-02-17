@@ -32,14 +32,13 @@ export default function useNFTMint(): Callback {
 
 			const extrinsics = [
 				!collectionId
-					? api.tx.nft.createCollection("Litho (default)", null, null)
+					? api.tx.nft.createCollection("Litho (default)", null)
 					: null,
 				api.tx.nft.mintSeries(
 					collectionId || nextCollectionId,
 					quantity,
 					account.address,
-					null,
-					metadataPath,
+					{ IpfsDir: metadataPath },
 					royalty
 						? {
 								entitlements: [[account.address, royalty * 10000]],

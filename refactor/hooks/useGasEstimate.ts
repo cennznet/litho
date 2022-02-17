@@ -22,12 +22,11 @@ export default function useGasEstimate(): {
 		return async () => {
 			const cpay = findAssetBySymbol("CPAY");
 			const batch = api.tx.utility.batchAll([
-				api.tx.nft.createCollection("Litho (default)", null, null),
+				api.tx.nft.createCollection("Litho (default)", null),
 				api.tx.nft.mintSeries(
 					1,
 					1,
 					"5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM",
-					null,
 					null,
 					null
 				),
