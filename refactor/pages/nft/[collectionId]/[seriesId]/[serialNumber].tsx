@@ -94,7 +94,7 @@ type PageProps = {
 export function NFTSingle({
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
-	const { tokenId, metadata, metadataIPFSUrl } = listingItem;
+	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
 	const isVideo = isVideoType(metadata.properties.extension);
 
 	return (
