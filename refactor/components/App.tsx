@@ -55,7 +55,9 @@ export default function App({
 											openGraph={{
 												images: [
 													{
-														url: "/assets/litho-share.png",
+														url: `${
+															process.env.VERCEL_URL || "https://lithoverse.xyz"
+														}/assets/litho-share.png`,
 														width: 800,
 														height: 421,
 													},
