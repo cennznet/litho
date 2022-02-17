@@ -103,10 +103,13 @@ export function NFTSingle({
 	const title = `${metadata.name} #${tokenId[2]}`;
 
 	useEffect(() => {
-		const { protocol, host, pathname } = window.location;
-		const currentUrl = `${protocol}//${host}/${pathname}`;
+		const { href } = window.location;
 
-		setTweetUrl(`https://twitter.com/intent/tweet?text=${title} ${currentUrl}`);
+		setTweetUrl(
+			`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+				title
+			)}&url=${encodeURIComponent(href)}`
+		);
 	}, [title]);
 
 	return (
@@ -140,12 +143,6 @@ export function NFTSingle({
 					<Link className={bem("tweet")} href={tweetUrl}>
 						Share on Twitter
 					</Link>
-
-					<a
-						className="twitter-share-button"
-						href="https://twitter.com/intent/tweet">
-						Tweet
-					</a>
 				</nav>
 			</div>
 		</Main>
