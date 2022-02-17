@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
+import isFinite from "lodash/isFinite";
 
 type Callback = (
 	collectionId: NFTCollectionId,
@@ -31,7 +32,7 @@ export default function useNFTMint(): Callback {
 			).toJSON() as number;
 
 			const extrinsics = [
-				!collectionId
+				!isFinite(collectionId)
 					? api.tx.nft.createCollection("Litho (default)", null)
 					: null,
 				api.tx.nft.mintSeries(

@@ -11,6 +11,7 @@ import NFTDetail from "@refactor/components/NFTDetail";
 import { indexAllOpenListingItems } from "@refactor/utils/findListingIdByTokenId";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Main from "@refactor/components/Main";
+import isFinite from "lodash/isFinite";
 
 const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
@@ -60,7 +61,9 @@ export async function getStaticProps({ params }) {
 		parseInt(serialNumber, 10),
 	];
 	const listingId = await findListingIdByTokenId(api, tokenId);
-	const listing = listingId ? await fetchListingItem(api, listingId) : null;
+	const listing = isFinite(listingId)
+		? await fetchListingItem(api, listingId)
+		: null;
 
 	const data = await fetchNFTData(api, tokenId);
 

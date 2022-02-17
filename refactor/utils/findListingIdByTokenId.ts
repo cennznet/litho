@@ -3,6 +3,7 @@ import { NFTId, NFTListingId, NFTIndex } from "@refactor/types";
 import createCacheStore from "@refactor/utils/createCacheStore";
 import { fetchAllOpenListingIds } from "@refactor/utils/fetchLatestOpenListingIds";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
+import isFinite from "lodash/isFinite";
 
 /**
  * Finds `listingId` by `tokenId`
@@ -21,7 +22,8 @@ export default async function findListingIdByTokenId(
 
 	let listingId = locks?.toJSON?.()?.ListingId;
 
-	if (!listingId) listingId = await findIndexedListingIdByTokenId(api, tokenId);
+	if (!isFinite(listingId))
+		listingId = await findIndexedListingIdByTokenId(api, tokenId);
 
 	return listingId;
 }

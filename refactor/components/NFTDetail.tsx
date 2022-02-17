@@ -24,6 +24,7 @@ import {
 } from "@refactor/components/ListingAction";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
+import isFinite from "lodash/isFinite";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -150,7 +151,7 @@ function ListingSection({
 		fetchWiningBid();
 	}, [listingItem, fetchWiningBid]);
 
-	if (!!account && !listingId && !isOwner) return null;
+	if (!!account && !isFinite(listingId) && !isOwner) return null;
 
 	return (
 		<div className={bem("listing")}>
@@ -222,7 +223,7 @@ function ListingSection({
 			{(() => {
 				if (!account) return <ConnectAction className={bem("action")} />;
 
-				if (!listingId) {
+				if (!isFinite(listingId)) {
 					if (isOwner)
 						return (
 							<SellAction
@@ -233,7 +234,7 @@ function ListingSection({
 						);
 				}
 
-				if (!!listingId) {
+				if (isFinite(listingId)) {
 					if (isOwner)
 						return (
 							<RemoveAction

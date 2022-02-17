@@ -19,11 +19,11 @@ export default function ListingGrid({
 			{!!children && <div className={bem("header")}>{children}</div>}
 
 			<div className={bem("list", { asStack: Array.isArray(listingIds?.[0]) })}>
-				{listingIds.map((id, index) => {
+				{listingIds.map((id) => {
 					return (
 						<ListingCard
 							listingId={id}
-							key={Array.isArray(id) ? id[1] : id || index}
+							key={Array.isArray(id) ? id[1] : id}
 							className={bem("item")}
 						/>
 					);

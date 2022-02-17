@@ -1,5 +1,6 @@
 import { Api } from "@cennznet/api";
 import { SortOrder } from "@refactor/types";
+import isFinite from "lodash/isFinite";
 
 /**
  * Fetches all open listing ids from a collection
@@ -18,6 +19,6 @@ export default async function fetchOpenListingIds(
 		await api.query.nft.openCollectionListings.keys(collectionId)
 	)
 		.map((key) => parseInt(key.toHuman()[1], 10))
-		.filter(Boolean)
+		.filter(isFinite)
 		.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a));
 }

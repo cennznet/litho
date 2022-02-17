@@ -17,6 +17,7 @@ import Link from "@refactor/components/Link";
 import { useInView } from "react-hook-inview";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
+import isFinite from "lodash/isFinite";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -51,10 +52,10 @@ export default function ListingCard({
 
 	return (
 		<Link
-			className={bem("root", { asStack: !!collectionId }, className)}
+			className={bem("root", { asStack: isFinite(collectionId) }, className)}
 			{...props}
 			href={
-				!!collectionId
+				isFinite(collectionId)
 					? `/collection/${collectionId}`
 					: !!tokenId
 					? `/nft/${tokenId.join("/")}`
@@ -162,7 +163,7 @@ export function CardContent({ item, loading, collectionId }: CardContentProps) {
 			</div>
 			<div className={bem("state", { loading })}>
 				<div className={bem("listingType")}>
-					{type === "Auction" && !collectionId && (
+					{type === "Auction" && !isFinite(collectionId) && (
 						<>
 							<img
 								src={HourglassSVG.src}
@@ -173,7 +174,7 @@ export function CardContent({ item, loading, collectionId }: CardContentProps) {
 						</>
 					)}
 
-					{type === "Fixed Price" && !collectionId && (
+					{type === "Fixed Price" && !isFinite(collectionId) && (
 						<>
 							<img
 								src={MoneySVG.src}
@@ -187,7 +188,7 @@ export function CardContent({ item, loading, collectionId }: CardContentProps) {
 					)}
 				</div>
 
-				{!collectionId && !!metadata?.properties?.quantity && (
+				{!isFinite(collectionId) && !!metadata?.properties?.quantity && (
 					<div className={bem("listingQuantity")}>
 						({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
 					</div>

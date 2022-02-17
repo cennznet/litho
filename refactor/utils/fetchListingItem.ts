@@ -6,6 +6,7 @@ import {
 	Listing,
 	Balance,
 } from "@cennznet/types";
+import isFinite from "lodash/isFinite";
 
 /**
  * Fetch an NFT from a `listingId`
@@ -18,7 +19,7 @@ export default async function fetchListingItem(
 	api: Api,
 	listingId: number
 ): Promise<NFTListing> {
-	if (!listingId) return;
+	if (!isFinite(listingId)) return;
 
 	const response: Listing = (
 		(await api.query.nft.listings(listingId)) as any

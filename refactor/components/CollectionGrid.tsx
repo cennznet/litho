@@ -7,6 +7,7 @@ import Text from "@refactor/components/Text";
 import ListingGrid from "@refactor/components/ListingGrid";
 import Dropdown from "@refactor/components/Dropdown";
 import fetchLatestOpenListingIds from "@refactor/utils/fetchLatestOpenListingIds";
+import isFinite from "lodash/isFinite";
 
 const bem = createBEMHelper(require("./CollectionGrid.module.scss"));
 
@@ -34,22 +35,14 @@ export default function CollectionGrid({
 	useEffect(() => {
 		if (!api) return;
 
-		async function fetchAllOpenListings() {
-			const listingIds = await fetchLatestOpenListingIds(api);
+		async function fetchAllListings() {
+			const listingIds = !isFinite(collectionId)
+				? await fetchLatestOpenListingIds(api)
+				: await fetchOpenListingIds(api, collectionId);
 			setListingIds(listingIds);
 		}
 
-		async function fetchOpenListings() {
-			const listingIds = await fetchOpenListingIds(api, collectionId);
-			setListingIds(listingIds);
-		}
-
-		if (!collectionId) {
-			fetchAllOpenListings();
-			return;
-		}
-
-		fetchOpenListings();
+		fetchAllListings();
 	}, [api, collectionId]);
 
 	useEffect(() => {
@@ -70,8 +63,6 @@ export default function CollectionGrid({
 	const onDropdownChange = useCallback((event) => {
 		setSortOrder(event.target.value);
 	}, []);
-
-	console.log({ sortedListingIds });
 
 	return (
 		<div className={bem("root", className)} {...props}>
