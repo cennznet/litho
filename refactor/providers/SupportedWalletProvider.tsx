@@ -59,15 +59,6 @@ export default function SupportedWalletProvider({
 				return promptInstallExtension();
 			}
 
-			const metaUpdated = store.get("EXTENSION_META_UPDATED");
-
-			if (!metaUpdated) {
-				const metadataDef = await extractExtensionMetadata(api);
-				if (!metadataDef) return;
-				await extension.metadata.provide(metadataDef as any);
-				store.set("EXTENSION_META_UPDATED", "true");
-			}
-
 			callback?.();
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
@@ -78,7 +69,6 @@ export default function SupportedWalletProvider({
 	const disconnectWallet = useCallback(() => {
 		store.remove("CENNZNET-EXTENSION");
 		store.remove("CENNZNET-ACCOUNT");
-		store.remove("EXTENSION_META_UPDATED");
 		setWallet(null);
 		setAccount(null);
 		setBalances(null);
