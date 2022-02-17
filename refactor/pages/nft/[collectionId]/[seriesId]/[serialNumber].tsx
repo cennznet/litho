@@ -103,7 +103,7 @@ export function NFTSingle({
 				title={`${metadata.name} #${tokenId[2]}`}
 				description={metadata?.description}
 				openGraph={{
-					images: [!isVideo && { url: `${metadata.image}?tw=w-800` }].filter(
+					images: [!isVideo && { url: `${metadata.image}?tr=w-800` }].filter(
 						Boolean
 					),
 				}}
