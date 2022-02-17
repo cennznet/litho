@@ -94,7 +94,7 @@ type PageProps = {
 export function NFTSingle({
 	listingItem,
 }: DOMComponentProps<PageProps, "div">) {
-	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
+	const { tokenId, metadata, metadataIPFSUrl } = listingItem;
 	const isVideo = isVideoType(metadata.properties.extension);
 
 	return (
@@ -103,7 +103,7 @@ export function NFTSingle({
 				title={`${metadata.name} #${tokenId[2]}`}
 				description={metadata?.description}
 				openGraph={{
-					images: [!isVideo && { url: listingItem.imageIPFSUrl }].filter(
+					images: [!isVideo && { url: `${metadata.image}?tw=w-800` }].filter(
 						Boolean
 					),
 				}}
