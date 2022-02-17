@@ -124,6 +124,7 @@ export function NFTSingle({
 					{!!metadataIPFSUrl && (
 						<Link href={metadataIPFSUrl}>Metadata IPFS</Link>
 					)}
+					<a href="https://twitter.com/intent/tweet">Share on Twitter</a>
 				</nav>
 			</div>
 		</Main>
