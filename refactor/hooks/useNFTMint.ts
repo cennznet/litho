@@ -6,6 +6,7 @@ import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
 import isFinite from "lodash/isFinite";
+import selectByRuntime from "@refactor/utils/selectByRuntime";
 
 type Callback = (
 	collectionId: NFTCollectionId,
@@ -31,21 +32,43 @@ export default function useNFTMint(): Callback {
 				await api.query.nft.nextCollectionId()
 			).toJSON() as number;
 
+			const collectionExt = selectByRuntime(api, {
+				current: () =>
+					api.tx.nft.createCollection("Litho (default)", null, null),
+				cerulean: () => api.tx.nft.createCollection("Litho (default)", null),
+			});
+
+			const mintExt = selectByRuntime(api, {
+				current: () =>
+					api.tx.nft.mintSeries(
+						collectionId || nextCollectionId,
+						quantity,
+						account.address,
+						null,
+						metadataPath,
+						royalty
+							? {
+									entitlements: [[account.address, royalty * 10000]],
+							  }
+							: null
+					),
+				cerulean: () =>
+					api.tx.nft.mintSeries(
+						collectionId || nextCollectionId,
+						quantity,
+						account.address,
+						{ IpfsDir: metadataPath },
+						royalty
+							? {
+									entitlements: [[account.address, royalty * 10000]],
+							  }
+							: null
+					),
+			});
+
 			const extrinsics = [
-				!isFinite(collectionId)
-					? api.tx.nft.createCollection("Litho (default)", null)
-					: null,
-				api.tx.nft.mintSeries(
-					collectionId || nextCollectionId,
-					quantity,
-					account.address,
-					{ IpfsDir: metadataPath },
-					royalty
-						? {
-								entitlements: [[account.address, royalty * 10000]],
-						  }
-						: null
-				),
+				!isFinite(collectionId) ? collectionExt : null,
+				mintExt,
 			].filter(Boolean);
 
 			const extrinsic =

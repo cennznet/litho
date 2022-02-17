@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import selectByRuntime from "@refactor/utils/selectByRuntime";
 
 export default function useGasEstimate(): {
 	estimateMintFee: () => Promise<number>;
@@ -21,16 +22,32 @@ export default function useGasEstimate(): {
 		if (!api) return;
 		return async () => {
 			const cpay = findAssetBySymbol("CPAY");
-			const batch = api.tx.utility.batchAll([
-				api.tx.nft.createCollection("Litho (default)", null),
-				api.tx.nft.mintSeries(
-					1,
-					1,
-					"5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM",
-					null,
-					null
-				),
-			]);
+			const batch = selectByRuntime(api, {
+				current: () =>
+					api.tx.utility.batchAll([
+						api.tx.nft.createCollection("Litho (default)", null, null),
+						api.tx.nft.mintSeries(
+							1,
+							1,
+							"5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM",
+							null,
+							null,
+							null
+						),
+					]),
+				cerulean: () =>
+					api.tx.utility.batchAll([
+						api.tx.nft.createCollection("Litho (default)", null),
+						api.tx.nft.mintSeries(
+							1,
+							1,
+							"5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM",
+							null,
+							null
+						),
+					]),
+			});
+
 			const fee = await fetchEstimateFee(api, batch, cpay);
 
 			return Math.ceil(fee);

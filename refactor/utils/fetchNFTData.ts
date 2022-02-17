@@ -7,6 +7,7 @@ import {
 	NFTData,
 	NFTMetadata271,
 } from "@refactor/types";
+import selectByRuntime from "./selectByRuntime";
 
 /**
  * Fetches NFT `attributes` and `metadata`
@@ -104,14 +105,30 @@ export async function fetchNFTInfo(
 	let rawMetadata: NFTMetadata271;
 
 	try {
-		const scheme = (
-			(await api.query.nft.seriesMetadataScheme(tokenId[0], tokenId[1])) as any
-		).unwrapOrDefault();
-		const metadataDir = scheme.asIpfsDir.toHuman();
+		const metadataUri = await Promise.resolve(
+			selectByRuntime(api, {
+				current: async () => {
+					return (
+						await api.query.nft.seriesMetadataURI(tokenId[0], tokenId[1])
+					).toHuman() as string;
+				},
 
-		metadataIPFSUrl = `${getPinataUrl(`ipfs://${metadataDir}`)}/${
-			tokenId[2]
-		}.json`;
+				cerulean: async () => {
+					const scheme = (
+						(await api.query.nft.seriesMetadataScheme(
+							tokenId[0],
+							tokenId[1]
+						)) as any
+					).unwrapOrDefault();
+					const metadataDir = scheme.asIpfsDir.toHuman();
+
+					return `ipfs://${metadataDir}`;
+				},
+			})
+		);
+
+		metadataIPFSUrl = `${getPinataUrl(metadataUri)}/${tokenId[2]}.json`;
+
 		rawMetadata = (await fetch(metadataIPFSUrl).then((response) =>
 			response?.json()
 		)) as NFTMetadata271;

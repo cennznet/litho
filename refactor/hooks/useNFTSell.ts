@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
+import selectByRuntime from "@refactor/utils/selectByRuntime";
 
 type Callback = (data: SellData) => Promise<string>;
 
@@ -41,17 +42,29 @@ export default function useNFTSell(): Callback {
 				((closingDate.getTime() - today.getTime()) / blockTime) as number
 			);
 
-			const extrinsic =
-				type === "Auction"
-					? api.tx.nft.auction(tokenId, paymentAssetId, price, duration, null)
-					: api.tx.nft.sell(
-							tokenId,
-							buyer || null,
-							paymentAssetId,
-							price,
-							duration,
-							null
-					  );
+			const extrinsic = selectByRuntime(api, {
+				current: () =>
+					type === "Auction"
+						? api.tx.nft.auction(tokenId, paymentAssetId, price, duration)
+						: api.tx.nft.sell(
+								tokenId,
+								buyer || null,
+								paymentAssetId,
+								price,
+								duration
+						  ),
+				cerulean: () =>
+					type === "Auction"
+						? api.tx.nft.auction(tokenId, paymentAssetId, price, duration, null)
+						: api.tx.nft.sell(
+								tokenId,
+								buyer || null,
+								paymentAssetId,
+								price,
+								duration,
+								null
+						  ),
+			});
 
 			const result = await confirmSufficientFund(extrinsic);
 			if (!result) return "cancelled";
