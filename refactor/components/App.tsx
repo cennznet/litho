@@ -50,7 +50,7 @@ export default function App({
 											twitter={{
 												handle: "@CENNZnet",
 												site: "@Lithoverse",
-												cardType: "summary",
+												cardType: "summary_large_image",
 											}}
 											openGraph={{
 												images: [

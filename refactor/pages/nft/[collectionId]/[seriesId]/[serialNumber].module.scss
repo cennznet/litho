@@ -15,6 +15,9 @@
 .externalLinks {
 	padding: 1em 0;
 	@include types.subtitle(s1);
+	width: 60%;
+	display: flex;
+	align-items: center;
 
 	a {
 		display: inline-block;
@@ -25,4 +28,9 @@
 			color: figma-color("Litho Black");
 		}
 	}
+}
+
+.tweet {
+	flex: 1;
+	text-align: right;
 }

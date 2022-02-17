@@ -14,6 +14,7 @@ import Main from "@refactor/components/Main";
 import isFinite from "lodash/isFinite";
 import { NextSeo } from "next-seo";
 import isVideoType from "@refactor/utils/isVideoType";
+import { useEffect, useState } from "react";
 
 const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
@@ -96,12 +97,24 @@ export function NFTSingle({
 }: DOMComponentProps<PageProps, "div">) {
 	const { tokenId, metadata, metadataIPFSUrl, imageIPFSUrl } = listingItem;
 	const isVideo = isVideoType(metadata.properties.extension);
+	const [tweetUrl, setTweetUrl] = useState<string>(
+		"https://twitter.com/intent/tweet"
+	);
+	const title = `${metadata.name} #${tokenId[2]}`;
+
+	useEffect(() => {
+		const { protocol, host, pathname } = window.location;
+		const currentUrl = `${protocol}//${host}/${pathname}`;
+
+		setTweetUrl(`https://twitter.com/intent/tweet?text=${title} ${currentUrl}`);
+	}, [title]);
 
 	return (
 		<Main>
 			<NextSeo
-				title={`${metadata.name} #${tokenId[2]}`}
+				title={title}
 				description={metadata?.description}
+				twitter={{ cardType: "summary" }}
 				openGraph={{
 					images: [!isVideo && { url: `${metadata.image}?tr=w-800` }].filter(
 						Boolean
@@ -124,7 +137,15 @@ export function NFTSingle({
 					{!!metadataIPFSUrl && (
 						<Link href={metadataIPFSUrl}>Metadata IPFS</Link>
 					)}
-					<a href="https://twitter.com/intent/tweet">Share on Twitter</a>
+					<Link className={bem("tweet")} href={tweetUrl}>
+						Share on Twitter
+					</Link>
+
+					<a
+						className="twitter-share-button"
+						href="https://twitter.com/intent/tweet">
+						Tweet
+					</a>
 				</nav>
 			</div>
 		</Main>
