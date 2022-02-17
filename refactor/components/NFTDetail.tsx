@@ -80,9 +80,17 @@ export default function NFTDetail({
 							extension={metadata.properties.extension}
 						/>
 					</Link>
-					<span className={bem("listingQuantity")}>
-						({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
-					</span>
+					<div className={bem("info")}>
+						<div className={bem("listingQuantity")}>
+							({`${tokenId[2] + 1} of ${metadata.properties.quantity}`})
+						</div>
+
+						<a
+							className="twitter-share-button"
+							href="https://twitter.com/intent/tweet">
+							Tweet
+						</a>
+					</div>
 				</div>
 			</div>
 

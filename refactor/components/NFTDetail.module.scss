@@ -19,8 +19,6 @@
 .listingQuantity {
 	@include types.headline(h6);
 	color: figma-color("Litho Black 60%");
-	margin-left: 1em;
-	vertical-align: baseline;
 }
 
 .header {
@@ -39,8 +37,12 @@
 	width: 72%;
 }
 
-.listingQuantity {
+.info {
+	width: 72%;
 	margin-top: 0.5em;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .sidebar {
