@@ -101,6 +101,7 @@ export function NFTSingle({
 		<Main>
 			<NextSeo
 				title={`${metadata.name} #${tokenId[2]}`}
+				description={metadata?.description}
 				openGraph={{
 					images: [!isVideo && { url: listingItem.imageIPFSUrl }].filter(
 						Boolean
