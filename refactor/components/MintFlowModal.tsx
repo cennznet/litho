@@ -135,7 +135,7 @@ export default function MintFlowModal({
 			className={bem("content")}
 			innerClassName={bem("inner")}
 			overlayClassName={bem("overlay")}
-			shouldCloseOnEsc={false}
+			shouldCloseOnEsc={!busy}
 			shouldCloseOnOverlayClick={!busy}
 			onRequestClose={onRequestClose}>
 			<div className={bem("header")}>
