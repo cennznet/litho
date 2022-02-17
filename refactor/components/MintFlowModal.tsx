@@ -110,8 +110,10 @@ export default function MintFlowModal({
 			);
 
 			if (status === "cancelled" || status === "error") return setBusy(false);
-			setBusy(false);
 			onRequestClose?.(null);
+			setBusy(false);
+			setFormData([]);
+			setCurrentStep(0);
 			await showSuccessDialog();
 		},
 		[
