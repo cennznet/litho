@@ -18,6 +18,7 @@
     "@pinata/sdk": "^1.1.23",
     "@polkadot/react-identicon": "^1.0.1",
     "@types/cache-manager": "^3.4.2",
+    "@types/gtag.js": "^0.0.8",
     "@types/store": "^2.0.2",
     "@types/ua-parser-js": "^0.7.36",
     "cache-manager": "^3.6.0",

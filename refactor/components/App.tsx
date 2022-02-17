@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import Modal from "react-modal";
 import Head from "next/head";
 import CENNZApiProvider from "@refactor/providers/CENNZApiProvider";
@@ -10,6 +10,8 @@ import { AppProps } from "@refactor/utils/fetchAppProps";
 import SellFlowProvider from "@refactor/providers/SellFlowProvider";
 import MintFlowProvider from "@refactor/providers/MintFlowProvider";
 import DialogProvider from "@refactor/providers/DialogProvider";
+import { useRouter } from "next/router";
+import trackPageview from "@refactor/utils/trackPageview";
 
 Modal.setAppElement("#__next");
 
@@ -19,6 +21,17 @@ export default function App({
 	children,
 	supportedAssets,
 }: PropsWithChildren<ComponentProps>) {
+	const { events, pathname } = useRouter();
+
+	useEffect(() => {
+		if (!events) return;
+
+		events.on("routeChangeComplete", trackPageview);
+		return () => {
+			events.off("routeChangeComplete", trackPageview);
+		};
+	}, [events]);
+
 	return (
 		<UserAgentProvider>
 			<DialogProvider>

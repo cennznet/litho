@@ -11,6 +11,8 @@ import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import findCollectionIdByAddress from "@refactor/utils/findCollectionIdByAddress";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { NFTCollectionId } from "@refactor/types";
+import { useRouter } from "next/router";
+import trackPageview from "@refactor/utils/trackPageview";
 
 type FlowContext = {
 	startMinting: () => Promise<void>;
@@ -27,16 +29,19 @@ export default function MintFlowProvider({
 	const { account } = useWallet();
 	const [ownedCollectionId, setOwnedCollectionId] = useState<NFTCollectionId>();
 	const [modalOpened, setModalOpened] = useState<{ resolve: () => void }>();
+	const { asPath } = useRouter();
 	const onModalRequestClose = useCallback(() => {
 		setModalOpened((previous) => {
 			previous?.resolve?.();
+			trackPageview(asPath);
 			return null;
 		});
-	}, []);
+	}, [asPath]);
 
 	const startMinting = useCallback(async () => {
 		return new Promise<void>((resolve) => {
 			setModalOpened({ resolve });
+			trackPageview("/create");
 		});
 	}, []);
 
