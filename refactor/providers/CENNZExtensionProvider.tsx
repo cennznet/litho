@@ -57,7 +57,7 @@ export default function CENNZExtensionProvider({
 		await showDialog({
 			title: "Missing CENNZnet Extension",
 			message:
-				"Please install a compatible CENNZnet Extension for your browser and create at least one account to continue.",
+				"Please install CENNZnet Extension for your browser and create at least one account to continue.",
 			action,
 		});
 	}, [browser, showDialog, closeDialog]);
@@ -95,7 +95,7 @@ export default function CENNZExtensionProvider({
 				return showDialog({
 					title: "Missing CENNZnet Account",
 					message:
-						"Please create at least one account in the CENNZnet extension to continue.",
+						"Please create at least one account in CENNZnet extension to continue.",
 				});
 
 			setAccounts(accounts);
