@@ -39,6 +39,11 @@
 .modal {
 	height: 100%;
 	margin: 0 auto;
+	outline: none;
+}
+
+.modalOverlay {
+	z-index: 1000;
 }
 
 .modalInner {

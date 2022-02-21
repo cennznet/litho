@@ -84,6 +84,7 @@ export default function WalletButton({
 				isOpen={modalOpened}
 				onRequestClose={onModalRequestClose}
 				className={bem("modal")}
+				overlayClassName={bem("modalOverlay")}
 				innerClassName={bem("modalInner")}>
 				{!balances && <WalletConnect />}
 				{!!balances && <WalletDetails />}
