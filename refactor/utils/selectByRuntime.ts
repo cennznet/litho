@@ -5,6 +5,6 @@ export default function selectByRuntime(
 ): any {
 	const runtimeVersion = api.runtimeVersion.specVersion.toNumber();
 
-	if (runtimeVersion >= 49) return cerulean();
-	return current();
+	if (runtimeVersion <= 45) return current();
+	return cerulean();
 }
