@@ -7,18 +7,28 @@
 .list {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	grid-gap: 1.75em;
+	grid-gap: 2em;
 
 	@include media(tablet) {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-gap: 1em;
+
+		&--asStack {
+			grid-gap: 2.25em 1em;
+		}
 	}
 
 	@include media(laptop) {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-gap: 1.25em;
+
+		&--asStack {
+			grid-gap: 2.25em 1.25em;
+		}
 	}
 
 	&--asStack {
-		grid-gap: 2.25em 1.75em;
+		grid-gap: 2.25em 2em;
 	}
 }
 
