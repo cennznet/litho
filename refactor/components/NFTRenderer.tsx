@@ -44,6 +44,7 @@ export default function NFTRenderer({
 						autoPlay
 						loop
 						muted
+						playsInline
 						controlsList="nodownload"
 					/>
 				)}

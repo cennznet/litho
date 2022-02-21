@@ -1,16 +1,21 @@
 @import "~@refactor/styles/bootstrap";
 
-.root {
-}
-
 .header {
-	margin-bottom: 2.5em;
+	@include interpolate("margin-bottom", 18px phone, 40px desktop);
 }
 
 .list {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr);
 	grid-gap: 1.75em;
+
+	@include media(tablet) {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	@include media(laptop) {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
 
 	&--asStack {
 		grid-gap: 2.25em 1.75em;
@@ -20,18 +25,39 @@
 .item {
 	grid-column-end: span 1;
 
-	&:nth-child(4n) {
-		grid-column-start: 0;
-	}
-	&:nth-child(4n + 1) {
-		grid-column-start: 1;
+	@include media(tablet) {
+		&:nth-child(3n) {
+			grid-column-start: 0;
+		}
+		&:nth-child(3n + 1) {
+			grid-column-start: 1;
+		}
+
+		&:nth-child(3n + 2) {
+			grid-column-start: 2;
+		}
 	}
 
-	&:nth-child(4n + 2) {
-		grid-column-start: 2;
-	}
+	@include media(laptop) {
+		&:nth-child(3n),
+		&:nth-child(3n + 1),
+		&:nth-child(3n + 2) {
+			grid-column-start: auto;
+		}
 
-	&:nth-child(4n + 3) {
-		grid-column-start: 3;
+		&:nth-child(4n) {
+			grid-column-start: 0;
+		}
+		&:nth-child(4n + 1) {
+			grid-column-start: 1;
+		}
+
+		&:nth-child(4n + 2) {
+			grid-column-start: 2;
+		}
+
+		&:nth-child(4n + 3) {
+			grid-column-start: 3;
+		}
 	}
 }
