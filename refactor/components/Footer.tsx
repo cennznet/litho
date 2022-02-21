@@ -40,6 +40,11 @@ export default function Footer({
 					className={bem("navRightItem")}>
 					Instagram
 				</Link>
+				<Link
+					href="https://discord.gg/cVxUnGC8DU"
+					className={bem("navRightItem")}>
+					Discord
+				</Link>
 			</nav>
 		</footer>
 	);
