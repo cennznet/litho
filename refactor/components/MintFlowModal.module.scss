@@ -8,7 +8,7 @@
 }
 
 .content {
-	width: 80%;
+	width: 100%;
 	max-width: 1024px;
 	margin: auto;
 	outline: none;
@@ -42,12 +42,16 @@
 }
 
 .form {
-	max-width: calc(600px + 2.5rem * 2);
+	max-width: 640px;
 	margin: 0 auto;
-	padding: 2.5rem;
+	padding: 1.5em;
 
 	input::placeholder {
 		font-weight: normal;
+	}
+
+	@include media(tablet) {
+		padding: 2.5em;
 	}
 }
 
@@ -56,7 +60,11 @@
 	text-align: center;
 
 	> button {
-		width: 50%;
+		width: 100%;
+
+		@include media(tablet) {
+			width: 50%;
+		}
 	}
 }
 
@@ -66,9 +74,12 @@
 }
 
 .tabList {
-	display: flex;
 	border-top: 1px solid figma-color("Litho Black");
 	border-bottom: 1px solid figma-color("Litho Black");
+
+	@include media(tablet) {
+		display: flex;
+	}
 }
 
 .tab {
@@ -76,16 +87,22 @@
 	flex: 1;
 	text-align: center;
 	@include types.headline(h5);
-	border-right: 1px solid figma-color("Litho Black");
+	border-bottom: 1px solid figma-color("Litho Black");
 	background-color: figma-color("Litho Cream");
 	cursor: pointer;
 
 	&:last-child {
 		border-right: none;
+		border-bottom: none;
 	}
 
 	@include on-hover {
 		color: figma-color("Litho Blue");
+	}
+
+	@include media(tablet) {
+		border-bottom: none;
+		border-right: 1px solid figma-color("Litho Black");
 	}
 
 	&--selected {
@@ -253,34 +270,3 @@
 .quantity {
 	flex-shrink: 0;
 }
-
-// .trigger {
-// 	display: flex;
-// 	align-items: center;
-// 	@include types.headline(h6);
-// 	cursor: pointer;
-// 	margin-bottom: 1em;
-
-// 	label {
-// 		cursor: inherit;
-// 	}
-
-// 	i {
-// 		display: block;
-// 		width: 10px;
-// 		margin-left: 0.5em;
-// 		margin-bottom: -2px;
-// 		transform: rotate(-90deg);
-// 		transition: transform 0.2s ease-in;
-// 	}
-
-// 	&--opened {
-// 		i {
-// 			transform: rotate(0deg);
-// 		}
-// 	}
-// }
-
-// .collapsible {
-// 	flex: 1;
-// }
