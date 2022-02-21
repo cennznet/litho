@@ -14,8 +14,11 @@ import store from "store";
 import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
-import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
 import { AssetInfo } from "@refactor/types";
+import {
+	useUnsupportDialog,
+	useRuntimeMode,
+} from "@refactor/providers/UserAgentProvider";
 
 export type BalanceInfo = AssetInfo & {
 	rawValue: any;
@@ -49,10 +52,19 @@ export default function SupportedWalletProvider({
 	const { promptInstallExtension, extension, accounts } = useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
+	const showUnsupportedMessage = useUnsupportDialog();
+	const runtimeMode = useRuntimeMode();
 
 	const connectWallet = useCallback(
 		async (callback) => {
 			if (!api) return;
+
+			if (runtimeMode === "ReadOnly") {
+				callback?.();
+				return showUnsupportedMessage(
+					"Sorry, this browser is not supported by CENNZnet Wallet. To connect to CENNZnet Wallet, please use either Chrome or Firefox browsers on a Mac or PC."
+				);
+			}
 
 			if (!extension) {
 				callback?.();
@@ -63,7 +75,13 @@ export default function SupportedWalletProvider({
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},
-		[promptInstallExtension, extension, api]
+		[
+			promptInstallExtension,
+			extension,
+			api,
+			runtimeMode,
+			showUnsupportedMessage,
+		]
 	);
 
 	const disconnectWallet = useCallback(() => {

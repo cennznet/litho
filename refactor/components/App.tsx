@@ -34,8 +34,8 @@ export default function App({
 	}, [events]);
 
 	return (
-		<UserAgentProvider>
-			<DialogProvider>
+		<DialogProvider>
+			<UserAgentProvider>
 				<CENNZExtensionProvider>
 					<CENNZApiProvider
 						endpoint={process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT}>
@@ -80,7 +80,7 @@ export default function App({
 						</SupportedAssetsProvider>
 					</CENNZApiProvider>
 				</CENNZExtensionProvider>
-			</DialogProvider>
-		</UserAgentProvider>
+			</UserAgentProvider>
+		</DialogProvider>
 	);
 }

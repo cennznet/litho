@@ -13,6 +13,10 @@ import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { NFTCollectionId } from "@refactor/types";
 import { useRouter } from "next/router";
 import trackPageview from "@refactor/utils/trackPageview";
+import {
+	useUnsupportDialog,
+	useRuntimeMode,
+} from "@refactor/providers/UserAgentProvider";
 
 type FlowContext = {
 	startMinting: () => Promise<void>;
@@ -37,13 +41,21 @@ export default function MintFlowProvider({
 			return null;
 		});
 	}, [asPath]);
+	const showUnsupportedMessage = useUnsupportDialog();
+	const runtimeMode = useRuntimeMode();
 
 	const startMinting = useCallback(async () => {
+		if (runtimeMode === "ReadOnly") {
+			return showUnsupportedMessage(
+				"Sorry, this browser is not supported by Lithoverse. To mint NFTs, please use either Chrome or Firefox browsers on a Mac or PC."
+			);
+		}
+
 		return new Promise<void>((resolve) => {
 			setModalOpened({ resolve });
 			trackPageview("/create");
 		});
-	}, []);
+	}, [runtimeMode, showUnsupportedMessage]);
 
 	useEffect(() => {
 		if (!account?.address || !api) return;

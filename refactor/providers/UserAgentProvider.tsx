@@ -1,11 +1,13 @@
 import {
 	createContext,
 	PropsWithChildren,
+	useCallback,
 	useContext,
 	useEffect,
 	useState,
 } from "react";
 import type { IBrowser, IOS, IDevice } from "ua-parser-js";
+import { useDialog } from "@refactor/providers/DialogProvider";
 
 type AgentContext = {
 	browser: IBrowser;
@@ -41,4 +43,33 @@ export default function UserAgentProvider({
 
 export function useUserAgent(): AgentContext {
 	return useContext(UserAgentContext);
+}
+
+type RuntimeMode = "ReadOnly" | "ReadWrite";
+export function useRuntimeMode(): RuntimeMode {
+	const { browser, os } = useUserAgent();
+	const [runtimeMode, setRuntimeMode] = useState<RuntimeMode>("ReadWrite");
+
+	useEffect(() => {
+		if (!browser?.name || !os?.name) return;
+		if (browser.name === "Safari" || os.name === "iOS" || os.name === "Android")
+			setRuntimeMode("ReadOnly");
+	}, [browser?.name, os?.name]);
+
+	return runtimeMode;
+}
+
+export function useUnsupportDialog(): (message: string) => Promise<void> {
+	const { showDialog } = useDialog();
+	const { browser, os } = useUserAgent();
+
+	return useCallback(
+		async (message: string) => {
+			return showDialog({
+				title: `${browser.name} (${os.name})`,
+				message,
+			});
+		},
+		[browser?.name, os?.name, showDialog]
+	);
 }
