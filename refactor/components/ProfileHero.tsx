@@ -4,8 +4,8 @@ import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Identicon from "@polkadot/react-identicon";
 import { useCallback, useState } from "react";
 import useResizeObserver from "@refactor/hooks/useResizeObserver";
-import Text from "./Text";
-import AccountAddress from "./AccountAddress";
+import Text from "@refactor/components/Text";
+import AccountAddress from "@refactor/components/AccountAddress";
 
 const bem = createBEMHelper(require("./ProfileHero.module.scss"));
 
