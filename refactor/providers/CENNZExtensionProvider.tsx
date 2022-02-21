@@ -95,7 +95,7 @@ export default function CENNZExtensionProvider({
 				return showDialog({
 					title: "Missing CENNZnet Account",
 					message:
-						"Please create at least one account in CENNZnet extension to continue.",
+						"Please create at least one account in CENNZnet Extension to continue.",
 				});
 
 			setAccounts(accounts);

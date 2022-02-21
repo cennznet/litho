@@ -43,7 +43,7 @@ export function BuyAction({
 		if (status === "cancelled" || status === "error") return setBusy(false);
 		await showDialog({
 			title: "Congratulations!",
-			message: `You successfully bought ${nftName}`,
+			message: `You successfully bought ${nftName}.`,
 		});
 
 		setBusy(false);
