@@ -10,7 +10,7 @@
 
 .logo {
 	display: block;
-	height: 40px;
+	@include interpolate("height", 30px phone, 40px desktop);
 
 	svg {
 		height: 100%;
@@ -46,11 +46,16 @@
 	flex-shrink: 0;
 	display: flex;
 	align-items: center;
+	// @include media(tablet-pro) {
+	// 	> a {
+	// 		display: block;
+	// 	}
+	// }
 }
 
 .navLink {
 	display: block;
-	margin-right: 2.25em;
+	@include interpolate("margin-left", 16px phone, 32px desktop);
 	@include types.headline(h6);
 	line-height: 1;
 	transition: color 0.2s;
@@ -61,5 +66,23 @@
 
 	@include on-hover {
 		color: figma-color("Litho Blue");
+	}
+
+	&[href="/#"] {
+		display: none;
+	}
+
+	@include media(tablet) {
+		&[href="/#"] {
+			display: block;
+		}
+	}
+}
+
+.walletButton {
+	display: none;
+	@include interpolate("margin-left", 16px phone, 32px desktop);
+	@include media(tablet) {
+		display: flex;
 	}
 }

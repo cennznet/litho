@@ -13,10 +13,10 @@ export default function Footer({
 }: DOMComponentProps<ComponentProps, "footer">) {
 	return (
 		<footer {...props} className={bem("footer", className)}>
+			<Link href="/" className={bem("logo")}>
+				<LithoSVG />
+			</Link>
 			<nav className={bem("navLeft")}>
-				<Link href="/" className={bem("logo")}>
-					<LithoSVG />
-				</Link>
 				<Link
 					href="https://cennz.net/privacy-policy/"
 					className={bem("navLeftItem")}>

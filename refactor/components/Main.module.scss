@@ -11,23 +11,17 @@
 }
 
 .inner {
-	width: 100%;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	max-width: 1520px;
-	@include interpolate("margin-left", 16px phone, 48px landscape, 80px desktop);
-	@include interpolate(
-		"margin-right",
-		16px phone,
-		48px landscape,
-		80px desktop
-	);
+	@include interpolate("margin-left", 16px phone, 80px desktop);
+	@include interpolate("margin-right", 16px phone, 80px desktop);
 }
 
 .header {
 	flex-shrink: 0;
-	@include interpolate("margin-bottom", 16px phone, 48px desktop);
+	@include interpolate("margin-bottom", 24px phone, 48px desktop);
 }
 
 .content {

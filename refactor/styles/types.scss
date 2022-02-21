@@ -24,13 +24,13 @@
 	}
 
 	@if ($level == h5) {
-		@include interpolate("font-size", 10px phone, 18px desktop);
+		@include interpolate("font-size", 14px phone, 18px desktop);
 		font-weight: 700;
 		text-transform: uppercase;
 	}
 
 	@if ($level == h6) {
-		@include interpolate("font-size", 10px phone, 18px desktop);
+		@include interpolate("font-size", 14px phone, 18px desktop);
 		font-weight: 600;
 	}
 }
@@ -61,7 +61,7 @@
 
 @mixin button() {
 	line-height: 1;
-	font-size: 14px;
+	@include interpolate("font-size", 12px phone, 14px desktop);
 	font-weight: 700;
 }
 

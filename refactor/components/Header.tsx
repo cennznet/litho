@@ -45,7 +45,7 @@ export default function Header({
 					activeClassName={bem("navLink", { active: true })}>
 					Create
 				</Link>
-				<WalletButton />
+				<WalletButton className={bem("walletButton")} />
 			</nav>
 		</header>
 	);

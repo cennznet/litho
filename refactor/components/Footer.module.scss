@@ -2,15 +2,22 @@
 
 .footer {
 	padding: 0 0 2em;
-	display: flex;
+	display: grid;
 	align-items: center;
-	justify-content: space-between;
+	grid-template-columns: 1fr;
+	grid-template-areas: "logo" "navRight" "navLeft";
+
+	@include media(tablet) {
+		grid-template-columns: max-content 1fr 1fr;
+		grid-template-areas: "logo navLeft navRight";
+	}
 }
 
 .logo {
+	grid-area: logo;
 	display: block;
-	height: 40px;
-	margin-right: 2.25em;
+	@include interpolate("height", 30px phone, 40px desktop);
+	margin-bottom: 1em;
 
 	svg {
 		height: 100%;
@@ -40,15 +47,22 @@
 			}
 		}
 	}
+
+	@include media(tablet) {
+		margin-bottom: 0;
+		@include interpolate("margin-right", 16px phone, 32px desktop);
+	}
 }
 
 .navLeft {
+	grid-area: navLeft;
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
 }
 
 .navLeftItem {
-	margin-right: 2.25em;
+	@include interpolate("margin-right", 16px phone, 32px desktop);
 	font-weight: 600;
 
 	&:last-child {
@@ -61,16 +75,23 @@
 }
 
 .navRight {
+	grid-area: navRight;
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
+	flex: 1;
+
+	@include media(tablet) {
+		justify-content: flex-end;
+	}
 }
 
 .navRightItem {
-	margin-left: 2.25em;
+	@include interpolate("margin-right", 16px phone, 32px desktop);
 	font-weight: 600;
 
-	&:first-child {
-		margin-left: 0;
+	&:last-child {
+		margin-right: 0;
 	}
 
 	@include on-hover {
