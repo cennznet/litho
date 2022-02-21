@@ -8,7 +8,7 @@
 }
 
 .content {
-	width: 80%;
+	width: 100%;
 	max-width: 1024px;
 	margin: auto;
 	outline: none;
@@ -27,7 +27,6 @@
 }
 
 .body {
-	padding: 2.5rem;
 	position: relative;
 
 	&:before {
@@ -43,12 +42,16 @@
 }
 
 .form {
-	max-width: 600px;
+	max-width: 640px;
 	margin: 0 auto;
-	position: relative;
+	padding: 1.5em;
 
 	input::placeholder {
 		font-weight: normal;
+	}
+
+	@include media(tablet) {
+		padding: 2.5em;
 	}
 }
 
@@ -164,8 +167,12 @@
 
 .submitInput {
 	display: block;
-	width: 50%;
+	width: 100%;
 	margin: 0 auto;
 	min-width: 200px;
 	margin-top: 1em;
+
+	@include media(tablet) {
+		width: 50%;
+	}
 }
