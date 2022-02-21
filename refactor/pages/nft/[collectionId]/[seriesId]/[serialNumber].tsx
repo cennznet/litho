@@ -125,7 +125,7 @@ export function NFTSingle({
 				}}
 			/>
 			<div className={bem("content")}>
-				<Breadcrumb>
+				<Breadcrumb className={bem("breadcrumb")}>
 					<Link href="/marketplace">Marketplace</Link>
 					<Link href={`/collection/${tokenId[0]}`}>
 						Collection #{tokenId[0]}

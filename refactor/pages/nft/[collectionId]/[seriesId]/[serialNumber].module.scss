@@ -12,12 +12,21 @@
 	min-height: 0;
 }
 
+.breadcrumb {
+	@include interpolate("margin-bottom", 16px phone, 24px desktop);
+}
+
 .externalLinks {
-	padding: 1em 0;
+	@include interpolate("margin-top", 16px phone, 24px desktop);
+	@include interpolate("margin-bottom", 16px phone, 24px desktop);
 	@include types.subtitle(s1);
-	width: 60%;
+
 	display: flex;
 	align-items: center;
+
+	@include media(tablet-pro) {
+		width: 60%;
+	}
 
 	a {
 		display: inline-block;
@@ -32,5 +41,10 @@
 
 .tweet {
 	flex: 1;
-	text-align: right;
+	text-align: left;
+	margin-right: 0 !important;
+
+	@include media(tablet-pro) {
+		text-align: right;
+	}
 }
