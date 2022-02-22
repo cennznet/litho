@@ -1,36 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
-export default function useCoinGeckoRate(
-	to: string,
-	from: string = "centrality"
+export default function useExchangeRate(
+	assetSymbol: string
 ): [number, (value: number) => string] {
 	const [rate, setRate] = useState<number>();
+	const pair = `${assetSymbol}_USDT`;
 
 	useEffect(() => {
-		const coinGeckoUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
+		const mexcApiUrl = `/api/exchangeRate?symbol=${pair}`;
 		async function fetchRate() {
-			const response = await fetch(coinGeckoUrl).then((response) =>
+			const response = await fetch(mexcApiUrl).then((response) =>
 				response.json()
 			);
-
-			setRate(response?.[from]?.[to]);
+			setRate(Number(response?.last));
 		}
 
 		fetchRate();
-	}, [from, to]);
+	}, [pair]);
 
 	const displayInCurrency = useCallback(
 		(value: number) => {
 			if (!rate) return;
 			const numberFormat = new Intl.NumberFormat("en-NZ", {
 				style: "currency",
-				currency: to,
+				currency: "usd",
 				currencyDisplay: "narrowSymbol",
 			});
 
 			return numberFormat.format(value * rate);
 		},
-		[rate, to]
+		[rate]
 	);
 
 	return [rate, displayInCurrency];

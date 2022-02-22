@@ -2,9 +2,9 @@ import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { IMaskInput } from "react-imask";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import throttle from "lodash/throttle";
-import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
+import useExchangeRate from "@refactor/hooks/useExchangeRate";
 import Text from "@refactor/components/Text";
 
 const bem = createBEMHelper(require("./AssetInput.module.scss"));
@@ -23,11 +23,13 @@ export default function AssetInput({
 	disabled,
 	...props
 }: DOMComponentProps<ComponentProps, "input">) {
-	const { getMinimumStep, displayAsset } = useAssets();
+	const { getMinimumStep, displayAsset, findAsset } = useAssets();
+	const asset = findAsset(assetId);
 	const [step, scale] = getMinimumStep?.(assetId) || [1, 0];
 	const [, symbol] = displayAsset(assetId, 0);
-	const [, displayInCurrency] = useCoinGeckoRate("usd");
+	const [, displayInCurrency] = useExchangeRate(asset.symbol);
 	const [usdValue, setUSDValue] = useState<string>("$0.00");
+	const [value, setValue] = useState<number>();
 
 	const onInputReady = useCallback(
 		(el) => {
@@ -37,13 +39,12 @@ export default function AssetInput({
 		[focusOnInit]
 	);
 
-	const throttledInputAccept = useMemo(
-		() =>
-			throttle((value: number) => {
-				setUSDValue(displayInCurrency(value));
-			}, 500),
-		[displayInCurrency]
-	);
+	const throttledInputAccept = useMemo(() => throttle(setValue, 500), []);
+
+	useEffect(() => {
+		if (!value) return;
+		setUSDValue(displayInCurrency(value));
+	}, [displayInCurrency, value]);
 
 	return (
 		<div className={bem("root", className)}>

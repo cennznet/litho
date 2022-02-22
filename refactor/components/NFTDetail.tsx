@@ -7,7 +7,7 @@ import HourglassSVG from "@refactor/assets/vectors/hourglass.svg?inline";
 import MoneySVG from "@refactor/assets/vectors/money.svg?inline";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useCallback, useEffect } from "react";
-import useCoinGeckoRate from "@refactor/hooks/useCoinGeckoRate";
+import useExchangeRate from "@refactor/hooks/useExchangeRate";
 import useEndTime, {
 	getFriendlyEndTimeString,
 } from "@refactor/hooks/useEndTime";
@@ -137,7 +137,7 @@ function ListingSection({
 		? displayAsset(paymentAssetId, latestPrice)
 		: [];
 
-	const [, displayInCurrency] = useCoinGeckoRate("usd");
+	const [, displayInCurrency] = useExchangeRate(symbol);
 	const usdPrice = listingPrice ? displayInCurrency(listingPrice) : null;
 
 	const endTime = useEndTime(closeBlock);
