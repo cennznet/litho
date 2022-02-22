@@ -62,7 +62,7 @@ export default function SupportedWalletProvider({
 			if (runtimeMode === "ReadOnly") {
 				callback?.();
 				return showUnsupportedMessage(
-					"Sorry, this browser is not supported by CENNZnet Wallet. To connect to CENNZnet Wallet, please use either Chrome or Firefox browsers on a Mac or PC."
+					"Sorry, this browser is not supported by the CENNZnet Wallet. To successfully connect to the CENNZnet Wallet, please use either a Chrome or Firefox browsers on a Mac or PC."
 				);
 			}
 

@@ -57,7 +57,7 @@ export default function MintFlowModal({
 		return await showDialog({
 			title: "Congratulations!",
 			message:
-				"Your NFTs were successfully minted and should be displayed in your wallet shortly.",
+				"Your NFTs have successfully minted and should be displayed in your wallet shortly.",
 			action,
 		});
 	}, [closeDialog, showDialog]);

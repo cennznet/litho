@@ -70,7 +70,7 @@ export default function useGasEstimate(): {
 				title: "Insufficient funds",
 				message: `You need ${Math.ceil(
 					fee
-				)} CPAY or more to pay for the gas fee. Please top up your account and try again.`,
+				)} CPAY or more to pay for this gas fee. Please top up your account and try again.`,
 			});
 
 			return false;

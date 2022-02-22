@@ -47,7 +47,7 @@ export default function MintFlowProvider({
 	const startMinting = useCallback(async () => {
 		if (runtimeMode === "ReadOnly") {
 			return showUnsupportedMessage(
-				"Sorry, this browser is not supported by Lithoverse. To mint NFTs, please use either Chrome or Firefox browsers on a Mac or PC."
+				"Sorry, this browser is not supported by Litho. To mint NFTs on Litho, please use either a Chrome or Firefox browsers on a Mac or PC."
 			);
 		}
 

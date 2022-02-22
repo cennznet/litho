@@ -49,7 +49,7 @@ export default function CENNZExtensionProvider({
 					Dismiss
 				</Button>
 				<Link href={url} onClick={closeDialog}>
-					<Button>{`Install Extension for ${browser.name}`}</Button>
+					<Button>Install CENNZnet Extension</Button>
 				</Link>
 			</>
 		);
@@ -57,7 +57,7 @@ export default function CENNZExtensionProvider({
 		await showDialog({
 			title: "Missing CENNZnet Extension",
 			message:
-				"Please install CENNZnet Extension for your browser and create at least one account to continue.",
+				"To continue please install the CENNZnet Extension for your browser and create at least an account.",
 			action,
 		});
 	}, [browser, showDialog, closeDialog]);
@@ -95,7 +95,7 @@ export default function CENNZExtensionProvider({
 				return showDialog({
 					title: "Missing CENNZnet Account",
 					message:
-						"Please create at least one account in CENNZnet Extension to continue.",
+						"To continue please create at least one account using the CENNZnet Extension.",
 				});
 
 			setAccounts(accounts);
