@@ -4,8 +4,11 @@
 .root {
 	display: inline-block;
 	position: relative;
-	min-width: 200px;
 	cursor: pointer;
+
+	@include media(tablet) {
+		min-width: 200px;
+	}
 
 	@include on-hover {
 		> div {
@@ -37,6 +40,7 @@
 .chevron {
 	display: inline-block;
 	width: 10px;
+	margin-left: 0.5em;
 }
 
 .select {
