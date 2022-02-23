@@ -4,9 +4,10 @@ export default function useExchangeRate(
 	assetSymbol: string
 ): [number, (value: number) => string] {
 	const [rate, setRate] = useState<number>();
-	const pair = `${assetSymbol}_USDT`;
 
 	useEffect(() => {
+		if (!assetSymbol) return;
+		const pair = `${assetSymbol}_USDT`;
 		const mexcApiUrl = `/api/exchangeRate?symbol=${pair}`;
 		async function fetchRate() {
 			const response = await fetch(mexcApiUrl).then((response) =>
@@ -16,7 +17,7 @@ export default function useExchangeRate(
 		}
 
 		fetchRate();
-	}, [pair]);
+	}, [assetSymbol]);
 
 	const displayInCurrency = useCallback(
 		(value: number) => {
