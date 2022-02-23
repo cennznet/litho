@@ -64,6 +64,11 @@ export default function NFTDetail({
 		[item, fetchByTokenId, fetchByListingId, fetchAssetBalances]
 	);
 
+	useEffect(() => {
+		if (!item?.tokenId || !fetchByTokenId) return;
+		fetchByTokenId(item.tokenId);
+	}, [item?.tokenId, fetchByTokenId]);
+
 	const { metadata, tokenId, attributes, imageIPFSUrl } = item || {};
 
 	return (

@@ -133,7 +133,6 @@ export async function fetchNFTInfo(
 			response?.json()
 		)) as NFTMetadata271;
 	} catch (e) {
-		console.warn(e);
 		return { metadata, attributes };
 	}
 
