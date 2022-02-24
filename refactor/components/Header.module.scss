@@ -64,6 +64,13 @@
 		color: figma-color("Litho Blue");
 	}
 
+	&--hiddenOnMobile {
+		display: none;
+		@include media(tablet) {
+			display: block;
+		}
+	}
+
 	@include on-hover {
 		color: figma-color("Litho Blue");
 	}

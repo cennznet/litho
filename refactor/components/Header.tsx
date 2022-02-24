@@ -43,14 +43,14 @@ export default function Header({
 				<Link
 					href="#"
 					onClick={onCreateClick}
-					className={bem("navLink")}
+					className={bem("navLink", { hiddenOnMobile: true })}
 					activeClassName={bem("navLink", { active: true })}>
 					Mint NFTs
 				</Link>
 				{account && (
 					<Link
 						href="/me"
-						className={bem("navLink")}
+						className={bem("navLink", { hiddenOnMobile: true })}
 						activeClassName={bem("navLink", { active: true })}>
 						My Profile
 					</Link>
