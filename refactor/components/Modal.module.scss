@@ -9,6 +9,7 @@
 	bottom: 0;
 	z-index: 30;
 	overflow-y: auto;
+	backdrop-filter: blur(2px);
 
 	@include interpolate("padding-left", 16px phone, 80px desktop);
 	@include interpolate("padding-right", 16px phone, 80px desktop);
