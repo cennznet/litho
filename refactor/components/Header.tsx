@@ -5,6 +5,7 @@ import WalletButton from "@refactor/components/WalletButton";
 import Link from "@refactor/components/Link";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 import { useCallback } from "react";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 
 const bem = createBEMHelper(require("./Header.module.scss"));
 
@@ -22,6 +23,7 @@ export default function Header({
 		},
 		[startMinting]
 	);
+	const { account } = useWallet();
 
 	return (
 		<header {...props} className={bem("header", className)}>
@@ -43,8 +45,17 @@ export default function Header({
 					onClick={onCreateClick}
 					className={bem("navLink")}
 					activeClassName={bem("navLink", { active: true })}>
-					Create
+					Mint NFTs
 				</Link>
+				{account && (
+					<Link
+						href="/me"
+						className={bem("navLink")}
+						activeClassName={bem("navLink", { active: true })}>
+						My Profile
+					</Link>
+				)}
+
 				<WalletButton className={bem("walletButton")} />
 			</nav>
 		</header>

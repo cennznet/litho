@@ -105,10 +105,6 @@ export default function WalletDetails({
 
 			<Hr />
 
-			<nav className={bem("linkList")}>
-				<Link href="/me">My Profile</Link>
-			</nav>
-
 			<div className={bem("disconnect")} onClick={disconnectWallet}>
 				Disconnect
 			</div>
