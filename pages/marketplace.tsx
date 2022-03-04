@@ -184,6 +184,7 @@ const MarketPlace: React.FC<{}> = () => {
       setPageEnd(10);
     }
   }, [sort]);
+  console.log("nft.tokenId::", nfts);
 
   return (
     <div>
@@ -206,8 +207,10 @@ const MarketPlace: React.FC<{}> = () => {
 
           return (
             <Link
-              href={`/marketplaceCollection/${nft.tokenId[0]}`}
-              key={nft.tokenId[0]}
+              href={
+                nft.tokenId ? `/marketplaceCollection/${nft.tokenId[0]}` : ""
+              }
+              key={nft.tokenId ? nft.tokenId[0] : "key"}
             >
               <a>
                 <NFT nft={nft} renderer={NFTRenderer} />
