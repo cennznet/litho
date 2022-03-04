@@ -184,7 +184,6 @@ const MarketPlace: React.FC<{}> = () => {
       setPageEnd(10);
     }
   }, [sort]);
-  console.log("nft.tokenId::", nfts);
 
   return (
     <div>
