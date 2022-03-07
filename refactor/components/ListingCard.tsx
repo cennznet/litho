@@ -18,6 +18,7 @@ import { useInView } from "react-hook-inview";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import isFinite from "lodash/isFinite";
+import { SUPPORTED_ASSET_IDS } from "@refactor/constants";
 
 const bem = createBEMHelper(require("./ListingCard.module.scss"));
 
@@ -46,7 +47,10 @@ export default function ListingCard({
 		);
 	}, [firstInView, fetchByListingId, listingId]);
 
-	const { tokenId, metadata } = item || {};
+	const { tokenId, metadata, paymentAssetId } = item || {};
+
+	if (isFinite(paymentAssetId) && !SUPPORTED_ASSET_IDS.includes(paymentAssetId))
+		return null;
 
 	if (!loading && !metadata) return null;
 
