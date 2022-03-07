@@ -4,6 +4,7 @@ import createCacheStore from "@refactor/utils/createCacheStore";
 import { fetchAllOpenListingIds } from "@refactor/utils/fetchLatestOpenListingIds";
 import fetchListingItem from "@refactor/utils/fetchListingItem";
 import isFinite from "lodash/isFinite";
+import uniq from "lodash/uniq";
 
 /**
  * Finds `listingId` by `tokenId`
@@ -31,22 +32,21 @@ export default async function findListingIdByTokenId(
 export async function indexAllOpenListingItems(api: Api): Promise<NFTIndex> {
 	return createCacheStore().wrap("indexAllOpenListingItems", async () => {
 		const allOpenListingIds = await fetchAllOpenListingIds(api);
+		const allOpenListingItems = allOpenListingIds.map(
+			async ([, listingIds]) => {
+				return await Promise.all(
+					uniq(listingIds).map(async (listingId) => {
+						const listingTokenId = await fetchListingItem(api, listingId).then(
+							(listingItem) => listingItem?.tokenId
+						);
+						if (!listingTokenId) return;
+						return [listingId, listingTokenId];
+					})
+				);
+			}
+		);
 
-		return (
-			await Promise.all(
-				allOpenListingIds.map(
-					async ([, listingIds]) =>
-						await Promise.all(
-							listingIds.map(async (listingId) => [
-								listingId,
-								await fetchListingItem(api, listingId).then(
-									({ tokenId }) => tokenId
-								),
-							])
-						)
-				)
-			)
-		).flat();
+		return (await Promise.all(allOpenListingItems)).flat().filter(Boolean);
 	});
 }
 

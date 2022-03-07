@@ -19,7 +19,7 @@ export default async function fetchListingItem(
 	api: Api,
 	listingId: number
 ): Promise<NFTListing> {
-	if (!isFinite(listingId)) return;
+	if (!isFinite(listingId)) return null;
 
 	const response: Listing = (
 		(await api.query.nft.listings(listingId)) as any
