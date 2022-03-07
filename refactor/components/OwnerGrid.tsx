@@ -69,17 +69,11 @@ export default function OwnerGrid({
 
 		const sortedListingIds = [
 			...tokenIds.sort((a: NFTId, b: NFTId) => {
-				const left: string = a.join("/");
-				const right: string = b.join("/");
-				if (sortOrder === "ASC") {
-					if (left > right) return 1;
-					if (left < right) return -1;
-				}
-
-				if (left > right) return -1;
-				if (left < right) return 1;
-
-				return 0;
+				const multiplier: number = sortOrder === "ASC" ? 1 : -1;
+				const diffBySeriesId: number = a[1] - b[1];
+				if (diffBySeriesId !== 0) return multiplier * diffBySeriesId;
+				const diffBySerialNumber: number = a[2] - b[2];
+				return multiplier * diffBySerialNumber;
 			}),
 		];
 
