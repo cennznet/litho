@@ -40,23 +40,20 @@ export default function OwnerGrid({
 		const address = account.address;
 
 		const fetchAllTokens = async function () {
-			const tokenIds = await api.derive.nft
-				.tokensOf(address)
-				.then((tokenIds) => {
-					if (!tokenIds && tokenIds instanceof Error) return null;
-					return (tokenIds as EnhancedTokenId[])
-						?.map?.((token) => {
-							const json = token?.toJSON?.();
-							if (!json) return;
+			const tokenOwnerEntries = await api.query.nft.tokenOwner.entries();
 
-							return [
-								json.collectionId,
-								json.seriesId,
-								json.serialNumber,
-							] as NFTId;
-						})
-						.filter?.(Boolean);
+			const tokenIds = tokenOwnerEntries
+				.filter((entry) => entry[1].toString() === address)
+				.map((entry) => {
+					const token = entry[0].args;
+
+					return [
+						token[0][0].toNumber(),
+						token[0][1].toNumber(),
+						(token[1] as any).toNumber(),
+					] as NFTId;
 				});
+
 			setTokenIds(tokenIds);
 		};
 
