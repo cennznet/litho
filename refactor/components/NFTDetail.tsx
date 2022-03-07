@@ -330,7 +330,9 @@ function DescriptionSection({
 		<div className={bem("descriptionSection")}>
 			<dl className={bem("description")}>
 				<dt>Description</dt>
-				<dd>{description}</dd>
+				<dd>
+					<pre>{description}</pre>
+				</dd>
 			</dl>
 		</div>
 	);
