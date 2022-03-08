@@ -19,6 +19,7 @@ import {
 	useUnsupportDialog,
 	useRuntimeMode,
 } from "@refactor/providers/UserAgentProvider";
+import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
 
 export type BalanceInfo = AssetInfo & {
 	rawValue: any;
@@ -161,6 +162,16 @@ export default function SupportedWalletProvider({
 		},
 		[balances]
 	);
+
+	useEffect(() => {
+		if (!api) return;
+
+		(window as any).extractExtensionMetadata = async () => {
+			const metadata = await extractExtensionMetadata(api);
+			wallet.metadata.provide(metadata as any);
+			console.log("success");
+		};
+	}, [wallet, api]);
 
 	return (
 		<SupportedWalletContext.Provider
