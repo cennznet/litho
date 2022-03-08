@@ -95,6 +95,7 @@ export default function MintFlowModal({
 				) as Array<NFTAttribute271>,
 				quantity,
 				creator: account.address,
+				source: "Lithoverse",
 			};
 
 			// Pint the metadata folder to Pinata IPFS
@@ -105,7 +106,7 @@ export default function MintFlowModal({
 
 			const status = await mintNFT(
 				collectionId,
-				`ipfs://${metadataHash}`,
+				`ipfs://${metadataHash}/metadata.json`,
 				quantity,
 				parseInt(aboutForm.get("royalty") as string, 10)
 			);

@@ -36,14 +36,12 @@ export default function usePinataIPFS(): {
 	const pinMetadata = useCallback(
 		async (metadata: { [key: string]: any }, repeats: number = 1) => {
 			const data = new FormData();
-			new Array(repeats).fill(null).map((noop, index) =>
-				data.append(
-					"file",
-					new Blob([JSON.stringify({ ...metadata, serial_number: index })], {
-						type: "application/json",
-					}),
-					`nft/${index}.json`
-				)
+			data.append(
+				"file",
+				new Blob([JSON.stringify(metadata)], {
+					type: "application/json",
+				}),
+				"nft/metadata.json"
 			);
 
 			return fetch(`${pinataEndpoint}/pinning/pinFileToIPFS`, {

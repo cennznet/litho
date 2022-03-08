@@ -57,7 +57,7 @@ export default function useNFTMint(): Callback {
 						collectionId || nextCollectionId,
 						quantity,
 						account.address,
-						{ IpfsDir: metadataPath },
+						{ IpfsShared: metadataPath },
 						royalty
 							? {
 									entitlements: [[account.address, royalty * 10000]],

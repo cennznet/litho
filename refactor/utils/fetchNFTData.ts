@@ -120,14 +120,14 @@ export async function fetchNFTInfo(
 							tokenId[1]
 						)) as any
 					).unwrapOrDefault();
-					const metadataDir = scheme.asIpfsDir.toHuman();
+					const metadataPath = scheme?.asIpfsShared?.toHuman();
 
-					return `ipfs://${metadataDir}`;
+					return `ipfs://${metadataPath}`;
 				},
 			})
 		);
 
-		metadataIPFSUrl = `${getPinataUrl(metadataUri)}/${tokenId[2]}.json`;
+		metadataIPFSUrl = getPinataUrl(metadataUri);
 
 		rawMetadata = (await fetch(metadataIPFSUrl).then((response) =>
 			response?.json()
@@ -136,7 +136,8 @@ export async function fetchNFTInfo(
 		return { metadata, attributes };
 	}
 
-	if (!rawMetadata) return { metadata, attributes };
+	if (!rawMetadata || rawMetadata?.source !== "Lithoverse")
+		return { metadata, attributes };
 
 	metadata = {
 		name: rawMetadata.name,
