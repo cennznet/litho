@@ -1,4 +1,3 @@
-import { EnhancedTokenId } from "@cennznet/types/interfaces/nft/enhanced-token-id";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import { DOMComponentProps, NFTId, SortOrder } from "@refactor/types";
@@ -8,7 +7,6 @@ import { NFTGrid } from "@refactor/components/ListingGrid";
 import Text from "@refactor/components/Text";
 import Dropdown from "@refactor/components/Dropdown";
 import Button from "@refactor/components/Button";
-import Link from "@refactor/components/Link";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 
 const bem = createBEMHelper(require("./OwnerGrid.module.scss"));

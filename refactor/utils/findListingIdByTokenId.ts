@@ -21,7 +21,7 @@ export default async function findListingIdByTokenId(
 		(await api.query.nft.tokenLocks(tokenId)) as any
 	).unwrapOrDefault();
 
-	let listingId = locks?.toJSON?.()?.ListingId;
+	let listingId = locks?.toJSON?.()?.listingId;
 
 	if (!isFinite(listingId))
 		listingId = await findIndexedListingIdByTokenId(api, tokenId);
