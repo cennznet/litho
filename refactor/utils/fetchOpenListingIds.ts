@@ -18,7 +18,10 @@ export default async function fetchOpenListingIds(
 	return Array.from(
 		await api.query.nft.openCollectionListings.keys(collectionId)
 	)
-		.map((key) => parseInt(key.toHuman()?.[1], 10))
+		.map((key) => {
+			const args = key.args.map((arg) => arg.toString());
+			return Number(args[1]);
+		})
 		.filter(isFinite)
 		.sort((a, b) => (sortOrder === "ASC" ? a - b : b - a));
 }
