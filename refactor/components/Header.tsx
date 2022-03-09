@@ -40,20 +40,23 @@ export default function Header({
 					activeClassName={bem("navLink", { active: true })}>
 					Marketplace
 				</Link>
-				<Link
-					href="#"
-					onClick={onCreateClick}
-					className={bem("navLink", { hiddenOnMobile: true })}
-					activeClassName={bem("navLink", { active: true })}>
-					Mint NFTs
-				</Link>
+
 				{account && (
-					<Link
-						href="/me"
-						className={bem("navLink", { hiddenOnMobile: true })}
-						activeClassName={bem("navLink", { active: true })}>
-						My Profile
-					</Link>
+					<>
+						<Link
+							href="#"
+							onClick={onCreateClick}
+							className={bem("navLink", { hiddenOnMobile: true })}
+							activeClassName={bem("navLink", { active: true })}>
+							Mint NFTs
+						</Link>
+						<Link
+							href="/me"
+							className={bem("navLink", { hiddenOnMobile: true })}
+							activeClassName={bem("navLink", { active: true })}>
+							My Profile
+						</Link>
+					</>
 				)}
 
 				<WalletButton className={bem("walletButton")} />

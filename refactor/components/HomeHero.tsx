@@ -7,6 +7,7 @@ import Image from "@refactor/components/Image";
 import MarketplacePNG from "@refactor/assets/bitmaps/marketplace.png";
 import MintingPNG from "@refactor/assets/bitmaps/minting.png";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 
 const bem = createBEMHelper(require("./HomeHero.module.scss"));
 
@@ -16,6 +17,7 @@ export default function HomeHero({
 	className,
 }: DOMComponentProps<ComponentProps, "div">) {
 	const { startMinting } = useMintFlow();
+	const { connectWallet, account } = useWallet();
 
 	return (
 		<div className={bem("root", className)}>
@@ -31,12 +33,19 @@ export default function HomeHero({
 				</div>
 				<div className={bem("action")}>
 					<Text variant="headline4" className={bem("headline")}>
-						Create NFTs
+						CREATE NFTs
 					</Text>
 					<br />
-					<Button className={bem("button")} onClick={startMinting}>
-						Start Minting
-					</Button>
+					{!!account && (
+						<Button className={bem("button")} onClick={startMinting}>
+							Start Minting
+						</Button>
+					)}
+					{!account && (
+						<Button className={bem("button")} onClick={() => connectWallet()}>
+							Connect Wallet
+						</Button>
+					)}
 				</div>
 			</div>
 			<div className={bem("marketplace")}>
@@ -49,7 +58,7 @@ export default function HomeHero({
 				</div>
 				<div className={bem("action")}>
 					<Text variant="headline4" className={bem("headline")}>
-						Marketplace
+						MARKETPLACE
 					</Text>
 					<br />
 					<Link href="/marketplace">
