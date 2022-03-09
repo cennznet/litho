@@ -28,7 +28,7 @@ export default async function signAndSend(
 	} catch (error) {
 		if (error?.message === "Cancelled") return "cancelled";
 		const err = new Error(
-			"An error occured while sending your transaction request."
+			"An error occurred while sending your transaction request."
 		);
 		(err as any).code = error?.message?.split?.(":")?.[0].trim();
 		throw err;

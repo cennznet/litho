@@ -88,7 +88,7 @@ export default function useNFTMint(): Callback {
 					title: "Oops, something went wrong",
 					message: `An error ${
 						error?.code ? `(#${error.code}) ` : ""
-					}occured while minting your NFTs. Please try again.`,
+					}occurred while minting your NFTs. Please try again.`,
 				});
 				return "error";
 			});

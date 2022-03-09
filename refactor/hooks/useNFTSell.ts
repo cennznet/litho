@@ -78,7 +78,7 @@ export default function useNFTSell(): Callback {
 					title: "Oops, something went wrong",
 					message: `An error ${
 						error?.code ? `(#${error.code}) ` : ""
-					}occured while listing your NFT for sale. Please try again.`,
+					}occurred while listing your NFT for sale. Please try again.`,
 				});
 				return "error";
 			});

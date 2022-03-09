@@ -28,7 +28,7 @@ export default function useNFTCancel(): Callback {
 					title: "Oops, something went wrong",
 					message: `An error ${
 						error?.code ? `(#${error.code}) ` : ""
-					}occured while removing your NFT listing. Please try again.`,
+					}occurred while removing your NFT listing. Please try again.`,
 				});
 				return "error";
 			});

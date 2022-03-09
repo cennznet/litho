@@ -28,7 +28,7 @@ export default function useNFTBuy(): Callback {
 					title: "Oops, something went wrong",
 					message: `An error ${
 						error?.code ? `(#${error.code}) ` : ""
-					}occured while processing your request. Please try again.`,
+					}occurred while processing your request. Please try again.`,
 				});
 				return "error";
 			});
