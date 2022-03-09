@@ -1,4 +1,5 @@
 import { PropsWithChildren, useEffect } from "react";
+import { AppProps as NextAppProps } from "next/app";
 import Modal from "react-modal";
 import Head from "next/head";
 import CENNZApiProvider from "@refactor/providers/CENNZApiProvider";
@@ -16,13 +17,17 @@ import { DefaultSeo } from "next-seo";
 
 Modal.setAppElement("#__next");
 
-type ComponentProps = {} & AppProps;
+type ComponentProps = {
+	appProps: AppProps;
+} & NextAppProps;
 
 export default function App({
-	children,
-	supportedAssets,
+	Component,
+	pageProps,
 }: PropsWithChildren<ComponentProps>) {
 	const { events } = useRouter();
+	const { appProps, ...props } = pageProps;
+	const supportedAssets = appProps?.supportedAssets || [];
 
 	useEffect(() => {
 		if (!events) return;
@@ -73,7 +78,7 @@ export default function App({
 												href="https://use.typekit.net/txj7ase.css"
 											/>
 										</Head>
-										{children}
+										<Component {...props} />
 									</SellFlowProvider>
 								</MintFlowProvider>
 							</SupportedWalletProvider>
