@@ -273,7 +273,7 @@ function NFTAbout({
 							id="RoyaltyInput"
 							defaultValue={10}
 							required={true}
-							min={1}
+							min={0}
 						/>
 						<span>%</span>
 					</div>

@@ -309,7 +309,7 @@ function AssociationSection({
 				</dd>
 			</dl>
 
-			{!!royalty && (
+			{!isNaN(royalty) && (
 				<dl className={bem("address")}>
 					<dt>Royalties</dt>
 					<dd>{royalty / 10000}%</dd>
