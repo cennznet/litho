@@ -1,6 +1,7 @@
 import { Api } from "@cennznet/api";
 import { NFTCollectionId } from "@refactor/types";
 import createCacheStore from "@refactor/utils/createCacheStore";
+import { hexToBn } from "@polkadot/util";
 
 export default async function findCollectionIdByAddress(
 	api: Api,
@@ -16,10 +17,13 @@ export async function fetchAllCollectionOwnerEntries(
 ): Promise<Array<{ collectionId: NFTCollectionId; address: string }>> {
 	return createCacheStore().wrap("fetchAllCollectionOwnerEntries", async () => {
 		return [...(await api.query.nft.collectionOwner.entries())].map(
-			([key, value]) => ({
-				collectionId: parseInt(key.toHuman()?.[0], 10),
-				address: value.toString(),
-			})
+			([key, value]) => {
+				const collectionId = key.args[0].toString();
+				return {
+					collectionId: Number(collectionId),
+					address: value.toString(),
+				};
+			}
 		);
 	});
 }
