@@ -1,0 +1,272 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.overlay {
+	display: flex;
+	padding-top: 4em;
+	padding-bottom: 4em;
+}
+
+.content {
+	width: 100%;
+	max-width: 1024px;
+	margin: auto;
+	outline: none;
+}
+
+.inner {
+	background-color: figma-color("Litho Cream");
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+	border: 1px solid figma-color("Litho Black");
+}
+
+.header {
+	// border-bottom: 1px solid figma-color("Litho Black");
+	padding: 1.25rem;
+	text-align: center;
+}
+
+.body {
+	position: relative;
+
+	&:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url("~@refactor/assets/bitmaps/background-home-2.png") top left;
+		opacity: 0.2;
+		content: "";
+	}
+}
+
+.form {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 1.5em;
+
+	input::placeholder {
+		font-weight: normal;
+	}
+
+	@include media(tablet) {
+		padding: 2.5em;
+	}
+}
+
+.formAction {
+	margin-top: 2em;
+	text-align: center;
+
+	> button {
+		width: 100%;
+
+		@include media(tablet) {
+			width: 50%;
+		}
+	}
+}
+
+.tabs {
+	position: relative;
+	z-index: 1;
+}
+
+.tabList {
+	border-top: 1px solid figma-color("Litho Black");
+	border-bottom: 1px solid figma-color("Litho Black");
+
+	@include media(tablet) {
+		display: flex;
+	}
+}
+
+.tab {
+	padding: 0.8em;
+	flex: 1;
+	text-align: center;
+	@include types.headline(h5);
+	border-bottom: 1px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
+	cursor: pointer;
+
+	&:last-child {
+		border-right: none;
+		border-bottom: none;
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
+	}
+
+	@include media(tablet) {
+		border-bottom: none;
+		border-right: 1px solid figma-color("Litho Black");
+	}
+
+	&--selected {
+		background-color: figma-color("Litho Black");
+		color: white !important;
+	}
+
+	&--disabled {
+		color: #bdbdbd !important;
+		cursor: not-allowed;
+	}
+}
+
+.tabPanel {
+	display: none;
+	&--selected {
+		display: block;
+	}
+}
+
+.field {
+	display: flex;
+	margin-bottom: 1.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.input {
+	width: 100%;
+
+	label[for] {
+		@include types.headline(h6);
+		display: block;
+		margin-bottom: 0.5em;
+		& + p {
+			margin-top: -0.5em;
+		}
+	}
+}
+
+.spacer {
+	width: 1em;
+	flex-shrink: 0;
+}
+
+.textInput {
+	@include types.headline(h6);
+	font-weight: normal;
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	display: block;
+	width: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+
+	&::placeholder {
+		font-weight: normal;
+	}
+
+	&:disabled {
+		border-color: #bdbdbd;
+		cursor: not-allowed;
+		background-color: figma-color("Litho Cream");
+	}
+
+	&--prefix {
+		display: flex;
+
+		> input {
+			width: 100%;
+			outline: none;
+		}
+
+		> span {
+			display: block;
+			padding: 0 0 0 0.875em;
+			color: figma-color("Litho Black 60%");
+		}
+	}
+}
+
+.inputNote {
+	@include types.subtitle(s1);
+	margin-top: 0.5em;
+	color: figma-color("Litho Black 60%");
+	font-weight: normal;
+}
+
+.card {
+	display: block;
+	position: relative;
+	border: 2px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
+	padding: 1.25rem;
+	width: 300px;
+	min-height: calc(300px + 1.25rem * 2);
+	margin: 0 auto;
+
+	&--asStack {
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 90%;
+			left: 5%;
+			bottom: -0.5rem;
+			z-index: 2;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 80%;
+			left: 10%;
+			bottom: calc((1rem - 2px) * -1);
+			z-index: 1;
+		}
+	}
+}
+
+.renderer {
+	position: relative;
+	padding-top: 100%;
+}
+
+.rendererItem {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	object-position: center;
+	object-fit: contain;
+}
+
+.details {
+	margin-top: 1.25rem;
+	display: flex;
+	align-items: flex-start;
+}
+
+.name {
+	text-transform: none;
+	min-width: 0;
+	flex: 1;
+	margin-right: 0.5rem;
+	padding-bottom: 0.125em; // fix "g" is being cut-off
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.quantity {
+	flex-shrink: 0;
+}

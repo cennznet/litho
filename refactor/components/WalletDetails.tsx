@@ -1,0 +1,113 @@
+import { DOMComponentProps } from "@refactor/types";
+import AccountAddress from "@refactor/components/AccountAddress";
+import Identicon from "@polkadot/react-identicon";
+import { Hr } from "@refactor/components/Modal";
+import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import Text from "@refactor/components/Text";
+import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
+import CPAYSVG from "@refactor/assets/vectors/cpay-logo.svg";
+import Link from "@refactor/components/Link";
+import createBEMHelper from "@refactor/utils/createBEMHelper";
+import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
+import { useCallback } from "react";
+import Button from "@refactor/components/Button";
+import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
+
+const bem = createBEMHelper(require("./WalletDetails.module.scss"));
+
+type ComponentProps = {};
+
+export default function WalletDetails({
+	className,
+	...props
+}: DOMComponentProps<ComponentProps, "div">) {
+	const { accounts } = useCENNZExtension();
+	const { account, balances, disconnectWallet, selectAccount } = useWallet();
+
+	const onAccountSelect = useCallback(
+		(event) => {
+			selectAccount(
+				accounts.find(({ address }) => event.target.value === address)
+			);
+		},
+		[accounts, selectAccount]
+	);
+
+	return (
+		<div className={bem("root")} {...props}>
+			<div className={bem("account")}>
+				<Identicon
+					value={account.address}
+					theme="beachball"
+					size={48}
+					className={bem("accountIcon")}
+				/>
+				<div className={bem("accountDetails")}>
+					<Text className={bem("accountTitle")} variant="headline4">
+						{account.meta.name}
+					</Text>
+					<AccountAddress
+						className={bem("accountAddress")}
+						address={account.address}
+						length={8}
+					/>
+					{accounts.length > 1 && (
+						<div className={bem("accountSwitch")}>
+							<select
+								onChange={onAccountSelect}
+								value={account.address}
+								className={bem("accountSelect")}>
+								{accounts.map((acc, index) => (
+									<option value={acc.address} key={index}>
+										{acc.meta.name}
+									</option>
+								))}
+							</select>
+							<label className={bem("accountSwitchLabel")}>
+								Switch account{" "}
+								<span className={bem("chevron")}>
+									<ChevronDownSVG />
+								</span>
+							</label>
+						</div>
+					)}
+				</div>
+			</div>
+
+			<Hr />
+
+			<Text variant="subtitle1">Balances</Text>
+
+			<ul className={bem("balanceList")}>
+				{balances.map(({ value, symbol }, key) => (
+					<li key={key} className={bem("balanceItem")}>
+						<div className={bem("balanceIcon")}>
+							{symbol === "CENNZ" && (
+								<span>
+									<CENNZnetSVG />
+								</span>
+							)}
+							{symbol === "CPAY" && (
+								<span>
+									<CPAYSVG />
+								</span>
+							)}
+						</div>
+						<span className={bem("balanceValue")}>{value}</span>&nbsp;
+						<span className={bem("balanceSymbol")}>{symbol}</span>
+					</li>
+				))}
+			</ul>
+
+			<Link href="https://www.mexc.com">
+				<Button className={bem("topUp")}>Top up</Button>
+			</Link>
+
+			<Hr />
+
+			<div className={bem("disconnect")} onClick={disconnectWallet}>
+				Disconnect
+			</div>
+		</div>
+	);
+}

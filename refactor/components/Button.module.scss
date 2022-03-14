@@ -1,0 +1,43 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	@include types.button();
+	display: inline-block;
+	padding: 0.875em 1em;
+	line-height: 1;
+	transition: color 0.2s, background-color 0.2s;
+
+	&--blue {
+		border: 2px solid figma-color("Litho Blue");
+		background-color: figma-color("Litho Blue");
+		color: white;
+		text-transform: uppercase;
+
+		@include on-hover {
+			background-color: figma-color("Litho Cream");
+			color: figma-color("Litho Blue");
+		}
+
+		&:disabled {
+			background-color: #bdbdbd !important;
+			border-color: transparent;
+			color: white !important;
+		}
+	}
+
+	&--hollow {
+		background-color: transparent;
+		color: figma-color("Litho Blue");
+		text-transform: uppercase;
+
+		@include on-hover {
+			color: figma-color("Litho Black");
+		}
+
+		&:disabled {
+			color: #bdbdbd !important;
+			background-color: transparent;
+		}
+	}
+}

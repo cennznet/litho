@@ -1,0 +1,61 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+}
+
+.title {
+	color: figma-color("Litho Blue");
+	margin-bottom: 1em;
+}
+
+.wallet {
+	display: block;
+	width: 100%;
+	border: 1px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
+	@include types.subtitle(s1);
+	padding: 0.875em 1em;
+	display: flex;
+	cursor: pointer;
+	position: relative;
+	align-items: center;
+	justify-content: flex-start;
+	transition: color 0.2s, background-color 0.2s;
+
+	&:disabled {
+		opacity: 0.5;
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Cream");
+		background-color: figma-color("Litho Blue");
+
+		> svg {
+			circle {
+				fill: figma-color("Litho Cream");
+			}
+
+			path {
+				fill: figma-color("Litho Blue");
+			}
+		}
+
+		> span > svg {
+			path {
+				fill: figma-color("Litho Cream");
+			}
+		}
+	}
+}
+
+.walletIcon {
+	display: block;
+	margin-right: 0.5em;
+	position: relative;
+}
+
+.walletName {
+	position: relative;
+	text-align: left;
+}

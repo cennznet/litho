@@ -1,0 +1,107 @@
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-areas: "intro" "mint" "browse";
+	grid-row-gap: 2em;
+
+	@include media(tablet) {
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-areas: "intro mint browse";
+		grid-column-gap: 1em;
+	}
+}
+
+.intro {
+	border: 2px solid figma-color("Litho Black");
+	padding: 2.5em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	overflow: hidden;
+
+	&:after {
+		position: absolute;
+		top: -3%;
+		bottom: -3%;
+		width: 100%;
+		left: 50%;
+		content: "";
+		background: url("~@refactor/assets/bitmaps/background-home-1.png") no-repeat;
+		background-size: contain;
+	}
+
+	@include media(tablet) {
+		padding: 1.5em;
+	}
+
+	@include media(laptop) {
+		padding: 2.5em;
+	}
+}
+
+.introText {
+	font-weight: 400;
+	strong {
+		font-weight: 700;
+	}
+}
+
+.mint {
+	border: 2px solid figma-color("Litho Black");
+	background: url("~@refactor/assets/bitmaps/background-home-2.png");
+	padding: 2.5em;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include media(tablet) {
+		padding: 1.5em;
+	}
+
+	@include media(laptop) {
+		padding: 2.5em;
+	}
+}
+
+.mintImage {
+	width: 100%;
+	max-width: 300px;
+	margin: 0 auto;
+	display: block;
+}
+
+.marketplace {
+	border: 2px solid figma-color("Litho Black");
+	padding: 0 2.5em 2.5em;
+
+	@include media(tablet) {
+		padding: 0 1.5em 1.5em;
+	}
+
+	@include media(laptop) {
+		padding: 0 2.5em 2.5em;
+	}
+}
+
+.marketplaceImage {
+	width: 100%;
+	max-width: 375px;
+	margin: 0 auto 1em auto;
+	display: block;
+}
+
+.action {
+	text-align: center;
+}
+
+.headline {
+	padding: 0.5em;
+	display: inline-block;
+	background-color: figma-color("Litho Cream");
+	margin-bottom: 0.5em;
+	background: url("~@refactor/assets/bitmaps/background-noise.png");
+	text-transform: none;
+}

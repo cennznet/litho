@@ -1,0 +1,46 @@
+@import "tailwindcss/base";
+
+@layer base {
+	body {
+		font-family: quasimoda, sans-serif;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+#__next {
+	height: 100%;
+	width: 100%;
+}
+
+.no-arrow {
+	appearance: none;
+}
+
+.ReactModal__Overlay {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+
+.ReactModal__Overlay--after-open {
+	opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+	opacity: 0;
+}

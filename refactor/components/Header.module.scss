@@ -1,0 +1,95 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.header {
+	padding: 2em 0 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+	display: block;
+	@include interpolate("height", 30px phone, 40px desktop);
+
+	svg {
+		height: 100%;
+		width: auto;
+	}
+
+	path {
+		transition: fill 0.2s, stroke 0.2s;
+
+		&[fill] {
+			fill: figma-color("Litho Black");
+		}
+
+		&[stroke] {
+			stroke: figma-color("Litho Black");
+		}
+	}
+
+	@include on-hover {
+		path {
+			&[fill] {
+				fill: figma-color("Litho Blue");
+			}
+
+			&[stroke] {
+				stroke: figma-color("Litho Blue");
+			}
+		}
+	}
+}
+
+.nav {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	// @include media(tablet-pro) {
+	// 	> a {
+	// 		display: block;
+	// 	}
+	// }
+}
+
+.navLink {
+	display: block;
+	@include interpolate("margin-left", 16px phone, 32px desktop);
+	@include types.headline(h6);
+	line-height: 1;
+	transition: color 0.2s;
+
+	&--active {
+		color: figma-color("Litho Blue");
+	}
+
+	&--hiddenOnMobile {
+		display: none;
+		@include media(tablet) {
+			display: block;
+		}
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
+	}
+
+	&[href="/#"] {
+		display: none;
+	}
+
+	@include media(tablet) {
+		&[href="/#"] {
+			display: block;
+		}
+	}
+}
+
+.walletButton {
+	display: none;
+	@include interpolate("margin-left", 16px phone, 32px desktop);
+	@include media(tablet) {
+		display: flex;
+	}
+}

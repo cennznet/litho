@@ -1,0 +1,36 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.main {
+	background: figma-color("Litho Cream")
+		url("~@refactor/assets/bitmaps/background-noise.png") repeat;
+	display: flex;
+	justify-content: center;
+	@include types.body(b1);
+	color: figma-color("Litho Black");
+}
+
+.inner {
+	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	max-width: 1520px;
+	@include interpolate("margin-left", 16px phone, 80px desktop);
+	@include interpolate("margin-right", 16px phone, 80px desktop);
+}
+
+.header {
+	flex-shrink: 0;
+	@include interpolate("margin-bottom", 24px phone, 48px desktop);
+}
+
+.content {
+	flex: 1;
+	margin-bottom: 3em;
+}
+
+.footer {
+	flex-shrink: 0;
+	@include interpolate("margin-top", 24px phone, 72px desktop);
+}

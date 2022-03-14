@@ -1,0 +1,20 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.link {
+	@include types.headline(h6);
+	transition: color 0.2s;
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
+	}
+}

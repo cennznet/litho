@@ -1,0 +1,51 @@
+@import "~@refactor/styles/bootstrap";
+
+.overlay {
+	background-color: rgba(figma-color("Litho Cream"), 0.85);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 30;
+	overflow-y: auto;
+	backdrop-filter: blur(2px);
+
+	@include interpolate("padding-left", 16px phone, 80px desktop);
+	@include interpolate("padding-right", 16px phone, 80px desktop);
+}
+
+.content {
+	position: relative;
+	max-width: 1520px;
+}
+
+.content {
+	position: relative;
+}
+
+.title {
+	flex: 1;
+}
+
+.close {
+	position: absolute;
+	cursor: pointer;
+	opacity: 0.6;
+	display: block;
+	right: 1.25rem;
+	top: 1.25rem;
+
+	@include on-hover {
+		opacity: 1;
+		path {
+			fill: figma-color("Litho Blue");
+		}
+	}
+}
+
+.hr {
+	border-top: 1px solid rgba(25, 27, 29, 0.15);
+	margin: 1.25rem 0;
+	width: 100%;
+}

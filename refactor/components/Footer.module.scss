@@ -1,0 +1,100 @@
+@import "~@refactor/styles/bootstrap";
+
+.footer {
+	padding: 0 0 2em;
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr;
+	grid-template-areas: "logo" "navRight" "navLeft";
+
+	@include media(tablet) {
+		grid-template-columns: max-content 1fr 1fr;
+		grid-template-areas: "logo navLeft navRight";
+	}
+}
+
+.logo {
+	grid-area: logo;
+	display: block;
+	@include interpolate("height", 30px phone, 40px desktop);
+	margin-bottom: 1em;
+
+	svg {
+		height: 100%;
+		width: auto;
+	}
+
+	path {
+		transition: fill 0.2s, stroke 0.2s;
+
+		&[fill] {
+			fill: figma-color("Litho Black");
+		}
+
+		&[stroke] {
+			stroke: figma-color("Litho Black");
+		}
+	}
+
+	@include on-hover {
+		path {
+			&[fill] {
+				fill: figma-color("Litho Blue");
+			}
+
+			&[stroke] {
+				stroke: figma-color("Litho Blue");
+			}
+		}
+	}
+
+	@include media(tablet) {
+		margin-bottom: 0;
+		@include interpolate("margin-right", 16px phone, 32px desktop);
+	}
+}
+
+.navLeft {
+	grid-area: navLeft;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.navLeftItem {
+	@include interpolate("margin-right", 16px phone, 32px desktop);
+	font-weight: 600;
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
+	}
+}
+
+.navRight {
+	grid-area: navRight;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex: 1;
+
+	@include media(tablet) {
+		justify-content: flex-end;
+	}
+}
+
+.navRightItem {
+	@include interpolate("margin-right", 16px phone, 32px desktop);
+	font-weight: 600;
+
+	&:last-child {
+		margin-right: 0;
+	}
+
+	@include on-hover {
+		color: figma-color("Litho Blue");
+	}
+}

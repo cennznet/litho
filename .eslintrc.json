@@ -1,0 +1,18 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "indent": "off",
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never"
+      }
+    ]
+  }
+}

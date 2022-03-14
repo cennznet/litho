@@ -1,5 +1,8 @@
 module.exports = {
-  images: {
-    domains: ["", "ipfs.io"],
+	 webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+    }
+    return config;
   },
 };
