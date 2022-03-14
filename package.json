@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@cennznet/api": "^2.1.0-alpha.1",
-    "@cennznet/types": "^2.1.0-alpha.1",
+    "@cennznet/types": "^2.1.0-alpha.2",
     "@jahed/bem": "^1.2.12",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",

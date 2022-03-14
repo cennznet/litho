@@ -234,6 +234,16 @@
     "@polkadot/util" "^8.2.2"
     "@polkadot/util-crypto" "^8.2.2"
 
+"@cennznet/types@^2.1.0-alpha.2":
+  version "2.1.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-2.1.0-alpha.2.tgz#0e6a365d34c1e573dac7cd0c215c623d12d1674e"
+  integrity sha512-BNhlgsqNkUScHD+Anx5qr3PuiiCsaGAo+orS0aohPc6NdutEvJeUXDIyDlKQHX1w1aK3kRmlqH94g5TRK58yLg==
+  dependencies:
+    "@polkadot/keyring" "^8.3.3"
+    "@polkadot/types" "^7.7.1"
+    "@polkadot/util" "^8.3.3"
+    "@polkadot/util-crypto" "^8.3.3"
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
@@ -520,7 +530,7 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@polkadot/keyring@8.4.1", "@polkadot/keyring@^8.2.2", "@polkadot/keyring@^8.3.3", "@polkadot/keyring@^8.4.1":
+"@polkadot/keyring@^8.2.2", "@polkadot/keyring@^8.3.3", "@polkadot/keyring@^8.4.1":
   version "8.4.1"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-8.4.1.tgz#71098121c60a05e1ad33653fcc521c52f22ad1b8"
   integrity sha512-0qfS7qikUxhe6LEdCOcMRdCxEa26inJ5aSUWaf5dXy+dgy9VJiov6uXAbXdAd1UHpDvr9hvw94FX+hXsJ7Vsyw==
