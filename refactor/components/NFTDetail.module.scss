@@ -1,0 +1,198 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	border: 1px solid figma-color("Litho Black");
+	display: grid;
+
+	grid-template-columns: 1fr;
+	grid-template-areas: "display" "sidebar";
+
+	@include media(tablet-pro) {
+		grid-template-columns: 6fr 4fr;
+		grid-template-areas: "display sidebar";
+	}
+}
+
+.display {
+	grid-area: display;
+	border-bottom: 1px solid figma-color("Litho Black");
+	padding: 1.5em;
+	display: flex;
+	flex-direction: column;
+
+	@include media(tablet-pro) {
+		border-bottom: none;
+		border-right: 1px solid figma-color("Litho Black");
+	}
+}
+
+.listingQuantity {
+	@include types.headline(h6);
+	color: figma-color("Litho Black 60%");
+}
+
+.header {
+	margin-bottom: 1.5em;
+}
+
+.body {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.renderer {
+	width: 72%;
+}
+
+.info {
+	width: 72%;
+	margin-top: 0.5em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sidebar {
+	grid-area: sidebar;
+	position: relative;
+}
+
+.sidebarContent {
+	@include media(tablet-pro) {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		overflow-y: scroll;
+	}
+}
+
+.scrollContent {
+	width: 100%;
+	height: 100%;
+
+	> div {
+		border-bottom: 1px solid figma-color("Litho Black");
+		padding: 1.5em;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}
+
+.state {
+	margin-bottom: 1.5em;
+
+	> li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0.5em;
+	}
+}
+
+.stateType {
+	display: flex;
+	align-items: center;
+	@include types.headline(h6);
+	color: figma-color("Litho Black 60%");
+}
+
+.stateLabel {
+	@include types.headline(h6);
+}
+
+.typeIcon {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	object-fit: contain;
+	object-position: center;
+	margin-right: 0.25rem;
+	margin-top: 0.125rem;
+	opacity: 0.6;
+}
+
+.typeLabel {
+	display: block;
+}
+
+.price {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin-bottom: 1.5em;
+}
+
+.priceValue {
+	@include types.headline(h3);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.priceConversion {
+	@include types.headline(h6);
+	flex-shrink: 0;
+	color: figma-color("Litho Black 60%");
+	padding-bottom: 0.125em;
+}
+
+.action {
+}
+
+.address {
+	@include types.headline(h6);
+	display: flex;
+	margin-bottom: 0.5em;
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	dt {
+		flex: 1;
+		color: figma-color("Litho Black 60%");
+	}
+
+	dd {
+		color: figma-color("Litho Black");
+	}
+}
+
+.description {
+	dt {
+		@include types.headline(h5);
+		margin-bottom: 0.5em;
+	}
+
+	dd {
+		@include types.body(b1);
+	}
+
+	pre {
+		font-family: inherit;
+		white-space: pre-wrap;
+	}
+}
+
+.detailsHeadline {
+	margin-bottom: 0.5em;
+}
+
+.attribute {
+	margin-bottom: 0.5em;
+	dt {
+		@include types.headline(h6);
+		color: figma-color("Litho Black 60%");
+	}
+
+	dd {
+		@include types.body(b1);
+	}
+}

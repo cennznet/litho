@@ -1,0 +1,50 @@
+/**
+ * Breakpoints
+ */
+$phone: 375px;
+$tablet: 768px;
+$tablet-pro: 1024px;
+$laptop: 1280px;
+$desktop: 1680px;
+$widescreen: 1920px;
+
+/**
+ * Breakpoint maps
+ */
+// List of min breakpoints (used for @media mixin)
+$media-breakpoints: (
+	phone: $phone,
+	tablet: $tablet,
+	tablet-pro: $tablet-pro,
+	laptop: $laptop,
+	desktop: $desktop,
+	widescreen: $widescreen
+);
+
+// List of mid breakpoints (used for @interpolation mixin)
+$interpolate-breakpoints: (
+	phone: $phone,
+	tablet: $tablet,
+	tablet-pro: $tablet-pro,
+	laptop: $laptop,
+	desktop: $desktop,
+	widescreen: $widescreen
+);
+
+$figma-colors: (
+	"Litho Red": #ef4332,
+	"Litho Black": #191b1d,
+	"Litho Black 60%": rgba(25, 27, 29, 0.6),
+	"Litho Black 30%": rgba(25, 27, 29, 0.3),
+	"Litho Black 15%": rgba(25, 27, 29, 0.15),
+	"Litho Cream": #fbf9f3,
+	"Litho Cream 75%": rgba(251, 249, 243, 0.75),
+	"Litho Blue": #1b019a,
+	"Litho Blue 75%": rgba(31, 76, 122, 0.6),
+	"Litho Mustard": #f8c93b,
+	"Litho Green": #45986f
+);
+
+@function figma-color($name) {
+	@return map-get($figma-colors, $name);
+}

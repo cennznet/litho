@@ -1,0 +1,172 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	display: block;
+	position: relative;
+	border: 2px solid figma-color("Litho Black");
+	background-color: figma-color("Litho Cream");
+	height: 100%;
+	transition: border-color 0.2s;
+
+	@include on-hover {
+		border-color: figma-color("Litho Blue");
+
+		&:before,
+		&::after {
+			border-color: figma-color("Litho Blue");
+		}
+	}
+
+	&--asStack {
+		&:before {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 90%;
+			left: 5%;
+			bottom: -0.5rem;
+			z-index: 2;
+		}
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			border: 2px solid figma-color("Litho Black");
+			background-color: figma-color("Litho Cream");
+			height: 0.5rem;
+			width: 80%;
+			left: 10%;
+			bottom: calc((1rem - 2px) * -1);
+			z-index: 1;
+		}
+	}
+}
+
+.inner {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 3;
+	background-color: figma-color("Litho Cream");
+}
+
+.media {
+	margin: 1.25em;
+	position: relative;
+	&:before {
+		display: block;
+		position: relative;
+		width: 100%;
+		padding-top: 100%;
+		content: "";
+		background: #e0e0e0 url("~@refactor/assets/bitmaps/background-loading.jpg")
+			no-repeat center center;
+		background-size: contain;
+	}
+}
+
+.renderer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: figma-color("Litho Cream");
+}
+
+.details {
+	padding: 0 1.25em 1.25em;
+	display: flex;
+	align-items: flex-start;
+	position: relative;
+	flex: 1;
+
+	&--loading {
+		&:before {
+			content: "";
+			display: block;
+			width: 100%;
+			height: 2em;
+			background-color: #e0e0e0;
+		}
+	}
+}
+
+.name {
+	text-transform: none;
+	min-width: 0;
+	flex: 1;
+	margin-right: 1em;
+	padding-bottom: 0.125em; // fix "g" is being cut-off
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.price {
+	flex-shrink: 0;
+}
+
+.priceValue {
+	display: block;
+	font-weight: 700;
+	text-align: right;
+}
+
+.priceSymbol {
+	display: block;
+	font-weight: normal;
+	text-align: right;
+}
+
+.state {
+	@include types.subtitle(s1);
+	padding: 0 1.25em 1em 1.25em;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	&--loading {
+		&:before {
+			content: "";
+			display: block;
+			width: 25%;
+			height: 1rem;
+			background-color: #e0e0e0;
+		}
+	}
+}
+
+.listingType {
+	display: flex;
+	align-items: center;
+	margin-right: 0.5em;
+}
+
+.typeIcon {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	object-fit: contain;
+	object-position: center;
+	margin-right: 0.25em;
+	margin-top: 0.125em;
+	opacity: 0.6;
+}
+
+.typeLabel {
+	display: block;
+	color: figma-color("Litho Black 60%");
+}
+
+.listingQuantity {
+	display: inline-block;
+	color: figma-color("Litho Black 60%");
+}

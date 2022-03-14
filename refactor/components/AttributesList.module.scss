@@ -1,0 +1,82 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	margin-top: 1em;
+}
+
+.listItem {
+	display: flex;
+	margin-bottom: 1em;
+	align-items: center;
+
+	> input:nth-child(1) {
+		width: 50%;
+		margin-right: 0.75em;
+	}
+
+	> input:nth-child(2) {
+		width: 50%;
+	}
+
+	@include media(tablet) {
+		> input:nth-child(1) {
+			width: 45%;
+			margin-right: 1em;
+		}
+
+		> input:nth-child(2) {
+			width: 100%;
+		}
+	}
+}
+
+.listItemRemove {
+	opacity: 0.6;
+	cursor: pointer;
+	padding: 0 1em;
+
+	@include on-hover {
+		opacity: 1;
+		path {
+			fill: figma-color("Litho Blue");
+		}
+	}
+}
+
+.addButton {
+	padding: 0;
+}
+
+.textInput {
+	@include types.headline(h6);
+	font-weight: normal;
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	display: block;
+	width: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+
+	&:disabled {
+		border-color: #bdbdbd;
+		cursor: not-allowed;
+	}
+
+	&--prefix {
+		display: flex;
+
+		> input {
+			width: 100%;
+			outline: none;
+		}
+
+		> span {
+			display: block;
+			padding: 0 0 0 0.875em;
+			color: figma-color("Litho Black 60%");
+		}
+	}
+}

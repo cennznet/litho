@@ -1,0 +1,63 @@
+/**
+ * Output a media query with `min-width` set to the breakpoint value
+ *
+ * @param {string|number} $breakpoint [] - The breakpoint
+ */
+
+@mixin media($breakpoint) {
+	$min-width: breakpoint-get($media-breakpoints, $breakpoint);
+
+	@media screen and (min-width: $min-width) {
+		@content;
+	}
+}
+
+/**
+ * Produce a default linear value for any CSS property that accepts `px` unit
+ * plus media queries to adjust the value at each breakpoint
+ *
+ * Example:
+ * 	`@include interpolate("font-size", 12px phone, 24px tablet, 32px laptop);`
+ * 	`@include interpolate("margin-left", 12px phone, 18px laptop);`
+ *
+ * @param {string} $property [] - The CSS property
+ * @param {list} $sizes [] - The list of sizes
+ */
+@mixin interpolate($property, $sizes...) {
+	$length: length($sizes);
+
+	@if $length < 2 {
+		@error "`interpolate` mixin requires 2 or more sizes";
+	}
+
+	#{$property}: linear(nth($sizes, 1), nth($sizes, 2));
+
+	@for $index from 2 to $length {
+		$from-size: nth($sizes, $index);
+		$from-breakpoint: nth($from-size, 2);
+
+		@if $index + 1 <= $length {
+			$to-size: nth($sizes, $index + 1);
+			@include media($from-breakpoint) {
+				#{$property}: linear($from-size, $to-size);
+			}
+		}
+	}
+}
+
+/**
+ * Fallback to `:active` selector if device doesn't
+ * support `hover`, e.g touch devices
+ *
+ */
+@mixin on-hover() {
+	&:active {
+		@content;
+	}
+
+	@media (hover: hover) {
+		&:hover {
+			@content;
+		}
+	}
+}

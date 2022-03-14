@@ -1,0 +1,26 @@
+@import "~@refactor/styles/bootstrap";
+
+.root {
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.sortDropdown {
+	flex-shrink: 0;
+}
+
+.message {
+	display: flex;
+	padding: 2em;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.headline {
+	margin-bottom: 1em;
+}

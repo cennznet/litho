@@ -1,0 +1,37 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.inner {
+	@include types.headline(h6);
+	display: flex;
+	background: white;
+	align-items: center;
+	border: 1px solid figma-color("Litho Black");
+	margin-bottom: 0.5em;
+
+	&--disabled {
+		border-color: #bdbdbd;
+	}
+}
+
+.symbol {
+	padding: 0 0.875em 0 0.875em;
+	color: figma-color("Litho Black 60%");
+}
+
+.usdValue {
+	color: figma-color("Litho Black 60%");
+}
+
+.input {
+	@include types.headline(h6);
+	font-weight: normal;
+	width: 100%;
+	height: 100%;
+	padding: 0.65em 0.875em 0.75em;
+	outline: none;
+	&:disabled {
+		cursor: not-allowed;
+		background-color: figma-color("Litho Cream");
+	}
+}

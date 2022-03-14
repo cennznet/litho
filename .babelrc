@@ -1,4 +1,18 @@
 {
-  "presets": ["next/babel"],
-  "plugins": ["inline-react-svg"]
+  "plugins": [
+      [
+          "module-resolver",
+          {
+              "alias": {
+                  "@refactor": "./refactor"
+              }
+          }
+      ],
+      ["inline-react-svg", {
+        "ignorePattern": "/\?inline/"
+      }]
+  ],
+  "presets": [
+      "next/babel"
+  ]
 }

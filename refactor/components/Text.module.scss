@@ -1,0 +1,44 @@
+@use "~@refactor/styles/types";
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	&--headline1 {
+		@include types.headline(h1);
+	}
+
+	&--headline2 {
+		@include types.headline(h2);
+	}
+
+	&--headline3 {
+		@include types.headline(h3);
+	}
+
+	&--headline4 {
+		@include types.headline(h4);
+	}
+
+	&--headline5 {
+		@include types.headline(h5);
+	}
+
+	&--headline6 {
+		@include types.headline(h6);
+	}
+
+	&--subtitle1 {
+		@include types.subtitle(s1);
+	}
+
+	&--subtitle2 {
+		@include types.subtitle(s2);
+	}
+
+	&--body1 {
+		@include types.body(b1);
+	}
+
+	&--body2 {
+		@include types.body(b2);
+	}
+}

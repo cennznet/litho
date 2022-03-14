@@ -1,0 +1,23 @@
+@import "~@refactor/styles/bootstrap";
+
+.root {
+	font-weight: bold;
+	margin-bottom: 1em;
+
+	> a {
+		display: inline-block;
+		position: relative;
+		transition: color 0.2s;
+		color: figma-color("Litho Blue");
+
+		@include on-hover {
+			color: figma-color("Litho Black");
+		}
+
+		&:after {
+			display: inline-block;
+			content: "\021A3";
+			padding: 0 0.25rem;
+		}
+	}
+}

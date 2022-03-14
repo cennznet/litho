@@ -4,3 +4,9 @@ declare module '*.svg' {
   const src: string;
   export default src;
 }
+
+declare module '*.svg?inline' {
+  export const src: string;
+  export const width: number;
+  export const height: number;
+}

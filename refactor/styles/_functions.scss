@@ -1,0 +1,72 @@
+@use "sass:math";
+/**
+ * Return a `calc` string with linear equation to scale value by $base-viewport-width
+ *
+ * Example:
+ * 	`font-size: linear(16px phone, 24px tablet);`
+ * 	which equivalent to
+ * 	`font-size: linear(16px 375px, 24px 900px)`
+ *
+ * @param {list} $from []- The starting point
+ * @param {list} $to []- The end point
+ * @param {map} $options [] - The options
+ *
+ * @return {string}
+ */
+@function linear(
+	$from,
+	$to,
+	$options: (base-viewport-width: 100vw, clamp: true)
+) {
+	$from-value: nth($from, 1);
+	$from-viewport-width: breakpoint-get($interpolate-breakpoints, nth($from, 2));
+
+	$to-value: nth($to, 1);
+	$to-viewport-width: breakpoint-get($interpolate-breakpoints, nth($to, 2));
+
+	$base-viewport-width: map-get($options, base-viewport-width);
+	$clamp: map-get($options, clamp);
+
+	$slope: math.div(
+		$to-value - $from-value,
+		$to-viewport-width - $from-viewport-width
+	);
+
+	$minimum-value: if($from-value < $to-value, $from-value, $to-value);
+	$maximum-value: if($from-value < $to-value, $to-value, $from-value);
+
+	@return if(
+		$clamp,
+		clamp(
+			#{$minimum-value},
+			#{$from-value} + (#{$base-viewport-width} - #{$from-viewport-width}) * #{$slope},
+			#{$maximum-value}
+		),
+		calc(
+			#{$from-value} + (#{$base-viewport-width} - #{$from-viewport-width}) * #{$slope}
+		)
+	);
+}
+
+/**
+ * Return a breakpoint value from `$breakpoint-map`, will return the input
+ * if retrieved breakpoint value from map is not a number
+ *
+ * @param {map} $breakpoint-map [] - The breakpoint map
+ * @param {string|number} $breakpoint [] - The breakpoint name or number
+ *
+ * @return {number}
+ */
+@function breakpoint-get($breakpoint-map, $breakpoint) {
+	$value: map-get($breakpoint-map, $breakpoint);
+
+	@if type-of($value) != number {
+		$value: $breakpoint;
+	}
+
+	@return $value;
+}
+
+@function figma-color($name) {
+	@return map-get($figma-colors, $name);
+}

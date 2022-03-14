@@ -1,0 +1,71 @@
+@import "~@refactor/styles/bootstrap";
+
+@mixin headline($level: h1) {
+	line-height: 1.25;
+	@if ($level == h1) {
+		@include interpolate("font-size", 26px phone, 52px desktop);
+		font-weight: 400;
+	}
+
+	@if ($level == h2) {
+		@include interpolate("font-size", 24px phone, 48px desktop);
+		font-weight: 700;
+	}
+
+	@if ($level == h3) {
+		@include interpolate("font-size", 22px phone, 36px desktop);
+		font-weight: 600;
+	}
+
+	@if ($level == h4) {
+		@include interpolate("font-size", 18px phone, 24px desktop);
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	@if ($level == h5) {
+		@include interpolate("font-size", 16px phone, 18px desktop);
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	@if ($level == h6) {
+		@include interpolate("font-size", 14px phone, 18px desktop);
+		font-weight: 600;
+	}
+}
+
+@mixin subtitle($level: s1) {
+	line-height: 1.5;
+	@if ($level == s1) {
+		@include interpolate("font-size", 14px phone, 16px desktop);
+		font-weight: 700;
+	}
+
+	@if ($level == s2) {
+		@include interpolate("font-size", 12px phone, 14px desktop);
+		font-weight: 600;
+	}
+}
+
+@mixin body($size: b1) {
+	line-height: 1.5;
+	@if ($size == b1) {
+		@include interpolate("font-size", 14px phone, 16px desktop);
+	}
+
+	@if ($size == b2) {
+		@include interpolate("font-size", 12px phone, 14px desktop);
+	}
+}
+
+@mixin button() {
+	line-height: 1;
+	@include interpolate("font-size", 12px phone, 14px desktop);
+	font-weight: 700;
+}
+
+@mixin caption() {
+	line-height: 1.5;
+	@include interpolate("font-size", 12px phone, 12px desktop);
+}
