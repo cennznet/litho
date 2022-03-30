@@ -115,14 +115,16 @@ export async function fetchNFTInfo(
 
 				cerulean: async () => {
 					const scheme = (
-						(await api.query.nft.seriesMetadataScheme(
-							tokenId[0],
-							tokenId[1]
-						)) as any
-					).unwrapOrDefault();
-					const metadataPath = scheme?.asIpfsShared?.toHuman();
+						await api.derive.nft.seriesMetadataUri(tokenId[0], tokenId[1])
+					)
+						.unwrapOrDefault()
+						?.toHuman();
 
-					return `ipfs://${metadataPath}`;
+					if (typeof scheme === "string") return scheme;
+
+					if (scheme?.IpfsShared) return `ipfs://${scheme.IpfsShared}`;
+
+					throw { message: "Cannot resolve seriesMetadataUri" };
 				},
 			})
 		);
@@ -133,6 +135,7 @@ export async function fetchNFTInfo(
 			response?.json()
 		)) as NFTMetadata271;
 	} catch (e) {
+		console.info(e);
 		return { metadata, attributes };
 	}
 

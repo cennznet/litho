@@ -178,6 +178,15 @@
 	pre {
 		font-family: inherit;
 		white-space: pre-wrap;
+
+		a {
+			color: figma-color("Litho Blue");
+			font-weight: 700;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 }
 
