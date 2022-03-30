@@ -25,6 +25,7 @@ import {
 import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import isFinite from "lodash/isFinite";
+import parseDescriptionForViewStoryLink from "@refactor/utils/parseDescriptionForViewStoryLink";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -326,12 +327,16 @@ function DescriptionSection({
 		metadata: { description },
 	} = listingItem;
 
+	const [start, link, end] = parseDescriptionForViewStoryLink(description);
+
 	return (
 		<div className={bem("descriptionSection")}>
 			<dl className={bem("description")}>
 				<dt>Description</dt>
 				<dd>
-					<pre>{description}</pre>
+					<pre>
+						{start} {!!link && <Link href={link}>here</Link>} {end}
+					</pre>
 				</dd>
 			</dl>
 		</div>
