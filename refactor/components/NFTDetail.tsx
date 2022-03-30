@@ -335,7 +335,13 @@ function DescriptionSection({
 				<dt>Description</dt>
 				<dd>
 					<pre>
-						{start} {!!link && <Link href={link}>here</Link>} {end}
+						{start}{" "}
+						{!!link && (
+							<>
+								<Link href={link}>here</Link>.
+							</>
+						)}{" "}
+						{end}
 					</pre>
 				</dd>
 			</dl>
