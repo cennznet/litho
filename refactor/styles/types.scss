@@ -30,7 +30,7 @@
 	}
 
 	@if ($level == h6) {
-		@include interpolate("font-size", 14px phone, 18px desktop);
+		@include interpolate("font-size", 12px phone, 18px desktop);
 		font-weight: 600;
 	}
 }
