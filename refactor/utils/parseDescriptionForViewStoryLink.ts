@@ -11,5 +11,9 @@ export default function parseDescriptionForViewStoryLink(
 
 	const [startDescription, endDescription] = description.split(match0);
 
-	return [startDescription, match0.replace(/(\shere)*:\s/, ""), endDescription];
+	return [
+		startDescription,
+		match0.replace(/(\shere)*:\s/, "").replace(/\.$/, ""),
+		endDescription,
+	];
 }
