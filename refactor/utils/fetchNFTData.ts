@@ -8,6 +8,7 @@ import {
 	NFTMetadata271,
 } from "@refactor/types";
 import selectByRuntime from "./selectByRuntime";
+import { hexToString } from "@polkadot/util";
 
 /**
  * Fetches NFT `attributes` and `metadata`
@@ -74,10 +75,17 @@ export async function fetchNFTInfo(
 		);
 
 		const { url: metadataIPFS } =
-			seriesAttributes.find(
-				(attribute: NFTAttribute) =>
-					attribute.url && attribute.url.search(/metadata/gi) >= 0
-			) || {};
+			seriesAttributes
+				.map((attribute: NFTAttribute) => {
+					return {
+						...attribute,
+						url: attribute.url ? hexToString(attribute.url) : null,
+					};
+				})
+				.find(
+					(attribute: NFTAttribute) =>
+						attribute.url && attribute.url.search(/metadata/gi) >= 0
+				) || {};
 
 		if (!metadataIPFS) return { metadata, attributes };
 
