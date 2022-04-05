@@ -9,6 +9,7 @@ import {
 	useEffect,
 	useState,
 	useCallback,
+	useMemo,
 } from "react";
 import type * as Extension from "@polkadot/extension-dapp";
 import { useUserAgent } from "@refactor/providers/UserAgentProvider";
@@ -18,8 +19,8 @@ import Button from "@refactor/components/Button";
 
 type ExtensionContext = typeof Extension & {
 	accounts: Array<InjectedAccountWithMeta>;
-	extension: InjectedExtension;
 	promptInstallExtension: () => void;
+	getInstalledExtension: () => Promise<InjectedExtension>;
 };
 
 const CENNZExtensionContext = createContext<ExtensionContext>(
@@ -33,7 +34,6 @@ export default function CENNZExtensionProvider({
 }: PropsWithChildren<ProviderProps>) {
 	const { browser } = useUserAgent();
 	const [module, setModule] = useState<typeof Extension>();
-	const [extension, setExtension] = useState<InjectedExtension>();
 	const [accounts, setAccounts] = useState<Array<InjectedAccountWithMeta>>();
 	const { showDialog, closeDialog } = useDialog();
 
@@ -66,25 +66,19 @@ export default function CENNZExtensionProvider({
 		import("@polkadot/extension-dapp").then(setModule);
 	}, []);
 
-	useEffect(() => {
+	const getInstalledExtension = useMemo(() => {
 		if (!module) return;
 
-		const getExtension = async () => {
+		return async () => {
 			const { web3Enable, web3FromSource } = module;
 			await web3Enable("Litho");
-			const extension = await web3FromSource("cennznet-extension").catch(
-				() => null
-			);
-
-			setExtension(extension);
+			return await web3FromSource("cennznet-extension").catch(() => null);
 		};
-
-		getExtension();
 	}, [module]);
 
 	useEffect(() => {
-		if (!module || !extension || !showDialog) return;
-		let unsubscibre: () => void;
+		if (!module || !showDialog) return;
+		let unsubscribe: () => void;
 
 		const fetchAccounts = async () => {
 			const { web3Enable, web3Accounts, web3AccountsSubscribe } = module;
@@ -100,19 +94,24 @@ export default function CENNZExtensionProvider({
 
 			setAccounts(accounts);
 
-			unsubscibre = await web3AccountsSubscribe((accounts) => {
+			unsubscribe = await web3AccountsSubscribe((accounts) => {
 				setAccounts([...accounts]);
 			});
 		};
 
 		fetchAccounts();
 
-		return unsubscibre;
-	}, [module, extension, showDialog]);
+		return unsubscribe;
+	}, [module, showDialog]);
 
 	return (
 		<CENNZExtensionContext.Provider
-			value={{ ...module, accounts, extension, promptInstallExtension }}>
+			value={{
+				...module,
+				accounts,
+				getInstalledExtension,
+				promptInstallExtension,
+			}}>
 			{children}
 		</CENNZExtensionContext.Provider>
 	);
