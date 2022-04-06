@@ -50,7 +50,8 @@ export default function SupportedWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
-	const { promptInstallExtension, extension, accounts } = useCENNZExtension();
+	const { promptInstallExtension, getInstalledExtension, accounts } =
+		useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
 	const showUnsupportedMessage = useUnsupportDialog();
@@ -67,6 +68,8 @@ export default function SupportedWalletProvider({
 				);
 			}
 
+			const extension = await getInstalledExtension?.();
+
 			if (!extension) {
 				callback?.();
 				return promptInstallExtension();
@@ -78,7 +81,7 @@ export default function SupportedWalletProvider({
 		},
 		[
 			promptInstallExtension,
-			extension,
+			getInstalledExtension,
 			api,
 			runtimeMode,
 			showUnsupportedMessage,
@@ -101,14 +104,13 @@ export default function SupportedWalletProvider({
 	// 1. Restore the wallet from the store if it exists
 	useEffect(() => {
 		async function restoreWallet() {
-			if (extension === null) return disconnectWallet();
 			const storedWallet = store.get("CENNZNET-EXTENSION");
-			if (!storedWallet) return;
-			setWallet(extension);
+			if (!storedWallet) return disconnectWallet();
+			setWallet(storedWallet);
 		}
 
 		restoreWallet();
-	}, [extension, disconnectWallet]);
+	}, [disconnectWallet]);
 
 	// 2. Pick the right account once a `wallet` has been set
 	useEffect(() => {
