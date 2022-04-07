@@ -106,11 +106,12 @@ export default function SupportedWalletProvider({
 		async function restoreWallet() {
 			const storedWallet = store.get("CENNZNET-EXTENSION");
 			if (!storedWallet) return disconnectWallet();
-			setWallet(storedWallet);
+			const extension = await getInstalledExtension?.();
+			setWallet(extension);
 		}
 
 		restoreWallet();
-	}, [disconnectWallet]);
+	}, [disconnectWallet, getInstalledExtension]);
 
 	// 2. Pick the right account once a `wallet` has been set
 	useEffect(() => {
@@ -166,7 +167,7 @@ export default function SupportedWalletProvider({
 	);
 
 	useEffect(() => {
-		if (!api) return;
+		if (!api || !wallet) return;
 
 		(window as any).extractExtensionMetadata = async () => {
 			const metadata = await extractExtensionMetadata(api);
