@@ -18,7 +18,7 @@ $media-breakpoints: (
 	tablet-pro: $tablet-pro,
 	laptop: $laptop,
 	desktop: $desktop,
-	widescreen: $widescreen
+	widescreen: $widescreen,
 );
 
 // List of mid breakpoints (used for @interpolation mixin)
@@ -28,7 +28,7 @@ $interpolate-breakpoints: (
 	tablet-pro: $tablet-pro,
 	laptop: $laptop,
 	desktop: $desktop,
-	widescreen: $widescreen
+	widescreen: $widescreen,
 );
 
 $figma-colors: (
@@ -42,7 +42,7 @@ $figma-colors: (
 	"Litho Blue": #1b019a,
 	"Litho Blue 75%": rgba(31, 76, 122, 0.6),
 	"Litho Mustard": #f8c93b,
-	"Litho Green": #45986f
+	"Litho Green": #45986f,
 );
 
 @function figma-color($name) {
