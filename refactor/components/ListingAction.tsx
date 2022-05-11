@@ -233,6 +233,7 @@ export function ConnectAction({
 	const [busy, setBusy] = useState<boolean>(false);
 	const onConnectClick = useCallback(() => {
 		setBusy(true);
+		window.scrollTo({ top: 0, behavior: "smooth" });
 		setWalletOpen(true);
 	}, [setWalletOpen]);
 

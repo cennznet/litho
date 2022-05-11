@@ -47,7 +47,10 @@ export default function HomeHero({
 					{!selectedAccount && (
 						<Button
 							className={bem("button")}
-							onClick={() => setWalletOpen(true)}>
+							onClick={() => {
+								window.scrollTo({ top: 0, behavior: "smooth" });
+								setWalletOpen(true);
+							}}>
 							Connect Wallet
 						</Button>
 					)}
