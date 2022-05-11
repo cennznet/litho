@@ -51,7 +51,7 @@ const MetaMaskWalletProvider: FC<MetaMaskWalletProviderProps> = ({
 
 			setSelectedAccount({ address: accounts[0] });
 			setSelectedWallet("MetaMask");
-			setWallet(new ethers.providers.Web3Provider(extension as any));
+			setWallet(new ethers.providers.Web3Provider(extension as any, "any"));
 			callback?.();
 		},
 		[extension, promptInstallExtension, setSelectedWallet]
@@ -66,7 +66,7 @@ const MetaMaskWalletProvider: FC<MetaMaskWalletProviderProps> = ({
 			if (!accounts?.length) return;
 
 			setSelectedAccount({ address: accounts[0] });
-			setWallet(new ethers.providers.Web3Provider(extension as any));
+			setWallet(new ethers.providers.Web3Provider(extension as any, "any"));
 		};
 
 		void checkAccounts();
