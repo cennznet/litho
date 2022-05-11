@@ -34,11 +34,7 @@ export default async function signViaEthWallet(
 			return status as string;
 		});
 	} catch (error) {
-		if (error?.message === "Cancelled") return "cancelled";
-		const err = new Error(
-			"An error occurred while sending your transaction request."
-		);
-		(err as any).code = error?.message?.split?.(":")?.[0].trim();
-		throw err;
+		if (error?.code === 4001) return "cancelled";
+		throw new Error(error?.message?.split?.(":")?.[1].trim());
 	}
 }
