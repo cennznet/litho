@@ -26,11 +26,11 @@ export default function WalletConnect({}: DOMComponentProps<
 		(wallet: WalletOption) => {
 			setBusy(true);
 
-			const callback = () => setTimeout(() => setBusy(false), 1000);
+			if (wallet === "CENNZnet")
+				return connectCENNZWallet().then(() => setBusy(false));
 
-			if (wallet === "CENNZnet") return connectCENNZWallet(callback);
-
-			if (wallet === "MetaMask") return connectMetaMask(callback);
+			if (wallet === "MetaMask")
+				return connectMetaMask().then(() => setBusy(false));
 		},
 		[connectCENNZWallet, connectMetaMask]
 	);

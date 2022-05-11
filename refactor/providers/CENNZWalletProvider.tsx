@@ -87,7 +87,6 @@ export default function CENNZWalletProvider({
 				return promptInstallExtension();
 			}
 
-			callback?.();
 			setSelectedWallet("CENNZnet");
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
