@@ -9,7 +9,7 @@
     "lint": "next lint",
     "clean": "rm -rdf .next",
     "new:component": "hygen component new",
-    "prettier-format": "prettier --config .prettierrc.json ./ --write"
+    "format": "prettier --config .prettierrc.json ./ --write"
   },
   "dependencies": {
     "@cennznet/api": "^2.1.1-alpha.2",
