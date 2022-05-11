@@ -7,8 +7,8 @@ import Text from "@refactor/components/Text";
 import Dropdown from "@refactor/components/Dropdown";
 import Button from "@refactor/components/Button";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
-import { useWalletProvider } from "@refactor/providers/WalletProvider";
 import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import useScrollToWallet from "@refactor/hooks/useScrollToWallet";
 
 const bem = createBEMHelper(require("./OwnerGrid.module.scss"));
 
@@ -20,7 +20,6 @@ export default function OwnerGrid({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { setWalletOpen } = useWalletProvider();
 	const selectedAccount = useSelectedAccount();
 	const api = useCENNZApi();
 	const [tokenIds, setTokenIds] = useState<Array<NFTId>>([...DEFAULT_STATE]);
@@ -82,11 +81,12 @@ export default function OwnerGrid({
 	}, []);
 
 	const [busy, setBusy] = useState<boolean>(false);
-	const onConnectClick = useCallback(() => {
+	const scrollToWallet = useScrollToWallet();
+
+	const onConnectClick = () => {
 		setBusy(true);
-		window.scrollTo({ top: 0, behavior: "smooth" });
-		setWalletOpen(true);
-	}, [setWalletOpen]);
+		scrollToWallet();
+	};
 
 	return (
 		<div className={bem("root", className)} {...props}>

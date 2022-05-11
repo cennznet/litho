@@ -8,7 +8,7 @@ import MarketplacePNG from "@refactor/assets/bitmaps/marketplace.png";
 import MintingPNG from "@refactor/assets/bitmaps/minting.png";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
-import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useScrollToWallet from "@refactor/hooks/useScrollToWallet";
 
 const bem = createBEMHelper(require("./HomeHero.module.scss"));
 
@@ -18,9 +18,8 @@ export default function HomeHero({
 	className,
 }: DOMComponentProps<ComponentProps, "div">) {
 	const { startMinting } = useMintFlow();
-	const { setWalletOpen } = useWalletProvider();
-
 	const selectedAccount = useSelectedAccount();
+	const scrollToWallet = useScrollToWallet();
 
 	return (
 		<div className={bem("root", className)}>
@@ -45,12 +44,7 @@ export default function HomeHero({
 						</Button>
 					)}
 					{!selectedAccount && (
-						<Button
-							className={bem("button")}
-							onClick={() => {
-								window.scrollTo({ top: 0, behavior: "smooth" });
-								setWalletOpen(true);
-							}}>
+						<Button className={bem("button")} onClick={() => scrollToWallet()}>
 							Connect Wallet
 						</Button>
 					)}

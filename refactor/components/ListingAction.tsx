@@ -17,7 +17,7 @@ import AssetInput from "@refactor/components/AssetInput";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useSellFlow } from "@refactor/providers/SellFlowProvider";
 import { useDialog } from "@refactor/providers/DialogProvider";
-import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useScrollToWallet from "@refactor/hooks/useScrollToWallet";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -229,13 +229,13 @@ type ConnectComponentProps = {};
 export function ConnectAction({
 	className,
 }: DOMComponentProps<ConnectComponentProps, "div">) {
-	const { setWalletOpen } = useWalletProvider();
 	const [busy, setBusy] = useState<boolean>(false);
-	const onConnectClick = useCallback(() => {
+	const scrollToWallet = useScrollToWallet();
+
+	const onConnectClick = () => {
 		setBusy(true);
-		window.scrollTo({ top: 0, behavior: "smooth" });
-		setWalletOpen(true);
-	}, [setWalletOpen]);
+		scrollToWallet();
+	};
 
 	return (
 		<div className={bem("connectAction", className)}>
