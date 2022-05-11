@@ -26,6 +26,7 @@ import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import isFinite from "lodash/isFinite";
 import parseDescriptionForViewStoryLink from "@refactor/utils/parseDescriptionForViewStoryLink";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -148,8 +149,9 @@ function ListingSection({
 
 	const endTime = useEndTime(closeBlock);
 
-	const { account, balances, checkSufficientFund } = useCENNZWallet();
-	const isOwner = account?.address === owner;
+	const { balances, checkSufficientFund } = useCENNZWallet();
+	const selectedAccount = useSelectedAccount();
+	const isOwner = selectedAccount?.address === owner;
 	const isSufficientFund = paymentAssetId
 		? checkSufficientFund(latestPrice, paymentAssetId)
 		: false;
@@ -158,7 +160,7 @@ function ListingSection({
 		fetchWiningBid();
 	}, [listingItem, fetchWiningBid]);
 
-	if (!!account && !isFinite(listingId) && !isOwner) return null;
+	if (!!selectedAccount && !isFinite(listingId) && !isOwner) return null;
 
 	return (
 		<div className={bem("listing")}>
@@ -224,7 +226,8 @@ function ListingSection({
 			)}
 
 			{(() => {
-				if (!account) return <ConnectAction className={bem("action")} />;
+				if (!selectedAccount)
+					return <ConnectAction className={bem("action")} />;
 
 				if (!isFinite(listingId)) {
 					if (isOwner)

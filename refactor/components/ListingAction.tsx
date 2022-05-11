@@ -17,6 +17,7 @@ import AssetInput from "@refactor/components/AssetInput";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useSellFlow } from "@refactor/providers/SellFlowProvider";
 import { useDialog } from "@refactor/providers/DialogProvider";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -228,12 +229,12 @@ type ConnectComponentProps = {};
 export function ConnectAction({
 	className,
 }: DOMComponentProps<ConnectComponentProps, "div">) {
-	const { connectWallet } = useCENNZWallet();
+	const { setWalletOpen } = useWalletProvider();
 	const [busy, setBusy] = useState<boolean>(false);
 	const onConnectClick = useCallback(() => {
 		setBusy(true);
-		connectWallet(() => setBusy(false));
-	}, [connectWallet]);
+		setWalletOpen(true);
+	}, [setWalletOpen]);
 
 	return (
 		<div className={bem("connectAction", className)}>

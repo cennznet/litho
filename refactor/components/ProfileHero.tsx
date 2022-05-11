@@ -1,4 +1,3 @@
-import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Identicon from "@polkadot/react-identicon";
@@ -6,6 +5,9 @@ import { useCallback, useState } from "react";
 import useResizeObserver from "@refactor/hooks/useResizeObserver";
 import Text from "@refactor/components/Text";
 import AccountAddress from "@refactor/components/AccountAddress";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
 
 const bem = createBEMHelper(require("./ProfileHero.module.scss"));
 
@@ -15,7 +17,9 @@ export default function ProfileHero({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { account } = useCENNZWallet();
+	const { selectedWallet } = useWalletProvider();
+	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
+	const selectedAccount = useSelectedAccount();
 	const [iconScale, setIconScale] = useState<number>(0);
 	const onResize = useCallback(
 		(entries: ResizeObserverEntry[], target: HTMLDivElement) => {
@@ -36,10 +40,10 @@ export default function ProfileHero({
 					className={bem("account")}
 					ref={accountRef}
 					style={{ "--icon-scale": iconScale } as any}>
-					{!!account && (
+					{!!selectedAccount && (
 						<>
 							<Identicon
-								value={account.address}
+								value={selectedAccount.address}
 								theme="beachball"
 								size={256}
 								className={bem("accountIcon")}
@@ -47,10 +51,17 @@ export default function ProfileHero({
 
 							<div className={bem("accountInfo")}>
 								<Text variant="headline4" className={bem("accountName")}>
-									{account.meta.name}
+									{selectedAccount?.meta?.name ?? "METAMASK"}
 								</Text>
 								<Text variant="headline6">
-									<AccountAddress address={account.address} length={8} />
+									<AccountAddress
+										address={
+											selectedWallet === "CENNZnet"
+												? selectedAccount.address
+												: metaMaskAccount.address
+										}
+										length={selectedWallet === "CENNZnet" ? 8 : 6}
+									/>
 								</Text>
 							</div>
 						</>

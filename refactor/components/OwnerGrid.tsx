@@ -1,5 +1,4 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { DOMComponentProps, NFTId, SortOrder } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useEffect, useState, useCallback } from "react";
@@ -8,6 +7,8 @@ import Text from "@refactor/components/Text";
 import Dropdown from "@refactor/components/Dropdown";
 import Button from "@refactor/components/Button";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
 
 const bem = createBEMHelper(require("./OwnerGrid.module.scss"));
 
@@ -19,7 +20,8 @@ export default function OwnerGrid({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { account, connectWallet } = useCENNZWallet();
+	const { setWalletOpen } = useWalletProvider();
+	const selectedAccount = useSelectedAccount();
 	const api = useCENNZApi();
 	const [tokenIds, setTokenIds] = useState<Array<NFTId>>([...DEFAULT_STATE]);
 	const [sortedTokenIds, setSortedTokenIds] = useState<Array<NFTId>>([
@@ -30,12 +32,12 @@ export default function OwnerGrid({
 
 	useEffect(() => {
 		setTokenIds([...DEFAULT_STATE]);
-	}, [account?.address]);
+	}, [selectedAccount?.address]);
 
 	useEffect(() => {
-		if (!api || !account?.address) return;
+		if (!api || !selectedAccount?.address) return;
 
-		const address = account.address;
+		const address = selectedAccount.address;
 
 		const fetchAllTokens = async function () {
 			const tokenOwnerEntries = await api.query.nft.tokenOwner.entries();
@@ -56,7 +58,7 @@ export default function OwnerGrid({
 		};
 
 		fetchAllTokens();
-	}, [api, account?.address]);
+	}, [api, selectedAccount?.address]);
 
 	useEffect(() => {
 		if (!tokenIds?.length) return setSortedTokenIds([]);
@@ -82,12 +84,12 @@ export default function OwnerGrid({
 	const [busy, setBusy] = useState<boolean>(false);
 	const onConnectClick = useCallback(() => {
 		setBusy(true);
-		connectWallet(() => setBusy(false));
-	}, [connectWallet]);
+		setWalletOpen(true);
+	}, [setWalletOpen]);
 
 	return (
 		<div className={bem("root", className)} {...props}>
-			{!!account && (
+			{!!selectedAccount && (
 				<NFTGrid tokenIds={sortedTokenIds}>
 					<div className={bem("header")}>
 						<Text variant="headline3">My NFTs</Text>
@@ -119,7 +121,7 @@ export default function OwnerGrid({
 				</NFTGrid>
 			)}
 
-			{!account && (
+			{!selectedAccount && (
 				<div className={bem("message")}>
 					<Button
 						className={bem("button")}
