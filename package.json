@@ -8,12 +8,15 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rdf .next",
-    "new:component": "hygen component new"
+    "new:component": "hygen component new",
+    "prettier-format": "prettier --config .prettierrc.json ./ --write"
   },
   "dependencies": {
-    "@cennznet/api": "^2.1.0-rc.2",
-    "@cennznet/types": "^2.1.0-rc.2",
+    "@cennznet/api": "^2.1.1-alpha.2",
+    "@cennznet/types": "^2.1.1-alpha.2",
     "@jahed/bem": "^1.2.12",
+    "@metamask/detect-provider": "^1.2.0",
+    "@metamask/providers": "^8.1.1",
     "@pinata/ipfs-gateway-tools": "^1.1.6",
     "@pinata/sdk": "^1.1.23",
     "@polkadot/react-identicon": "^1.0.1",
@@ -31,7 +34,7 @@
     "next-seo": "^5.1.0",
     "node-cache": "^5.1.2",
     "postcss-import": "^13.0.0",
-    "postcss-preset-env": "^6.7.0",
+    "postcss-preset-env": "^7.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-inview": "^4.4.0",
@@ -48,7 +51,8 @@
   "devDependencies": {
     "@types/gtag.js": "^0.0.8",
     "@types/node": "^14.14.37",
-    "@types/react": "^17.0.3",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "17.0.2",
     "@types/react-modal": "^3.13.1",
     "@types/react-tabs": "^2.3.4",
     "autoprefixer": "^10.2.5",
@@ -66,9 +70,12 @@
   },
   "resolutions": {
     "lodash": "^4.17.21",
+    "resolve": "2.0.0-next.3",
     "@polkadot/wasm-crypto": "^4.5.1",
     "@polkadot/util-crypto": "^8.4.1",
     "@polkadot/util": "^8.4.1",
-    "@polkadot/keyring": "^8.4.1"
+    "@polkadot/keyring": "^8.4.1",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "17.0.2"
   }
 }
