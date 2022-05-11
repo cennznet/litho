@@ -1,11 +1,14 @@
 import { useCallback, useState } from "react";
-import { DOMComponentProps } from "@refactor/types";
+import { DOMComponentProps, WalletOption } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { Hr } from "@refactor/components/Modal";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
+import MetaMaskSVG from "@refactor/assets/vectors/metamask.svg";
+
 import ThreeDots from "@refactor/components/ThreeDots";
 import Text from "@refactor/components/Text";
+import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
 
 const bem = createBEMHelper(require("./WalletConnect.module.scss"));
 
@@ -15,13 +18,22 @@ export default function WalletConnect({}: DOMComponentProps<
 	ComponentProps,
 	"div"
 >) {
-	const { connectWallet } = useWallet();
+	const { connectWallet: connectCENNZWallet } = useCENNZWallet();
+	const { connectWallet: connectMetaMask } = useMetaMaskWallet();
 	const [busy, setBusy] = useState<boolean>(false);
 
-	const onWalletClick = useCallback(() => {
-		setBusy(true);
-		connectWallet(() => setBusy(false));
-	}, [connectWallet]);
+	const onWalletClick = useCallback(
+		(wallet: WalletOption) => {
+			setBusy(true);
+
+			const callback = () => setTimeout(() => setBusy(false), 1000);
+
+			if (wallet === "CENNZnet") return connectCENNZWallet(callback);
+
+			if (wallet === "MetaMask") return connectMetaMask(callback);
+		},
+		[connectCENNZWallet, connectMetaMask]
+	);
 
 	return (
 		<div className={bem("root")}>
@@ -37,7 +49,22 @@ export default function WalletConnect({}: DOMComponentProps<
 			<div className={bem("list")}>
 				<button
 					className={bem("wallet")}
-					onClick={onWalletClick}
+					onClick={() => onWalletClick("MetaMask")}
+					disabled={busy}>
+					<img
+						src={MetaMaskSVG.src}
+						alt="MetaMask logo"
+						className={bem("metaMaskIcon")}
+					/>
+					<span className={bem("walletName")}>
+						{!busy ? "MetaMask Wallet" : "Connecting"}
+					</span>
+					{busy && <ThreeDots />}
+				</button>
+				<br />
+				<button
+					className={bem("wallet")}
+					onClick={() => onWalletClick("CENNZnet")}
 					disabled={busy}>
 					<CENNZnetSVG className={bem("walletIcon")} />
 					<span className={bem("walletName")}>

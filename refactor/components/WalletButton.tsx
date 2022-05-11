@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { DOMComponentProps } from "@refactor/types";
 import WalletSVG from "@refactor/assets/vectors/wallet.svg";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import Modal from "@refactor/components/Modal";
 import WalletConnect from "@refactor/components/WalletConnect";
 import WalletDetails from "@refactor/components/WalletDetails";
 import Identicon from "@polkadot/react-identicon";
 import ThreeDots from "@refactor/components/ThreeDots";
 import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
 
 const bem = createBEMHelper(require("./WalletButton.module.scss"));
 
@@ -18,17 +20,20 @@ export default function WalletButton({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "button">) {
-	const { account, balances } = useWallet();
-	const [modalOpened, setModalOpened] = useState<boolean>(false);
+	const { balances } = useCENNZWallet();
+	const { walletOpen, setWalletOpen } = useWalletProvider();
+
+	const selectedAccount = useSelectedAccount();
+
 	const onModalRequestClose = useCallback(() => {
-		setModalOpened(false);
+		setWalletOpen(false);
 	}, []);
 	const onButtonClick = useCallback(() => {
-		setModalOpened(!modalOpened);
-	}, [modalOpened]);
+		setWalletOpen(!walletOpen);
+	}, [walletOpen]);
 
 	useEffect(() => {
-		setModalOpened(false);
+		setWalletOpen(false);
 	}, [balances?.length]);
 
 	return (
@@ -37,18 +42,18 @@ export default function WalletButton({
 				{...props}
 				className={bem("root", className)}
 				onClick={onButtonClick}>
-				{!account && !balances && (
+				{!selectedAccount && !balances && (
 					<>
 						<WalletSVG className={bem("icon")} />
 						<label className={bem("label")}>Connect Wallet</label>
 					</>
 				)}
 
-				{!!account && !balances && (
+				{!!selectedAccount && !balances && (
 					<>
-						<span title={account.address}>
+						<span title={selectedAccount.address}>
 							<Identicon
-								value={account.address}
+								value={selectedAccount.address}
 								theme="beachball"
 								size={24}
 								className={bem("icon")}
@@ -62,10 +67,14 @@ export default function WalletButton({
 					</>
 				)}
 
-				{!!account && !!balances && (
+				{!!selectedAccount && !!balances && (
 					<>
-						<div title={account.address} className={bem("icon")}>
-							<Identicon value={account.address} theme="beachball" size={24} />
+						<div title={selectedAccount.address} className={bem("icon")}>
+							<Identicon
+								value={selectedAccount.address}
+								theme="beachball"
+								size={24}
+							/>
 						</div>
 
 						<label
@@ -73,7 +82,7 @@ export default function WalletButton({
 								"label"
 							)}>{`${balances[0].value} ${balances[0].symbol}`}</label>
 
-						<span className={bem("chevron", { modalOpened })}>
+						<span className={bem("chevron", { walletOpen })}>
 							<ChevronDownSVG />
 						</span>
 					</>
@@ -81,7 +90,7 @@ export default function WalletButton({
 			</button>
 
 			<Modal
-				isOpen={modalOpened}
+				isOpen={walletOpen}
 				onRequestClose={onModalRequestClose}
 				className={bem("modal")}
 				overlayClassName={bem("modalOverlay")}
