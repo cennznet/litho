@@ -146,7 +146,6 @@ export default function CENNZWalletProvider({
 	const { assets } = useAssets();
 	const [balances, setBalances] = useState<Array<BalanceInfo>>();
 	const fetchAssetBalances = useCallback(async () => {
-		console.log({ selectedWallet, selectedAccount });
 		if (
 			!assets ||
 			!api ||
