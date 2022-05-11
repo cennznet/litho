@@ -22,7 +22,7 @@ import {
 	ConnectAction,
 	TopUpAction,
 } from "@refactor/components/ListingAction";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import isFinite from "lodash/isFinite";
 import parseDescriptionForViewStoryLink from "@refactor/utils/parseDescriptionForViewStoryLink";
@@ -39,7 +39,7 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { fetchAssetBalances } = useWallet();
+	const { fetchAssetBalances } = useCENNZWallet();
 	const { item, fetchByListingId, fetchByTokenId } = useNFTListing(listingItem);
 
 	const onActionComplete = useCallback(
@@ -148,7 +148,7 @@ function ListingSection({
 
 	const endTime = useEndTime(closeBlock);
 
-	const { account, balances, checkSufficientFund } = useWallet();
+	const { account, balances, checkSufficientFund } = useCENNZWallet();
 	const isOwner = account?.address === owner;
 	const isSufficientFund = paymentAssetId
 		? checkSufficientFund(latestPrice, paymentAssetId)

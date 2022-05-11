@@ -1,5 +1,5 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { NFTCollectionId } from "@refactor/types";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
@@ -17,7 +17,7 @@ type Callback = (
 
 export default function useNFTMint(): Callback {
 	const api = useCENNZApi();
-	const { account, wallet } = useWallet();
+	const { account, wallet } = useCENNZWallet();
 	const { showDialog } = useDialog();
 	const { confirmSufficientFund } = useGasEstimate();
 

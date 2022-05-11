@@ -17,7 +17,7 @@ import usePinataIPFS from "@refactor/hooks/usePinataIPFS";
 import useNFTMint from "@refactor/hooks/useNFTMint";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import Link from "@refactor/components/Link";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { NextSeo } from "next-seo";
 
 const bem = createBEMHelper(require("./MintFlowModal.module.scss"));
@@ -39,7 +39,7 @@ export default function MintFlowModal({
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [formData, setFormData] = useState<Array<FormData>>([]);
 	const { pinFile, pinMetadata } = usePinataIPFS();
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 	const mintNFT = useNFTMint();
 	const { showDialog, closeDialog } = useDialog();
 	const showSuccessDialog = useCallback(async () => {

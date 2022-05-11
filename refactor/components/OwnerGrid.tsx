@@ -1,5 +1,5 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { DOMComponentProps, NFTId, SortOrder } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import { useEffect, useState, useCallback } from "react";
@@ -19,7 +19,7 @@ export default function OwnerGrid({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { account, connectWallet } = useWallet();
+	const { account, connectWallet } = useCENNZWallet();
 	const api = useCENNZApi();
 	const [tokenIds, setTokenIds] = useState<Array<NFTId>>([...DEFAULT_STATE]);
 	const [sortedTokenIds, setSortedTokenIds] = useState<Array<NFTId>>([

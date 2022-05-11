@@ -5,7 +5,7 @@ import WalletButton from "@refactor/components/WalletButton";
 import Link from "@refactor/components/Link";
 import { useMintFlow } from "@refactor/providers/MintFlowProvider";
 import { useCallback } from "react";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 
 const bem = createBEMHelper(require("./Header.module.scss"));
 
@@ -23,7 +23,7 @@ export default function Header({
 		},
 		[startMinting]
 	);
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 
 	return (
 		<header {...props} className={bem("header", className)}>

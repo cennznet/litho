@@ -1,4 +1,4 @@
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { DOMComponentProps } from "@refactor/types";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Identicon from "@polkadot/react-identicon";
@@ -15,7 +15,7 @@ export default function ProfileHero({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 	const [iconScale, setIconScale] = useState<number>(0);
 	const onResize = useCallback(
 		(entries: ResizeObserverEntry[], target: HTMLDivElement) => {

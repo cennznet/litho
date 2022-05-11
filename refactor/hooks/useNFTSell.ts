@@ -1,6 +1,6 @@
 import { NFTListingType, NFTId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
@@ -20,7 +20,7 @@ type SellData = {
 
 export default function useNFTSell(): Callback {
 	const api = useCENNZApi();
-	const { account, wallet } = useWallet();
+	const { account, wallet } = useCENNZWallet();
 	const { showDialog } = useDialog();
 	const { confirmSufficientFund } = useGasEstimate();
 

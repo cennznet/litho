@@ -4,7 +4,9 @@ import {
 } from "@polkadot/extension-inject/types";
 import {
 	createContext,
+	Dispatch,
 	PropsWithChildren,
+	SetStateAction,
 	useCallback,
 	useContext,
 	useEffect,
@@ -20,6 +22,8 @@ import {
 	useRuntimeMode,
 } from "@refactor/providers/UserAgentProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
 
 export type BalanceInfo = AssetInfo & {
 	rawValue: any;
@@ -28,12 +32,18 @@ export type BalanceInfo = AssetInfo & {
 
 type WalletContext = {
 	balances: Array<BalanceInfo>;
+	setBalances: Dispatch<SetStateAction<Array<BalanceInfo>>>;
+
 	account: InjectedAccountWithMeta;
+
 	wallet: InjectedExtension;
 	connectWallet: (callback?: () => void) => Promise<void>;
 	disconnectWallet: () => void;
+
 	selectAccount: (account: InjectedAccountWithMeta) => void;
+
 	fetchAssetBalances: () => Promise<void>;
+
 	checkSufficientFund: (
 		requiredFund: number,
 		paymentAssetId: number
@@ -46,14 +56,16 @@ const SupportedWalletContext = createContext<WalletContext>(
 
 type ProviderProps = {};
 
-export default function SupportedWalletProvider({
+export default function CENNZWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
+	const { selectedWallet, setSelectedWallet } = useWalletProvider();
 	const { promptInstallExtension, getInstalledExtension, accounts } =
 		useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
+	const selectedAccount = useSelectedAccount();
 	const showUnsupportedMessage = useUnsupportDialog();
 	const runtimeMode = useRuntimeMode();
 
@@ -76,6 +88,7 @@ export default function SupportedWalletProvider({
 			}
 
 			callback?.();
+			setSelectedWallet("CENNZnet");
 			setWallet(extension);
 			store.set("CENNZNET-EXTENSION", extension);
 		},
@@ -85,6 +98,7 @@ export default function SupportedWalletProvider({
 			api,
 			runtimeMode,
 			showUnsupportedMessage,
+			setSelectedWallet,
 		]
 	);
 
@@ -132,10 +146,23 @@ export default function SupportedWalletProvider({
 	const { assets } = useAssets();
 	const [balances, setBalances] = useState<Array<BalanceInfo>>();
 	const fetchAssetBalances = useCallback(async () => {
-		if (!assets || !account?.address || !api) return;
+		console.log({ selectedWallet, selectedAccount });
+		if (
+			!assets ||
+			!api ||
+			!selectedWallet ||
+			(selectedWallet === "MetaMask" && !selectedAccount) ||
+			(selectedWallet === "CENNZnet" && !account)
+		)
+			return;
 		const balances = (
 			await api.query.genericAsset.freeBalance.multi(
-				assets.map(({ assetId }) => [assetId, account.address])
+				assets.map(({ assetId }) => [
+					assetId,
+					selectedWallet === "CENNZnet"
+						? account.address
+						: selectedAccount.address,
+				])
 			)
 		).map((balance, index) => {
 			const asset = assets[index];
@@ -147,11 +174,13 @@ export default function SupportedWalletProvider({
 		});
 
 		setBalances(balances);
-	}, [assets, account?.address, api]);
+	}, [assets, account, api, selectedWallet, selectedAccount]);
 
 	useEffect(() => {
-		fetchAssetBalances();
-	}, [fetchAssetBalances]);
+		if (!selectedWallet) return;
+
+		void fetchAssetBalances?.();
+	}, [selectedWallet, fetchAssetBalances]);
 
 	const checkSufficientFund = useCallback(
 		(requiredFund, paymentAssetId) => {
@@ -180,6 +209,7 @@ export default function SupportedWalletProvider({
 		<SupportedWalletContext.Provider
 			value={{
 				balances,
+				setBalances,
 				account,
 				wallet,
 				connectWallet,
@@ -193,6 +223,6 @@ export default function SupportedWalletProvider({
 	);
 }
 
-export function useWallet(): WalletContext {
+export function useCENNZWallet(): WalletContext {
 	return useContext(SupportedWalletContext);
 }
