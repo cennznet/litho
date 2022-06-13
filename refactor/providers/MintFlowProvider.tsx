@@ -7,7 +7,7 @@ import {
 	useState,
 } from "react";
 import MintFlowModal from "@refactor/components/MintFlowModal";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import findCollectionIdByAddress from "@refactor/utils/findCollectionIdByAddress";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 import { NFTCollectionId } from "@refactor/types";
@@ -30,7 +30,7 @@ export default function MintFlowProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 	const [ownedCollectionId, setOwnedCollectionId] = useState<NFTCollectionId>();
 	const [modalOpened, setModalOpened] = useState<{ resolve: () => void }>();
 	const { asPath } = useRouter();

@@ -1,5 +1,4 @@
-import { ComponentPropsWithRef, PropsWithChildren, Context } from "react";
-import { TokenId } from "@cennznet/types";
+import { ComponentPropsWithRef, PropsWithChildren } from "react";
 
 export type DOMComponentProps<T, E> = PropsWithChildren<T> &
 	ComponentPropsWithRef<E>;
@@ -76,3 +75,18 @@ export type NFTMetadata271 = {
 	creator: string;
 	[key: string]: any;
 };
+
+export interface MetaMaskAccount {
+	address: string;
+}
+
+export type WalletOption = "CENNZnet" | "MetaMask";
+
+export type BalanceInfo = AssetInfo & {
+	rawValue: any;
+	value: number;
+};
+
+export type CennzBalances = Array<BalanceInfo>;
+
+declare module "*.svg";

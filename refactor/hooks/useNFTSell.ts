@@ -1,11 +1,16 @@
 import { NFTListingType, NFTId } from "@refactor/types";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
 import selectByRuntime from "@refactor/utils/selectByRuntime";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import signViaEthWallet from "@refactor/utils/signViaEthWallet";
+import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
+import { useMetaMaskExtension } from "@refactor/providers/MetaMaskExtensionProvider";
+import useSelectedAccount from "./useSelectedAccount";
 
 type Callback = (data: SellData) => Promise<string>;
 
@@ -20,7 +25,11 @@ type SellData = {
 
 export default function useNFTSell(): Callback {
 	const api = useCENNZApi();
-	const { account, wallet } = useWallet();
+	const { extension } = useMetaMaskExtension();
+	const { wallet } = useCENNZWallet();
+	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
+	const { selectedWallet } = useWalletProvider();
+	const selectedAccount = useSelectedAccount();
 	const { showDialog } = useDialog();
 	const { confirmSufficientFund } = useGasEstimate();
 
@@ -69,20 +78,46 @@ export default function useNFTSell(): Callback {
 			const result = await confirmSufficientFund(extrinsic);
 			if (!result) return "cancelled";
 
-			return await signAndSendTx(
-				extrinsic,
-				account.address,
-				wallet.signer
-			).catch(async (error) => {
-				await showDialog({
-					title: "Oops, something went wrong",
-					message: `An error ${
-						error?.code ? `(#${error.code}) ` : ""
-					}occurred while listing your NFT for sale. Please try again.`,
+			if (selectedWallet === "CENNZnet")
+				return await signAndSendTx(
+					extrinsic,
+					selectedAccount.address,
+					wallet.signer
+				).catch(async (error) => {
+					await showDialog({
+						title: "Oops, something went wrong",
+						message: `An error ${
+							error?.code ? `(#${error.code}) ` : ""
+						}occurred while listing your NFT for sale. Please try again.`,
+					});
+					return "error";
 				});
-				return "error";
-			});
+
+			if (selectedWallet === "MetaMask")
+				return await signViaEthWallet(
+					api,
+					metaMaskAccount.address,
+					extrinsic,
+					extension
+				).catch(async (error) => {
+					await showDialog({
+						title: "Oops, something went wrong",
+						message: `An error ${
+							error?.message ? `(#${error.message}) ` : ""
+						}occurred while listing your NFT for sale. Please try again.`,
+					});
+					return "error";
+				});
 		},
-		[api, account?.address, wallet?.signer, showDialog, confirmSufficientFund]
+		[
+			api,
+			selectedAccount?.address,
+			wallet?.signer,
+			showDialog,
+			confirmSufficientFund,
+			selectedWallet,
+			metaMaskAccount,
+			extension,
+		]
 	);
 }

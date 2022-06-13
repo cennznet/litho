@@ -2,7 +2,7 @@ import { DOMComponentProps } from "@refactor/types";
 import AccountAddress from "@refactor/components/AccountAddress";
 import Identicon from "@polkadot/react-identicon";
 import { Hr } from "@refactor/components/Modal";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import Text from "@refactor/components/Text";
 import CENNZnetSVG from "@refactor/assets/vectors/cennznet-logo.svg";
 import CPAYSVG from "@refactor/assets/vectors/cpay-logo.svg";
@@ -12,6 +12,10 @@ import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCallback } from "react";
 import Button from "@refactor/components/Button";
 import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import store from "store";
 
 const bem = createBEMHelper(require("./WalletDetails.module.scss"));
 
@@ -22,7 +26,12 @@ export default function WalletDetails({
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const { accounts } = useCENNZExtension();
-	const { account, balances, disconnectWallet, selectAccount } = useWallet();
+	const { disconnectWallet, selectAccount } = useCENNZWallet();
+	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
+	const { selectedWallet, setSelectedWallet, cennzBalances, setCennzBalances } =
+		useWalletProvider();
+
+	const selectedAccount = useSelectedAccount();
 
 	const onAccountSelect = useCallback(
 		(event) => {
@@ -33,29 +42,45 @@ export default function WalletDetails({
 		[accounts, selectAccount]
 	);
 
+	const onDisconnectClick = useCallback(() => {
+		if (selectedWallet === "CENNZnet") {
+			disconnectWallet();
+		}
+		if (selectedWallet === "MetaMask") {
+			setCennzBalances(null);
+		}
+		store.remove("SELECTED-WALLET");
+		setSelectedWallet(null);
+		setCennzBalances(null);
+	}, [selectedWallet, setSelectedWallet, setCennzBalances]);
+
 	return (
 		<div className={bem("root")} {...props}>
 			<div className={bem("account")}>
 				<Identicon
-					value={account.address}
+					value={selectedAccount.address}
 					theme="beachball"
 					size={48}
 					className={bem("accountIcon")}
 				/>
 				<div className={bem("accountDetails")}>
 					<Text className={bem("accountTitle")} variant="headline4">
-						{account.meta.name}
+						{selectedAccount?.meta?.name ?? "METAMASK"}
 					</Text>
 					<AccountAddress
 						className={bem("accountAddress")}
-						address={account.address}
-						length={8}
+						address={
+							selectedWallet === "CENNZnet"
+								? selectedAccount.address
+								: metaMaskAccount.address
+						}
+						length={selectedWallet === "CENNZnet" ? 8 : 6}
 					/>
-					{accounts.length > 1 && (
+					{selectedWallet === "CENNZnet" && accounts.length > 1 && (
 						<div className={bem("accountSwitch")}>
 							<select
 								onChange={onAccountSelect}
-								value={account.address}
+								value={selectedAccount.address}
 								className={bem("accountSelect")}>
 								{accounts.map((acc, index) => (
 									<option value={acc.address} key={index}>
@@ -79,7 +104,7 @@ export default function WalletDetails({
 			<Text variant="subtitle1">Balances</Text>
 
 			<ul className={bem("balanceList")}>
-				{balances.map(({ value, symbol }, key) => (
+				{cennzBalances.map(({ value, symbol }, key) => (
 					<li key={key} className={bem("balanceItem")}>
 						<div className={bem("balanceIcon")}>
 							{symbol === "CENNZ" && (
@@ -105,7 +130,7 @@ export default function WalletDetails({
 
 			<Hr />
 
-			<div className={bem("disconnect")} onClick={disconnectWallet}>
+			<div className={bem("disconnect")} onClick={onDisconnectClick}>
 				Disconnect
 			</div>
 		</div>

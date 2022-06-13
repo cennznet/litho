@@ -1,5 +1,5 @@
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import { NFTCollectionId } from "@refactor/types";
 import { useCallback } from "react";
 import signAndSendTx from "@refactor/utils/signAndSendTx";
@@ -7,6 +7,11 @@ import { useDialog } from "@refactor/providers/DialogProvider";
 import useGasEstimate from "@refactor/hooks/useGasEstimate";
 import isFinite from "lodash/isFinite";
 import selectByRuntime from "@refactor/utils/selectByRuntime";
+import signViaEthWallet from "@refactor/utils/signViaEthWallet";
+import { useMetaMaskExtension } from "@refactor/providers/MetaMaskExtensionProvider";
+import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useSelectedAccount from "./useSelectedAccount";
 
 type Callback = (
 	collectionId: NFTCollectionId,
@@ -17,7 +22,11 @@ type Callback = (
 
 export default function useNFTMint(): Callback {
 	const api = useCENNZApi();
-	const { account, wallet } = useWallet();
+	const { extension } = useMetaMaskExtension();
+	const { wallet } = useCENNZWallet();
+	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
+	const { selectedWallet } = useWalletProvider();
+	const selectedAccount = useSelectedAccount();
 	const { showDialog } = useDialog();
 	const { confirmSufficientFund } = useGasEstimate();
 
@@ -43,12 +52,12 @@ export default function useNFTMint(): Callback {
 					api.tx.nft.mintSeries(
 						collectionId || nextCollectionId,
 						quantity,
-						account.address,
+						selectedAccount.address,
 						null,
 						metadataPath,
 						royalty
 							? {
-									entitlements: [[account.address, royalty * 10000]],
+									entitlements: [[selectedAccount.address, royalty * 10000]],
 							  }
 							: null
 					),
@@ -56,11 +65,11 @@ export default function useNFTMint(): Callback {
 					api.tx.nft.mintSeries(
 						collectionId || nextCollectionId,
 						quantity,
-						account.address,
+						selectedAccount.address,
 						{ IpfsShared: metadataPath },
 						royalty
 							? {
-									entitlements: [[account.address, royalty * 10000]],
+									entitlements: [[selectedAccount.address, royalty * 10000]],
 							  }
 							: null
 					),
@@ -79,20 +88,46 @@ export default function useNFTMint(): Callback {
 			const result = await confirmSufficientFund(extrinsic);
 			if (!result) return "cancelled";
 
-			return await signAndSendTx(
-				extrinsic,
-				account.address,
-				wallet.signer
-			).catch(async (error) => {
-				await showDialog({
-					title: "Oops, something went wrong",
-					message: `An error ${
-						error?.code ? `(#${error.code}) ` : ""
-					}occurred while minting your NFTs. Please try again.`,
+			if (selectedWallet === "CENNZnet")
+				return await signAndSendTx(
+					extrinsic,
+					selectedAccount.address,
+					wallet.signer
+				).catch(async (error) => {
+					await showDialog({
+						title: "Oops, something went wrong",
+						message: `An error ${
+							error?.code ? `(#${error.code}) ` : ""
+						}occurred while listing your NFT for sale. Please try again.`,
+					});
+					return "error";
 				});
-				return "error";
-			});
+
+			if (selectedWallet === "MetaMask")
+				return await signViaEthWallet(
+					api,
+					metaMaskAccount.address,
+					extrinsic,
+					extension
+				).catch(async (error) => {
+					await showDialog({
+						title: "Oops, something went wrong",
+						message: `An error ${
+							error?.message ? `(#${error.message}) ` : ""
+						}occurred while listing your NFT for sale. Please try again.`,
+					});
+					return "error";
+				});
 		},
-		[api, account?.address, wallet?.signer, showDialog, confirmSufficientFund]
+		[
+			api,
+			selectedAccount?.address,
+			wallet?.signer,
+			showDialog,
+			confirmSufficientFund,
+			selectedWallet,
+			metaMaskAccount,
+			extension,
+		]
 	);
 }

@@ -22,10 +22,12 @@ import {
 	ConnectAction,
 	TopUpAction,
 } from "@refactor/components/ListingAction";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import isFinite from "lodash/isFinite";
 import parseDescriptionForViewStoryLink from "@refactor/utils/parseDescriptionForViewStoryLink";
+import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useCENNZBalances from "@refactor/hooks/useCENNZBalances";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -39,7 +41,7 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { fetchAssetBalances } = useWallet();
+	const { updateCENNZBalances } = useCENNZBalances();
 	const { item, fetchByListingId, fetchByTokenId } = useNFTListing(listingItem);
 
 	const onActionComplete = useCallback(
@@ -48,7 +50,7 @@ export default function NFTDetail({
 				case "cancel":
 				case "buy":
 					await fetchByTokenId(item.tokenId);
-					await fetchAssetBalances();
+					void updateCENNZBalances();
 					break;
 
 				case "bid":
@@ -62,7 +64,7 @@ export default function NFTDetail({
 					break;
 			}
 		},
-		[item, fetchByTokenId, fetchByListingId, fetchAssetBalances]
+		[item, fetchByTokenId, fetchByListingId, updateCENNZBalances]
 	);
 
 	useEffect(() => {
@@ -148,8 +150,10 @@ function ListingSection({
 
 	const endTime = useEndTime(closeBlock);
 
-	const { account, balances, checkSufficientFund } = useWallet();
-	const isOwner = account?.address === owner;
+	const { cennzBalances } = useWalletProvider();
+	const { checkSufficientFund } = useCENNZBalances();
+	const selectedAccount = useSelectedAccount();
+	const isOwner = selectedAccount?.address === owner;
 	const isSufficientFund = paymentAssetId
 		? checkSufficientFund(latestPrice, paymentAssetId)
 		: false;
@@ -158,7 +162,7 @@ function ListingSection({
 		fetchWiningBid();
 	}, [listingItem, fetchWiningBid]);
 
-	if (!!account && !isFinite(listingId) && !isOwner) return null;
+	if (!!selectedAccount && !isFinite(listingId) && !isOwner) return null;
 
 	return (
 		<div className={bem("listing")}>
@@ -224,7 +228,8 @@ function ListingSection({
 			)}
 
 			{(() => {
-				if (!account) return <ConnectAction className={bem("action")} />;
+				if (!selectedAccount)
+					return <ConnectAction className={bem("action")} />;
 
 				if (!isFinite(listingId)) {
 					if (isOwner)
@@ -248,7 +253,7 @@ function ListingSection({
 							/>
 						);
 
-					if (!isSufficientFund && !!balances)
+					if (!isSufficientFund && !!cennzBalances)
 						return (
 							<TopUpAction
 								type={type}

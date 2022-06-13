@@ -9,7 +9,7 @@
           }
       ],
       ["inline-react-svg", {
-        "ignorePattern": "/\?inline/"
+        "ignorePattern": "metamask"
       }]
   ],
   "presets": [

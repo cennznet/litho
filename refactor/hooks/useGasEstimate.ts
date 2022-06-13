@@ -5,8 +5,8 @@ import { AssetInfo } from "@refactor/types";
 import { useMemo } from "react";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { useDialog } from "@refactor/providers/DialogProvider";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
 import selectByRuntime from "@refactor/utils/selectByRuntime";
+import useCENNZBalances from "@refactor/hooks/useCENNZBalances";
 
 export default function useGasEstimate(): {
 	estimateMintFee: () => Promise<number>;
@@ -16,7 +16,7 @@ export default function useGasEstimate(): {
 } {
 	const api = useCENNZApi();
 	const { findAssetBySymbol } = useAssets();
-	const { checkSufficientFund } = useWallet();
+	const { checkSufficientFund } = useCENNZBalances();
 	const { showDialog } = useDialog();
 	const estimateMintFee = useMemo(() => {
 		if (!api) return;

@@ -11,12 +11,13 @@ import useNFTCancel from "@refactor/hooks/useNFTCancel";
 import useNFTBuy from "@refactor/hooks/useNFTBuy";
 import useNFTBid from "@refactor/hooks/useNFTBid";
 import Link from "@refactor/components/Link";
-import { useWallet } from "@refactor/providers/SupportedWalletProvider";
+import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import Text from "@refactor/components/Text";
 import AssetInput from "@refactor/components/AssetInput";
 import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { useSellFlow } from "@refactor/providers/SellFlowProvider";
 import { useDialog } from "@refactor/providers/DialogProvider";
+import useScrollToWallet from "@refactor/hooks/useScrollToWallet";
 
 const bem = createBEMHelper(require("./ListingAction.module.scss"));
 
@@ -34,7 +35,7 @@ export function BuyAction({
 	nftName,
 }: DOMComponentProps<BuyComponentProps, "div">) {
 	const [busy, setBusy] = useState<boolean>(false);
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 	const buyListing = useNFTBuy();
 	const { showDialog } = useDialog();
 	const onBuyClick = useCallback(async () => {
@@ -228,12 +229,13 @@ type ConnectComponentProps = {};
 export function ConnectAction({
 	className,
 }: DOMComponentProps<ConnectComponentProps, "div">) {
-	const { connectWallet } = useWallet();
 	const [busy, setBusy] = useState<boolean>(false);
-	const onConnectClick = useCallback(() => {
+	const scrollToWallet = useScrollToWallet();
+
+	const onConnectClick = () => {
 		setBusy(true);
-		connectWallet(() => setBusy(false));
-	}, [connectWallet]);
+		scrollToWallet();
+	};
 
 	return (
 		<div className={bem("connectAction", className)}>
@@ -256,7 +258,7 @@ export function TopUpAction({
 	type,
 	buyerAddress,
 }: DOMComponentProps<TopUpComponentProps, "div">) {
-	const { account } = useWallet();
+	const { account } = useCENNZWallet();
 
 	if (!!buyerAddress && buyerAddress !== account.address) return null;
 	return (

@@ -16,6 +16,7 @@ import { useUserAgent } from "@refactor/providers/UserAgentProvider";
 import { useDialog } from "@refactor/providers/DialogProvider";
 import Link from "@refactor/components/Link";
 import Button from "@refactor/components/Button";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
 
 type ExtensionContext = typeof Extension & {
 	accounts: Array<InjectedAccountWithMeta>;
@@ -33,6 +34,7 @@ export default function CENNZExtensionProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const { browser } = useUserAgent();
+	const { selectedWallet } = useWalletProvider();
 	const [module, setModule] = useState<typeof Extension>();
 	const [accounts, setAccounts] = useState<Array<InjectedAccountWithMeta>>();
 	const { showDialog, closeDialog } = useDialog();
@@ -77,7 +79,7 @@ export default function CENNZExtensionProvider({
 	}, [module]);
 
 	useEffect(() => {
-		if (!module || !showDialog) return;
+		if (!module || !showDialog || selectedWallet !== "CENNZnet") return;
 		let unsubscribe: () => void;
 
 		const fetchAccounts = async () => {
@@ -102,7 +104,7 @@ export default function CENNZExtensionProvider({
 		fetchAccounts();
 
 		return unsubscribe;
-	}, [module, showDialog]);
+	}, [module, showDialog, selectedWallet]);
 
 	return (
 		<CENNZExtensionContext.Provider
