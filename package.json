@@ -2,6 +2,9 @@
   "name": "@cennznet/litho",
   "version": "1.0.3",
   "private": true,
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "EXEC_ENV=build next build",
