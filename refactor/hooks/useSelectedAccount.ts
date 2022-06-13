@@ -6,13 +6,13 @@ import { useWalletProvider } from "@refactor/providers/WalletProvider";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 export default function useSelectedAccount(): Partial<InjectedAccountWithMeta> {
-	const { account: CENNZAccount } = useCENNZWallet();
+	const { account: cennzAccount } = useCENNZWallet();
 	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
 	const { selectedWallet } = useWalletProvider();
 
 	return useMemo(() => {
-		if (selectedWallet === "CENNZnet") return CENNZAccount;
+		if (selectedWallet === "CENNZnet") return cennzAccount;
 		if (selectedWallet === "MetaMask" && !!metaMaskAccount?.address)
 			return { address: cvmToAddress(metaMaskAccount.address) };
-	}, [CENNZAccount, metaMaskAccount, selectedWallet]);
+	}, [cennzAccount, metaMaskAccount, selectedWallet]);
 }

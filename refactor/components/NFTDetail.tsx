@@ -22,11 +22,12 @@ import {
 	ConnectAction,
 	TopUpAction,
 } from "@refactor/components/ListingAction";
-import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import useNFTListing from "@refactor/hooks/useNFTListing";
 import isFinite from "lodash/isFinite";
 import parseDescriptionForViewStoryLink from "@refactor/utils/parseDescriptionForViewStoryLink";
 import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
+import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useCENNZBalances from "@refactor/hooks/useCENNZBalances";
 
 const bem = createBEMHelper(require("./NFTDetail.module.scss"));
 
@@ -40,7 +41,7 @@ export default function NFTDetail({
 	listingItem,
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
-	const { fetchAssetBalances } = useCENNZWallet();
+	const { updateCENNZBalances } = useCENNZBalances();
 	const { item, fetchByListingId, fetchByTokenId } = useNFTListing(listingItem);
 
 	const onActionComplete = useCallback(
@@ -49,7 +50,7 @@ export default function NFTDetail({
 				case "cancel":
 				case "buy":
 					await fetchByTokenId(item.tokenId);
-					await fetchAssetBalances();
+					void updateCENNZBalances();
 					break;
 
 				case "bid":
@@ -63,7 +64,7 @@ export default function NFTDetail({
 					break;
 			}
 		},
-		[item, fetchByTokenId, fetchByListingId, fetchAssetBalances]
+		[item, fetchByTokenId, fetchByListingId, updateCENNZBalances]
 	);
 
 	useEffect(() => {
@@ -149,7 +150,8 @@ function ListingSection({
 
 	const endTime = useEndTime(closeBlock);
 
-	const { balances, checkSufficientFund } = useCENNZWallet();
+	const { cennzBalances } = useWalletProvider();
+	const { checkSufficientFund } = useCENNZBalances();
 	const selectedAccount = useSelectedAccount();
 	const isOwner = selectedAccount?.address === owner;
 	const isSufficientFund = paymentAssetId
@@ -251,7 +253,7 @@ function ListingSection({
 							/>
 						);
 
-					if (!isSufficientFund && !!balances)
+					if (!isSufficientFund && !!cennzBalances)
 						return (
 							<TopUpAction
 								type={type}

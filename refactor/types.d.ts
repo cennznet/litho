@@ -82,4 +82,11 @@ export interface MetaMaskAccount {
 
 export type WalletOption = "CENNZnet" | "MetaMask";
 
+export type BalanceInfo = AssetInfo & {
+	rawValue: any;
+	value: number;
+};
+
+export type CennzBalances = Array<BalanceInfo>;
+
 declare module "*.svg";

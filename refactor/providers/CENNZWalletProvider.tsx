@@ -4,9 +4,7 @@ import {
 } from "@polkadot/extension-inject/types";
 import {
 	createContext,
-	Dispatch,
 	PropsWithChildren,
-	SetStateAction,
 	useCallback,
 	useContext,
 	useEffect,
@@ -15,14 +13,12 @@ import {
 import store from "store";
 import { useCENNZExtension } from "@refactor/providers/CENNZExtensionProvider";
 import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
-import { useAssets } from "@refactor/providers/SupportedAssetsProvider";
 import { AssetInfo } from "@refactor/types";
 import {
 	useUnsupportDialog,
 	useRuntimeMode,
 } from "@refactor/providers/UserAgentProvider";
 import extractExtensionMetadata from "@refactor/utils/extractExtensionMetadata";
-import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
 import { useWalletProvider } from "@refactor/providers/WalletProvider";
 
 export type BalanceInfo = AssetInfo & {
@@ -31,23 +27,12 @@ export type BalanceInfo = AssetInfo & {
 };
 
 type WalletContext = {
-	balances: Array<BalanceInfo>;
-	setBalances: Dispatch<SetStateAction<Array<BalanceInfo>>>;
-
 	account: InjectedAccountWithMeta;
+	selectAccount: (account: InjectedAccountWithMeta) => void;
 
 	wallet: InjectedExtension;
 	connectWallet: (callback?: () => void) => Promise<void>;
 	disconnectWallet: () => void;
-
-	selectAccount: (account: InjectedAccountWithMeta) => void;
-
-	fetchAssetBalances: () => Promise<void>;
-
-	checkSufficientFund: (
-		requiredFund: number,
-		paymentAssetId: number
-	) => boolean;
 };
 
 const SupportedWalletContext = createContext<WalletContext>(
@@ -60,12 +45,11 @@ export default function CENNZWalletProvider({
 	children,
 }: PropsWithChildren<ProviderProps>) {
 	const api = useCENNZApi();
-	const { selectedWallet, setSelectedWallet } = useWalletProvider();
+	const { setSelectedWallet, setCennzBalances } = useWalletProvider();
 	const { promptInstallExtension, getInstalledExtension, accounts } =
 		useCENNZExtension();
 	const [wallet, setWallet] = useState<InjectedExtension>(null);
 	const [account, setAccount] = useState<InjectedAccountWithMeta>(null);
-	const selectedAccount = useSelectedAccount();
 	const showUnsupportedMessage = useUnsupportDialog();
 	const runtimeMode = useRuntimeMode();
 
@@ -106,7 +90,7 @@ export default function CENNZWalletProvider({
 		store.remove("CENNZNET-ACCOUNT");
 		setWallet(null);
 		setAccount(null);
-		setBalances(null);
+		setCennzBalances(null);
 	}, []);
 
 	const selectAccount = useCallback((account) => {
@@ -141,58 +125,6 @@ export default function CENNZWalletProvider({
 		selectAccount(matchedAccount);
 	}, [wallet, accounts, selectAccount]);
 
-	// 3. Fetch `account` balance plus provide a function to re-fetch balances as needed
-	const { assets } = useAssets();
-	const [balances, setBalances] = useState<Array<BalanceInfo>>();
-	const fetchAssetBalances = useCallback(async () => {
-		if (
-			!assets ||
-			!api ||
-			!selectedWallet ||
-			(selectedWallet === "MetaMask" && !selectedAccount) ||
-			(selectedWallet === "CENNZnet" && !account)
-		)
-			return;
-		const balances = (
-			await api.query.genericAsset.freeBalance.multi(
-				assets.map(({ assetId }) => [
-					assetId,
-					selectedWallet === "CENNZnet"
-						? account.address
-						: selectedAccount.address,
-				])
-			)
-		).map((balance, index) => {
-			const asset = assets[index];
-			return {
-				...asset,
-				rawValue: balance as any,
-				value: (balance as any) / Math.pow(10, asset.decimals),
-			};
-		});
-
-		setBalances(balances);
-	}, [assets, account, api, selectedWallet, selectedAccount]);
-
-	useEffect(() => {
-		if (!selectedWallet) return;
-
-		void fetchAssetBalances?.();
-	}, [selectedWallet, fetchAssetBalances]);
-
-	const checkSufficientFund = useCallback(
-		(requiredFund, paymentAssetId) => {
-			if (!balances?.length) return;
-			const balance = balances.find(
-				(balance) => balance.assetId === paymentAssetId
-			);
-			if (!balance) throw new Error(`Asset "${paymentAssetId}" is not found`);
-
-			return (balance.rawValue?.toJSON?.() as number) >= requiredFund;
-		},
-		[balances]
-	);
-
 	useEffect(() => {
 		if (!api || !wallet) return;
 
@@ -206,15 +138,12 @@ export default function CENNZWalletProvider({
 	return (
 		<SupportedWalletContext.Provider
 			value={{
-				balances,
-				setBalances,
 				account,
+				selectAccount,
+
 				wallet,
 				connectWallet,
 				disconnectWallet,
-				selectAccount,
-				fetchAssetBalances,
-				checkSufficientFund,
 			}}>
 			{children}
 		</SupportedWalletContext.Provider>

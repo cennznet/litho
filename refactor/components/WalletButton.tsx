@@ -2,7 +2,6 @@ import { useCallback, useEffect } from "react";
 import { DOMComponentProps } from "@refactor/types";
 import WalletSVG from "@refactor/assets/vectors/wallet.svg";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
-import { useCENNZWallet } from "@refactor/providers/CENNZWalletProvider";
 import Modal from "@refactor/components/Modal";
 import WalletConnect from "@refactor/components/WalletConnect";
 import WalletDetails from "@refactor/components/WalletDetails";
@@ -11,6 +10,8 @@ import ThreeDots from "@refactor/components/ThreeDots";
 import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
 import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
 import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import useCENNZBalances from "@refactor/hooks/useCENNZBalances";
+import { useCENNZApi } from "@refactor/providers/CENNZApiProvider";
 
 const bem = createBEMHelper(require("./WalletButton.module.scss"));
 
@@ -20,21 +21,26 @@ export default function WalletButton({
 	className,
 	...props
 }: DOMComponentProps<ComponentProps, "button">) {
-	const { balances } = useCENNZWallet();
-	const { walletOpen, setWalletOpen } = useWalletProvider();
+	const { walletOpen, setWalletOpen, cennzBalances } = useWalletProvider();
+	const api = useCENNZApi();
 
 	const selectedAccount = useSelectedAccount();
+	const { updateCENNZBalances } = useCENNZBalances();
 
 	const onModalRequestClose = useCallback(() => {
 		setWalletOpen(false);
 	}, []);
+
 	const onButtonClick = useCallback(() => {
 		setWalletOpen(!walletOpen);
 	}, [walletOpen]);
 
 	useEffect(() => {
+		if ((!selectedAccount && cennzBalances?.length) || !api) return;
+
 		setWalletOpen(false);
-	}, [balances?.length]);
+		updateCENNZBalances();
+	}, [selectedAccount, cennzBalances?.length, api]);
 
 	return (
 		<>
@@ -42,14 +48,14 @@ export default function WalletButton({
 				{...props}
 				className={bem("root", className)}
 				onClick={onButtonClick}>
-				{!selectedAccount && !balances && (
+				{!selectedAccount && !cennzBalances && (
 					<>
 						<WalletSVG className={bem("icon")} />
 						<label className={bem("label")}>Connect Wallet</label>
 					</>
 				)}
 
-				{!!selectedAccount && !balances && (
+				{!!selectedAccount && !cennzBalances && (
 					<>
 						<span title={selectedAccount.address}>
 							<Identicon
@@ -67,7 +73,7 @@ export default function WalletButton({
 					</>
 				)}
 
-				{!!selectedAccount && !!balances && (
+				{!!selectedAccount && !!cennzBalances && (
 					<>
 						<div title={selectedAccount.address} className={bem("icon")}>
 							<Identicon
@@ -80,7 +86,7 @@ export default function WalletButton({
 						<label
 							className={bem(
 								"label"
-							)}>{`${balances[0].value} ${balances[0].symbol}`}</label>
+							)}>{`${cennzBalances[0].value} ${cennzBalances[0].symbol}`}</label>
 
 						<span className={bem("chevron", { walletOpen })}>
 							<ChevronDownSVG />
@@ -95,8 +101,8 @@ export default function WalletButton({
 				className={bem("modal")}
 				overlayClassName={bem("modalOverlay")}
 				innerClassName={bem("modalInner")}>
-				{!balances && <WalletConnect />}
-				{!!balances && <WalletDetails />}
+				{!cennzBalances && <WalletConnect />}
+				{!!cennzBalances && <WalletDetails />}
 			</Modal>
 		</>
 	);

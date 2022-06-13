@@ -15,6 +15,7 @@ import ChevronDownSVG from "@refactor/assets/vectors/chevron-down.svg";
 import useSelectedAccount from "@refactor/hooks/useSelectedAccount";
 import { useMetaMaskWallet } from "@refactor/providers/MetaMaskWalletProvider";
 import { useWalletProvider } from "@refactor/providers/WalletProvider";
+import store from "store";
 
 const bem = createBEMHelper(require("./WalletDetails.module.scss"));
 
@@ -25,10 +26,10 @@ export default function WalletDetails({
 	...props
 }: DOMComponentProps<ComponentProps, "div">) {
 	const { accounts } = useCENNZExtension();
-	const { balances, disconnectWallet, selectAccount, setBalances } =
-		useCENNZWallet();
+	const { disconnectWallet, selectAccount } = useCENNZWallet();
 	const { selectedAccount: metaMaskAccount } = useMetaMaskWallet();
-	const { selectedWallet, setSelectedWallet } = useWalletProvider();
+	const { selectedWallet, setSelectedWallet, cennzBalances, setCennzBalances } =
+		useWalletProvider();
 
 	const selectedAccount = useSelectedAccount();
 
@@ -46,10 +47,12 @@ export default function WalletDetails({
 			disconnectWallet();
 		}
 		if (selectedWallet === "MetaMask") {
-			setBalances(null);
+			setCennzBalances(null);
 		}
+		store.remove("SELECTED-WALLET");
 		setSelectedWallet(null);
-	}, [selectedWallet, setSelectedWallet, setBalances]);
+		setCennzBalances(null);
+	}, [selectedWallet, setSelectedWallet, setCennzBalances]);
 
 	return (
 		<div className={bem("root")} {...props}>
@@ -101,7 +104,7 @@ export default function WalletDetails({
 			<Text variant="subtitle1">Balances</Text>
 
 			<ul className={bem("balanceList")}>
-				{balances.map(({ value, symbol }, key) => (
+				{cennzBalances.map(({ value, symbol }, key) => (
 					<li key={key} className={bem("balanceItem")}>
 						<div className={bem("balanceIcon")}>
 							{symbol === "CENNZ" && (

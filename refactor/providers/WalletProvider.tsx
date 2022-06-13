@@ -1,4 +1,4 @@
-import { WalletOption } from "@refactor/types";
+import { CennzBalances, WalletOption } from "@refactor/types";
 import {
 	createContext,
 	Dispatch,
@@ -6,7 +6,9 @@ import {
 	SetStateAction,
 	useContext,
 	useState,
+	useEffect,
 } from "react";
+import store from "store";
 
 interface WalletContextType {
 	walletOpen: boolean;
@@ -14,6 +16,9 @@ interface WalletContextType {
 
 	selectedWallet: WalletOption;
 	setSelectedWallet: Dispatch<SetStateAction<WalletOption>>;
+
+	cennzBalances: CennzBalances;
+	setCennzBalances: Dispatch<SetStateAction<CennzBalances>>;
 }
 
 const WalletContext = createContext<WalletContextType>({} as WalletContextType);
@@ -23,6 +28,13 @@ interface WalletProviderProps {}
 const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
 	const [walletOpen, setWalletOpen] = useState<boolean>(false);
 	const [selectedWallet, setSelectedWallet] = useState<WalletOption>();
+	const [cennzBalances, setCennzBalances] = useState<CennzBalances>();
+
+	useEffect(() => {
+		if (!selectedWallet) return setSelectedWallet(store.get("SELECTED-WALLET"));
+
+		store.set("SELECTED-WALLET", selectedWallet);
+	}, [selectedWallet]);
 
 	return (
 		<WalletContext.Provider
@@ -32,6 +44,9 @@ const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
 
 				selectedWallet,
 				setSelectedWallet,
+
+				cennzBalances,
+				setCennzBalances,
 			}}>
 			{children}
 		</WalletContext.Provider>
