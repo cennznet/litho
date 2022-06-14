@@ -160,7 +160,7 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@cennznet/api@^2.1.1-alpha.2":
+"@cennznet/api@^2.1.1-alpha.4":
   version "2.1.1-alpha.4"
   resolved "https://registry.yarnpkg.com/@cennznet/api/-/api-2.1.1-alpha.4.tgz#87b1489ec71153083b50e384f470db7d2df7c7e4"
   integrity sha512-eXx9qve/H+/j4hu0tNHxckau+ZHPeRQvevBVnN/eQMi2J6zvQ8WnEi0fDgcZQfKS8M8DyessLovMaE+QKiGETA==
@@ -179,7 +179,7 @@
     ethers "^5.6.4"
     eventemitter3 "^4.0.0"
 
-"@cennznet/types@^2.1.1-alpha.2", "@cennznet/types@^2.1.1-alpha.4":
+"@cennznet/types@^2.1.1-alpha.4":
   version "2.1.1-alpha.4"
   resolved "https://registry.yarnpkg.com/@cennznet/types/-/types-2.1.1-alpha.4.tgz#f287c7eac3bc52fed04ed909c1a73fe8727c7b9a"
   integrity sha512-2LnOyFW0bRfNQvo0TjOuEDURDAqDOPs48vpmixFP5wxdN6IcL+T/xMf0sUZPq98kuCoviBGzDGJepN9/EW+vNQ==
