@@ -1,0 +1,28 @@
+name: "Labeled Deployment"
+
+on:
+  pull_request:
+    types:
+      - labeled
+    branches:
+      - develop
+
+jobs:
+  deploy-rata:
+    name: "Rata"
+    if: ${{ github.event.label.name == 'deploy:rata' }}
+    uses: cennznet/gh-workflows/.github/workflows/_labeled_deployment.yml@develop
+    with:
+      branch: rata
+  deploy-nikau:
+    name: "Nikau"
+    if: ${{ github.event.label.name == 'deploy:nikau' }}
+    uses: cennznet/gh-workflows/.github/workflows/_labeled_deployment.yml@develop
+    with:
+      branch: nikau
+  deploy-main:
+    name: "Main"
+    if: ${{ github.event.label.name == 'deploy:main' }}
+    uses: cennznet/gh-workflows/.github/workflows/_labeled_deployment.yml@develop
+    with:
+      branch: main
