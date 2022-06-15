@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.0.3] - 2022-16-06
+
+- Add MetaMask as wallet option
+
 ## [1.0.3] - 2022-04-07
 
 - Hotfix: Fix wallet not being able to sign due to restoring issue
