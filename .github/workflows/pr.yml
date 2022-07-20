@@ -1,12 +1,14 @@
-name: CI
+name: PR
 
 on:
   push:
     branches:
       - develop
+      - 'prod/**'
   pull_request:
     branches:
       - develop
+      - 'prod/**'
 
   workflow_dispatch:
 
