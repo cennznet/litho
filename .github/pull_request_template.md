@@ -1,8 +1,8 @@
-## Why
+## Summary
 
 > _Summary of the change in one short paragraph._
 
-## What is changing
+## Changes
 
 > _Details of the change in bullet points._
 
