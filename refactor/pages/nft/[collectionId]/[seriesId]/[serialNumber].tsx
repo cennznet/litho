@@ -1,4 +1,3 @@
-import { Api } from "@cennznet/api";
 import { DOMComponentProps, NFTData, NFTId, NFTListing } from "@refactor/types";
 import { fetchAllOpenListingIds } from "@refactor/utils/fetchLatestOpenListingIds";
 import fetchAppProps from "@refactor/utils/fetchAppProps";
@@ -15,13 +14,12 @@ import isFinite from "lodash/isFinite";
 import { NextSeo } from "next-seo";
 import isVideoType from "@refactor/utils/isVideoType";
 import { useEffect, useState } from "react";
+import getApiInstance from "@refactor/utils/getApiInstance";
 
 const bem = createBEMHelper(require("./[serialNumber].module.scss"));
 
 export async function getStaticPaths() {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
+	const api = await getApiInstance();
 
 	await indexAllOpenListingItems(api);
 
@@ -53,9 +51,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
+	const api = await getApiInstance();
 
 	const { collectionId, seriesId, serialNumber } = params;
 	const tokenId: NFTId = [

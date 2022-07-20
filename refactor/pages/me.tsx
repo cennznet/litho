@@ -1,4 +1,3 @@
-import { Api } from "@cennznet/api";
 import { DOMComponentProps } from "@refactor/types";
 import fetchAppProps from "@refactor/utils/fetchAppProps";
 import ProfileHero from "@refactor/components/ProfileHero";
@@ -6,13 +5,12 @@ import OwnerGrid from "@refactor/components/OwnerGrid";
 import createBEMHelper from "@refactor/utils/createBEMHelper";
 import Main from "@refactor/components/Main";
 import { NextSeo } from "next-seo";
+import getApiInstance from "@refactor/utils/getApiInstance";
 
 const bem = createBEMHelper(require("./me.module.scss"));
 
 export async function getStaticProps() {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
+	const api = await getApiInstance();
 	const appProps = await fetchAppProps(api);
 
 	return {
