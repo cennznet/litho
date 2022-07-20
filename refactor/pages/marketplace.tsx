@@ -1,4 +1,3 @@
-import { Api } from "@cennznet/api";
 import { NFTListingTuple, DOMComponentProps } from "@refactor/types";
 import fetchAppProps from "@refactor/utils/fetchAppProps";
 import CollectionGrid from "@refactor/components/CollectionGrid";
@@ -7,13 +6,12 @@ import Main from "@refactor/components/Main";
 import { NextSeo } from "next-seo";
 
 import createBEMHelper from "@refactor/utils/createBEMHelper";
+import getApiInstance from "@refactor/utils/getApiInstance";
 
 const bem = createBEMHelper(require("./marketplace.module.scss"));
 
 export async function getStaticProps() {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
+	const api = await getApiInstance();
 	const appProps = await fetchAppProps(api);
 	const defaultListingIds = await fetchLatestOpenListingIds(api);
 

@@ -1,4 +1,3 @@
-import { Api } from "@cennznet/api";
 import {
 	NFTListingTuple,
 	DOMComponentProps,
@@ -12,12 +11,10 @@ import Breadcrumb from "@refactor/components/Breadcrumb";
 import Link from "@refactor/components/Link";
 import Main from "@refactor/components/Main";
 import { NextSeo } from "next-seo";
+import getApiInstance from "@refactor/utils/getApiInstance";
 
 export async function getStaticPaths() {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
-
+	const api = await getApiInstance();
 	const paths = (await fetchLatestOpenListingIds(api)).map(
 		(listingId: NFTListingTuple) => ({
 			params: {
@@ -30,9 +27,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-	const api = await Api.create({
-		provider: process.env.NEXT_PUBLIC_CENNZ_API_ENDPOINT,
-	});
+	const api = await getApiInstance();
 	const appProps = await fetchAppProps(api);
 
 	const collectionId = parseInt(params?.collectionId, 10);
